@@ -1,3 +1,5 @@
+import { LampScene } from "@/components/LampScene";
+
 export default function Home() {
   return (
     <main className="page-grid">
@@ -21,11 +23,7 @@ export default function Home() {
         <p className="mt-[1.1em]">노브를 이용해 조명을 켜보세요.</p>
       </div>
 
-      {/* 메인 비주얼 자리 */}
-      <div className="col-span-5 row-span-4 bg-[var(--placeholder)]" />
-
-      {/* 노브 자리 */}
-      <div className="col-span-3 row-span-4 overflow-hidden bg-[var(--placeholder)]" />
+      <LampScene />
     </main>
   );
 }

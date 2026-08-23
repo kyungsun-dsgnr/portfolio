@@ -4,8 +4,8 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 /** 2섹션 — 단어가 하나씩 떠오릅니다. */
 const LINES = [
-  ["What", "We"],
-  ["Already", "Know"],
+  ["From", "Memory"],
+  ["To", "Interaction"],
 ];
 
 /** 단어 사이 간격 */

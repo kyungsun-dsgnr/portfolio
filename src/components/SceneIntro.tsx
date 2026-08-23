@@ -6,10 +6,10 @@ import { LampScene } from "@/components/LampScene";
 export function SceneIntro() {
   return (
     <div className="page-grid">
-      <h1 className="type-display reveal col-span-5 row-span-2">
-        you Already Know
+      <h1 className="type-display intro-headline reveal col-span-5 row-span-2">
+        What We Already Know
         <br />
-        which way to turn
+        Becomes Interaction
       </h1>
 
       {/* 우측 텍스트는 세로 중앙이 아니라 각자 행 시작선에 붙습니다. */}
@@ -17,7 +17,9 @@ export function SceneIntro() {
         className="type-title reveal col-span-3 col-start-6 row-start-1"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        What We Already Know
+        Designing Digital Experiences
+        <br />
+        From Sensory and Behavioral Memory
       </h2>
 
       <div
@@ -25,9 +27,9 @@ export function SceneIntro() {
         style={{ "--delay": "0.2s" } as CSSProperties}
       >
         <p>
-          사람들이 이미 이해하고 있는 행동과 감각을 디지털 브랜드
+          빛의 변화, 거리의 감각, 손의 움직임.
           <br />
-          경험으로 번역합니다.
+          이미 알고 있는 감각과 행동의 기억을 바탕으로 디지털 경험을 설계합니다.
         </p>
         {/* 눈에 띄게 천천히 반짝이다가, 조명이 켜질수록 잦아들며 물러납니다. */}
         <p className="hint mt-[1.1em]">조명을 켜보세요.</p>

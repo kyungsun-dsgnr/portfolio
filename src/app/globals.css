@@ -2,7 +2,8 @@
 
 @theme {
   --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-body: "SUIT Variable", var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-body:
+    "SUIT Variable", var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
@@ -36,11 +37,17 @@
   /* 셀 하나의 실제 크기 (1440×800 기준 158.5 × 110).
      그리드에 얹지 않은 요소를 그리드에 맞출 때 씁니다. */
   --col-size: calc(
-    (var(--canvas-w) - 2 * var(--page-margin) - (var(--grid-cols) - 1) * var(--grid-gap)) /
+    (
+        var(--canvas-w) - 2 * var(--page-margin) - (var(--grid-cols) - 1) *
+          var(--grid-gap)
+      ) /
       var(--grid-cols)
   );
   --row-size: calc(
-    (var(--canvas-h) - 2 * var(--page-margin) - (var(--grid-rows) - 1) * var(--grid-gap)) /
+    (
+        var(--canvas-h) - 2 * var(--page-margin) - (var(--grid-rows) - 1) *
+          var(--grid-gap)
+      ) /
       var(--grid-rows)
   );
 
@@ -161,7 +168,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: calc(12 * var(--u));
+    gap: calc(4 * var(--u));
     opacity: 0;
     /* 마우스 외곽선과 화살표가 같은 굵기를 쓰도록 한 곳에서 정합니다. */
     --cue-stroke: calc(1.5 * var(--u));
@@ -222,6 +229,12 @@
     line-height: 1.1;
     letter-spacing: 0.01em;
     text-transform: uppercase;
+  }
+
+  /* 1섹션 헤드라인. 새 문구는 64px 로는 5칼럼(856.5px)을 18px 넘겨
+     "KNOW" 가 혼자 떨어져 3줄이 되므로 이 자리만 한 단계 줄입니다. */
+  .intro-headline {
+    font-size: calc(62 * var(--u));
   }
 
   .type-title {

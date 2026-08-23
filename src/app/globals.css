@@ -159,7 +159,9 @@
     bottom: calc(40 * var(--u));
     left: 0;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(12 * var(--u));
     opacity: 0;
   }
 
@@ -190,6 +192,22 @@
 
   .statement[data-visible] .scroll-cue-dot {
     animation: cue-wheel 1.8s cubic-bezier(0.4, 0, 0.2, 1) 1.6s infinite;
+  }
+
+  /* 꼬리 없는 아래 화살표. 정사각형의 두 변만 남기고 45° 돌린 것입니다. */
+  .scroll-cue-chevron {
+    display: block;
+    height: calc(12 * var(--u));
+    width: calc(12 * var(--u));
+    border-right: calc(2 * var(--u)) solid currentColor;
+    border-bottom: calc(2 * var(--u)) solid currentColor;
+    rotate: 45deg;
+    opacity: 0.4;
+  }
+
+  /* rotate 와 translate 는 따로 쌓이므로 회전은 그대로 두고 위치만 움직입니다. */
+  .statement[data-visible] .scroll-cue-chevron {
+    animation: cue-arrow 1.8s ease-in-out 1.75s infinite;
   }
 
   /* ── 타입 스케일 ───────────────────────────────
@@ -393,6 +411,18 @@
   }
 }
 
+@keyframes cue-arrow {
+  0%,
+  100% {
+    opacity: 0.4;
+    translate: 0 0;
+  }
+  50% {
+    opacity: 1;
+    translate: 0 calc(6 * var(--u));
+  }
+}
+
 @keyframes hint-pulse {
   0%,
   100% {
@@ -427,5 +457,10 @@
   .statement[data-visible] .scroll-cue-dot {
     animation: none;
     opacity: 1;
+  }
+
+  .statement[data-visible] .scroll-cue-chevron {
+    animation: none;
+    opacity: 0.8;
   }
 }

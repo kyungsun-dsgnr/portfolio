@@ -37,6 +37,7 @@ export function SceneStatement() {
         <span className="scroll-cue-mouse">
           <span className="scroll-cue-dot" />
         </span>
+        <span className="scroll-cue-chevron" />
       </span>
 
       <h2 className="type-display statement-text">

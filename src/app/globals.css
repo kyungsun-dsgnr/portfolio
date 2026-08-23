@@ -443,10 +443,12 @@
     color: var(--fg);
   }
 
+  /* Iconsax 아이콘은 24 단위 viewBox 입니다.
+     120px 로 키우면서 선은 화면에서 1.5px 로 남도록 굵기를 1.5 × 24/120 = 0.3 으로 둡니다. */
   .card-art svg {
-    height: 100%;
-    width: 100%;
-    stroke-width: 1;
+    height: calc(120 * var(--u));
+    width: calc(120 * var(--u));
+    stroke-width: 0.3;
     stroke-linecap: round;
     stroke-linejoin: round;
     opacity: 0.85;

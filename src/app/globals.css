@@ -163,6 +163,8 @@
     align-items: center;
     gap: calc(12 * var(--u));
     opacity: 0;
+    /* 마우스 외곽선과 화살표가 같은 굵기를 쓰도록 한 곳에서 정합니다. */
+    --cue-stroke: calc(2 * var(--u));
   }
 
   .statement[data-visible] .scroll-cue {
@@ -174,7 +176,7 @@
     display: block;
     height: calc(38 * var(--u));
     width: calc(24 * var(--u));
-    border: calc(1.5 * var(--u)) solid currentColor;
+    border: var(--cue-stroke) solid currentColor;
     border-radius: calc(12 * var(--u));
   }
 
@@ -199,8 +201,8 @@
     display: block;
     height: calc(12 * var(--u));
     width: calc(12 * var(--u));
-    border-right: calc(2 * var(--u)) solid currentColor;
-    border-bottom: calc(2 * var(--u)) solid currentColor;
+    border-right: var(--cue-stroke) solid currentColor;
+    border-bottom: var(--cue-stroke) solid currentColor;
     rotate: 45deg;
     opacity: 0.4;
   }

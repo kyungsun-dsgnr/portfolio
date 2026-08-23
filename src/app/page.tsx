@@ -3,6 +3,7 @@ import { SceneIntro } from "@/components/SceneIntro";
 import { ScenePerspective } from "@/components/ScenePerspective";
 import { ScenePrinciples } from "@/components/ScenePrinciples";
 import { SceneStatement } from "@/components/SceneStatement";
+import { SceneWork } from "@/components/SceneWork";
 
 export default function Home() {
   return (
@@ -28,6 +29,7 @@ export default function Home() {
           cue
           dark
         />,
+        <SceneWork key="work" />,
       ]}
     />
   );

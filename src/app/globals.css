@@ -406,6 +406,32 @@
       0 calc(3 * var(--u)) calc(7 * var(--u)) rgb(0 0 0 / 0.1);
   }
 
+  /* ── 6섹션 작업 카드 ───────────────────────────
+     머리글 높이를 원본대로 고정해 세 카드의 이미지 자리가 같은 선에서 시작합니다. */
+  .work {
+    display: flex;
+    flex-direction: column;
+    gap: calc(16 * var(--u));
+  }
+
+  .work-head {
+    display: flex;
+    /* 번호를 띄운 만큼 원본 109 보다 조금 키웠습니다. */
+    height: calc(120 * var(--u));
+    flex-direction: column;
+    gap: calc(8 * var(--u));
+  }
+
+  /* 번호는 제목·설명 묶음에서 한 단 떨어뜨립니다. */
+  .work-head .card-index {
+    margin-bottom: calc(8 * var(--u));
+  }
+
+  .work-visual {
+    flex: 1 1 0;
+    background: var(--placeholder);
+  }
+
   /* ── 4섹션 카드 ────────────────────────────────
      칼럼에 맞추지 않고 콘텐츠 폭을 정확히 4등분합니다. 사이는 여백 대신 세로 선입니다. */
   .card-row {

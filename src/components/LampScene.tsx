@@ -10,20 +10,6 @@ const LAMP_X = "50.2%";
 const LAMP_Y = "59.9%";
 const GLOW_SIZE = "137.8%";
 
-const FRAME_W = 856.5;
-const FRAME_H = 488;
-const LAMP_W = 1716;
-const LAMP_H = 2147;
-const LINE_H = 1080;
-
-const LAMP_SCALED = (LAMP_H / LAMP_W) * (FRAME_W / FRAME_H);
-const CROP_TOP = (LAMP_SCALED - 1) / 2;
-
-const LINE_STYLE = {
-  top: `${-CROP_TOP * 100}%`,
-  height: `${(LINE_H / LAMP_W) * (FRAME_W / FRAME_H) * 100}%`,
-};
-
 const SIZES = "62vw";
 
 export function LampScene() {
@@ -84,24 +70,16 @@ export function LampScene() {
           />
         </div>
 
-        {/* 4. 전선: level, glow, lamp-on opacity와 완전히 분리된 최상단 레이어 */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 z-[999] opacity-100 mix-blend-normal"
-          style={LINE_STYLE as CSSProperties}
-        >
+        {/* 4. 전선 — 맨 위 레이어. 밝기(level)와 무관하게 항상 불투명합니다.
+            조명 이미지와 크기가 같아 같은 방식으로 얹으면 정확히 겹칩니다. */}
+        <div className="pointer-events-none absolute inset-0 z-30" aria-hidden>
           <Image
             src="/images/lamp-line.png"
             alt=""
             fill
             priority
             sizes={SIZES}
-            className="object-fill opacity-100"
-            style={{
-              opacity: 1,
-              mixBlendMode: "normal",
-              filter: "contrast(1.15)",
-            }}
+            className="object-cover"
           />
         </div>
       </div>

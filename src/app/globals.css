@@ -12,10 +12,17 @@
   --design-w: 1440;
   --design-h: 800;
 
+  /* 캔버스와 창 사이의 바깥 여백. 캔버스가 화면 네 변에 붙지 않게 합니다. */
+  --viewport-margin: 40px;
+
   /* 디자인 1px 이 화면에서 차지하는 실제 크기.
-     가로/세로 중 모자란 쪽에 맞추므로 캔버스가 절대 잘리지 않습니다.
+     바깥 여백을 뺀 공간에서 가로/세로 중 모자란 쪽에 맞추므로
+     캔버스가 잘리지 않고 항상 여백 안쪽에 들어옵니다.
      아래 모든 수치에 이 단위를 곱하면 전체가 같은 비율로 스케일됩니다. */
-  --u: min(100vw / 1440, 100dvh / 800);
+  --u: min(
+    (100vw - 2 * var(--viewport-margin)) / 1440,
+    (100dvh - 2 * var(--viewport-margin)) / 800
+  );
 
   --canvas-w: calc(var(--design-w) * var(--u));
   --canvas-h: calc(var(--design-h) * var(--u));
@@ -50,11 +57,12 @@
   }
 
   body {
-    /* 캔버스를 뷰포트 정중앙에 */
+    /* 캔버스를 바깥 여백 안쪽, 뷰포트 정중앙에 */
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100dvh;
+    padding: var(--viewport-margin);
 
     background-color: var(--bg);
     color: var(--fg);

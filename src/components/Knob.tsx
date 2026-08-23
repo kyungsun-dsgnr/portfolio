@@ -126,13 +126,13 @@ export function Knob({ value, onChange, ariaLabel = "조명 밝기" }: Props) {
           />
         </svg>
 
-        {/* 눈금 삼각형만 값에 따라 돌아갑니다. 캡은 원형이라 회전이 보이지 않습니다. */}
+        <div className="knob-rim" />
+        <div className="knob-cap" />
+
+        {/* 눈금은 캡 위에 얹혀 값에 따라 돕니다. 캡 자체는 원형이라 회전이 보이지 않습니다. */}
         <div className="knob-marker" style={{ transform: `rotate(${value * SWEEP}deg)` }}>
           <span />
         </div>
-
-        <div className="knob-rim" />
-        <div className="knob-cap" />
       </div>
     </div>
   );

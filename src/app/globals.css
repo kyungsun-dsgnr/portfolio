@@ -140,9 +140,8 @@
     cursor: grab;
     /* 포인터 드래그가 스크롤/줌으로 새지 않게 */
     touch-action: none;
-    /* 얕게 파인 자리 */
+    /* 얕게 파인 자리. 테두리 선 없이 배경 톤 차이로만 구분합니다. */
     background: #e4e1db;
-    box-shadow: inset 0 0 0 calc(1 * var(--u)) rgb(0 0 0 / 0.06);
   }
 
   .knob:active {
@@ -150,7 +149,7 @@
   }
 
   .knob:focus-visible {
-    outline: calc(2 * var(--u)) solid #e08a3a;
+    outline: calc(2 * var(--u)) solid #b9b2a4;
     outline-offset: calc(6 * var(--u));
   }
 
@@ -171,9 +170,11 @@
 
   .knob-arc-value {
     fill: none;
-    stroke: #e08a3a;
+    /* 주황이 아니라 노란기 도는 흰빛 */
+    stroke: #fff7e0;
     stroke-width: 2.2;
     stroke-linecap: round;
+    filter: drop-shadow(0 0 calc(4 * var(--u)) rgb(255 233 176 / 0.85));
   }
 
   /* 값에 따라 도는 눈금 삼각형 */
@@ -182,10 +183,11 @@
     inset: 0;
   }
 
+  /* 가운데 캡 안쪽에 놓습니다. 캡은 21.5%~78.5% 구간이라 26% 면 캡 위입니다. */
   .knob-marker span {
     position: absolute;
     left: 50%;
-    top: calc(15 * var(--u));
+    top: 26%;
     height: 0;
     width: 0;
     translate: -50% 0;

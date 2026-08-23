@@ -9,9 +9,25 @@ export default function Home() {
     <LightStage
       sections={[
         <SceneIntro key="intro" />,
-        <SceneStatement key="statement" />,
+        <SceneStatement
+          key="statement"
+          lines={[
+            ["From", "Memory"],
+            ["To", "Interaction"],
+          ]}
+          cue
+        />,
         <ScenePerspective key="perspective" />,
         <ScenePrinciples key="principles" />,
+        <SceneStatement
+          key="closing"
+          lines={[
+            ["Familiar", "Memory"],
+            ["Becomes", "Experience"],
+          ]}
+          cue
+          dark
+        />,
       ]}
     />
   );

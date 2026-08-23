@@ -99,14 +99,14 @@ export function ScenePrinciples() {
         where familiar senses and behaviors become expectations.
       </h2>
 
-      <p
+      {/* <p
         className="type-body rise col-span-2 col-start-7 row-start-1"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
         감각과 행동의 기억은 인터페이스가 낯설지 않게 작동하는 기준이 됩니다.
         <br />
         좋은 디지털 경험은 사용자가 설명을 읽기 전에 다음 반응을 예상할 수 있게 만듭니다.
-      </p>
+      </p> */}
 
       <div className="card-row col-span-8 row-start-4 row-span-3">
         {CARDS.map((card, i) => (
@@ -118,7 +118,12 @@ export function ScenePrinciples() {
             <span className="card-index">{card.index}</span>
 
             <div className="card-art">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                aria-hidden
+              >
                 {card.art}
               </svg>
             </div>

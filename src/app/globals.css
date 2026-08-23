@@ -60,12 +60,9 @@
   }
 
   body {
-    /* 캔버스를 바깥 여백 안쪽, 뷰포트 정중앙에 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100dvh;
-    padding: var(--viewport-margin);
+    /* 스크롤은 .scroll-root 가 맡습니다. */
+    height: 100dvh;
+    overflow: hidden;
 
     background-color: var(--bg);
     color: var(--fg);
@@ -79,7 +76,38 @@
 }
 
 @layer components {
-  /* 비율 고정 캔버스 위의 8×6 그리드.
+  /* 섹션 단위로 딱딱 맞춰 넘어가는 스크롤 영역 */
+  .scroll-root {
+    height: 100dvh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    /* 캔버스 크기 계산이 100vw 기준이라 스크롤바가 생기면 폭이 어긋납니다. */
+    scrollbar-width: none;
+  }
+
+  .scroll-root::-webkit-scrollbar {
+    display: none;
+  }
+
+  .section {
+    display: flex;
+    height: 100dvh;
+    align-items: center;
+    justify-content: center;
+    padding: var(--viewport-margin);
+    scroll-snap-align: center;
+  }
+
+  /* 비율 고정 캔버스. 섹션마다 안쪽 레이아웃은 다릅니다. */
+  .canvas {
+    position: relative;
+    width: var(--canvas-w);
+    height: var(--canvas-h);
+    flex: none;
+    overflow: hidden;
+  }
+
+  /* 캔버스를 채우는 8×6 그리드.
      자식은 Tailwind의 col-span-* / row-span-* / col-start-* 로 배치합니다. */
   .page-grid {
     display: grid;
@@ -87,9 +115,39 @@
     grid-template-rows: repeat(var(--grid-rows), 1fr);
     gap: var(--grid-gap);
     padding: var(--page-margin);
-    width: var(--canvas-w);
-    height: var(--canvas-h);
-    flex: none;
+    height: 100%;
+    width: 100%;
+  }
+
+  /* 2장 — 캔버스 정중앙에 놓인 문장 */
+  .statement {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .statement-text {
+    width: calc(1205 * var(--u));
+    text-align: center;
+  }
+
+  .statement-line {
+    display: flex;
+    justify-content: center;
+    gap: 0.25em;
+  }
+
+  /* 단어는 섹션이 화면에 들어왔을 때 하나씩 떠오릅니다.
+     섹션을 벗어나면 다시 숨어서, 올라갔다 내려오면 처음부터 재생됩니다. */
+  .word {
+    display: inline-block;
+    opacity: 0;
+  }
+
+  .statement[data-visible] .word {
+    animation: word-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--delay, 0s);
   }
 
   /* ── 타입 스케일 ───────────────────────────────
@@ -246,6 +304,17 @@
   from {
     opacity: 0;
     translate: 0 calc(16 * var(--u));
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes word-in {
+  from {
+    opacity: 0;
+    translate: 0 calc(20 * var(--u));
   }
   to {
     opacity: 1;

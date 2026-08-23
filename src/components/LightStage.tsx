@@ -3,6 +3,8 @@
 import {
   createContext,
   useContext,
+  useEffect,
+  useRef,
   useState,
   type CSSProperties,
   type ReactNode,
@@ -18,17 +20,61 @@ export function useLight() {
   return value;
 }
 
+/** 조명이 다 켜진 뒤 다음 섹션으로 넘어가기까지 두는 사이 */
+const ADVANCE_DELAY = 900;
+
 /**
- * 페이지 그리드를 겸하는 조명 상태 저장소.
- * 밝기를 --light (0~1) 로 내려보내서 CSS 쪽에서도 반응할 수 있게 합니다.
+ * 조명 상태 저장소이자 섹션 스크롤 영역.
+ * 밝기를 --light (0~1) 로 내려보내 CSS 쪽에서도 반응할 수 있게 하고,
+ * 노브가 끝까지 돌아가면 잠깐 뒤 다음 섹션으로 넘깁니다.
  */
-export function LightStage({ children }: { children: ReactNode }) {
+export function LightStage({
+  intro,
+  statement,
+}: {
+  intro: ReactNode;
+  statement: ReactNode;
+}) {
   const [level, setLevel] = useState(0);
+  const statementRef = useRef<HTMLElement>(null);
+  /** 100% 에 막 도달한 순간에만 넘깁니다. 이미 100% 인 채로 올라온 경우는 그대로 둡니다. */
+  const wasFull = useRef(false);
+  const timer = useRef<number | null>(null);
+
+  useEffect(() => () => {
+    if (timer.current) clearTimeout(timer.current);
+  }, []);
+
+  function handleLevel(next: number) {
+    setLevel(next);
+
+    if (next < 1) {
+      wasFull.current = false;
+      return;
+    }
+
+    if (wasFull.current) return;
+    wasFull.current = true;
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    timer.current = window.setTimeout(() => {
+      statementRef.current?.scrollIntoView({
+        behavior: reduced ? "auto" : "smooth",
+        block: "center",
+      });
+    }, ADVANCE_DELAY);
+  }
 
   return (
-    <LightContext.Provider value={{ level, setLevel }}>
-      <main className="page-grid" style={{ "--light": level } as CSSProperties}>
-        {children}
+    <LightContext.Provider value={{ level, setLevel: handleLevel }}>
+      <main className="scroll-root" style={{ "--light": level } as CSSProperties}>
+        <section className="section">
+          <div className="canvas">{intro}</div>
+        </section>
+
+        <section className="section" ref={statementRef}>
+          <div className="canvas">{statement}</div>
+        </section>
       </main>
     </LightContext.Provider>
   );

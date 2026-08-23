@@ -29,8 +29,8 @@ export default function Home() {
           <br />
           경험으로 번역합니다.
         </p>
-        {/* 조명이 켜질수록 흐려집니다. 안내가 제 역할을 다하면 물러나도록. */}
-        <p className="hint mt-[1.1em]">노브를 이용해 조명을 켜보세요.</p>
+        {/* 눈에 띄게 천천히 반짝이다가, 조명이 켜질수록 잦아들며 물러납니다. */}
+        <p className="hint mt-[1.1em]">조명을 켜보세요.</p>
       </div>
 
       <LampScene />

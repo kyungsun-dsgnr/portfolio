@@ -236,10 +236,9 @@
     animation-delay: var(--delay, 0s);
   }
 
-  /* 안내 문구는 조명이 켜질수록 물러납니다. */
+  /* 안내 문구는 천천히 반짝이고, 조명이 켜질수록 물러납니다. */
   .hint {
-    opacity: calc(1 - 0.75 * var(--light));
-    transition: opacity 120ms linear;
+    animation: hint-pulse 2.6s ease-in-out infinite;
   }
 }
 
@@ -251,5 +250,32 @@
   to {
     opacity: 1;
     translate: 0 0;
+  }
+}
+
+@keyframes hint-pulse {
+  0%,
+  100% {
+    opacity: calc(1 - 0.75 * var(--light));
+  }
+  50% {
+    /* 조명이 켜질수록 반짝임 폭이 좁아져, 다 켜지면 깜빡임이 멎습니다. */
+    opacity: calc((1 - 0.75 * var(--light)) * (0.4 + 0.6 * var(--light)));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* 무한 반복은 짧은 duration 으로 두면 오히려 빠르게 깜빡입니다. 아예 끄고 정지값을 줍니다. */
+  .hint {
+    animation: none;
+    opacity: calc(1 - 0.75 * var(--light));
   }
 }

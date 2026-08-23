@@ -432,8 +432,8 @@
     background: var(--placeholder);
   }
 
-  /* 카드 위에서는 기본 커서를 감춥니다. */
-  .work {
+  /* 갈 곳이 있는 카드 위에서만 기본 커서를 감춥니다. */
+  .work[data-linked] {
     cursor: none;
   }
 

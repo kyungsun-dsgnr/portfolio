@@ -28,7 +28,10 @@ const ADVANCE_DELAY = 900;
  * 밝기를 --light (0~1) 로 내려보내 CSS 쪽에서도 반응할 수 있게 하고,
  * 노브가 끝까지 돌아가면 잠깐 뒤 다음 섹션으로 넘깁니다.
  */
-export function LightStage({ sections }: { sections: ReactNode[] }) {
+/** 각 장. id 는 카드에서 해당 장으로 건너뛸 때 쓰입니다. */
+export type Section = { id: string; node: ReactNode };
+
+export function LightStage({ sections }: { sections: Section[] }) {
   const [level, setLevel] = useState(0);
   /** 노브를 다 돌렸을 때 내려갈 곳 — 두 번째 섹션 */
   const nextRef = useRef<HTMLElement>(null);
@@ -71,11 +74,12 @@ export function LightStage({ sections }: { sections: ReactNode[] }) {
       <main className="scroll-root" style={{ "--light": level } as CSSProperties}>
         {sections.map((section, index) => (
           <section
-            key={index}
+            key={section.id}
+            id={section.id}
             className="section"
             ref={index === 1 ? nextRef : undefined}
           >
-            <div className="canvas">{section}</div>
+            <div className="canvas">{section.node}</div>
           </section>
         ))}
       </main>

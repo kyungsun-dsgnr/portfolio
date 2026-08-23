@@ -121,6 +121,7 @@
 
   /* 2장 — 캔버스 정중앙에 놓인 문장 */
   .statement {
+    position: relative;
     display: flex;
     height: 100%;
     align-items: center;
@@ -148,6 +149,47 @@
   .statement[data-visible] .word {
     animation: word-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: var(--delay, 0s);
+  }
+
+  /* ── 스크롤 유도 ───────────────────────────────
+     문장이 다 나온 뒤에 나타나, 마우스 휠이 아래로 굴러가는 모양을 반복합니다. */
+  .scroll-cue {
+    position: absolute;
+    right: 0;
+    bottom: calc(40 * var(--u));
+    left: 0;
+    display: flex;
+    justify-content: center;
+    opacity: 0;
+  }
+
+  .statement[data-visible] .scroll-cue {
+    animation: cue-in 0.6s ease 1.3s both;
+  }
+
+  .scroll-cue-mouse {
+    position: relative;
+    display: block;
+    height: calc(38 * var(--u));
+    width: calc(24 * var(--u));
+    border: calc(1.5 * var(--u)) solid currentColor;
+    border-radius: calc(12 * var(--u));
+  }
+
+  .scroll-cue-dot {
+    position: absolute;
+    left: 50%;
+    top: calc(7 * var(--u));
+    height: calc(6 * var(--u));
+    width: calc(3 * var(--u));
+    margin-left: calc(-1.5 * var(--u));
+    border-radius: calc(2 * var(--u));
+    background: currentColor;
+    opacity: 0;
+  }
+
+  .statement[data-visible] .scroll-cue-dot {
+    animation: cue-wheel 1.8s cubic-bezier(0.4, 0, 0.2, 1) 1.6s infinite;
   }
 
   /* ── 타입 스케일 ───────────────────────────────
@@ -322,6 +364,35 @@
   }
 }
 
+@keyframes cue-in {
+  from {
+    opacity: 0;
+    translate: 0 calc(8 * var(--u));
+  }
+  to {
+    opacity: 0.45;
+    translate: 0 0;
+  }
+}
+
+@keyframes cue-wheel {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0;
+    translate: 0 calc(11 * var(--u));
+  }
+  100% {
+    opacity: 0;
+    translate: 0 calc(11 * var(--u));
+  }
+}
+
 @keyframes hint-pulse {
   0%,
   100% {
@@ -346,5 +417,15 @@
   .hint {
     animation: none;
     opacity: calc(1 - 0.75 * var(--light));
+  }
+
+  .statement[data-visible] .scroll-cue {
+    animation: none;
+    opacity: 0.45;
+  }
+
+  .statement[data-visible] .scroll-cue-dot {
+    animation: none;
+    opacity: 1;
   }
 }

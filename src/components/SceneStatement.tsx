@@ -32,6 +32,13 @@ export function SceneStatement() {
 
   return (
     <div ref={ref} className="statement" data-visible={visible || undefined}>
+      {/* 아래로 더 내려가도록 유도하는 표시 */}
+      <span className="scroll-cue" aria-hidden>
+        <span className="scroll-cue-mouse">
+          <span className="scroll-cue-dot" />
+        </span>
+      </span>
+
       <h2 className="type-display statement-text">
         {LINES.map((line, lineIndex) => {
           // 앞 줄에 있던 단어 수만큼 순번을 밀어 줄이 바뀌어도 차례가 이어집니다.

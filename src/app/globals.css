@@ -231,6 +231,17 @@
     text-transform: uppercase;
   }
 
+  /* ── 캡 높이 정렬 ──────────────────────────────
+     폰트는 글자 위에 크기에 비례한 여백(하프 리딩 + 어센더 여유)을 남깁니다.
+     그래서 박스 top 을 맞춰도 62px 과 24px 글자는 서로 다른 높이에서 시작합니다.
+     그 여백(Inter 기준 0.195em)만큼 끌어올려 캡 상단을 행 선에 맞춥니다.
+     2섹션 문장은 가운데 정렬이라 대상이 아닙니다. */
+  .page-grid .type-display,
+  .page-grid .type-title,
+  .page-grid .type-body {
+    margin-top: -0.195em;
+  }
+
   /* 1섹션 헤드라인. 새 문구는 64px 로는 5칼럼(856.5px)을 18px 넘겨
      "KNOW" 가 혼자 떨어져 3줄이 되므로 이 자리만 한 단계 줄입니다. */
   .intro-headline {

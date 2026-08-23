@@ -1,12 +1,93 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-body: "SUIT Variable", var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  /* ── 레이아웃 기준 ────────────────────────────────
+     여기 네 값만 바꾸면 페이지 전체가 따라갑니다.
+     디자인 원본은 1440×800 기준 (칼럼 158.5px, 행 110px). */
+  --page-margin: 30px;
+  --grid-gap: 16px;
+  --grid-cols: 8;
+  --grid-rows: 6;
+
+  /* 셀 하나의 실제 크기.
+     그리드에 얹지 않은 요소(고정 폭 이미지 등)를 그리드에 맞출 때 씁니다. */
+  --col-size: calc(
+    (100vw - 2 * var(--page-margin) - (var(--grid-cols) - 1) * var(--grid-gap)) /
+      var(--grid-cols)
+  );
+  --row-size: calc(
+    (100dvh - 2 * var(--page-margin) - (var(--grid-rows) - 1) * var(--grid-gap)) /
+      var(--grid-rows)
+  );
+
+  /* ── 색 ─────────────────────────────────────── */
+  --bg: #fafafa;
+  --fg: #191919;
+  --placeholder: #d9d9d9;
 }
 
 @layer base {
+  html,
   body {
-    font-family: var(--font-sans);
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    /* 페이지가 뷰포트에 딱 맞으므로 스크롤이 생기지 않습니다. */
+    overflow: hidden;
+    /* 한글이 단어 중간에서 줄바꿈되지 않도록 */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+}
+
+@layer components {
+  /* 뷰포트를 꽉 채우는 8×6 그리드.
+     자식은 Tailwind의 col-span-* / row-span-* / col-start-* 로 배치합니다. */
+  .page-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-cols), 1fr);
+    grid-template-rows: repeat(var(--grid-rows), 1fr);
+    gap: var(--grid-gap);
+    padding: var(--page-margin);
+    width: 100%;
+    height: 100dvh;
+  }
+
+  /* ── 타입 스케일 ───────────────────────────────
+     원본의 line-height / letter-spacing 은 모두 폰트 크기의 1.1배, 1% 입니다.
+     px 대신 배수로 적어 두어 크기를 바꿔도 비율이 유지됩니다. */
+  .type-display {
+    font-family: var(--font-display);
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+
+  .type-title {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+  }
+
+  .type-body {
+    font-family: var(--font-body);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
   }
 }

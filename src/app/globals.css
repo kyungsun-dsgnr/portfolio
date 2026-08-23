@@ -432,6 +432,43 @@
     background: var(--placeholder);
   }
 
+  /* 카드 위에서는 기본 커서를 감춥니다. */
+  .work {
+    cursor: none;
+  }
+
+  /* 커서를 따라다니는 원형 표시 */
+  .view-cursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 40;
+    display: grid;
+    height: calc(72 * var(--u));
+    width: calc(72 * var(--u));
+    place-items: center;
+    border-radius: 50%;
+    background: var(--fg);
+    color: var(--bg);
+    font-family: var(--font-display);
+    font-size: calc(11 * var(--u));
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-indent: 0.1em;
+    text-transform: uppercase;
+    pointer-events: none;
+    opacity: 0;
+    scale: 0.6;
+    transition:
+      scale 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 180ms linear;
+  }
+
+  .view-cursor[data-on] {
+    opacity: 1;
+    scale: 1;
+  }
+
   /* ── 4섹션 카드 ────────────────────────────────
      칼럼에 맞추지 않고 콘텐츠 폭을 정확히 4등분합니다. 사이는 여백 대신 세로 선입니다. */
   .card-row {

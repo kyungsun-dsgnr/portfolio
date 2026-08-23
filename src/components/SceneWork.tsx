@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useRef, useState, type CSSProperties, type PointerEvent } from "react";
 
 import { useInView } from "@/components/useInView";
 
@@ -30,6 +30,25 @@ const WORKS = [
 export function SceneWork() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
 
+  /* 카드 위에서는 기본 커서를 감추고 원형 "View" 를 따라다니게 합니다.
+     위치는 매 움직임마다 리렌더하지 않도록 ref 로 직접 갱신합니다. */
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const [showCursor, setShowCursor] = useState(false);
+
+  function moveCursor(event: PointerEvent<HTMLDivElement>) {
+    const el = cursorRef.current;
+    if (!el) return;
+    // 퍼센트는 요소 자기 크기 기준이라, 이 한 줄로 커서 중심에 맞춰집니다.
+    el.style.translate = `calc(${event.clientX}px - 50%) calc(${event.clientY}px - 50%)`;
+  }
+
+  function enter(event: PointerEvent<HTMLDivElement>) {
+    // 터치로는 커서가 남아 버리므로 마우스일 때만 씁니다.
+    if (event.pointerType !== "mouse") return;
+    moveCursor(event);
+    setShowCursor(true);
+  }
+
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-display rise col-span-4 row-start-1 row-span-2">
@@ -51,6 +70,9 @@ export function SceneWork() {
           key={work.index}
           className={`work rise row-start-3 row-span-4 ${work.place}`}
           style={{ "--delay": `${0.2 + i * 0.08}s` } as CSSProperties}
+          onPointerEnter={enter}
+          onPointerMove={showCursor ? moveCursor : undefined}
+          onPointerLeave={() => setShowCursor(false)}
         >
           <div className="work-head">
             <span className="card-index">{work.index}</span>
@@ -62,6 +84,10 @@ export function SceneWork() {
           <div className="work-visual" />
         </div>
       ))}
+
+      <div ref={cursorRef} className="view-cursor" data-on={showCursor || undefined} aria-hidden>
+        VIEW
+      </div>
     </div>
   );
 }

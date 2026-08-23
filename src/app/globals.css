@@ -463,7 +463,8 @@
     opacity: 0;
   }
 
-  [data-visible] > .rise {
+  /* 자손까지 걸리게 둡니다. 카드처럼 한 단계 감싸인 요소도 있습니다. */
+  [data-visible] .rise {
     animation: reveal-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: var(--delay, 0s);
   }

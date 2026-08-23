@@ -14,8 +14,8 @@ const LAMP_Y = "59.9%";
 const GLOW_SIZE = "137.8%";
 
 /* ── lamp-line 자리 계산 ────────────────────────────
-   lamp-line 은 조명 이미지와 같은 캔버스에서 위쪽 1080px 만 잘라낸 것이라,
-   조명과 같은 배율·같은 원점에 놓아야 전선이 어긋나지 않습니다. */
+  lamp-line 은 조명 이미지와 같은 캔버스에서 위쪽 1080px 만 잘라낸 것이라,
+  조명과 같은 배율·같은 원점에 놓아야 전선이 어긋나지 않습니다. */
 const FRAME_W = 856.5; // 5칼럼
 const FRAME_H = 488; // 4행
 const LAMP_W = 1716;
@@ -51,14 +51,19 @@ export function LampScene() {
           fill
           priority
           sizes={SIZES}
-          className="object-cover"
+          className="object-cover z-0"
         />
 
         {/* 2. 빛 — 조명 위치에 맞춰 얹습니다 */}
         <div
           aria-hidden
-          className="pointer-events-none absolute aspect-square -translate-x-1/2 -translate-y-1/2"
-          style={{ left: LAMP_X, top: LAMP_Y, width: GLOW_SIZE, opacity: level }}
+          className="pointer-events-none absolute z-10 aspect-square -translate-x-1/2 -translate-y-1/2"
+          style={{
+            left: LAMP_X,
+            top: LAMP_Y,
+            width: GLOW_SIZE,
+            opacity: level,
+          }}
         >
           <Image
             src="/images/glow.png"
@@ -78,12 +83,15 @@ export function LampScene() {
           fill
           priority
           sizes={SIZES}
-          className="object-cover"
+          className="object-cover z-20"
           style={{ opacity: level }}
         />
 
-        {/* 4. 전선 — 빛 위로 올려 선명하게 남깁니다. */}
-        <div className="absolute inset-x-0" style={LINE_STYLE}>
+        {/* 4. 전선 — 조명 상태와 무관하게 항상 최상단에 고정 */}
+        <div
+          className="pointer-events-none absolute inset-x-0 z-30"
+          style={LINE_STYLE as CSSProperties}
+        >
           <Image
             src="/images/lamp-line.png"
             alt=""

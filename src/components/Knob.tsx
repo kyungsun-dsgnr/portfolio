@@ -1,0 +1,142 @@
+"use client";
+
+import { useRef, type KeyboardEvent, type PointerEvent } from "react";
+
+/** 0 = 12시 방향, 최대값 = 시계방향으로 이만큼 돌린 지점 */
+const SWEEP = 270;
+/** SVG 원(r=46)의 둘레. 아크 길이를 stroke-dasharray 로 자를 때 씁니다. */
+const CIRCUMFERENCE = 2 * Math.PI * 46;
+/** 키보드 한 번에 움직이는 양 */
+const STEP = 0.05;
+/** 중심에 가까우면 각도가 불안정해서(1px만 움직여도 크게 흔들림) 값을 바꾸지 않습니다. */
+const DEAD_ZONE = 0.2;
+/** 이벤트 하나가 밀 수 있는 최대 회전각. 튀는 좌표가 값을 통째로 옮기는 것을 막습니다. */
+const MAX_STEP_ANGLE = 90;
+
+const clamp = (n: number) => Math.min(1, Math.max(0, n));
+
+/**
+ * 노브 중심에서 본 포인터의 각도와 거리.
+ * 각도는 12시를 0°로 두고 시계방향으로 증가하고, 거리는 반지름 대비 비율입니다.
+ */
+function pointerPolar(el: HTMLElement, clientX: number, clientY: number) {
+  const box = el.getBoundingClientRect();
+  const dx = clientX - (box.left + box.width / 2);
+  const dy = clientY - (box.top + box.height / 2);
+
+  return {
+    angle: (Math.atan2(dx, -dy) * 180) / Math.PI,
+    distance: Math.hypot(dx, dy) / (box.width / 2),
+  };
+}
+
+type Props = {
+  /** 0~1 */
+  value: number;
+  onChange: (value: number) => void;
+  label?: string;
+  ariaLabel?: string;
+};
+
+export function Knob({ value, onChange, label = "LIGHT", ariaLabel = "조명 밝기" }: Props) {
+  const ref = useRef<HTMLDivElement>(null);
+  /** 드래그 중 직전 각도와 누적값. 12시를 넘어가도 튀지 않게 각도 차이를 더해 나갑니다. */
+  const drag = useRef<{ angle: number; value: number } | null>(null);
+
+  function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
+    const el = ref.current;
+    if (!el) return;
+    el.setPointerCapture(event.pointerId);
+    el.focus();
+    drag.current = { angle: pointerPolar(el, event.clientX, event.clientY).angle, value };
+  }
+
+  function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
+    const el = ref.current;
+    const state = drag.current;
+    if (!el || !state) return;
+
+    const { angle, distance } = pointerPolar(el, event.clientX, event.clientY);
+
+    let delta = angle - state.angle;
+    // 12시를 넘어갈 때 359°→1° 같은 점프가 생기지 않게 -180~180 으로 정규화합니다.
+    if (delta > 180) delta -= 360;
+    if (delta < -180) delta += 360;
+
+    // 각도는 항상 따라가되, 중심 근처이거나 한 번에 너무 크게 튄 값은 반영하지 않습니다.
+    state.angle = angle;
+    if (distance < DEAD_ZONE || Math.abs(delta) > MAX_STEP_ANGLE) return;
+
+    state.value = clamp(state.value + delta / SWEEP);
+    onChange(state.value);
+  }
+
+  function handlePointerUp(event: PointerEvent<HTMLDivElement>) {
+    ref.current?.releasePointerCapture(event.pointerId);
+    drag.current = null;
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    const step: Record<string, number> = {
+      ArrowUp: STEP,
+      ArrowRight: STEP,
+      ArrowDown: -STEP,
+      ArrowLeft: -STEP,
+    };
+
+    if (event.key in step) {
+      event.preventDefault();
+      onChange(clamp(value + step[event.key]));
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      onChange(0);
+    } else if (event.key === "End") {
+      event.preventDefault();
+      onChange(1);
+    }
+  }
+
+  const percent = Math.round(value * 100);
+
+  return (
+    <div className="knob-panel">
+      <span className="knob-label">{label}</span>
+
+      <div
+        ref={ref}
+        className="knob"
+        role="slider"
+        tabIndex={0}
+        aria-label={ariaLabel}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={percent}
+        aria-valuetext={`${percent}%`}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+        onKeyDown={handleKeyDown}
+      >
+        <svg className="knob-arc" viewBox="0 0 100 100" aria-hidden>
+          <circle className="knob-arc-track" cx="50" cy="50" r="46" />
+          <circle
+            className="knob-arc-value"
+            cx="50"
+            cy="50"
+            r="46"
+            strokeDasharray={`${(value * SWEEP) / 360 * CIRCUMFERENCE} ${CIRCUMFERENCE}`}
+          />
+        </svg>
+
+        {/* 눈금 삼각형만 값에 따라 돌아갑니다. 캡은 원형이라 회전이 보이지 않습니다. */}
+        <div className="knob-marker" style={{ transform: `rotate(${value * SWEEP}deg)` }}>
+          <span />
+        </div>
+
+        <div className="knob-rim" />
+        <div className="knob-cap" />
+      </div>
+    </div>
+  );
+}

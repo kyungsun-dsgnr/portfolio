@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useState } from "react";
 
+import { Knob } from "@/components/Knob";
+
 /** 프레임(5칼럼 × 4행) 안에서 조명이 놓이는 위치. 빛을 여기에 맞춥니다.
  *  불꺼진 조명 이미지(858×1074)를 object-cover 로 채웠을 때의 실제 좌표에서 나온 값입니다. */
 const LAMP_X = "50.2%";
@@ -59,23 +61,10 @@ export function LampScene() {
         />
       </div>
 
-      <div className="col-span-3 row-span-4 overflow-hidden bg-[var(--placeholder)]">
-        {/* 노브 자리. 아래는 동작 확인용 임시 슬라이더로, 노브가 오면 교체합니다. */}
-        <label className="flex h-full flex-col items-center justify-center gap-2 p-4">
-          <span className="font-mono text-[11px] text-black/40">
-            임시 컨트롤 · {Math.round(level * 100)}%
-          </span>
-          <input
-            type="range"
-            min={0}
-            max={1}
-            step={0.01}
-            value={level}
-            onChange={(event) => setLevel(Number(event.target.value))}
-            className="w-2/3"
-          />
-        </label>
+      <div className="col-span-3 row-span-4 overflow-hidden">
+        <Knob value={level} onChange={setLevel} />
       </div>
+
     </>
   );
 }

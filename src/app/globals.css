@@ -117,3 +117,124 @@
     letter-spacing: 0.01em;
   }
 }
+
+@layer components {
+  /* ── 노브 ─────────────────────────────────────
+     이미지가 아니라 그라디언트로 그려서 캔버스 스케일(--u)을 그대로 따릅니다. */
+  .knob-panel {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: calc(30 * var(--u));
+    background: #2c2c2c;
+  }
+
+  .knob-label {
+    font-family: var(--font-display);
+    font-size: calc(13 * var(--u));
+    font-weight: 500;
+    letter-spacing: 0.42em;
+    /* letter-spacing 이 마지막 글자 뒤에도 붙어 오른쪽으로 밀리는 것을 되돌립니다. */
+    text-indent: 0.42em;
+    color: rgb(255 255 255 / 0.3);
+  }
+
+  .knob {
+    position: relative;
+    width: calc(280 * var(--u));
+    height: calc(280 * var(--u));
+    border-radius: 50%;
+    cursor: grab;
+    /* 포인터 드래그가 스크롤/줌으로 새지 않게 */
+    touch-action: none;
+    /* 패널에 오목하게 파인 자리 */
+    background: radial-gradient(circle at 50% 42%, #343434 0%, #2b2b2b 64%, #232323 100%);
+    box-shadow:
+      inset 0 calc(2 * var(--u)) calc(7 * var(--u)) rgb(0 0 0 / 0.55),
+      0 calc(1 * var(--u)) 0 rgb(255 255 255 / 0.04);
+  }
+
+  .knob:active {
+    cursor: grabbing;
+  }
+
+  .knob:focus-visible {
+    outline: calc(2 * var(--u)) solid #f6e3c4;
+    outline-offset: calc(6 * var(--u));
+  }
+
+  /* 값 표시 아크. 12시에서 시작하도록 -90° 돌려 둡니다. */
+  .knob-arc {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    rotate: -90deg;
+  }
+
+  .knob-arc-track {
+    fill: none;
+    stroke: rgb(0 0 0 / 0.5);
+    stroke-width: 2.2;
+  }
+
+  .knob-arc-value {
+    fill: none;
+    stroke: #f7e6ca;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 calc(3 * var(--u)) rgb(247 230 202 / 0.75));
+  }
+
+  /* 값에 따라 도는 눈금 삼각형 */
+  .knob-marker {
+    position: absolute;
+    inset: 0;
+  }
+
+  .knob-marker span {
+    position: absolute;
+    left: 50%;
+    top: calc(19 * var(--u));
+    height: 0;
+    width: 0;
+    translate: -50% 0;
+    border-left: calc(6 * var(--u)) solid transparent;
+    border-right: calc(6 * var(--u)) solid transparent;
+    border-bottom: calc(10 * var(--u)) solid #f7e6ca;
+    filter: drop-shadow(0 0 calc(4 * var(--u)) rgb(247 230 202 / 0.6));
+  }
+
+  /* 캡 바깥 테두리(넓고 낮은 단) */
+  .knob-rim {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 78%;
+    width: 78%;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: linear-gradient(155deg, #efece6 0%, #d9d4cb 52%, #a9a49b 100%);
+    box-shadow: 0 calc(6 * var(--u)) calc(14 * var(--u)) rgb(0 0 0 / 0.5);
+  }
+
+  /* 가운데 솟은 캡 */
+  .knob-cap {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 57%;
+    width: 57%;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: linear-gradient(158deg, #f8f6f3 0%, #e6e2db 46%, #bdb8af 100%);
+    box-shadow:
+      /* 바깥 테두리와 캡 사이의 단차 */
+      0 0 0 calc(1 * var(--u)) rgb(0 0 0 / 0.1),
+      0 calc(9 * var(--u)) calc(18 * var(--u)) rgb(0 0 0 / 0.4),
+      inset 0 calc(1 * var(--u)) 0 rgb(255 255 255 / 0.85),
+      inset 0 calc(-4 * var(--u)) calc(8 * var(--u)) rgb(0 0 0 / 0.14);
+  }
+}

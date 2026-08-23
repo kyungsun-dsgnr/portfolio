@@ -6,22 +6,34 @@
 }
 
 :root {
-  /* ── 레이아웃 기준 ────────────────────────────────
-     여기 네 값만 바꾸면 페이지 전체가 따라갑니다.
-     디자인 원본은 1440×800 기준 (칼럼 158.5px, 행 110px). */
-  --page-margin: 30px;
-  --grid-gap: 16px;
+  /* ── 캔버스 ───────────────────────────────────
+     디자인 원본 크기. 이 비율을 유지한 채 뷰포트에 맞춰 축소되고,
+     남는 쪽에는 여백이 생깁니다(레터박스). */
+  --design-w: 1440;
+  --design-h: 800;
+
+  /* 디자인 1px 이 화면에서 차지하는 실제 크기.
+     가로/세로 중 모자란 쪽에 맞추므로 캔버스가 절대 잘리지 않습니다.
+     아래 모든 수치에 이 단위를 곱하면 전체가 같은 비율로 스케일됩니다. */
+  --u: min(100vw / 1440, 100dvh / 800);
+
+  --canvas-w: calc(var(--design-w) * var(--u));
+  --canvas-h: calc(var(--design-h) * var(--u));
+
+  /* ── 레이아웃 기준 ────────────────────────────── */
+  --page-margin: calc(30 * var(--u));
+  --grid-gap: calc(16 * var(--u));
   --grid-cols: 8;
   --grid-rows: 6;
 
-  /* 셀 하나의 실제 크기.
-     그리드에 얹지 않은 요소(고정 폭 이미지 등)를 그리드에 맞출 때 씁니다. */
+  /* 셀 하나의 실제 크기 (1440×800 기준 158.5 × 110).
+     그리드에 얹지 않은 요소를 그리드에 맞출 때 씁니다. */
   --col-size: calc(
-    (100vw - 2 * var(--page-margin) - (var(--grid-cols) - 1) * var(--grid-gap)) /
+    (var(--canvas-w) - 2 * var(--page-margin) - (var(--grid-cols) - 1) * var(--grid-gap)) /
       var(--grid-cols)
   );
   --row-size: calc(
-    (100dvh - 2 * var(--page-margin) - (var(--grid-rows) - 1) * var(--grid-gap)) /
+    (var(--canvas-h) - 2 * var(--page-margin) - (var(--grid-rows) - 1) * var(--grid-gap)) /
       var(--grid-rows)
   );
 
@@ -38,11 +50,16 @@
   }
 
   body {
+    /* 캔버스를 뷰포트 정중앙에 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+
     background-color: var(--bg);
     color: var(--fg);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
-    /* 페이지가 뷰포트에 딱 맞으므로 스크롤이 생기지 않습니다. */
     overflow: hidden;
     /* 한글이 단어 중간에서 줄바꿈되지 않도록 */
     word-break: keep-all;
@@ -51,7 +68,7 @@
 }
 
 @layer components {
-  /* 뷰포트를 꽉 채우는 8×6 그리드.
+  /* 비율 고정 캔버스 위의 8×6 그리드.
      자식은 Tailwind의 col-span-* / row-span-* / col-start-* 로 배치합니다. */
   .page-grid {
     display: grid;
@@ -59,16 +76,17 @@
     grid-template-rows: repeat(var(--grid-rows), 1fr);
     gap: var(--grid-gap);
     padding: var(--page-margin);
-    width: 100%;
-    height: 100dvh;
+    width: var(--canvas-w);
+    height: var(--canvas-h);
+    flex: none;
   }
 
   /* ── 타입 스케일 ───────────────────────────────
-     원본의 line-height / letter-spacing 은 모두 폰트 크기의 1.1배, 1% 입니다.
-     px 대신 배수로 적어 두어 크기를 바꿔도 비율이 유지됩니다. */
+     디자인 px 을 그대로 적고 --u 를 곱합니다.
+     line-height / letter-spacing 은 원본이 모두 1.1배, 1% 입니다. */
   .type-display {
     font-family: var(--font-display);
-    font-size: 64px;
+    font-size: calc(64 * var(--u));
     font-weight: 700;
     line-height: 1.1;
     letter-spacing: 0.01em;
@@ -77,7 +95,7 @@
 
   .type-title {
     font-family: var(--font-display);
-    font-size: 24px;
+    font-size: calc(24 * var(--u));
     font-weight: 700;
     line-height: 1.1;
     letter-spacing: 0.01em;
@@ -85,7 +103,7 @@
 
   .type-body {
     font-family: var(--font-body);
-    font-size: 20px;
+    font-size: calc(20 * var(--u));
     font-weight: 500;
     line-height: 1.1;
     letter-spacing: 0.01em;

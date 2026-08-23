@@ -19,12 +19,21 @@ const CARDS: {
     index: "01",
     title: "Learned Behavior",
     body: "익숙한 행동 기억은 새로운 화면에서도 다음 조작을 예상하게 합니다.",
-    // 되풀이되며 몸에 남는 행동 — 순환 화살표
+    // 같은 원이 겹겹이 쌓이며 짙어집니다 — 반복이 남긴 자국
     art: (
       <>
-        <path d="M3.58 5.16h13.84c1.66 0 3 1.34 3 3v3.32" />
-        <path d="M6.74 2L3.58 5.16l3.16 3.16M20.42 18.84H6.58c-1.66 0-3-1.34-3-3v-3.32" />
-        <path d="M17.26 22l3.16-3.16-3.16-3.16" />
+        {Array.from({ length: 14 }, (_, i) => {
+          const t = i / 13;
+          return (
+            <circle
+              key={i}
+              cx={8.6 + 7 * t}
+              cy={15.4 - 7 * t}
+              r={5.6}
+              opacity={0.07 + 0.93 * t}
+            />
+          );
+        })}
       </>
     ),
   },
@@ -32,10 +41,20 @@ const CARDS: {
     index: "02",
     title: "Sensory Cues",
     body: "감각 단서는 인터페이스의 상태와 변화를 직관적으로 이해하게 합니다.",
-    // 상태를 알려 주는 빛 — 켜진 전구
+    // 고른 격자 속에서 두 칸만 채워집니다 — 눈에 걸리는 신호
     art: (
       <>
-        <path d="M8.3 18.04v-1.16C6 15.49 4.11 12.78 4.11 9.9c0-4.95 4.55-8.83 9.69-7.71 2.26.5 4.24 2 5.27 4.07 2.09 4.2-.11 8.66-3.34 10.61v1.16c0 .29.11.96-.96.96H9.26c-1.1.01-.96-.42-.96-.95ZM8.5 22c2.29-.65 4.71-.65 7 0" />
+        {[0, 1, 2, 3].flatMap((row) =>
+          [0, 1, 2, 3].map((col) => (
+            <circle
+              key={`${row}-${col}`}
+              cx={3.4 + col * 5.7}
+              cy={3.4 + row * 5.7}
+              r={2.3}
+              fill={col === 1 && row < 2 ? "currentColor" : "none"}
+            />
+          )),
+        )}
       </>
     ),
   },
@@ -43,12 +62,14 @@ const CARDS: {
     index: "03",
     title: "Natural Control",
     body: "손에 익은 조작은 기능을 설명보다 먼저 몸으로 이해하게 합니다.",
-    // 둥근 조작부 위의 손가락
+    // 서로 맞물린 원들 — 따로 배우지 않아도 이어지는 동작
     art: (
       <>
-        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10Z" />
-        <path d="M12 14.88c-.91 0-1.65-.74-1.65-1.65v-2.47c0-.91.74-1.65 1.65-1.65.91 0 1.65.74 1.65 1.65v2.47c0 .91-.74 1.65-1.65 1.65Z" />
-        <path d="M16.98 13.47c-.2 2.58-2.36 4.6-4.98 4.6-2.76 0-5-2.24-5-5v-2.14c0-2.76 2.24-5 5-5 2.59 0 4.72 1.97 4.97 4.49" />
+        <circle cx="7" cy="15" r="4.9" />
+        <circle cx="12" cy="15" r="4.9" />
+        <circle cx="17" cy="15" r="4.9" />
+        <circle cx="9.5" cy="9.6" r="4.9" />
+        <circle cx="14.5" cy="9.6" r="4.9" />
       </>
     ),
   },
@@ -56,11 +77,11 @@ const CARDS: {
     index: "04",
     title: "Expected Response",
     body: "예측 가능한 반응은 행동과 시스템 사이에 신뢰를 만듭니다.",
-    // 예상대로 돌아온 반응 — 확인 표시
+    // 두 원이 겹치는 자리 — 행동과 시스템이 만나는 지점
     art: (
       <>
-        <path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10Z" />
-        <path d="m7.75 12 2.83 2.83 5.67-5.66" />
+        <circle cx="9.4" cy="14.6" r="6.1" />
+        <circle cx="14.6" cy="9.4" r="6.1" />
       </>
     ),
   },
@@ -94,16 +115,17 @@ export function ScenePrinciples() {
             className="card rise"
             style={{ "--delay": `${0.2 + i * 0.08}s` } as CSSProperties}
           >
-            <div className="card-head">
-              <span className="card-index">{card.index}</span>
-              <h3 className="type-title">{card.title}</h3>
-              <p className="type-body">{card.body}</p>
-            </div>
+            <span className="card-index">{card.index}</span>
 
             <div className="card-art">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
                 {card.art}
               </svg>
+            </div>
+
+            <div className="card-text">
+              <h3 className="type-title">{card.title}</h3>
+              <p className="type-body">{card.body}</p>
             </div>
           </div>
         ))}

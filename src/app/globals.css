@@ -419,7 +419,8 @@
     border-left: calc(1 * var(--u)) solid rgb(0 0 0 / 0.14);
   }
 
-  .card-head {
+  /* 번호 → 삽화 → 내용 순서. 삽화가 가운데 남는 자리를 차지합니다. */
+  .card-text {
     display: flex;
     flex-direction: column;
     gap: calc(8 * var(--u));
@@ -444,11 +445,12 @@
   }
 
   /* Iconsax 아이콘은 24 단위 viewBox 입니다.
-     120px 로 키우면서 선은 화면에서 1.5px 로 남도록 굵기를 1.5 × 24/120 = 0.3 으로 둡니다. */
+     120px 로 키우면서 선이 화면에서 1px 로 남도록 굵기를 24/120 = 0.2 로 둡니다.
+     원이 여러 겹 포개지는 그림이라 굵으면 뭉칩니다. */
   .card-art svg {
     height: calc(120 * var(--u));
     width: calc(120 * var(--u));
-    stroke-width: 0.3;
+    stroke-width: 0.2;
     stroke-linecap: round;
     stroke-linejoin: round;
     opacity: 0.85;

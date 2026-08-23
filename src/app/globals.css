@@ -164,7 +164,7 @@
     gap: calc(12 * var(--u));
     opacity: 0;
     /* 마우스 외곽선과 화살표가 같은 굵기를 쓰도록 한 곳에서 정합니다. */
-    --cue-stroke: calc(2 * var(--u));
+    --cue-stroke: calc(1.5 * var(--u));
   }
 
   .statement[data-visible] .scroll-cue {

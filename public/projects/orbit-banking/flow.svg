@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Flow diagram placeholder">
+  <defs>
+    <linearGradient id="gpublicprojectsorbitbankingflowsvg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1e3a8a"/>
+      <stop offset="1" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <pattern id="ppublicprojectsorbitbankingflowsvg" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M80 0H0V80" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#gpublicprojectsorbitbankingflowsvg)"/>
+  <rect width="1600" height="900" fill="url(#ppublicprojectsorbitbankingflowsvg)"/>
+  <text x="64" y="836" fill="#ffffff" fill-opacity="0.82" font-family="ui-monospace, monospace" font-size="34" letter-spacing="2">Flow diagram</text>
+  <text x="64" y="112" fill="#ffffff" fill-opacity="0.55" font-family="ui-monospace, monospace" font-size="24" letter-spacing="3">PLACEHOLDER · 1600×900</text>
+</svg>

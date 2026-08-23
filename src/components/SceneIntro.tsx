@@ -25,7 +25,7 @@ export function SceneIntro() {
       </h2>
 
       <div
-        className="type-body reveal col-span-3 col-start-6 row-start-2 text-[#191919]/90"
+        className="type-body reveal col-span-3 col-start-6 row-start-2"
         style={{ "--delay": "0.2s" } as CSSProperties}
       >
         <p>

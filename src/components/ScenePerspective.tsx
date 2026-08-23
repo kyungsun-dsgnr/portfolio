@@ -18,11 +18,11 @@ function Note({
 }) {
   return (
     <div
-      className={`rise ${className}`}
+      className={`note rise ${className}`}
       style={{ "--delay": delay } as CSSProperties}
     >
       <h3 className="type-title">{title}</h3>
-      <p className="type-note">{children}</p>
+      <p className="type-body">{children}</p>
     </div>
   );
 }

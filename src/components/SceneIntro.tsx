@@ -7,7 +7,9 @@ export function SceneIntro() {
   return (
     <div className="page-grid">
       <h1 className="type-display intro-headline reveal col-span-5 row-span-2">
-        What We Already Know
+        What We
+        <br />
+        Already Know
         <br />
         Becomes Interaction
       </h1>

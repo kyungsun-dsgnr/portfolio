@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import type { CSSProperties } from "react";
+
+import { useInView } from "@/components/useInView";
 
 /** 2섹션 — 단어가 하나씩 떠오릅니다. */
 const LINES = [
@@ -14,21 +16,8 @@ const STAGGER = 0.22;
 const LEAD_IN = 0.15;
 
 export function SceneStatement() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
   // 섹션이 화면에 들어왔을 때 단어 애니메이션을 시작합니다.
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting),
-      { threshold: 0.6 },
-    );
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, []);
+  const [ref, visible] = useInView<HTMLDivElement>(0.6);
 
   return (
     <div ref={ref} className="statement" data-visible={visible || undefined}>

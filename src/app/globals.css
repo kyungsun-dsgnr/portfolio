@@ -14,7 +14,7 @@
   --design-h: 800;
 
   /* 캔버스와 창 사이의 바깥 여백. 캔버스가 화면 네 변에 붙지 않게 합니다. */
-  --viewport-margin: 40px;
+  --viewport-margin: 0px;
 
   /* 디자인 1px 이 화면에서 차지하는 실제 크기.
      바깥 여백을 뺀 공간에서 가로/세로 중 모자란 쪽에 맞추므로
@@ -237,6 +237,7 @@
      그 여백(Inter 기준 0.195em)만큼 끌어올려 캡 상단을 행 선에 맞춥니다.
      2섹션 문장은 가운데 정렬이라 대상이 아닙니다. */
   .page-grid .type-display,
+  .page-grid .type-lead,
   .page-grid .type-title,
   .page-grid .type-body {
     margin-top: -0.195em;
@@ -246,6 +247,15 @@
      "KNOW" 가 혼자 떨어져 3줄이 되므로 이 자리만 한 단계 줄입니다. */
   .intro-headline {
     font-size: calc(62 * var(--u));
+  }
+
+  /* 3섹션 헤드라인. 대문자로 바꾸지 않습니다. */
+  .type-lead {
+    font-family: var(--font-display);
+    font-size: calc(52 * var(--u));
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
   }
 
   .type-title {
@@ -371,6 +381,27 @@
     box-shadow:
       0 0 0 calc(1 * var(--u)) rgb(0 0 0 / 0.05),
       0 calc(3 * var(--u)) calc(7 * var(--u)) rgb(0 0 0 / 0.1);
+  }
+
+  /* 소제목 아래 본문. 원본은 소제목과 본문 사이에 20px 짜리 빈 줄을 두었습니다. */
+  .type-note {
+    margin-top: calc(22 * var(--u));
+    font-family: var(--font-body);
+    font-size: calc(16 * var(--u));
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    color: rgb(25 25 25 / 0.9);
+  }
+
+  /* 섹션이 화면에 들어오면 떠오릅니다. 섹션을 벗어나면 다시 숨습니다. */
+  .rise {
+    opacity: 0;
+  }
+
+  [data-visible] > .rise {
+    animation: reveal-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--delay, 0s);
   }
 
   /* ── 텍스트 등장 ───────────────────────────────

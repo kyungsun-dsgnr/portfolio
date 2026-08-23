@@ -47,6 +47,9 @@ export function Knob({ value, onChange, ariaLabel = "조명 밝기" }: Props) {
     if (!el) return;
     el.setPointerCapture(event.pointerId);
     el.focus();
+    // Chrome 은 tabindex 가 있는 요소를 마우스로 눌러도 :focus-visible 로 봅니다.
+    // 포인터로 들어왔다고 표시해 두고 CSS 에서 링을 지웁니다. 키보드로 오면 다시 보입니다.
+    el.dataset.pointer = "";
     drag.current = { angle: pointerPolar(el, event.clientX, event.clientY).angle, value };
   }
 
@@ -76,6 +79,9 @@ export function Knob({ value, onChange, ariaLabel = "조명 밝기" }: Props) {
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    // 키보드로 조작하기 시작하면 포커스 링을 다시 보여 줍니다.
+    delete ref.current?.dataset.pointer;
+
     const step: Record<string, number> = {
       ArrowUp: STEP,
       ArrowRight: STEP,
@@ -114,6 +120,7 @@ export function Knob({ value, onChange, ariaLabel = "조명 밝기" }: Props) {
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
         onKeyDown={handleKeyDown}
+        onBlur={(event) => delete event.currentTarget.dataset.pointer}
       >
         <svg className="knob-arc" viewBox="0 0 100 100" aria-hidden>
           <circle className="knob-arc-track" cx="50" cy="50" r="46" />

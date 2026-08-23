@@ -153,6 +153,11 @@
     outline-offset: calc(6 * var(--u));
   }
 
+  /* 마우스/터치로 잡았을 때는 링을 지웁니다. */
+  .knob[data-pointer]:focus-visible {
+    outline: none;
+  }
+
   /* 값 표시 아크. 12시에서 시작하도록 -90° 돌려 둡니다. */
   .knob-arc {
     position: absolute;

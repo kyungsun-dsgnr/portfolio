@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import type { CSSProperties } from "react";
 
 import { Knob } from "@/components/Knob";
+import { useLight } from "@/components/LightStage";
 
 /** 프레임(5칼럼 × 4행) 안에서 조명이 놓이는 위치. 빛을 여기에 맞춥니다.
  *  불꺼진 조명 이미지(858×1074)를 object-cover 로 채웠을 때의 실제 좌표에서 나온 값입니다. */
@@ -16,12 +17,14 @@ const GLOW_SIZE = "137.8%";
 const SIZES = "62vw";
 
 export function LampScene() {
-  // 0 = 꺼짐, 1 = 최대 밝기. 우측 노브가 이 값을 움직입니다.
-  const [level, setLevel] = useState(0);
+  const { level, setLevel } = useLight();
 
   return (
     <>
-      <div className="relative col-span-5 row-span-4 overflow-hidden bg-[#d5d2cd]">
+      <div
+        className="reveal relative col-span-5 row-span-4 overflow-hidden bg-[#d5d2cd]"
+        style={{ "--delay": "0.3s" } as CSSProperties}
+      >
         {/* 1. 꺼진 조명 — 항상 보임 */}
         <Image
           src="/images/lamp-off.png"
@@ -61,10 +64,12 @@ export function LampScene() {
         />
       </div>
 
-      <div className="col-span-3 row-span-4 overflow-hidden">
+      <div
+        className="reveal col-span-3 row-span-4 overflow-hidden"
+        style={{ "--delay": "0.4s" } as CSSProperties}
+      >
         <Knob value={level} onChange={setLevel} />
       </div>
-
     </>
   );
 }

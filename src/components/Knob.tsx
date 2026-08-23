@@ -2,8 +2,8 @@
 
 import { useRef, type KeyboardEvent, type PointerEvent } from "react";
 
-/** 0 = 12시 방향, 최대값 = 시계방향으로 이만큼 돌린 지점 */
-const SWEEP = 270;
+/** 0 = 12시 방향, 최대값 = 시계방향으로 한 바퀴 돌아 다시 12시 */
+const SWEEP = 360;
 /** SVG 원(r=46)의 둘레. 아크 길이를 stroke-dasharray 로 자를 때 씁니다. */
 const CIRCUMFERENCE = 2 * Math.PI * 46;
 /** 키보드 한 번에 움직이는 양 */
@@ -34,11 +34,10 @@ type Props = {
   /** 0~1 */
   value: number;
   onChange: (value: number) => void;
-  label?: string;
   ariaLabel?: string;
 };
 
-export function Knob({ value, onChange, label = "LIGHT", ariaLabel = "조명 밝기" }: Props) {
+export function Knob({ value, onChange, ariaLabel = "조명 밝기" }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   /** 드래그 중 직전 각도와 누적값. 12시를 넘어가도 튀지 않게 각도 차이를 더해 나갑니다. */
   const drag = useRef<{ angle: number; value: number } | null>(null);
@@ -100,8 +99,6 @@ export function Knob({ value, onChange, label = "LIGHT", ariaLabel = "조명 밝
 
   return (
     <div className="knob-panel">
-      <span className="knob-label">{label}</span>
-
       <div
         ref={ref}
         className="knob"

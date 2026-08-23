@@ -11,7 +11,7 @@ export function SceneIntro() {
         <br />
         Already Know
         <br />
-        Becomes <span className="carry">Interaction</span>
+        Becomes Interaction
       </h1>
 
       {/* 우측 텍스트는 세로 중앙이 아니라 각자 행 시작선에 붙습니다. */}
@@ -21,7 +21,7 @@ export function SceneIntro() {
       >
         Designing Digital Experiences
         <br />
-        From Sensory and Behavioral <span className="carry">Memory</span>
+        From Sensory and Behavioral Memory
       </h2>
 
       <div

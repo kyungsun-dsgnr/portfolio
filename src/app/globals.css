@@ -401,6 +401,57 @@
       0 calc(3 * var(--u)) calc(7 * var(--u)) rgb(0 0 0 / 0.1);
   }
 
+  /* ── 4섹션 카드 ────────────────────────────────
+     칼럼에 맞추지 않고 콘텐츠 폭을 정확히 4등분합니다. 사이는 여백 대신 세로 선입니다. */
+  .card-row {
+    display: flex;
+  }
+
+  .card {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: calc(16 * var(--u));
+    padding: calc(16 * var(--u)) calc(32 * var(--u));
+  }
+
+  .card + .card {
+    border-left: calc(1 * var(--u)) solid rgb(0 0 0 / 0.14);
+  }
+
+  .card-head {
+    display: flex;
+    flex-direction: column;
+    gap: calc(8 * var(--u));
+  }
+
+  .card-index {
+    font-family: var(--font-display);
+    font-size: var(--type-body);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    color: rgb(25 25 25 / 0.5);
+  }
+
+  /* 삽화. 남는 자리를 채우고 가운데 놓입니다. */
+  .card-art {
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    color: var(--fg);
+  }
+
+  .card-art svg {
+    height: 100%;
+    width: 100%;
+    stroke-width: 1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.85;
+  }
+
   /* 소제목 + 본문 한 덩어리. 원본은 둘 사이에 20px 짜리 빈 줄을 두었습니다.
      본문은 행 선에 맞출 대상이 아니라 소제목을 따라가므로, 캡 보정 대신 이 간격을 씁니다. */
   .note > .type-body {
@@ -532,25 +583,5 @@
   .statement[data-visible] .scroll-cue-chevron {
     animation: none;
     opacity: 0.8;
-  }
-
-  /* 크기가 튀는 것도 모션이므로 넘어갈 때 단어를 키우지 않습니다. */
-  [data-advancing] .carry {
-    scale: 1;
-  }
-}
-
-@layer components {
-  /* ── 다음 장으로 넘어가는 순간 ────────────────────
-     2섹션 문장("FROM MEMORY / TO INTERACTION")에 그대로 이어지는 두 단어입니다.
-     노브가 끝까지 돌아가면 이 단어들만 커지면서 다음 장을 예고합니다. */
-  .carry {
-    display: inline-block;
-    transform-origin: left center;
-    transition: scale 900ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  [data-advancing] .carry {
-    scale: var(--carry-scale, 1.2);
   }
 }

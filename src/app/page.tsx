@@ -1,6 +1,7 @@
 import { LightStage } from "@/components/LightStage";
 import { SceneIntro } from "@/components/SceneIntro";
 import { ScenePerspective } from "@/components/ScenePerspective";
+import { ScenePrinciples } from "@/components/ScenePrinciples";
 import { SceneStatement } from "@/components/SceneStatement";
 
 export default function Home() {
@@ -10,6 +11,7 @@ export default function Home() {
         <SceneIntro key="intro" />,
         <SceneStatement key="statement" />,
         <ScenePerspective key="perspective" />,
+        <ScenePrinciples key="principles" />,
       ]}
     />
   );

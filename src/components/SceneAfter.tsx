@@ -18,7 +18,7 @@ export function SceneAfter() {
       </h2>
 
       <p
-        className="type-body rise col-start-1 col-span-3 row-start-3 row-span-2"
+        className="type-body rise self-end col-start-1 col-span-2 row-start-5 row-span-2"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
         이 제안은 매장 정보를 단순한 목록으로 보여주는 방식에서 나아가, 도시를 이동하며

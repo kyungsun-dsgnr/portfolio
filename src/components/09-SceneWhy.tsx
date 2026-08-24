@@ -53,6 +53,10 @@ export function SceneWhy() {
         <br />
         하지만 탐색은 곧바로 지역 선택과 리스트 확인으로 좁혀져, 사용자가 여러 도시의
         매장을 둘러볼 여지는 제한됩니다.
+        <br />
+        <br />
+        매장 정보를 단순한 목록으로 보여주는 방식에서 나아가, 도시를 이동하며 발견하는
+        글로벌 브랜드 경험으로 확장합니다.
       </p>
 
       <div className="card-row why-row col-start-1 col-span-8 row-start-3 row-span-4">

@@ -146,12 +146,37 @@ function card(store: Store) {
   };
 }
 
+/** 안내를 따라갈 때 지구본에서 집어 두는 매장 */
+const SPOTLIGHT = STORES.find((store) => store.city === "Shanghai")!;
+
+/** 화면 위 점과, 그 점을 설명하는 항목 번호 */
+const DOTS = {
+  tabs: "01",
+  globe: "02",
+  list: "03",
+};
+
 /**
  * 제안하는 스토어 화면.
  * 현재 국가 탭은 평면 지도, 글로벌 탭은 끌어 돌리는 지구본입니다.
  * 지구본에서 점을 집으면 그 나라 매장만 아래에 남습니다.
  */
-export function StoreGlobeMock() {
+type Props = {
+  /** 눌러야 하는 자리에 점을 얹고, 화면을 밖에서 몰아갑니다. */
+  dots?: boolean;
+  step?: string | null;
+  phase?: number;
+  onPick?: (key: string) => void;
+  dotRef?: (key: string, el: HTMLButtonElement | null) => void;
+};
+
+export function StoreGlobeMock({
+  dots = false,
+  step = null,
+  phase = 0,
+  onPick,
+  dotRef,
+}: Props) {
   const [world, setWorld] = useState(false);
   const [region, setRegion] = useState(REGION_NAMES[0]);
   /** 글로벌 탭의 두 선택기. 지구본에서 점을 집으면 둘 다 채워집니다. */
@@ -159,12 +184,45 @@ export function StoreGlobeMock() {
   const [city, setCity] = useState<string | null>(null);
   const [open, setOpen] = useState<null | "region" | "country" | "city">(null);
 
-  const stores = !world
+  /* 안내를 따라갈 때는 화면이 스스로 움직입니다. 그때는 안쪽 상태를 보지 않습니다. */
+  const led = dots
+    ? {
+        world: step !== DOTS.tabs || phase >= 1,
+        store:
+          (step === DOTS.globe && phase >= 1) || step === DOTS.list
+            ? SPOTLIGHT
+            : null,
+      }
+    : null;
+
+  const showWorld = led ? led.world : world;
+  const showCountry = led ? (led.store?.country ?? null) : country;
+  const showCity = led ? (led.store?.city ?? null) : city;
+
+  /** 점 하나. 자리는 얹히는 요소가 정합니다. */
+  const dot = (of: keyof typeof DOTS) => {
+    if (!dots) return null;
+    const key = DOTS[of];
+    return (
+      <button
+        type="button"
+        ref={(el) => dotRef?.(key, el)}
+        aria-label={key}
+        aria-pressed={step === key}
+        onClick={() => onPick?.(key)}
+        className={`store-dot${of === "globe" ? " globe-dot-stage" : " store-dot-right"}`}
+      >
+        <span>{key}</span>
+      </button>
+    );
+  };
+
+  const stores = !showWorld
     ? REGIONS[region]
-    : city
-      ? STORES.filter((store) => store.city === city).map(card)
-      : country
-        ? STORES.filter((store) => store.country === country).map(card)
+    : showCity
+      ? STORES.filter((store) => store.city === showCity).map(card)
+      : showCountry
+        ? STORES.filter((store) => store.country === showCountry).map(card)
         : STORES.filter((store) => store.flagship).map(card);
 
   function show(next: boolean) {
@@ -192,7 +250,7 @@ export function StoreGlobeMock() {
         <button
           type="button"
           className="globe-tab"
-          data-on={!world || undefined}
+          data-on={!showWorld || undefined}
           onClick={() => show(false)}
         >
           현재 국가
@@ -200,19 +258,20 @@ export function StoreGlobeMock() {
         <button
           type="button"
           className="globe-tab"
-          data-on={world || undefined}
+          data-on={showWorld || undefined}
           onClick={() => show(true)}
         >
           글로벌
+          {dot("tabs")}
         </button>
       </div>
 
       {/* 선택 상자 대신 지금 보고 있는 범위만 한 줄로. 눌러서 바꿉니다. */}
       <div className="globe-scope-row">
-        {world ? (
+        {showWorld ? (
           <>
             <Pick
-              text={country ?? ALL_COUNTRIES}
+              text={showCountry ?? ALL_COUNTRIES}
               items={[ALL_COUNTRIES, ...COUNTRIES]}
               open={open === "country"}
               onToggle={() => toggle("country")}
@@ -224,15 +283,15 @@ export function StoreGlobeMock() {
             />
             <span className="globe-scope-sep">·</span>
             <Pick
-              text={city ?? ALL_CITIES}
+              text={showCity ?? ALL_CITIES}
               items={[
                 ALL_CITIES,
-                ...STORES.filter((store) => store.country === country).map(
+                ...STORES.filter((store) => store.country === showCountry).map(
                   (store) => store.city,
                 ),
               ]}
               open={open === "city"}
-              disabled={!country}
+              disabled={!showCountry}
               onToggle={() => toggle("city")}
               onPick={(item) => {
                 setCity(item === ALL_CITIES ? null : item);
@@ -259,7 +318,7 @@ export function StoreGlobeMock() {
       </div>
 
       <div className="globe-stage">
-        {world ? (
+        {showWorld ? (
           <GlobeDots labels={false} onPickStore={fromGlobe} />
         ) : (
           <Image
@@ -276,14 +335,17 @@ export function StoreGlobeMock() {
           <LocateIcon size={11} />
           현재 위치 사용
         </button>
+
+        {dot("globe")}
       </div>
 
       <div className="globe-list">
-        {stores.map((store) => (
+        {stores.map((store, i) => (
           <article className="store-card" key={store.name}>
             <div className="store-card-top">
               <h4 className="store-name">{store.name}</h4>
               <span className="store-distance">{store.aside}</span>
+              {i === 0 && dot("list")}
             </div>
             <p className="store-hours">{store.line}</p>
             <p className="store-address">{store.where}</p>

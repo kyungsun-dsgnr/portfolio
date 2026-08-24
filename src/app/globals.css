@@ -141,7 +141,7 @@
   }
 
   .section:has(.compare-frame) {
-    background: #ffffff;
+    background: var(--bg);
   }
 
   /* 비율 고정 캔버스. 섹션마다 안쪽 레이아웃은 다릅니다. */
@@ -777,42 +777,33 @@
 }
 
 @layer components {
-  /* 비포/애프터 장. 크기 차이가 곧 주장입니다. */
+  /* 비포/애프터 장. 두 화면을 나란히 두되 크기로 위계를 줍니다. */
   .compare-frame {
     position: relative;
-    display: block;
-    height: 100%;
-    width: 100%;
     overflow: hidden;
-    background: #fafaf8;
   }
 
-  /* 작은 카드는 한 톤 다른 바탕을 씁니다. */
-  .compare-swap .compare-frame {
-    background: #fafafa;
+  .compare-after {
+    background: #ffffff;
   }
 
-  /* 이 장 헤드라인은 대문자로 바꾸지 않고, 한 단계 작은 크기로 오른쪽에 붙입니다.
-     본문은 줄이 많아 좌측 정렬을 유지합니다. */
+  .compare-before {
+    background: #f1f1f1;
+  }
+
+  /* 이 장 헤드라인은 대문자로 바꾸지 않고 한 단계 작은 크기를 씁니다. */
   .compare-headline {
     font-size: calc(52 * var(--u));
-    text-align: right;
     text-transform: none;
   }
 
-  .compare-body {
-    font-size: calc(20 * var(--u));
-    color: var(--fg);
-  }
-
-  /* 큰 이미지 좌측 상단에 얹히는 설명 */
+  /* 각 화면 위에 얹히는 설명 */
   .compare-caption {
     position: absolute;
     left: 0;
     top: 0;
     display: flex;
-    /* 위 여백을 키운 만큼 높이는 내용에 맡깁니다. 고정하면 마지막 줄이 잘립니다. */
-    width: calc(508 * var(--u));
+    width: 100%;
     flex-direction: column;
     gap: calc(8 * var(--u));
     padding: calc(24 * var(--u)) calc(32 * var(--u));
@@ -820,33 +811,5 @@
 
   .compare-caption .card-index {
     text-transform: uppercase;
-  }
-
-  /* 작은 카드는 눌러서 큰 자리와 맞바꾸는 버튼입니다. */
-  .compare-swap {
-    position: relative;
-    display: block;
-    cursor: pointer;
-    text-align: left;
-  }
-
-  .compare-swap-label {
-    position: absolute;
-    bottom: calc(10 * var(--u));
-    left: calc(12 * var(--u));
-    padding: calc(5 * var(--u)) calc(10 * var(--u));
-    border-radius: 999px;
-    background: var(--fg);
-    color: var(--bg);
-    font-family: var(--font-display);
-    font-size: calc(10 * var(--u));
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-indent: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .compare-swap:hover .compare-swap-label {
-    background: rgb(25 25 25 / 0.75);
   }
 }

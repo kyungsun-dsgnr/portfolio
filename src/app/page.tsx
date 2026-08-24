@@ -80,26 +80,15 @@ export default function Home() {
                   To Spatial Discovery
                 </>
               }
-              body={
-                <>
-                  기존의 글로벌 스토어 탐색은 국가와 도시를 목록에서 선택하는 방식에
-                  머물렀습니다.
-                  <br />
-                  <br />이 프로젝트는 지구본을 돌려 위치를 가늠하고 가까이 다가가는 행동
-                  기억을 바탕으로, 스토어 탐색을 과거 행동 기반 유도 경험으로 전환합니다.
-                </>
-              }
               after={{
                 label: "After",
                 name: "Globe-based Store Exploration",
                 parts: "지구본 / 도시 핀 / 선택 스토어 카드 / 줌인 흐름",
-                visual: null,
               }}
               before={{
                 label: "Before",
                 name: "List-based Store Finder",
                 parts: "국가 선택 / 지역 선택 / 매장 목록",
-                visual: null,
               }}
             />
           ),

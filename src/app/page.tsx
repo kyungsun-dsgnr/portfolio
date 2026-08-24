@@ -73,23 +73,34 @@ export default function Home() {
             <SceneCompare
               title={
                 <>
-                  From Filter
+                  From Store List
                   <br />
-                  To Globe
+                  To Spatial Discovery
                 </>
               }
               body={
                 <>
-                  기존 스토어 찾기는 국가를 고르고, 지역을 고르고, 목록을 읽는
-                  순서였습니다.
+                  기존의 글로벌 스토어 탐색은 국가와 도시를 목록에서 선택하는 방식에
+                  머물렀습니다.
                   <br />
-                  <br />
-                  지구본은 그 세 단계를 한 번의 손짓으로 대체합니다. 돌리고, 멈추고,
-                  도시를 집으면 됩니다.
+                  <br />이 프로젝트는 지구본을 돌려 위치를 가늠하고 가까이 다가가는 행동
+                  기억을 바탕으로, 스토어 탐색을 과거 행동 기반 유도 경험으로 전환합니다.
                 </>
               }
-              after={null}
-              before={null}
+              after={{
+                label: "After",
+                name: "Globe-based Store Exploration",
+                parts: "지구본 / 도시 핀 / 선택 스토어 카드 / 줌인 흐름",
+                note: "평면적인 선택 흐름을 익숙한 공간 탐색 행동으로 바꿉니다.",
+                visual: null,
+              }}
+              before={{
+                label: "Before",
+                name: "List-based Store Finder",
+                parts: "국가 선택 / 지역 선택 / 매장 목록",
+                note: "목록을 좁혀 가며 읽어야 위치를 알 수 있습니다.",
+                visual: null,
+              }}
             />
           ),
         },

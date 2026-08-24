@@ -868,7 +868,7 @@
 
   /* 이 목업은 장 안에서 아래로 내려 앉고, 아래쪽은 잘려 나갑니다. */
   .store-slot .store-panel {
-    top: calc(124 * var(--u));
+    top: calc(156 * var(--u));
   }
 
   .compare-big .store-panel {

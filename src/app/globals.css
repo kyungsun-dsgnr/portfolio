@@ -712,3 +712,13 @@
     color: var(--fg-soft);
   }
 }
+
+@layer components {
+  /* 참고 영상의 모눈 배경. 아주 옅게 깔아 두어 지구본이 떠 보이게 합니다. */
+  .globe-grid {
+    background-image:
+      linear-gradient(to right, rgba(120, 120, 120, 0.09) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(120, 120, 120, 0.09) 1px, transparent 1px);
+    background-size: calc(28 * var(--u)) calc(28 * var(--u));
+  }
+}

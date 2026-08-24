@@ -24,6 +24,8 @@ const MAX_SPEED = 720;
 const TILT = -6;
 /** 매장을 집을 수 있는 반경(px) */
 const HIT_RADIUS = 14;
+/** 이름표를 띄우는 한계 각도. 90도가 지평선이라, 가장자리에 닿기 전에 접습니다. */
+const TAG_LIMIT = Math.PI * 0.4;
 /** 점 격자의 위도 간격(도). 작을수록 촘촘합니다. */
 const LAT_STEP = 1.5;
 
@@ -116,6 +118,8 @@ export function GlobeDots({ interactive = true, labels = false }: Props) {
   const badgeRef = useRef<HTMLDivElement>(null);
   /** 늘 떠 있는 나라 이름표들. 매 프레임 자리만 옮깁니다. */
   const tagRefs = useRef<(HTMLDivElement | null)[]>([]);
+  /** 이름표 크기는 판넬 밖으로 나가는지 볼 때만 필요해 한 번 재고 아껴 씁니다. */
+  const tagSize = useRef<([number, number] | undefined)[]>([]);
   /** 마우스가 지구본 위에 있으면 자동 회전을 멈춥니다. */
   const hovering = useRef(false);
 
@@ -200,6 +204,7 @@ export function GlobeDots({ interactive = true, labels = false }: Props) {
       radius = (Math.min(width, height) / 2) * 0.92;
       projection.translate([width / 2, height / 2]).scale(radius);
       unit = radius / 320;
+      tagSize.current = [];
     }
 
     const observer = new ResizeObserver(resize);
@@ -333,16 +338,26 @@ export function GlobeDots({ interactive = true, labels = false }: Props) {
           const tag = tagRefs.current[i];
           if (!tag) return;
           const point =
-            geoDistance(entry.at, center) > Math.PI / 2
+            geoDistance(entry.at, center) > TAG_LIMIT
               ? null
               : projection(entry.at);
           if (!point) {
             tag.dataset.off = "";
             return;
           }
-          delete tag.dataset.off;
+
           // 호버 뱃지와 같은 자리 — 점 오른쪽으로 펼칩니다.
-          tag.style.translate = `calc(${point[0]}px + ${HIT_RADIUS}px) calc(${point[1]}px - 50%)`;
+          const size = (tagSize.current[i] ??= [tag.offsetWidth, tag.offsetHeight]);
+          const left = point[0] + HIT_RADIUS;
+          const top = point[1] - size[1] / 2;
+          // 한 귀퉁이라도 판넬을 벗어나면 그 자리에서 접습니다.
+          if (left < 0 || top < 0 || left + size[0] > width || top + size[1] > height) {
+            tag.dataset.off = "";
+            return;
+          }
+
+          delete tag.dataset.off;
+          tag.style.translate = `${left}px calc(${point[1]}px - 50%)`;
         });
       }
 

@@ -661,6 +661,28 @@
   }
 }
 
+/* 지금 칸이 차오르는 동안 */
+@keyframes step-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* 화면이 바뀔 때 한 번 */
+@keyframes soft-in {
+  from {
+    opacity: 0;
+    translate: 0 calc(6 * var(--u));
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
 /* 핀과 그 아래 카드가 떠오릅니다 */
 @keyframes tip-in {
   from {
@@ -1012,6 +1034,9 @@
   .store-tab {
     position: relative;
     display: flex;
+    transition:
+      background 320ms ease,
+      color 320ms ease;
     height: calc(26.35 * var(--u));
     align-items: center;
     padding: 0 calc(10.54 * var(--u));
@@ -1120,6 +1145,59 @@
     white-space: nowrap;
   }
 
+  /* ── 자동 전환 진행 막대 ───────────────────────
+     목업 아래 세 칸. 지금 칸이 시간에 맞춰 차오릅니다. */
+  .store-steps {
+    position: absolute;
+    left: 50%;
+    bottom: calc(16 * var(--u));
+    display: flex;
+    width: calc(332 * var(--u));
+    gap: calc(6 * var(--u));
+    margin-left: calc(-166 * var(--u));
+    padding: 0 calc(32 * var(--u));
+  }
+
+  /* 막대 뒤를 아래로 갈수록 하얗게 덮어 화면과 겹쳐 보이지 않게 합니다. */
+  .store-scrim {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    height: calc(140 * var(--u));
+    width: calc(332 * var(--u));
+    margin-left: calc(-166 * var(--u));
+    background: linear-gradient(to bottom, rgb(255 255 255 / 0), #ffffff 72%);
+  }
+
+  .step {
+    height: calc(3 * var(--u));
+    flex: 1 1 0;
+    overflow: hidden;
+    background: rgb(25 25 25 / 0.15);
+  }
+
+  .step-fill {
+    display: block;
+    height: 100%;
+    background: var(--fg);
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  /* 지나온 칸은 채운 채로 둡니다. */
+  .step[data-state="done"] .step-fill {
+    transform: scaleX(1);
+  }
+
+  .step[data-state="now"] .step-fill {
+    animation: step-fill var(--dwell) linear forwards;
+  }
+
+  /* 목록과 지도가 서로 바뀔 때 한 번 부드럽게 떠오릅니다. */
+  .store-results {
+    animation: soft-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
   /* 매장 카드 목록. 자리는 지도와 같은 높이로 고정하고 안쪽만 움직입니다. */
   .store-list {
     height: calc(495.37 * var(--u));
@@ -1203,6 +1281,7 @@
 
   /* 시/군/구를 켜면 그 아래로 지역 목록이 열립니다. 상자와 함께 커집니다. */
   .store-open-list {
+    animation: soft-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
     position: absolute;
     left: 0;
     top: calc(100% + 5.98 * var(--u));
@@ -1211,7 +1290,7 @@
     width: 100%;
     flex-direction: column;
     overflow: hidden;
-    padding: 0 calc(11.47 * var(--u));
+    padding: 0 calc(4 * var(--u));
     border-radius: calc(7.03 * var(--u));
     outline: calc(0.88 * var(--u)) solid #d8d8d8;
     outline-offset: calc(-0.88 * var(--u));
@@ -1221,7 +1300,8 @@
   .store-open-item {
     height: calc(43.04 * var(--u));
     flex: none;
-    padding-top: calc(12.3 * var(--u));
+    /* 목록 여백을 줄이고 그만큼 지역에 넘겨, 짚은 자리가 글자에 붙지 않게 합니다. */
+    padding: calc(12.3 * var(--u)) calc(7.47 * var(--u)) 0;
     border-bottom: calc(0.88 * var(--u)) solid #d8d8d8;
     font-size: calc(10.54 * var(--u));
     font-weight: 300;
@@ -1232,7 +1312,13 @@
     border-bottom: 0;
   }
 
-  /* 고른 지역 */
+  .store-open-item {
+    transition:
+      background 180ms ease,
+      color 180ms ease;
+  }
+
+  /* 지금 고른 지역 */
   .store-open-item[data-on] {
     color: #111111;
     font-weight: 500;
@@ -1240,6 +1326,12 @@
 
   .store-open-item:not([data-on]) {
     color: #858585;
+  }
+
+  /* 서울 위에 손이 올라가 눌리는 참 */
+  .store-open-item[data-press] {
+    background: #f7f7f7;
+    color: #111111;
   }
 
   /* 펼쳐 놓은 상자는 테두리로 표시합니다. */

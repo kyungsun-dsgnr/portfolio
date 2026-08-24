@@ -6,9 +6,11 @@ import { useInView } from "@/components/useInView";
 import { StoreListMock } from "@/components/StoreListMock";
 
 /** 한 칸이 머무는 시간 */
-const DWELL = 4500;
+const DWELL = 5500;
 /** 칸에 들어선 뒤 이어지는 동작까지의 사이 */
 const BEAT = 1400;
+/** 눌리는 시늉을 보여 주고 결과가 나오기까지의 짧은 사이 */
+const PRESS = 700;
 
 /** 지금 화면이 하는 일과, 그 위에 더할 것 */
 const POINTS = [
@@ -39,6 +41,7 @@ export function SceneProblem() {
       phase 0 은 칸에 막 들어선 참, 1 은 이어지는 동작이 벌어진 뒤입니다. */
   const [stage, setStage] = useState({ picked: POINTS[0].index, phase: 0 });
   const { picked, phase } = stage;
+  const step = POINTS.findIndex((point) => point.index === picked);
 
   /* 장이 보이는 동안 01 부터 03 까지 한 번 훑고 멈춥니다.
      장을 벗어나면 01 로 되감고, 점을 누르면 그 칸부터 다시 셉니다. */
@@ -57,10 +60,14 @@ export function SceneProblem() {
     return () => clearTimeout(id);
   }, [inView, picked]);
 
-  /* 칸에 들어서고 잠시 뒤 목록이 움직이거나 지역이 골라집니다. */
+  /* 칸에 들어서고 잠시 뒤 동작이 이어집니다.
+     2번 칸만 두 박자를 씁니다 — 서울을 누르는 참, 그리고 그 결과. */
   useEffect(() => {
-    if (phase > 0) return;
-    const id = setTimeout(() => setStage((now) => ({ ...now, phase: 1 })), BEAT);
+    if (phase >= 2) return;
+    const id = setTimeout(
+      () => setStage((now) => ({ ...now, phase: now.phase + 1 })),
+      phase === 0 ? BEAT : PRESS,
+    );
     return () => clearTimeout(id);
   }, [picked, phase]);
 
@@ -84,6 +91,19 @@ export function SceneProblem() {
           phase={phase}
           onPick={(key) => setStage({ picked: key, phase: 0 })}
         />
+
+        <div className="store-scrim" />
+        <div className="store-steps" style={{ "--dwell": `${DWELL}ms` } as CSSProperties}>
+          {POINTS.map((point, i) => (
+            <span
+              key={point.index}
+              className="step"
+              data-state={i < step ? "done" : i === step ? "now" : undefined}
+            >
+              <span className="step-fill" />
+            </span>
+          ))}
+        </div>
       </div>
 
       {POINTS.map((point, i) => (

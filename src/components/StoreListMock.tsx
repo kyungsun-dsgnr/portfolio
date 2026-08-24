@@ -183,8 +183,10 @@ export function StoreListMock({
   const zoomed = picked === DOTS.district.key;
   /** 지도 탭을 켜면 목록 자리에 지도가 들어섭니다. */
   const mapped = picked === DOTS.map.key;
-  /** 펼친 목록에서 다른 지역을 고른 참 */
-  const repicked = zoomed && phase > 0;
+  /** 펼친 목록의 서울 위에 손이 올라간 참 */
+  const pressing = zoomed && phase === 1;
+  /** 서울을 누르고 목록이 닫힌 뒤 */
+  const repicked = zoomed && phase >= 2;
 
   /* 서울로 다시 좁히면 목록이 통째로 바뀌고, 현재 위치를 켜면 거리순으로 섭니다.
      그 전에는 지역 필터가 돌려줄 법한 차례입니다. */
@@ -236,7 +238,8 @@ export function StoreListMock({
                   <p
                     className="store-open-item"
                     key={name}
-                    data-on={name === (repicked ? "서울" : "경기") || undefined}
+                    data-on={name === "경기" || undefined}
+                    data-press={(pressing && name === "서울") || undefined}
                   >
                     {name}
                   </p>
@@ -262,6 +265,11 @@ export function StoreListMock({
         </span>
       </div>
 
+      {/* 목록과 지도가 서로 바뀔 때마다 이 자리를 새로 그려 한 번 떠오르게 합니다. */}
+      <div
+        className="store-results"
+        key={mapped ? "map" : repicked ? "seoul" : located ? "near" : "browse"}
+      >
       {mapped ? (
         <div className="store-map">
           <Image src="/images/store-map.png" alt="" fill sizes="25vw" className="object-cover" />
@@ -316,6 +324,7 @@ export function StoreListMock({
         </div>
       </div>
       )}
+      </div>
     </div>
   );
 }

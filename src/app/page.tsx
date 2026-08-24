@@ -8,6 +8,7 @@ import { ScenePerspective } from "@/components/ScenePerspective";
 import { ScenePrinciples } from "@/components/ScenePrinciples";
 import { SceneStatement } from "@/components/SceneStatement";
 import { SceneWork } from "@/components/SceneWork";
+import { StoreListMock } from "@/components/StoreListMock";
 
 export default function Home() {
   return (
@@ -84,11 +85,13 @@ export default function Home() {
                 label: "After",
                 name: "Globe-based Store Exploration",
                 parts: "지구본 / 도시 핀 / 선택 스토어 카드 / 줌인 흐름",
+                visual: <StoreListMock />,
               }}
               before={{
                 label: "Before",
                 name: "List-based Store Finder",
                 parts: "국가 선택 / 지역 선택 / 매장 목록",
+                visual: <StoreListMock />,
               }}
             />
           ),

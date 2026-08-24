@@ -39,7 +39,7 @@ function Frame({
         <h3 className="type-title">{view.name}</h3>
         <p className="type-body">{view.parts}</p>
       </div>
-      <div className="compare-shot">{view.visual}</div>
+      {view.visual}
     </div>
   );
 }
@@ -60,13 +60,13 @@ export function SceneCompare({ title, after, before }: Props) {
       <Frame
         view={after}
         delay="0.1s"
-        className="compare-after col-start-5 col-span-4 row-start-1 row-span-6"
+        className="compare-after col-start-4 col-span-5 row-start-1 row-span-6"
       />
 
       <Frame
         view={before}
         delay="0.18s"
-        className="compare-before col-start-1 col-span-4 row-start-3 row-span-4"
+        className="compare-before col-start-1 col-span-3 row-start-3 row-span-4"
       />
     </div>
   );

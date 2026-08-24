@@ -780,18 +780,7 @@
   /* 비포/애프터 장. 두 화면을 나란히 두되 크기로 위계를 줍니다. */
   .compare-frame {
     position: relative;
-    display: flex;
-    flex-direction: column;
     overflow: hidden;
-  }
-
-  /* 화면 목업이 들어갈 자리. 설명 아래 남은 영역을 모두 씁니다. */
-  .compare-shot {
-    position: relative;
-    flex: 1;
-    margin: 0 calc(32 * var(--u)) calc(32 * var(--u));
-    overflow: hidden;
-    background: var(--placeholder);
   }
 
   .compare-after {
@@ -808,9 +797,14 @@
     text-transform: none;
   }
 
-  /* 각 화면 맨 위에 놓이는 설명 */
+  /* 각 화면 위에 얹히는 설명 */
   .compare-caption {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
     display: flex;
+    width: 100%;
     flex-direction: column;
     gap: calc(8 * var(--u));
     padding: calc(24 * var(--u)) calc(32 * var(--u));
@@ -818,5 +812,209 @@
 
   .compare-caption .card-index {
     text-transform: uppercase;
+  }
+
+  /* 화면 이름은 다른 장 카드 제목보다 한 단계 큽니다. */
+  .compare-caption .type-title {
+    font-size: calc(24 * var(--u));
+  }
+}
+
+@layer components {
+  /* ── 젠틀몬스터 스토어 목록 화면 목업 ──────────────
+     실제 화면을 0.703배로 줄여 옮긴 것이라 수치가 딱 떨어지지 않습니다.
+     프레임보다 길어서 아래쪽은 프레임 밖으로 잘려 나갑니다. */
+  .store-panel {
+    position: absolute;
+    width: calc(332 * var(--u));
+    background: #f3f4f6;
+    color: #111111;
+    font-family: var(--font-body);
+    font-weight: 400;
+  }
+
+  .compare-after .store-panel {
+    left: calc(262 * var(--u));
+    top: calc(154 * var(--u));
+  }
+
+  .compare-before .store-panel {
+    left: calc(88 * var(--u));
+    top: calc(150 * var(--u));
+  }
+
+  /* 매장 수와 필터 버튼 */
+  .store-head {
+    display: flex;
+    height: calc(49.19 * var(--u));
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 calc(21.08 * var(--u));
+  }
+
+  .store-count {
+    font-size: calc(14.93 * var(--u));
+    line-height: 1.294;
+    text-transform: uppercase;
+  }
+
+  /* 개수는 글자보다 작게 붙습니다. */
+  .store-count span {
+    font-size: calc(11.2 * var(--u));
+  }
+
+  .store-icon {
+    display: block;
+    flex: none;
+    color: #111111;
+  }
+
+  /* 국가·지역 선택과 현재 위치 */
+  .store-filters {
+    padding: calc(21.08 * var(--u)) calc(21.08 * var(--u)) 0;
+  }
+
+  .store-selects {
+    display: flex;
+    gap: calc(7.03 * var(--u));
+  }
+
+  .store-select {
+    position: relative;
+    width: calc(141.41 * var(--u));
+    height: calc(42.16 * var(--u));
+    border-radius: calc(7.03 * var(--u));
+    background: #ffffff;
+  }
+
+  .store-select-label {
+    position: absolute;
+    left: calc(10.55 * var(--u));
+    top: calc(7.03 * var(--u));
+    color: #858585;
+    font-size: calc(8.78 * var(--u));
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  .store-select-value {
+    position: absolute;
+    left: calc(9.66 * var(--u));
+    top: calc(20.2 * var(--u));
+    font-size: calc(10.54 * var(--u));
+    font-weight: 300;
+    line-height: 1.416;
+  }
+
+  .store-select .store-icon {
+    position: absolute;
+    left: calc(113.3 * var(--u));
+    top: calc(12.3 * var(--u));
+  }
+
+  .store-locate {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(3.51 * var(--u));
+    margin-top: calc(7.03 * var(--u));
+    padding: calc(3.51 * var(--u)) calc(10.54 * var(--u));
+    font-size: calc(8.78 * var(--u));
+    line-height: 1.5;
+  }
+
+  /* 목록 / 지도 전환 */
+  .store-tabs {
+    display: flex;
+    height: calc(59.72 * var(--u));
+    justify-content: center;
+    gap: calc(10.54 * var(--u));
+    padding: calc(21.96 * var(--u)) 0 calc(11.42 * var(--u));
+  }
+
+  .store-tab {
+    display: flex;
+    height: calc(26.35 * var(--u));
+    align-items: center;
+    padding: 0 calc(10.54 * var(--u));
+    border-radius: calc(7.03 * var(--u));
+    color: #858585;
+    font-size: calc(14.93 * var(--u));
+    line-height: 1.294;
+    text-transform: uppercase;
+  }
+
+  .store-tab[data-on] {
+    background: #e2e4e5;
+    color: #111111;
+  }
+
+  /* 매장 카드 목록 */
+  .store-list {
+    display: flex;
+    flex-direction: column;
+    gap: calc(21.08 * var(--u));
+    padding: calc(10.54 * var(--u)) calc(10.54 * var(--u)) calc(28.11 * var(--u));
+  }
+
+  .store-card {
+    display: flex;
+    height: calc(98.37 * var(--u));
+    flex-direction: column;
+    gap: calc(3.51 * var(--u));
+    overflow: hidden;
+    padding: calc(14.05 * var(--u));
+    border-radius: calc(7.03 * var(--u));
+    background: #ffffff;
+  }
+
+  .store-card-top {
+    display: flex;
+    justify-content: space-between;
+    gap: calc(7.03 * var(--u));
+  }
+
+  .store-name {
+    font-size: calc(10.54 * var(--u));
+    line-height: 1.416;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .store-distance,
+  .store-address {
+    color: #858585;
+    font-size: calc(8.78 * var(--u));
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+
+  .store-hours {
+    display: flex;
+    gap: calc(3.51 * var(--u));
+    color: #858585;
+    font-size: calc(10.54 * var(--u));
+    font-weight: 300;
+    line-height: 1.416;
+    white-space: nowrap;
+  }
+
+  .store-tags {
+    display: flex;
+    align-items: center;
+    gap: calc(7.03 * var(--u));
+    padding-top: calc(3.52 * var(--u));
+  }
+
+  .store-tag {
+    display: flex;
+    height: calc(13.17 * var(--u));
+    align-items: center;
+    padding: 0 calc(3.51 * var(--u));
+    border-radius: calc(3.51 * var(--u));
+    background: #dfe3e8;
+    color: #858585;
+    font-size: calc(8.78 * var(--u));
+    line-height: 1.5;
+    white-space: nowrap;
   }
 }

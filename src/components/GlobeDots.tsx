@@ -17,7 +17,7 @@ const MAX_TILT = 70;
 /** 매장을 집을 수 있는 반경(px) */
 const HIT_RADIUS = 14;
 /** 점 격자의 위도 간격(도). 작을수록 촘촘합니다. */
-const LAT_STEP = 2.2;
+const LAT_STEP = 1.5;
 
 /**
  * 육지를 점으로 찍기 위한 좌표를 미리 만듭니다.
@@ -134,7 +134,7 @@ export function GlobeDots() {
       ctx!.clearRect(0, 0, width, height);
 
       const center: [number, number] = [-rotation.current[0], -rotation.current[1]];
-      const size = 1.7 * unit;
+      const size = 2 * unit;
 
       /* 가장자리로 갈수록 옅어지게 세 겹으로 나눠 칠합니다.
          한 겹마다 fill 한 번이라 점이 수천 개여도 부담이 적습니다. */
@@ -150,12 +150,12 @@ export function GlobeDots() {
         bands[edge < 0.55 ? 0 : edge < 0.82 ? 1 : 2].push(point);
       }
 
-      const alpha = [0.55, 0.34, 0.16];
+      const alpha = [0.9, 0.66, 0.36];
       bands.forEach((band, i) => {
         if (!band.length) return;
         ctx!.beginPath();
         for (const [x, y] of band) ctx!.rect(x - size / 2, y - size / 2, size, size);
-        ctx!.fillStyle = `rgba(120, 120, 120, ${alpha[i]})`;
+        ctx!.fillStyle = `rgba(105, 105, 105, ${alpha[i]})`;
         ctx!.fill();
       });
 
@@ -241,7 +241,7 @@ export function GlobeDots() {
   const store = active === null ? null : STORES[active];
 
   return (
-    <div ref={wrapRef} className="globe globe-grid">
+    <div ref={wrapRef} className="globe">
       <canvas
         ref={canvasRef}
         className="globe-canvas"

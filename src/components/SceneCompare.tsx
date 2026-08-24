@@ -19,12 +19,27 @@ type Props = {
   before: CompareView;
 };
 
-function Caption({ view }: { view: CompareView }) {
+/** 설명 한 묶음 + 그 아래 화면 목업 자리 */
+function Frame({
+  view,
+  className,
+  delay,
+}: {
+  view: CompareView;
+  className: string;
+  delay: string;
+}) {
   return (
-    <div className="compare-caption">
-      <span className="card-index">{view.label}</span>
-      <h3 className="type-title">{view.name}</h3>
-      <p className="type-body">{view.parts}</p>
+    <div
+      className={`compare-frame rise ${className}`}
+      style={{ "--delay": delay } as CSSProperties}
+    >
+      <div className="compare-caption">
+        <span className="card-index">{view.label}</span>
+        <h3 className="type-title">{view.name}</h3>
+        <p className="type-body">{view.parts}</p>
+      </div>
+      <div className="compare-shot">{view.visual}</div>
     </div>
   );
 }
@@ -42,21 +57,17 @@ export function SceneCompare({ title, after, before }: Props) {
         {title}
       </h2>
 
-      <div
-        className="compare-frame compare-after rise col-start-5 col-span-4 row-start-1 row-span-6"
-        style={{ "--delay": "0.1s" } as CSSProperties}
-      >
-        {after.visual}
-        <Caption view={after} />
-      </div>
+      <Frame
+        view={after}
+        delay="0.1s"
+        className="compare-after col-start-5 col-span-4 row-start-1 row-span-6"
+      />
 
-      <div
-        className="compare-frame compare-before rise col-start-1 col-span-4 row-start-3 row-span-4"
-        style={{ "--delay": "0.18s" } as CSSProperties}
-      >
-        {before.visual}
-        <Caption view={before} />
-      </div>
+      <Frame
+        view={before}
+        delay="0.18s"
+        className="compare-before col-start-1 col-span-4 row-start-3 row-span-4"
+      />
     </div>
   );
 }

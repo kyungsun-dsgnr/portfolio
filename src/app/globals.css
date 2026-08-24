@@ -733,8 +733,6 @@
     position: relative;
     height: 100%;
     width: 100%;
-    /* 페이지 바탕(#FAFAFA)과 구분되도록 지구 영역만 흰색으로 둡니다. */
-    background: #ffffff;
     /* 안경이 좌측으로 넘쳐도 잘리지 않게 둡니다. */
     overflow: visible;
   }

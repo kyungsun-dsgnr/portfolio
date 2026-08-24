@@ -154,6 +154,9 @@ export function GlobeDots({ interactive = true }: Props) {
     if (!ctx) return;
 
     const projection = projectionRef.current;
+    // 구를 흰색으로 채울 때 씁니다. 반지름/중심을 따로 계산하지 않아도 됩니다.
+    const path = geoPath(projection, ctx);
+    const sphere = { type: "Sphere" } as const;
     let width = 0;
     let height = 0;
     let unit = 1;
@@ -195,6 +198,12 @@ export function GlobeDots({ interactive = true }: Props) {
 
       projection.rotate(rotation.current);
       ctx!.clearRect(0, 0, width, height);
+
+      // 페이지 바탕과 구분되도록 지구본 원 안쪽만 흰색으로 깝니다.
+      ctx!.beginPath();
+      path(sphere);
+      ctx!.fillStyle = "#ffffff";
+      ctx!.fill();
 
       const center: [number, number] = [-rotation.current[0], -rotation.current[1]];
       /* 가장자리로 갈수록 옅어지게 세 겹으로 나누고, 매장 보유국은 따로 모읍니다.

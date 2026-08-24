@@ -687,9 +687,6 @@
   .globe-canvas:active {
     cursor: grabbing;
   }
-
-
-
 }
 
 @layer components {
@@ -736,19 +733,21 @@
     position: relative;
     height: 100%;
     width: 100%;
+    /* 페이지 바탕(#FAFAFA)과 구분되도록 지구 영역만 흰색으로 둡니다. */
+    background: #ffffff;
     /* 안경이 좌측으로 넘쳐도 잘리지 않게 둡니다. */
     overflow: visible;
   }
 
   /* width 만 주고 height 는 비워 두어 이미지 자체 비율을 따릅니다. */
   .globe-glasses {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 97%;
-    height: auto;
-    translate: -50% -50%;
     pointer-events: none;
+    width: 100%;
+    height: auto;
+    position: absolute;
+    top: 60%;
+    left: 40%;
+    translate: -50% -50%;
   }
 
   /* 손대지 않는 지구본에는 커서를 바꾸지 않습니다. */

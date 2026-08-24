@@ -452,10 +452,13 @@
   }
 
   /* 문제를 짚는 항목. 번호 → 제목 → 설명 순서는 다른 장과 같습니다. */
+  /* 항목을 눌러도 그 점이 켜지고 그 칸이 다시 재생됩니다. */
   .issue {
     display: flex;
     flex-direction: column;
     gap: calc(8 * var(--u));
+    cursor: pointer;
+    text-align: left;
   }
 
   /* 마지막 항목은 한 행보다 길어 두 행을 잡고 아래 여백 선에 바닥을 맞춥니다.
@@ -1393,9 +1396,10 @@
 
   /* 좁은 요소에서는 글자를 덮지 않도록 옆으로 비켜섭니다.
      여백 자리만 살짝 물고 글자에는 닿지 않습니다. */
+  /* 아이콘 위에 걸치되 글자에는 닿지 않는 자리입니다. */
   .store-dot-left {
     left: auto;
-    right: calc(100% - 6 * var(--u));
+    right: calc(100% - 26 * var(--u));
     translate: 0 -50%;
   }
 

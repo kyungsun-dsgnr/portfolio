@@ -71,7 +71,7 @@ export function SceneProblem() {
   }, [inView, picked]);
 
   /* 고른 항목과 그 점을 잇는 점선. 칸이 바뀌거나 창이 바뀌면 다시 잽니다. */
-  const cards = useRef<Record<string, HTMLDivElement | null>>({});
+  const cards = useRef<Record<string, HTMLButtonElement | null>>({});
   const dots = useRef<Record<string, HTMLButtonElement | null>>({});
   const [link, setLink] = useState<{ d: string; len: number } | null>(null);
 
@@ -198,19 +198,21 @@ export function SceneProblem() {
       )}
 
       {POINTS.map((point, i) => (
-        <div
+        <button
+          type="button"
           key={point.index}
           ref={(el) => {
             cards.current[point.index] = el;
           }}
           className={`issue rise ${point.place}`}
           data-dim={picked && picked !== point.index ? true : undefined}
+          onClick={() => setStage({ picked: point.index, phase: 0 })}
           style={{ "--delay": `${0.18 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">{point.index}</span>
           <h3 className="type-title">{point.title}</h3>
           <p className="type-body">{point.body}</p>
-        </div>
+        </button>
       ))}
     </div>
   );

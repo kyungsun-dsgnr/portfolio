@@ -27,6 +27,16 @@ const HIT_RADIUS = 14;
 /** 점 격자의 위도 간격(도). 작을수록 촘촘합니다. */
 const LAT_STEP = 1.5;
 
+/** 매장이 있는 나라와, 그 나라를 대표해 이름표를 다는 좌표.
+    한 나라에 여러 매장이 있으면 대표 매장 자리에 답니다. */
+const COUNTRIES = (() => {
+  const seen = new Map<string, [number, number]>();
+  for (const store of STORES) {
+    if (!seen.has(store.country) || store.flagship) seen.set(store.country, store.at);
+  }
+  return [...seen].map(([country, at]) => ({ country, at }));
+})();
+
 /** 지구본에 찍히는 점 하나. home 은 매장이 있는 나라인지. */
 type Dot = { at: [number, number]; home: boolean };
 
@@ -82,9 +92,11 @@ function landDots(
 type Props = {
   /** false 면 손대지 않고 계속 도는 장식이 됩니다. 뱃지와 매장 집기도 꺼집니다. */
   interactive?: boolean;
+  /** 매장 보유국 이름표를 계속 띄워 둡니다. 지구본이 돌면 따라 돌고, 뒤로 넘어가면 숨습니다. */
+  labels?: boolean;
 };
 
-export function GlobeDots({ interactive = true }: Props) {
+export function GlobeDots({ interactive = true, labels = false }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -99,6 +111,8 @@ export function GlobeDots({ interactive = true }: Props) {
     { shape: FeatureCollection["features"][number]; label: string }[]
   >([]);
   const badgeRef = useRef<HTMLDivElement>(null);
+  /** 늘 떠 있는 나라 이름표들. 매 프레임 자리만 옮깁니다. */
+  const tagRefs = useRef<(HTMLDivElement | null)[]>([]);
   /** 마우스가 지구본 위에 있으면 자동 회전을 멈춥니다. */
   const hovering = useRef(false);
 
@@ -308,6 +322,26 @@ export function GlobeDots({ interactive = true }: Props) {
       });
 
       screen.current = visible;
+
+      /* 늘 떠 있는 나라 이름표. 앞면에 온 나라만 보이고 자리를 따라갑니다.
+         캔버스가 아니라 DOM 이라 글꼴과 배경을 다른 뱃지와 같이 씁니다. */
+      if (labels) {
+        COUNTRIES.forEach((entry, i) => {
+          const tag = tagRefs.current[i];
+          if (!tag) return;
+          const point =
+            geoDistance(entry.at, center) > Math.PI / 2
+              ? null
+              : projection(entry.at);
+          if (!point) {
+            tag.dataset.off = "";
+            return;
+          }
+          delete tag.dataset.off;
+          tag.style.translate = `calc(${point[0]}px - 50%) calc(${point[1]}px - ${12 * unit}px - 100%)`;
+        });
+      }
+
       frame = requestAnimationFrame(draw);
     }
 
@@ -317,7 +351,7 @@ export function GlobeDots({ interactive = true }: Props) {
       cancelAnimationFrame(frame);
       observer.disconnect();
     };
-  }, [dots, interactive]);
+  }, [dots, interactive, labels]);
 
   function pointerDown(event: React.PointerEvent<HTMLCanvasElement>) {
     // 포인터 캡처가 실패해도 드래그 상태는 어긋나지 않게 먼저 세웁니다.
@@ -429,6 +463,22 @@ export function GlobeDots({ interactive = true }: Props) {
             : undefined
         }
       />
+
+      {/* 늘 떠 있는 나라 이름표 */}
+      {labels &&
+        COUNTRIES.map((entry, i) => (
+          <div
+            key={entry.country}
+            ref={(el) => {
+              tagRefs.current[i] = el;
+            }}
+            className="globe-tag"
+            data-off=""
+            aria-hidden
+          >
+            {entry.country}
+          </div>
+        ))}
 
       {/* 매장 보유국 위에서 오른쪽으로 펼쳐지는 이름표 */}
       {interactive && (

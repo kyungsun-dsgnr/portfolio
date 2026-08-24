@@ -775,6 +775,31 @@
     opacity: 1;
     clip-path: inset(0 0 0 0 round 999px);
   }
+
+  /* 매장 보유국마다 늘 떠 있는 이름표. 점 바로 위에 놓입니다. */
+  .globe-tag {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: calc(4 * var(--u)) calc(9 * var(--u));
+    border-radius: 999px;
+    background: var(--fg);
+    color: var(--bg);
+    font-family: var(--font-display);
+    font-size: calc(9 * var(--u));
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 260ms ease;
+  }
+
+  /* 지구 뒤로 넘어간 나라 */
+  .globe-tag[data-off] {
+    opacity: 0;
+  }
 }
 
 @layer components {

@@ -60,7 +60,7 @@ export default function Home() {
               }
               visual={
                 <div className="globe-scene">
-                  <GlobeDots interactive={false} />
+                  <GlobeDots interactive={false} labels />
                   {/* 지구본이 안경을 쓴 것처럼 앞에 겹칩니다. */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img className="globe-glasses" src="/images/glasses.png" alt="" />

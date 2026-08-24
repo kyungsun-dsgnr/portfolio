@@ -769,7 +769,12 @@
     height: 100%;
     width: 100%;
     overflow: hidden;
-    background: var(--placeholder);
+    background: #fafaf8;
+  }
+
+  /* 작은 카드는 한 톤 다른 바탕을 씁니다. */
+  .compare-swap .compare-frame {
+    background: #fafafa;
   }
 
   /* 이 장 헤드라인은 대문자로 바꾸지 않고 오른쪽에 붙입니다. */
@@ -793,7 +798,7 @@
     width: calc(508 * var(--u));
     flex-direction: column;
     gap: calc(8 * var(--u));
-    padding: calc(24 * var(--u)) calc(32 * var(--u)) calc(16 * var(--u));
+    padding: calc(24 * var(--u)) calc(32 * var(--u));
   }
 
   .compare-caption .card-index {

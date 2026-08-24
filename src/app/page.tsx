@@ -7,6 +7,7 @@ import { SceneProblem } from "@/components/SceneProblem";
 import { ScenePerspective } from "@/components/ScenePerspective";
 import { ScenePrinciples } from "@/components/ScenePrinciples";
 import { SceneStatement } from "@/components/SceneStatement";
+import { SceneWhy } from "@/components/SceneWhy";
 import { SceneWork } from "@/components/SceneWork";
 import { StoreListMock } from "@/components/StoreListMock";
 
@@ -70,6 +71,7 @@ export default function Home() {
           ),
         },
         { id: "gentle-monster-problem", node: <SceneProblem /> },
+        { id: "gentle-monster-why", node: <SceneWhy /> },
         {
           id: "gentle-monster-compare",
           node: (

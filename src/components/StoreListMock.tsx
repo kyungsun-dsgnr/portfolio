@@ -173,7 +173,12 @@ type Props = {
   onPick?: (key: string) => void;
   /** 점과 항목을 선으로 이으려면 점의 자리를 밖에서 알아야 합니다. */
   dotRef?: (key: string, el: HTMLButtonElement | null) => void;
+  /** 화면의 일부만 보여 줍니다. 기본은 전부입니다. */
+  show?: Part[];
 };
+
+type Part = "head" | "filters" | "tabs" | "results";
+const ALL: Part[] = ["head", "filters", "tabs", "results"];
 
 export function StoreListMock({
   dots = false,
@@ -181,7 +186,9 @@ export function StoreListMock({
   phase = 0,
   onPick,
   dotRef,
+  show = ALL,
 }: Props) {
+  const has = (part: Part) => show.includes(part);
   const located = picked === DOTS.locate.key;
   const zoomed = picked === DOTS.district.key;
   /** 지도 탭을 켜면 목록 자리에 지도가 들어섭니다. */
@@ -218,14 +225,21 @@ export function StoreListMock({
   };
 
   return (
-    <div className="store-panel" aria-hidden={dots ? undefined : true}>
+    <div
+      className="store-panel"
+      data-parts={show === ALL ? undefined : ""}
+      aria-hidden={dots ? undefined : true}
+    >
+      {has("head") && (
       <div className="store-head">
         <p className="store-count">
           스토어 <span>{stores.length}</span>
         </p>
         <FilterIcon />
       </div>
+      )}
 
+      {has("filters") && (
       <div className="store-filters">
         <div className="store-selects">
           <div className="store-select">
@@ -233,7 +247,7 @@ export function StoreListMock({
             <span className="store-select-value">대한민국</span>
             <ChevronIcon />
           </div>
-          <div className="store-select" data-hot={zoomed || undefined}>
+          <div className="store-select" data-hot={(dots && zoomed) || undefined}>
             <span className="store-select-label">시/군/구</span>
             <span className="store-select-value">{repicked ? "서울" : "경기"}</span>
             <ChevronIcon />
@@ -254,23 +268,28 @@ export function StoreListMock({
             )}
           </div>
         </div>
-        <p className="store-locate" data-hot={located || undefined}>
+        <p className="store-locate" data-hot={(dots && located) || undefined}>
           <LocateIcon />
           현재 위치 사용
           {dot("locate", "left")}
         </p>
       </div>
+      )}
 
+      {has("tabs") && (
       <div className="store-tabs">
         <span className="store-tab" data-on={!mapped || undefined}>
           목록
         </span>
-        <span className="store-tab" data-on={mapped || undefined} data-hot={mapped || undefined}>
+        <span className="store-tab" data-on={mapped || undefined} data-hot={(dots && mapped) || undefined}>
           지도
           {dot("map", "right")}
         </span>
       </div>
+      )}
 
+      {has("results") && (
+      <>
       {/* 목록과 지도가 서로 바뀔 때마다 이 자리를 새로 그려 한 번 떠오르게 합니다. */}
       <div
         className="store-results"
@@ -331,6 +350,8 @@ export function StoreListMock({
       </div>
       )}
       </div>
+      </>
+      )}
     </div>
   );
 }

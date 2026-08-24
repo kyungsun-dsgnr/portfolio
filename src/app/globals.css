@@ -447,6 +447,7 @@
      비포/애프터 장의 설명도 같은 간격을 씁니다. */
   .work-head .card-index,
   .compare-caption .card-index,
+  .why-card .card-index,
   .issue .card-index {
     margin-bottom: calc(8 * var(--u));
   }
@@ -526,6 +527,52 @@
 
   .card + .card {
     border-left: calc(1 * var(--u)) solid rgb(0 0 0 / 0.14);
+  }
+
+  /* ── 시작점을 왜 옮기는지 짚는 장 ──────────────
+     칸마다 글은 위, 화면은 아래. 마지막 칸만 한 행 더 높아 글이 먼저 시작합니다. */
+  .why-row {
+    align-items: flex-end;
+  }
+
+  .why-card {
+    height: calc(362 * var(--u));
+    justify-content: space-between;
+  }
+
+  .why-card[data-tall] {
+    height: 100%;
+  }
+
+  .why-visual {
+    position: relative;
+    width: 100%;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* 목업 조각은 칸 위쪽에 붙고, 넘치는 부분은 칸에서 잘립니다.
+     폭은 글이 놓인 폭과 같게 늘립니다. */
+  .why-mock {
+    position: relative;
+    height: 100%;
+  }
+
+  .why-mock .store-panel {
+    left: 0;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  /* 선택 상자도 늘어난 폭을 반씩 나눠 씁니다. */
+  .why-mock .store-selects {
+    align-self: stretch;
+  }
+
+  .why-mock .store-select {
+    width: auto;
+    flex: 1 1 0;
   }
 
   /* 번호 → 삽화 → 내용 순서. 삽화가 가운데 남는 자리를 차지합니다. */
@@ -930,6 +977,11 @@
   /* ── 젠틀몬스터 스토어 목록 화면 목업 ──────────────
      실제 화면을 0.703배로 줄여 옮긴 것이라 수치가 딱 떨어지지 않습니다.
      프레임보다 길어서 아래쪽은 프레임 밖으로 잘려 나갑니다. */
+  /* 일부만 보여 줄 때는 잘린 티가 나지 않게 아래도 여백을 둡니다. */
+  .store-panel[data-parts] {
+    padding-bottom: calc(21.08 * var(--u));
+  }
+
   .store-panel {
     position: absolute;
     /* 목업은 그림입니다. 눌리는 건 점뿐이라, 커진 요소나 펼친 목록이
@@ -1027,9 +1079,10 @@
     line-height: 1.416;
   }
 
+  /* 폭이 늘어나도 끝에서 같은 거리에 남도록 오른쪽 기준으로 둡니다. */
   .store-select .store-icon {
     position: absolute;
-    left: calc(113.3 * var(--u));
+    right: calc(10.54 * var(--u));
     top: calc(12.3 * var(--u));
   }
 
@@ -1396,10 +1449,10 @@
 
   /* 좁은 요소에서는 글자를 덮지 않도록 옆으로 비켜섭니다.
      여백 자리만 살짝 물고 글자에는 닿지 않습니다. */
-  /* 아이콘 위에 걸치되 글자에는 닿지 않는 자리입니다. */
+  /* 아이콘 왼쪽 절반에 걸칩니다. 아이콘이 아주 가려지지는 않습니다. */
   .store-dot-left {
     left: auto;
-    right: calc(100% - 26 * var(--u));
+    right: calc(100% - 17.6 * var(--u));
     translate: 0 -50%;
   }
 

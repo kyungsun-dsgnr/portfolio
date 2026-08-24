@@ -7,7 +7,7 @@ import {
   geoOrthographic,
   geoPath,
 } from "d3-geo";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { feature } from "topojson-client";
 import type { GeometryCollection, Topology } from "topojson-specification";
 import type { FeatureCollection } from "geojson";
@@ -38,9 +38,7 @@ const TAGGED = [
   "Milan",
   "Dubai",
 ];
-const COUNTRIES = TAGGED.map(
-  (city) => STORES.find((store) => store.city === city)!,
-);
+
 
 /** 지구본에 찍히는 점 하나. home 은 매장이 있는 나라인지. */
 type Dot = { at: [number, number]; home: boolean };
@@ -99,9 +97,22 @@ type Props = {
   interactive?: boolean;
   /** 매장 보유국 이름표를 계속 띄워 둡니다. 지구본이 돌면 따라 돌고, 뒤로 넘어가면 숨습니다. */
   labels?: boolean;
+  /** 이름표를 달 도시. 기본은 대륙마다 하나씩입니다. */
+  tags?: string[];
+  /** 돌지 않고 멈춰 있는 지구본. 첫 도시가 정면에 옵니다. */
+  still?: boolean;
 };
 
-export function GlobeDots({ interactive = true, labels = false }: Props) {
+export function GlobeDots({
+  interactive = true,
+  labels = false,
+  tags,
+  still = false,
+}: Props) {
+  const tagged = useMemo(
+    () => (tags ?? TAGGED).map((city) => STORES.find((store) => store.city === city)!),
+    [tags],
+  );
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -123,8 +134,13 @@ export function GlobeDots({ interactive = true, labels = false }: Props) {
   /** 마우스가 지구본 위에 있으면 자동 회전을 멈춥니다. */
   const hovering = useRef(false);
 
-  const rotation = useRef<[number, number]>([-10, TILT]);
-  const velocity = useRef<[number, number]>([IDLE_SPIN, 0]);
+  /* 멈춰 있을 때는 첫 도시를 가운데에서 조금 왼쪽에 두어
+     오른쪽으로 펼쳐지는 이름표가 판넬 안에 들어옵니다. */
+  const rotation = useRef<[number, number]>([
+    still ? -tagged[0].at[0] - 25 : -10,
+    TILT,
+  ]);
+  const velocity = useRef<[number, number]>([still ? 0 : IDLE_SPIN, 0]);
   /** 프레임/이벤트 간격을 재서 회전을 시간 기준으로 굴립니다. */
   const lastFrame = useRef(0);
   const lastMove = useRef(0);
@@ -224,7 +240,8 @@ export function GlobeDots({ interactive = true, labels = false }: Props) {
       if (!dragging.current && dt) {
         // 마우스를 올리면 돌던 것이 잦아들고, 벗어나면 다시 천천히 돕니다.
         // 프레임 수가 아니라 흐른 시간으로 계산해 화면 주사율과 무관하게 같은 속도가 납니다.
-        const idle = interactive && hovering.current ? 0 : IDLE_SPIN;
+        const idle =
+          still || (interactive && hovering.current) ? 0 : IDLE_SPIN;
         const decay = Math.exp(-dt / GLIDE);
         const vx = velocity.current[0] * decay + idle * (1 - decay);
         velocity.current = [vx, 0];
@@ -336,7 +353,7 @@ export function GlobeDots({ interactive = true, labels = false }: Props) {
       /* 늘 떠 있는 나라 이름표. 앞면에 온 나라만 보이고 자리를 따라갑니다.
          캔버스가 아니라 DOM 이라 글꼴과 배경을 다른 뱃지와 같이 씁니다. */
       if (labels) {
-        COUNTRIES.forEach((entry, i) => {
+        tagged.forEach((entry, i) => {
           const tag = tagRefs.current[i];
           if (!tag) return;
           const point =
@@ -372,7 +389,7 @@ export function GlobeDots({ interactive = true, labels = false }: Props) {
       cancelAnimationFrame(frame);
       observer.disconnect();
     };
-  }, [dots, interactive, labels]);
+  }, [dots, interactive, labels, still, tagged]);
 
   function pointerDown(event: React.PointerEvent<HTMLCanvasElement>) {
     // 포인터 캡처가 실패해도 드래그 상태는 어긋나지 않게 먼저 세웁니다.
@@ -487,7 +504,7 @@ export function GlobeDots({ interactive = true, labels = false }: Props) {
 
       {/* 늘 떠 있는 나라 이름표 */}
       {labels &&
-        COUNTRIES.map((entry, i) => (
+        tagged.map((entry, i) => (
           <div
             key={entry.city}
             ref={(el) => {

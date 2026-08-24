@@ -134,7 +134,7 @@ export function GlobeDots() {
       ctx!.clearRect(0, 0, width, height);
 
       const center: [number, number] = [-rotation.current[0], -rotation.current[1]];
-      const size = 2 * unit;
+      const size = 3.5 * unit;
 
       /* 가장자리로 갈수록 옅어지게 세 겹으로 나눠 칠합니다.
          한 겹마다 fill 한 번이라 점이 수천 개여도 부담이 적습니다. */
@@ -150,12 +150,12 @@ export function GlobeDots() {
         bands[edge < 0.55 ? 0 : edge < 0.82 ? 1 : 2].push(point);
       }
 
-      const alpha = [0.9, 0.66, 0.36];
+      const alpha = [1, 0.78, 0.5];
       bands.forEach((band, i) => {
         if (!band.length) return;
         ctx!.beginPath();
         for (const [x, y] of band) ctx!.rect(x - size / 2, y - size / 2, size, size);
-        ctx!.fillStyle = `rgba(105, 105, 105, ${alpha[i]})`;
+        ctx!.fillStyle = `rgba(85, 85, 85, ${alpha[i]})`;
         ctx!.fill();
       });
 
@@ -170,19 +170,19 @@ export function GlobeDots() {
         visible.push({ i, x, y });
 
         const isActive = activeRef.current === i;
-        const r = (store.flagship ? 3 : 2.2) * unit * (isActive ? 1.7 : 1);
+        const r = (store.flagship ? 4 : 3) * unit * (isActive ? 1.7 : 1);
 
         if (isActive) {
           ctx!.beginPath();
           ctx!.arc(x, y, r * 2.8, 0, Math.PI * 2);
-          ctx!.strokeStyle = "rgba(90, 90, 90, 0.5)";
+          ctx!.strokeStyle = "rgba(25, 25, 25, 0.45)";
           ctx!.lineWidth = unit;
           ctx!.stroke();
         }
 
         ctx!.beginPath();
         ctx!.arc(x, y, r, 0, Math.PI * 2);
-        ctx!.fillStyle = isActive ? "rgba(35, 35, 35, 1)" : "rgba(70, 70, 70, 0.9)";
+        ctx!.fillStyle = isActive ? "rgba(25, 25, 25, 1)" : "rgba(25, 25, 25, 0.85)";
         ctx!.fill();
       });
 

@@ -14,10 +14,12 @@ import type { FeatureCollection } from "geojson";
 
 import { STORES } from "@/data/gentle-monster-stores";
 
-/** 손을 뗀 뒤 남는 회전 */
-const FRICTION = 0.94;
-/** 가만히 두면 이 속도로 천천히 돕니다(도/프레임) */
-const IDLE_SPIN = 0.06;
+/** 손을 뗀 뒤 속도가 잦아드는 시간 상수(초). 클수록 오래 미끄러집니다. */
+const GLIDE = 0.45;
+/** 가만히 두면 이 속도로 천천히 돕니다(도/초) */
+const IDLE_SPIN = 3.6;
+/** 드래그가 만들어 낼 수 있는 최대 속도(도/초) */
+const MAX_SPEED = 720;
 /** 받침대에 꽂힌 지구본처럼 축을 고정합니다. 세로로는 돌지 않아 극이 정면에 오지 않습니다. */
 const TILT = -6;
 /** 매장을 집을 수 있는 반경(px) */
@@ -80,9 +82,23 @@ export function GlobeDots() {
 
   const [dots, setDots] = useState<Dot[] | null>(null);
   const [active, setActive] = useState<number | null>(null);
+  const [country, setCountry] = useState<string | null>(null);
+
+  /* 투영은 그리기 루프와 마우스 판정 양쪽에서 쓰므로 ref 로 둡니다. */
+  const projectionRef = useRef(geoOrthographic());
+  /** 매장 보유국 폴리곤과, 뱃지에 쓸 짧은 국가명 */
+  const homelandsRef = useRef<{ shape: FeatureCollection["features"][number]; label: string }[]>(
+    [],
+  );
+  const badgeRef = useRef<HTMLDivElement>(null);
+  /** 마우스가 지구본 위에 있으면 자동 회전을 멈춥니다. */
+  const hovering = useRef(false);
 
   const rotation = useRef<[number, number]>([-10, TILT]);
   const velocity = useRef<[number, number]>([IDLE_SPIN, 0]);
+  /** 프레임/이벤트 간격을 재서 회전을 시간 기준으로 굴립니다. */
+  const lastFrame = useRef(0);
+  const lastMove = useRef(0);
   const dragging = useRef(false);
   const last = useRef<[number, number]>([0, 0]);
   const activeRef = useRef<number | null>(null);
@@ -99,14 +115,24 @@ export function GlobeDots() {
       const land = feature(topo, topo.objects.land) as unknown as FeatureCollection;
       const countries = feature(topo, topo.objects.countries) as unknown as FeatureCollection;
 
-      // 매장 좌표를 품고 있는 나라만 골라 냅니다.
+      /* 매장 좌표를 품고 있는 나라만 골라 냅니다.
+         이름은 지도 데이터의 정식 명칭("United States of America") 대신
+         매장 데이터의 짧은 표기를 씁니다. */
+      const picked = countries.features
+        .map((shape) => ({
+          shape,
+          label: STORES.find((store) => geoContains(shape, store.at))?.country,
+        }))
+        .filter((entry): entry is { shape: typeof entry.shape; label: string } =>
+          Boolean(entry.label),
+        );
+
       const homelands: FeatureCollection = {
         type: "FeatureCollection",
-        features: countries.features.filter((country) =>
-          STORES.some((store) => geoContains(country, store.at)),
-        ),
+        features: picked.map((entry) => entry.shape),
       };
 
+      homelandsRef.current = picked;
       setDots(landDots(land, homelands));
     });
     return () => {
@@ -122,7 +148,7 @@ export function GlobeDots() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const projection = geoOrthographic();
+    const projection = projectionRef.current;
     let width = 0;
     let height = 0;
     let unit = 1;
@@ -147,10 +173,19 @@ export function GlobeDots() {
     let frame = 0;
 
     function draw() {
-      if (!dragging.current) {
-        const vx = velocity.current[0] * FRICTION + IDLE_SPIN * (1 - FRICTION);
+      const now = performance.now();
+      // 탭이 뒤에 있다 돌아왔을 때 한 번에 튀지 않게 상한을 둡니다.
+      const dt = lastFrame.current ? Math.min(0.05, (now - lastFrame.current) / 1000) : 0;
+      lastFrame.current = now;
+
+      if (!dragging.current && dt) {
+        // 마우스를 올리면 돌던 것이 잦아들고, 벗어나면 다시 천천히 돕니다.
+        // 프레임 수가 아니라 흐른 시간으로 계산해 화면 주사율과 무관하게 같은 속도가 납니다.
+        const idle = hovering.current ? 0 : IDLE_SPIN;
+        const decay = Math.exp(-dt / GLIDE);
+        const vx = velocity.current[0] * decay + idle * (1 - decay);
         velocity.current = [vx, 0];
-        rotation.current = [rotation.current[0] + vx, TILT];
+        rotation.current = [rotation.current[0] + vx * dt, TILT];
       }
 
       projection.rotate(rotation.current);
@@ -189,8 +224,8 @@ export function GlobeDots() {
       }
 
       // 매장이 없는 나라는 바탕처럼 옅게, 있는 나라는 또렷하게.
-      paint(plain, 2.7 * unit, "125, 125, 125", [0.5, 0.36, 0.2]);
-      paint(home, 3.2 * unit, "60, 60, 60", [0.95, 0.7, 0.42]);
+      paint(plain, 2.1 * unit, "125, 125, 125", [0.5, 0.36, 0.2]);
+      paint(home, 2.7 * unit, "60, 60, 60", [0.95, 0.7, 0.42]);
 
       // 매장
       const visible: { i: number; x: number; y: number }[] = [];
@@ -240,7 +275,9 @@ export function GlobeDots() {
   function pointerDown(event: React.PointerEvent<HTMLCanvasElement>) {
     // 포인터 캡처가 실패해도 드래그 상태는 어긋나지 않게 먼저 세웁니다.
     dragging.current = true;
+    hovering.current = true;
     last.current = [event.clientX, event.clientY];
+    lastMove.current = performance.now();
     velocity.current = [0, 0];
     try {
       event.currentTarget.setPointerCapture(event.pointerId);
@@ -250,20 +287,30 @@ export function GlobeDots() {
   }
 
   function pointerMove(event: React.PointerEvent<HTMLCanvasElement>) {
+    // enter 에 기대지 않습니다. 움직임이 잡히면 이미 지구본 위입니다.
+    hovering.current = true;
     const box = event.currentTarget.getBoundingClientRect();
 
     if (dragging.current) {
       // 가로로만 돕니다. 세로 움직임은 회전에 쓰지 않습니다.
       const dx = event.clientX - last.current[0];
       last.current = [event.clientX, event.clientY];
-      const speed = 220 / Math.min(box.width, box.height);
-      velocity.current = [dx * speed, 0];
-      rotation.current = [rotation.current[0] + dx * speed, TILT];
+
+      const now = performance.now();
+      const dt = Math.max(0.008, (now - (lastMove.current || now)) / 1000);
+      lastMove.current = now;
+
+      const turned = dx * (220 / Math.min(box.width, box.height));
+      rotation.current = [rotation.current[0] + turned, TILT];
+      // 놓았을 때 이어질 속도(도/초). 이벤트가 몰리면 과하게 잡히므로 묶어 둡니다.
+      const speed = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, turned / dt));
+      velocity.current = [speed, 0];
       return;
     }
 
     const x = event.clientX - box.left;
     const y = event.clientY - box.top;
+
     let found: number | null = null;
     let best = HIT_RADIUS;
     for (const point of screen.current) {
@@ -277,9 +324,31 @@ export function GlobeDots() {
       activeRef.current = found;
       setActive(found);
     }
+
+    // 화면 좌표를 위경도로 되돌려, 매장 보유국 위인지 봅니다.
+    // 검사 대상이 스무 나라 남짓이라 폴리곤 판정으로 충분합니다.
+    const geo = projectionRef.current.invert?.([x, y]);
+    const hit = geo
+      ? homelandsRef.current.find((land) => geoContains(land.shape, geo))
+      : undefined;
+    const name = hit?.label ?? null;
+
+    if (badgeRef.current) {
+      badgeRef.current.style.translate = `calc(${x}px + ${HIT_RADIUS}px) calc(${y}px - 50%)`;
+    }
+    setCountry((current) => (current === name ? current : name));
   }
 
+  /* 뱃지가 유일한 표시입니다.
+     도시 점을 집으면 국가와 도시를, 나라만 스치면 국가만 보여 줍니다.
+     도시를 집었을 때는 국가명을 매장 데이터에서 가져오므로,
+     110m 지도에서 폴리곤이 잡히지 않는 도시(싱가포르 등)도 제대로 나옵니다. */
   const store = active === null ? null : STORES[active];
+  const label = store
+    ? { country: store.country, city: store.city }
+    : country
+      ? { country, city: null }
+      : null;
 
   return (
     <div ref={wrapRef} className="globe">
@@ -298,21 +367,23 @@ export function GlobeDots() {
         }}
         onPointerLeave={() => {
           dragging.current = false;
+          hovering.current = false;
           activeRef.current = null;
           setActive(null);
+          setCountry(null);
         }}
       />
 
-      <p className="globe-readout">
-        {store ? (
+      {/* 매장 보유국 위에서 오른쪽으로 펼쳐지는 이름표 */}
+      <div ref={badgeRef} className="globe-badge" data-on={label ? "" : undefined} aria-hidden>
+        <span>{label?.country}</span>
+        {label?.city && (
           <>
-            <span className="globe-city">{store.city}</span>
-            <span className="globe-name">{store.name}</span>
+            <span className="globe-badge-divider">|</span>
+            <span>{label.city}</span>
           </>
-        ) : (
-          <span className="globe-name">지구본을 돌려 도시를 찾아보세요</span>
         )}
-      </p>
+      </div>
     </div>
   );
 }

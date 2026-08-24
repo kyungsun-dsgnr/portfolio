@@ -682,33 +682,44 @@
     cursor: grabbing;
   }
 
-  /* 집은 매장 이름. 지구본 아래에 조용히 놓입니다. */
-  .globe-readout {
-    position: absolute;
-    right: 0;
-    bottom: calc(8 * var(--u));
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    gap: calc(4 * var(--u));
-    text-align: center;
-    pointer-events: none;
-  }
 
-  .globe-city {
+
+}
+
+@layer components {
+  /* 매장 보유국 위에 뜨는 이름표. 왼쪽 끝을 붙잡고 오른쪽으로 펼쳐집니다. */
+  .globe-badge {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    gap: calc(7 * var(--u));
+    padding: calc(6 * var(--u)) calc(12 * var(--u));
+    border-radius: 999px;
+    background: var(--fg);
+    color: var(--bg);
     font-family: var(--font-display);
-    font-size: calc(20 * var(--u));
+    font-size: calc(11 * var(--u));
     font-weight: 700;
     line-height: 1.1;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    clip-path: inset(0 100% 0 0 round 999px);
+    transition:
+      clip-path 340ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 140ms linear;
   }
 
-  .globe-name {
-    font-family: var(--font-body);
-    font-size: calc(13 * var(--u));
-    font-weight: 500;
-    line-height: 1.1;
-    letter-spacing: 0.01em;
-    color: var(--fg-soft);
+  .globe-badge-divider {
+    opacity: 0.4;
+  }
+
+  .globe-badge[data-on] {
+    opacity: 1;
+    clip-path: inset(0 0 0 0 round 999px);
   }
 }

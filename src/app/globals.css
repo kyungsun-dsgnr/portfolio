@@ -133,6 +133,10 @@
     background: #ffffff;
   }
 
+  .section:has(.compare-frame) {
+    background: #ffffff;
+  }
+
   /* 비율 고정 캔버스. 섹션마다 안쪽 레이아웃은 다릅니다. */
   .canvas {
     position: relative;
@@ -427,8 +431,10 @@
     gap: calc(8 * var(--u));
   }
 
-  /* 번호는 제목·설명 묶음에서 한 단 떨어뜨립니다. */
-  .work-head .card-index {
+  /* 번호는 제목·설명 묶음에서 한 단 떨어뜨립니다.
+     비포/애프터 장의 설명도 같은 간격을 씁니다. */
+  .work-head .card-index,
+  .compare-caption .card-index {
     margin-bottom: calc(8 * var(--u));
   }
 
@@ -766,25 +772,31 @@
     background: var(--placeholder);
   }
 
-  /* 이 장 헤드라인은 문구가 길어 64px 로는 3칼럼에서 4줄로 넘쳐 본문과 겹칩니다.
-     이 자리만 한 단계 줄여 "FROM STORE LIST" 가 한 줄에 들어오게 합니다. */
+  /* 이 장 헤드라인은 대문자로 바꾸지 않습니다. */
   .compare-headline {
-    font-size: calc(48 * var(--u));
+    text-transform: none;
   }
 
+  .compare-body {
+    font-size: calc(20 * var(--u));
+    color: var(--fg);
+  }
+
+  /* 큰 이미지 좌측 상단에 얹히는 설명 */
   .compare-caption {
+    position: absolute;
+    left: 0;
+    top: 0;
     display: flex;
+    height: calc(109 * var(--u));
+    width: calc(508 * var(--u));
     flex-direction: column;
     gap: calc(8 * var(--u));
+    padding: calc(16 * var(--u)) calc(32 * var(--u));
   }
 
   .compare-caption .card-index {
     text-transform: uppercase;
-  }
-
-  /* 무엇이 달라지는지 한 줄. 요소 나열과 한 칸 띄웁니다. */
-  .compare-note {
-    margin-top: calc(8 * var(--u));
   }
 
   /* 작은 카드는 눌러서 큰 자리와 맞바꾸는 버튼입니다. */

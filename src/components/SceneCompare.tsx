@@ -5,13 +5,11 @@ import { useState, type CSSProperties, type ReactNode } from "react";
 import { useInView } from "@/components/useInView";
 
 export type CompareView = {
-  /** BEFORE / AFTER */
+  /** Before / After */
   label: string;
   name: string;
   /** 화면을 이루는 요소들 */
   parts: string;
-  /** 무엇이 달라지는지 한 줄 */
-  note: string;
   visual: ReactNode;
 };
 
@@ -36,7 +34,16 @@ export function SceneCompare({ title, body, after, before }: Props) {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <div className="compare-frame rise col-span-4 row-start-1 row-span-6">{big.visual}</div>
+      <div className="compare-frame rise col-span-4 row-start-1 row-span-6">
+        {big.visual}
+
+        {/* 큰 자리에 지금 무엇이 있는지, 그 위에 얹어 설명합니다. */}
+        <div className="compare-caption">
+          <span className="card-index">{big.label}</span>
+          <h3 className="type-title">{big.name}</h3>
+          <p className="type-body">{big.parts}</p>
+        </div>
+      </div>
 
       <h2
         className="type-display compare-headline rise col-span-3 col-start-6 row-start-1 row-span-2"
@@ -46,28 +53,17 @@ export function SceneCompare({ title, body, after, before }: Props) {
       </h2>
 
       <div
-        className="type-body rise col-span-3 col-start-6 row-start-3 row-span-2"
+        className="type-body compare-body rise col-span-3 col-start-6 row-start-3 row-span-2"
         style={{ "--delay": "0.18s" } as CSSProperties}
       >
         {body}
-      </div>
-
-      {/* 큰 자리에 지금 무엇이 있는지 설명합니다. */}
-      <div
-        className="compare-caption rise col-start-5 col-span-2 row-start-5 row-span-2"
-        style={{ "--delay": "0.26s" } as CSSProperties}
-      >
-        <span className="card-index">{big.label}</span>
-        <h3 className="type-title">{big.name}</h3>
-        <p className="type-body">{big.parts}</p>
-        <p className="type-body compare-note">{big.note}</p>
       </div>
 
       {/* 누르면 큰 자리와 맞바꿉니다. */}
       <button
         type="button"
         className="compare-swap rise col-start-7 col-span-2 row-start-5 row-span-2"
-        style={{ "--delay": "0.32s" } as CSSProperties}
+        style={{ "--delay": "0.26s" } as CSSProperties}
         onClick={() => setShowing(showing === "after" ? "before" : "after")}
       >
         <span className="compare-frame">{small.visual}</span>

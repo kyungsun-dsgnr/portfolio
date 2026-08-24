@@ -91,14 +91,12 @@ export default function Home() {
                 label: "After",
                 name: "Globe-based Store Exploration",
                 parts: "지구본 / 도시 핀 / 선택 스토어 카드 / 줌인 흐름",
-                note: "평면적인 선택 흐름을 익숙한 공간 탐색 행동으로 바꿉니다.",
                 visual: null,
               }}
               before={{
                 label: "Before",
                 name: "List-based Store Finder",
                 parts: "국가 선택 / 지역 선택 / 매장 목록",
-                note: "목록을 좁혀 가며 읽어야 위치를 알 수 있습니다.",
                 visual: null,
               }}
             />

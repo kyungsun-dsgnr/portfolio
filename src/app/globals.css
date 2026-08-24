@@ -54,6 +54,13 @@
   /* 조명 밝기 0~1. <LightStage> 가 실제 값을 덮어씁니다. */
   --light: 0;
 
+  /* ── 등장 속도 ─────────────────────────────────
+     떠오르는 데 걸리는 시간과, 요소 사이 시차의 배수입니다.
+     --delay 는 컴포넌트마다 다르지만 전부 이 배수를 거칩니다. */
+  --reveal-time: 1.05s;
+  --word-time: 0.7s;
+  --stagger: 1.35;
+
   /* ── 타입 스케일 ───────────────────────────────
      디자인 px 에 --u 를 곱한 값입니다. 크기는 여기서만 고칩니다. */
   --type-display: calc(64 * var(--u));
@@ -186,8 +193,8 @@
   }
 
   .statement[data-visible] .word {
-    animation: word-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: var(--delay, 0s);
+    animation: word-in var(--word-time) cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--delay, 0s) * var(--stagger));
   }
 
   /* ── 스크롤 유도 ───────────────────────────────
@@ -207,7 +214,7 @@
   }
 
   .statement[data-visible] .scroll-cue {
-    animation: cue-in 0.6s ease 1.3s both;
+    animation: cue-in 0.6s ease 1.7s both;
   }
 
   .scroll-cue-mouse {
@@ -232,7 +239,7 @@
   }
 
   .statement[data-visible] .scroll-cue-dot {
-    animation: cue-wheel 1.8s cubic-bezier(0.4, 0, 0.2, 1) 1.6s infinite;
+    animation: cue-wheel 1.8s cubic-bezier(0.4, 0, 0.2, 1) 2s infinite;
   }
 
   /* 꼬리 없는 아래 화살표. 정사각형의 두 변만 남기고 45° 돌린 것입니다. */
@@ -248,7 +255,7 @@
 
   /* rotate 와 translate 는 따로 쌓이므로 회전은 그대로 두고 위치만 움직입니다. */
   .statement[data-visible] .scroll-cue-chevron {
-    animation: cue-arrow 1.8s ease-in-out 1.75s infinite;
+    animation: cue-arrow 1.8s ease-in-out 2.15s infinite;
   }
 
   /* ── 타입 ──────────────────────────────────────
@@ -557,15 +564,15 @@
 
   /* 자손까지 걸리게 둡니다. 카드처럼 한 단계 감싸인 요소도 있습니다. */
   [data-visible] .rise {
-    animation: reveal-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: var(--delay, 0s);
+    animation: reveal-up var(--reveal-time) cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--delay, 0s) * var(--stagger));
   }
 
   /* ── 텍스트 등장 ───────────────────────────────
      불이 켜지듯 아래에서 차례로 떠오릅니다. --delay 로 순서를 줍니다. */
   .reveal {
-    animation: reveal-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-    animation-delay: var(--delay, 0s);
+    animation: reveal-up var(--reveal-time) cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(var(--delay, 0s) * var(--stagger));
   }
 
   /* 안내 문구는 천천히 반짝이고, 조명이 켜질수록 물러납니다. */

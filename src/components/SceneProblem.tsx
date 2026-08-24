@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 import { useInView } from "@/components/useInView";
 import { StoreListMock } from "@/components/StoreListMock";
+
+/** 한 칸이 머무는 시간. 아래 진행 막대도 같은 길이로 차오릅니다. */
+const DWELL = 4500;
 
 /** 지금 화면이 하는 일과, 그 위에 더할 것 */
 const POINTS = [
@@ -31,7 +34,26 @@ const POINTS = [
 export function SceneProblem() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
   /** 목업 위의 점과 아래 항목은 번호로 짝지어져 있습니다. */
-  const [picked, setPicked] = useState<string | null>(null);
+  const [picked, setPicked] = useState(POINTS[0].index);
+  const step = POINTS.findIndex((point) => point.index === picked);
+
+  /* 장이 보이는 동안 01 부터 차례로 넘어가고, 벗어나면 01 로 되돌아갑니다.
+     점을 누르면 그 칸부터 다시 셉니다. */
+  useEffect(() => {
+    const first = POINTS[0].index;
+    if (!inView && picked === first) return;
+
+    const id = setTimeout(
+      () =>
+        setPicked((now) => {
+          if (!inView) return first;
+          const at = POINTS.findIndex((point) => point.index === now);
+          return POINTS[(at + 1) % POINTS.length].index;
+        }),
+      inView ? DWELL : 0,
+    );
+    return () => clearTimeout(id);
+  }, [inView, picked]);
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
@@ -50,8 +72,21 @@ export function SceneProblem() {
         <StoreListMock
           dots
           picked={picked}
-          onPick={(key) => setPicked((now) => (now === key ? null : key))}
+          onPick={setPicked}
         />
+
+        <div className="store-scrim" />
+        <div className="store-steps" style={{ "--dwell": `${DWELL}ms` } as CSSProperties}>
+          {POINTS.map((point, i) => (
+            <span
+              key={point.index}
+              className="step"
+              data-state={i < step ? "done" : i === step ? "now" : undefined}
+            >
+              <span className="step-fill" />
+            </span>
+          ))}
+        </div>
       </div>
 
       {POINTS.map((point, i) => (

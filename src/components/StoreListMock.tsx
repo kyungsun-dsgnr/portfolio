@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 /**
  * 젠틀몬스터 스토어 찾기 화면의 목업.
  * 국가 → 지역 → 목록 순으로 좁혀 들어가는 지금의 흐름을 그대로 옮겼습니다.
@@ -124,6 +126,8 @@ type Props = {
 export function StoreListMock({ dots = false, picked = null, onPick }: Props) {
   const located = picked === DOTS.locate.key;
   const zoomed = picked === DOTS.district.key;
+  /** 지도 탭을 켜면 목록 자리에 지도가 들어섭니다. */
+  const mapped = picked === DOTS.map.key;
   /** 현재 위치를 켜기 전에는 지역으로 좁힌 차례, 켜면 거리순입니다. */
   const stores = located ? STORES : BROWSE_ORDER.map((i) => STORES[i]);
 
@@ -182,15 +186,20 @@ export function StoreListMock({ dots = false, picked = null, onPick }: Props) {
       </div>
 
       <div className="store-tabs">
-        <span className="store-tab" data-on>
+        <span className="store-tab" data-on={!mapped || undefined}>
           목록
         </span>
-        <span className="store-tab" data-hot={picked === DOTS.map.key || undefined}>
+        <span className="store-tab" data-on={mapped || undefined} data-hot={mapped || undefined}>
           지도
           {dot("map", true)}
         </span>
       </div>
 
+      {mapped ? (
+        <div className="store-map">
+          <Image src="/images/store-map.png" alt="" fill sizes="25vw" className="object-cover" />
+        </div>
+      ) : (
       <div className="store-list">
         {stores.map((store) => (
           <article className="store-card" key={store.name}>
@@ -213,6 +222,7 @@ export function StoreListMock({ dots = false, picked = null, onPick }: Props) {
           </article>
         ))}
       </div>
+      )}
     </div>
   );
 }

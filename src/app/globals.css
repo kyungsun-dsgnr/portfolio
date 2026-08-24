@@ -661,6 +661,16 @@
   }
 }
 
+/* 지금 칸이 차오르는 동안 */
+@keyframes step-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
 /* 클릭 유도 점에서 번져 나가는 고리 */
 @keyframes dot-pulse {
   0% {
@@ -869,6 +879,9 @@
      프레임보다 길어서 아래쪽은 프레임 밖으로 잘려 나갑니다. */
   .store-panel {
     position: absolute;
+    /* 목업은 그림입니다. 눌리는 건 점뿐이라, 커진 요소나 펼친 목록이
+       다른 점을 덮어도 그 점을 누를 수 있습니다. */
+    pointer-events: none;
     left: 50%;
     top: 0;
     width: calc(332 * var(--u));
@@ -1005,6 +1018,67 @@
     color: #111111;
   }
 
+  /* 지도 탭에서 목록 자리를 대신하는 지도. 목록과 같은 높이를 씁니다. */
+  .store-map {
+    position: relative;
+    height: calc(495.37 * var(--u));
+    width: 100%;
+    overflow: hidden;
+  }
+
+  /* 이 크기에서는 지도 글자와 핀이 너무 작아 한 번 더 당겨 봅니다. */
+  .store-map img {
+    scale: 1.5;
+  }
+
+  /* ── 자동 전환 진행 막대 ───────────────────────
+     목업 아래에 세 칸. 지금 칸이 시간에 맞춰 차오릅니다. */
+  .store-steps {
+    position: absolute;
+    left: 50%;
+    bottom: calc(16 * var(--u));
+    display: flex;
+    width: calc(332 * var(--u));
+    gap: calc(6 * var(--u));
+    margin-left: calc(-166 * var(--u));
+    padding: 0 calc(32 * var(--u));
+  }
+
+  /* 막대 뒤를 아래로 갈수록 하얗게 덮어 화면과 겹쳐 보이지 않게 합니다. */
+  .store-scrim {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    height: calc(140 * var(--u));
+    width: calc(332 * var(--u));
+    margin-left: calc(-166 * var(--u));
+    background: linear-gradient(to bottom, rgb(255 255 255 / 0), #ffffff 72%);
+  }
+
+  .step {
+    height: calc(3 * var(--u));
+    flex: 1 1 0;
+    overflow: hidden;
+    background: rgb(25 25 25 / 0.15);
+  }
+
+  .step-fill {
+    display: block;
+    height: 100%;
+    background: var(--fg);
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  /* 지나온 칸은 채운 채로 둡니다. */
+  .step[data-state="done"] .step-fill {
+    transform: scaleX(1);
+  }
+
+  .step[data-state="now"] .step-fill {
+    animation: step-fill var(--dwell) linear forwards;
+  }
+
   /* 매장 카드 목록 */
   .store-list {
     display: flex;
@@ -1124,6 +1198,7 @@
     border-radius: 50%;
     background: var(--fg);
     cursor: pointer;
+    pointer-events: auto;
   }
 
   /* 좁은 요소에서는 글자를 덮지 않도록 오른쪽 끝으로 비켜섭니다. */

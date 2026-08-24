@@ -81,7 +81,7 @@ export function SceneWork() {
       </h2>
 
       <p
-        className="type-body rise col-span-3 col-start-6 row-start-1 row-span-2"
+        className="type-body rise col-span-2 col-start-7 row-start-1 row-span-2"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
         하나의 UX 관점에서 출발한 세 가지 실험입니다.

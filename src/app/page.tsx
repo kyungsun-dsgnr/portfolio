@@ -3,6 +3,7 @@ import { LightStage } from "@/components/LightStage";
 import { SceneCase } from "@/components/SceneCase";
 import { SceneCompare } from "@/components/SceneCompare";
 import { SceneIntro } from "@/components/SceneIntro";
+import { SceneProblem } from "@/components/SceneProblem";
 import { ScenePerspective } from "@/components/ScenePerspective";
 import { ScenePrinciples } from "@/components/ScenePrinciples";
 import { SceneStatement } from "@/components/SceneStatement";
@@ -67,6 +68,7 @@ export default function Home() {
             />
           ),
         },
+        { id: "gentle-monster-problem", node: <SceneProblem /> },
         {
           id: "gentle-monster-compare",
           node: (

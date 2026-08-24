@@ -434,8 +434,16 @@
   /* 번호는 제목·설명 묶음에서 한 단 떨어뜨립니다.
      비포/애프터 장의 설명도 같은 간격을 씁니다. */
   .work-head .card-index,
-  .compare-caption .card-index {
+  .compare-caption .card-index,
+  .issue .card-index {
     margin-bottom: calc(8 * var(--u));
+  }
+
+  /* 문제를 짚는 항목. 번호 → 제목 → 설명 순서는 다른 장과 같습니다. */
+  .issue {
+    display: flex;
+    flex-direction: column;
+    gap: calc(8 * var(--u));
   }
 
   .work-visual {

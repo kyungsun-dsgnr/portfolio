@@ -754,3 +754,13 @@
     pointer-events: none;
   }
 }
+
+@layer components {
+  /* 비포/애프터 장의 두 이미지 자리. 크기 차이가 곧 주장입니다. */
+  .compare-after,
+  .compare-before {
+    position: relative;
+    overflow: hidden;
+    background: var(--placeholder);
+  }
+}

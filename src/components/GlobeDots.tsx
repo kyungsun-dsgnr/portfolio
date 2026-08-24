@@ -219,8 +219,8 @@ export function GlobeDots({ interactive = true }: Props) {
       ctx!.translate(width / 2, height / 2 + radius * 1.05);
       ctx!.scale(1, 0.12);
       const glow = ctx!.createRadialGradient(0, 0, 0, 0, 0, shade);
-      glow.addColorStop(0, "rgba(25, 25, 25, 0.06)");
-      glow.addColorStop(0.5, "rgba(25, 25, 25, 0.025)");
+      glow.addColorStop(0, "rgba(25, 25, 25, 0.005)");
+      glow.addColorStop(0.5, "rgba(25, 25, 25, 0.002)");
       glow.addColorStop(1, "rgba(25, 25, 25, 0)");
       ctx!.fillStyle = glow;
       ctx!.beginPath();
@@ -231,7 +231,7 @@ export function GlobeDots({ interactive = true }: Props) {
       // 페이지 바탕과 구분되도록 지구본 원 안쪽만 흰색으로 깝니다.
       ctx!.beginPath();
       path(sphere);
-      ctx!.fillStyle = "#ffffff";
+      ctx!.fillStyle = "#ffffff7f";
       ctx!.fill();
 
       const center: [number, number] = [

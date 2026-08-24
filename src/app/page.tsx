@@ -1,6 +1,7 @@
 import { GlobeDots } from "@/components/GlobeDots";
 import { LightStage } from "@/components/LightStage";
 import { SceneCase } from "@/components/SceneCase";
+import { SceneCompare } from "@/components/SceneCompare";
 import { SceneIntro } from "@/components/SceneIntro";
 import { ScenePerspective } from "@/components/ScenePerspective";
 import { ScenePrinciples } from "@/components/ScenePrinciples";
@@ -63,6 +64,32 @@ export default function Home() {
                   <img className="globe-glasses" src="/images/glasses.png" alt="" />
                 </div>
               }
+            />
+          ),
+        },
+        {
+          id: "gentle-monster-compare",
+          node: (
+            <SceneCompare
+              title={
+                <>
+                  From Filter
+                  <br />
+                  To Globe
+                </>
+              }
+              body={
+                <>
+                  기존 스토어 찾기는 국가를 고르고, 지역을 고르고, 목록을 읽는
+                  순서였습니다.
+                  <br />
+                  <br />
+                  지구본은 그 세 단계를 한 번의 손짓으로 대체합니다. 돌리고, 멈추고,
+                  도시를 집으면 됩니다.
+                </>
+              }
+              after={null}
+              before={null}
             />
           ),
         },

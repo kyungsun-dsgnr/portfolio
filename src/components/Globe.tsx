@@ -183,10 +183,15 @@ export function Globe() {
   }
 
   function pointerDown(event: React.PointerEvent<HTMLCanvasElement>) {
-    event.currentTarget.setPointerCapture(event.pointerId);
+    // 포인터 캡처가 실패해도 드래그 상태는 어긋나지 않게 먼저 세웁니다.
     dragging.current = true;
     last.current = [event.clientX, event.clientY];
     velocity.current = [0, 0];
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch {
+      // 이미 놓친 포인터면 캡처할 것이 없습니다.
+    }
   }
 
   function pointerMove(event: React.PointerEvent<HTMLCanvasElement>) {
@@ -226,8 +231,12 @@ export function Globe() {
   }
 
   function pointerUp(event: React.PointerEvent<HTMLCanvasElement>) {
-    event.currentTarget.releasePointerCapture(event.pointerId);
     dragging.current = false;
+    try {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    } catch {
+      // 캡처가 없었으면 놓을 것도 없습니다.
+    }
   }
 
   const store = active === null ? null : STORES[active];

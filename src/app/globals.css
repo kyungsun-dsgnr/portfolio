@@ -72,6 +72,12 @@
   --type-body: calc(16 * var(--u));
 
   /* ── 색 ─────────────────────────────────────── */
+  /* 목업 안 글자. 실제 스토어 화면이 쓰는 이름을 그대로 적었습니다.
+     앞의 셋은 이 프로젝트에 파일이 없어 결국 시스템 고딕으로 떨어집니다. */
+  --font-store:
+    __gentleSansRegularKo_ca70b3, __gentleSansRegularKo_Fallback_ca70b3,
+    "Sandoll GothicNeo1 Md", Arial, sans-serif;
+
   --bg: #fafafa;
   --fg: #191919;
   /* 본문. 제목보다 한 톤 눌러 읽습니다. */
@@ -935,7 +941,7 @@
     padding: calc(21.08 * var(--u)) 0 calc(28.11 * var(--u));
     background: #f3f4f6;
     color: #111111;
-    font-family: var(--font-body);
+    font-family: var(--font-store);
     font-weight: 400;
   }
 
@@ -969,18 +975,68 @@
   }
 
   /* 선택 상자 두 개 대신 지금 보고 있는 범위를 한 줄로 적습니다. */
+  .globe-scope-wrap {
+    position: relative;
+    margin: calc(14.05 * var(--u)) calc(21.08 * var(--u)) 0;
+  }
+
   .globe-scope {
     display: flex;
     align-items: center;
     gap: calc(2 * var(--u));
-    margin: calc(14.05 * var(--u)) calc(21.08 * var(--u)) 0;
     font-size: calc(10.54 * var(--u));
     font-weight: 300;
     line-height: 1.416;
+    cursor: pointer;
   }
 
   .globe-scope .store-icon {
     flex: none;
+    transition: rotate 240ms ease;
+  }
+
+  .globe-scope[data-open] .store-icon {
+    rotate: 180deg;
+  }
+
+  /* 눌러서 여는 지역 목록 */
+  .globe-scope-list {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 6 * var(--u));
+    z-index: 2;
+    display: flex;
+    width: calc(120 * var(--u));
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: calc(7.03 * var(--u));
+    outline: calc(0.88 * var(--u)) solid #d8d8d8;
+    outline-offset: calc(-0.88 * var(--u));
+    background: #ffffff;
+    animation: soft-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .globe-scope-item {
+    padding: calc(9 * var(--u)) calc(12 * var(--u));
+    color: #858585;
+    font-size: calc(10.54 * var(--u));
+    font-weight: 300;
+    line-height: 1.416;
+    text-align: left;
+    cursor: pointer;
+    transition: background 180ms ease;
+  }
+
+  .globe-scope-item + .globe-scope-item {
+    border-top: calc(0.88 * var(--u)) solid #ececec;
+  }
+
+  .globe-scope-item[data-on] {
+    color: #111111;
+  }
+
+  .globe-scope-item:hover {
+    background: #f7f7f7;
   }
 
   /* 지구본과 지도가 놓이는 자리. 화면 폭을 꽉 채웁니다. */
@@ -995,7 +1051,7 @@
   .globe-stage .globe-badge {
     gap: calc(4 * var(--u));
     padding: calc(4 * var(--u)) calc(8 * var(--u));
-    font-family: var(--font-body);
+    font-family: var(--font-store);
     font-size: calc(8.78 * var(--u));
     font-weight: 400;
     letter-spacing: normal;
@@ -1032,8 +1088,8 @@
   .globe-list {
     display: flex;
     flex-direction: column;
-    gap: calc(21.08 * var(--u));
-    margin: calc(21.08 * var(--u)) calc(10.54 * var(--u)) 0;
+    gap: calc(10.54 * var(--u));
+    margin: calc(14.05 * var(--u)) calc(10.54 * var(--u)) 0;
   }
 
   .globe-list .store-card {
@@ -1065,7 +1121,7 @@
     margin-left: calc(-166 * var(--u));
     background: #f3f4f6;
     color: #111111;
-    font-family: var(--font-body);
+    font-family: var(--font-store);
     font-weight: 400;
   }
 

@@ -671,6 +671,13 @@
   }
 }
 
+/* 잇는 선이 그어지는 동안 */
+@keyframes link-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 /* 화면이 바뀔 때 한 번 */
 @keyframes soft-in {
   from {
@@ -1379,32 +1386,62 @@
     z-index: 1;
   }
 
-  /* 좁은 요소에서는 글자를 덮지 않도록 왼쪽 바깥으로 나섭니다.
+  /* 좁은 요소에서는 글자를 덮지 않도록 옆으로 비켜섭니다.
      여백 자리만 살짝 물고 글자에는 닿지 않습니다. */
-  .store-dot-side {
+  .store-dot-left {
     left: auto;
     right: calc(100% - 6 * var(--u));
+    translate: 0 -50%;
+  }
+
+  /* 탭은 둘이 나란해서, 왼쪽에 두면 어느 탭을 가리키는지 흐려집니다. */
+  .store-dot-right {
+    left: auto;
+    right: calc(-8 * var(--u));
     translate: 0 -50%;
   }
 
   /* 점을 고르면 짝이 되는 항목만 남고 나머지 항목은 물러납니다.
      목업은 그대로 둡니다. 등장 애니메이션이 항목의 opacity 를 붙잡고 있어
      (fill-mode: both) 흐려지는 건 안쪽 요소에 겁니다. */
-  /* 고른 항목은 목업 쪽으로 한 단 당겨 와 짝이 눈에 붙습니다.
-     등장 애니메이션이 항목의 translate 를 붙잡고 있어(fill-mode: both)
-     흐려지는 것도 움직이는 것도 안쪽 요소에 겁니다. */
+  /* 점을 고르면 짝이 되는 항목만 남고 나머지 항목은 물러납니다.
+     등장 애니메이션이 항목의 opacity 를 붙잡고 있어(fill-mode: both)
+     흐려지는 건 안쪽 요소에 겁니다. */
   .issue > * {
-    transition:
-      opacity 0.5s ease,
-      translate 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 0.5s ease;
   }
 
   .issue[data-dim] > * {
     opacity: 0.18;
   }
 
-  .issue:not([data-dim]) > * {
-    translate: calc(var(--shift, 0) * var(--u));
+  /* 고른 항목과 그 점을 잇는 점선. 두 번 꺾여 들어갑니다. */
+  .link {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    /* svg 는 고유 크기(300×150)를 가진 요소라 inset 만으로는 늘어나지 않습니다.
+       마스크가 뷰포트를 기준으로 잘리므로 크기를 분명히 줘야 합니다. */
+    height: 100%;
+    width: 100%;
+    overflow: visible;
+    fill: none;
+    pointer-events: none;
+  }
+
+  .link-dash {
+    stroke: rgb(25 25 25 / 0.22);
+    stroke-width: 0.5;
+    stroke-dasharray: 2 3;
+  }
+
+  /* 글이 다 뜬 뒤에 점에서 항목 쪽으로 열립니다. */
+  .link-reveal {
+    stroke: #ffffff;
+    stroke-width: 3;
+    stroke-dasharray: var(--len);
+    stroke-dashoffset: var(--len);
+    animation: link-draw 760ms cubic-bezier(0.33, 1, 0.68, 1) 460ms both;
   }
 
   /* 천천히 번져 나가는 고리 */

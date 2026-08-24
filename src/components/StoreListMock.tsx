@@ -171,6 +171,8 @@ type Props = {
   /** 0 은 막 고른 참, 1 은 그다음에 이어지는 동작입니다. */
   phase?: number;
   onPick?: (key: string) => void;
+  /** 점과 항목을 선으로 이으려면 점의 자리를 밖에서 알아야 합니다. */
+  dotRef?: (key: string, el: HTMLButtonElement | null) => void;
 };
 
 export function StoreListMock({
@@ -178,6 +180,7 @@ export function StoreListMock({
   picked = null,
   phase = 0,
   onPick,
+  dotRef,
 }: Props) {
   const located = picked === DOTS.locate.key;
   const zoomed = picked === DOTS.district.key;
@@ -196,17 +199,18 @@ export function StoreListMock({
       ? STORES
       : BROWSE_ORDER.map((i) => STORES[i]);
 
-  /** 점 하나. 좁은 자리에서는 글자를 피해 오른쪽으로 비켜 놓습니다. */
-  const dot = (of: keyof typeof DOTS, side = false) => {
+  /** 점 하나. 좁은 자리에서는 글자를 피해 옆으로 비켜 놓습니다. */
+  const dot = (of: keyof typeof DOTS, at: "center" | "left" | "right" = "center") => {
     if (!dots) return null;
     const { key, label } = DOTS[of];
     return (
       <button
         type="button"
+        ref={(el) => dotRef?.(key, el)}
         aria-label={label}
         aria-pressed={picked === key}
         onClick={() => onPick?.(key)}
-        className={`store-dot${side ? " store-dot-side" : ""}`}
+        className={`store-dot${at === "center" ? "" : ` store-dot-${at}`}`}
       >
         <span>{key}</span>
       </button>
@@ -233,7 +237,7 @@ export function StoreListMock({
             <span className="store-select-label">시/군/구</span>
             <span className="store-select-value">{repicked ? "서울" : "경기"}</span>
             <ChevronIcon />
-            {dot("district")}
+            {dot("district", "right")}
             {zoomed && !repicked && (
               <div className="store-open-list">
                 {DISTRICTS.map((name) => (
@@ -253,7 +257,7 @@ export function StoreListMock({
         <p className="store-locate" data-hot={located || undefined}>
           <LocateIcon />
           현재 위치 사용
-          {dot("locate", true)}
+          {dot("locate", "left")}
         </p>
       </div>
 
@@ -263,7 +267,7 @@ export function StoreListMock({
         </span>
         <span className="store-tab" data-on={mapped || undefined} data-hot={mapped || undefined}>
           지도
-          {dot("map", true)}
+          {dot("map", "right")}
         </span>
       </div>
 

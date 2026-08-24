@@ -59,6 +59,7 @@ export default function Home() {
             />
           ),
         },
+        /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.
         {
           id: "gentle-monster-2",
           node: (
@@ -77,7 +78,8 @@ export default function Home() {
               visual={<GlobeDots />}
             />
           ),
-        },
+        }
+        */
       ]}
     />
   );

@@ -557,11 +557,6 @@
     margin-top: calc(22 * var(--u));
   }
 
-  /* 문단 여럿짜리 노트. 첫 줄은 행 선에 맞추고 문단 사이만 한 줄 띄웁니다. */
-  .note-block > .type-body + .type-body {
-    margin-top: calc(22 * var(--u));
-  }
-
   /* 섹션이 화면에 들어오면 떠오릅니다. 섹션을 벗어나면 다시 숨습니다. */
   .rise {
     opacity: 0;
@@ -837,8 +832,9 @@
     text-transform: uppercase;
   }
 
-  /* 화면 이름은 다른 장 카드 제목보다 한 단계 큽니다. */
-  .compare-caption .type-title {
+  /* 화면 이름과 항목 제목은 다른 장 카드 제목보다 한 단계 큽니다. */
+  .compare-caption .type-title,
+  .issue .type-title {
     font-size: calc(24 * var(--u));
   }
 
@@ -868,6 +864,11 @@
   .store-slot {
     position: relative;
     overflow: hidden;
+  }
+
+  /* 이 목업은 장 안에서 아래로 내려 앉고, 아래쪽은 잘려 나갑니다. */
+  .store-slot .store-panel {
+    top: calc(124 * var(--u));
   }
 
   .compare-big .store-panel {

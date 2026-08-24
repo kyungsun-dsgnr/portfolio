@@ -76,16 +76,15 @@ export function SceneWork() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-display rise col-span-4 row-start-1 row-span-2">
+      <h2 className="type-display rise col-span-3 row-start-1 row-span-2">
         Three Directions
       </h2>
 
       <p
-        className="type-body rise col-span-2 col-start-7 row-start-1 row-span-2"
+        className="type-body rise col-span-4 col-start-5 row-start-1 row-span-2"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
         하나의 UX 관점에서 출발한 세 가지 실험입니다.
-        <br />
         <br />
         익숙한 감각과 행동의 기억을 각각 탐색, 선택, 구성의 디지털 경험으로 확장했습니다.
       </p>

@@ -1,4 +1,5 @@
 import { LightStage } from "@/components/LightStage";
+import { Globe } from "@/components/Globe";
 import { SceneCase } from "@/components/SceneCase";
 import { SceneIntro } from "@/components/SceneIntro";
 import { ScenePerspective } from "@/components/ScenePerspective";
@@ -54,6 +55,7 @@ export default function Home() {
                   스토어를 탐색하는 디지털 경험을 설계합니다.
                 </>
               }
+              visual={<Globe />}
             />
           ),
         },

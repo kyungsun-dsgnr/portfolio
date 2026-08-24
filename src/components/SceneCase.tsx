@@ -11,10 +11,12 @@ type Props = {
   /** 브랜드 로고. 원본이 333×110(2칼럼 × 1행)에 맞춰 그려져 있습니다. */
   logo?: { src: string; alt: string };
   body: ReactNode;
+  /** 우측을 채울 것. 없으면 회색 자리로 둡니다. */
+  visual?: ReactNode;
 };
 
 /** 케이스 한 장 — 좌측에 제목·로고·설명, 우측에 큰 비주얼 */
-export function SceneCase({ title, logo, body }: Props) {
+export function SceneCase({ title, logo, body, visual }: Props) {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
 
   return (
@@ -37,11 +39,12 @@ export function SceneCase({ title, logo, body }: Props) {
         {body}
       </p>
 
-      {/* 작업 이미지 자리 */}
       <div
-        className="rise col-span-4 col-start-5 row-start-1 row-span-6 bg-[var(--placeholder)]"
+        className="rise col-span-4 col-start-5 row-start-1 row-span-6"
         style={{ "--delay": "0.22s" } as CSSProperties}
-      />
+      >
+        {visual ?? <div className="h-full w-full bg-[var(--placeholder)]" />}
+      </div>
     </div>
   );
 }

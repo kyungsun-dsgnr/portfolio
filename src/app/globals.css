@@ -658,3 +658,57 @@
     opacity: 0.8;
   }
 }
+
+@layer components {
+  /* ── 지구본 ────────────────────────────────────
+     정사영으로 그린 선 지도. 끌어서 돌리고, 놓으면 관성으로 이어집니다. */
+  .globe {
+    position: relative;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .globe-canvas {
+    height: 100%;
+    width: 100%;
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .globe-canvas:active {
+    cursor: grabbing;
+  }
+
+  /* 집은 매장 이름. 지구본 아래에 조용히 놓입니다. */
+  .globe-readout {
+    position: absolute;
+    right: 0;
+    bottom: calc(8 * var(--u));
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: calc(4 * var(--u));
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .globe-city {
+    font-family: var(--font-display);
+    font-size: calc(20 * var(--u));
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+  }
+
+  .globe-name {
+    font-family: var(--font-body);
+    font-size: calc(13 * var(--u));
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    color: var(--fg-soft);
+  }
+}

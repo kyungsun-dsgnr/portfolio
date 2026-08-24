@@ -786,6 +786,7 @@
   .compare-body {
     font-size: calc(20 * var(--u));
     color: var(--fg);
+    text-align: right;
   }
 
   /* 큰 이미지 좌측 상단에 얹히는 설명 */

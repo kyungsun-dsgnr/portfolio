@@ -453,6 +453,12 @@
     gap: calc(8 * var(--u));
   }
 
+  /* 마지막 항목은 한 행보다 길어 두 행을 잡고 아래 여백 선에 바닥을 맞춥니다.
+     한 행에 두면 행이 늘어나 다른 행까지 밀립니다(1fr 은 최소가 auto). */
+  .issue-low {
+    align-self: end;
+  }
+
   .work-visual {
     position: relative;
     flex: 1 1 0;

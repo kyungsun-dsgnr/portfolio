@@ -10,20 +10,20 @@ const POINTS = [
   {
     index: "01",
     title: "Functional Search",
-    body: "현재 위치 기반으로 가까운 매장을 빠르게 찾을 수 있습니다.",
+    body: "현재 위치와 선택한 지역을 기준으로 가까운 매장을 빠르게 찾을 수 있습니다.",
     place: "col-start-1 col-span-2 row-start-4 row-span-2",
   },
   {
     index: "02",
-    title: "Global Presence",
-    body: "전 세계 도시의 스토어를 함께 보여주면 브랜드의 확장성과 존재감을 더 쉽게 인식할 수 있습니다.",
+    title: "Local Context",
+    body: "탐색은 접속 국가와 현재 위치를 중심으로 시작되어, 가까운 지역의 매장 정보에 집중됩니다.",
     place: "col-start-7 col-span-2 row-start-3 row-span-2",
   },
   {
     index: "03",
-    title: "Exploratory Entry",
-    body: "목록에 들어가기 전, 지구본을 돌려 도시를 발견하는 진입은 탐색의 감각을 더합니다.",
-    place: "col-start-7 col-span-2 row-start-6",
+    title: "Limited Global View",
+    body: "각 매장은 개별 정보로 확인되지만, 전 세계 여러 도시와 연결된 브랜드의 확장감은 한눈에 드러나지 않습니다.",
+    place: "col-start-7 col-span-2 row-start-5 row-span-2 issue-low",
   },
 ];
 

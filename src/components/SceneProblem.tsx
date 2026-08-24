@@ -19,18 +19,22 @@ const POINTS = [
     title: "Functional Search",
     body: "현재 위치와 선택한 지역을 기준으로 가까운 매장을 빠르게 찾을 수 있습니다.",
     place: "col-start-1 col-span-2 row-start-4 row-span-2",
+    /* 고르면 목업 쪽으로 한 단(158.5 + 간격 16) 옮겨 옵니다. */
+    shift: 174.5,
   },
   {
     index: "02",
     title: "Local Context",
     body: "탐색은 접속 국가와 현재 위치를 중심으로 시작되어, 가까운 지역의 매장 정보에 집중됩니다.",
     place: "col-start-7 col-span-2 row-start-3 row-span-2",
+    shift: -174.5,
   },
   {
     index: "03",
     title: "Limited Global View",
     body: "각 매장은 개별 정보로 확인되지만, 전 세계 여러 도시와 연결된 브랜드의 확장감은 한눈에 드러나지 않습니다.",
     place: "col-start-7 col-span-2 row-start-5 row-span-2 issue-low",
+    shift: -174.5,
   },
 ];
 
@@ -111,7 +115,12 @@ export function SceneProblem() {
           key={point.index}
           className={`issue rise ${point.place}`}
           data-dim={picked && picked !== point.index ? true : undefined}
-          style={{ "--delay": `${0.18 + i * 0.08}s` } as CSSProperties}
+          style={
+            {
+              "--delay": `${0.18 + i * 0.08}s`,
+              "--shift": point.shift,
+            } as CSSProperties
+          }
         >
           <span className="card-index">{point.index}</span>
           <h3 className="type-title">{point.title}</h3>

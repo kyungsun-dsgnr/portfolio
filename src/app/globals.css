@@ -1067,18 +1067,19 @@
     overflow: hidden;
   }
 
-  /* 이 크기에서는 지도 글자와 핀이 너무 작아 한 번 더 당겨 봅니다. */
+  /* 이미 좁혀 찍은 지도라 살짝만 더 당기고, 고른 핀이 위쪽에 오도록 끌어올립니다. */
   .store-map img {
-    scale: 1.5;
+    scale: 1.35;
+    translate: 0 calc(-86 * var(--u));
   }
 
   /* 눌린 핀. 지도 이미지 안 핀 자리에 맞춰 테를 두릅니다. */
   .store-pin {
     position: absolute;
-    left: calc(197.4 * var(--u));
-    top: calc(128.9 * var(--u));
-    height: calc(30 * var(--u));
-    width: calc(30 * var(--u));
+    left: calc(160.3 * var(--u));
+    top: calc(147.1 * var(--u));
+    height: calc(27 * var(--u));
+    width: calc(27 * var(--u));
     border-radius: 50%;
     outline: calc(3 * var(--u)) solid rgb(25 25 25 / 0.28);
     outline-offset: calc(3 * var(--u));
@@ -1089,7 +1090,7 @@
   .store-tip {
     position: absolute;
     left: calc(16 * var(--u));
-    top: calc(190 * var(--u));
+    top: calc(186 * var(--u));
     display: flex;
     width: calc(300 * var(--u));
     flex-direction: column;
@@ -1389,12 +1390,21 @@
   /* 점을 고르면 짝이 되는 항목만 남고 나머지 항목은 물러납니다.
      목업은 그대로 둡니다. 등장 애니메이션이 항목의 opacity 를 붙잡고 있어
      (fill-mode: both) 흐려지는 건 안쪽 요소에 겁니다. */
+  /* 고른 항목은 목업 쪽으로 한 단 당겨 와 짝이 눈에 붙습니다.
+     등장 애니메이션이 항목의 translate 를 붙잡고 있어(fill-mode: both)
+     흐려지는 것도 움직이는 것도 안쪽 요소에 겁니다. */
   .issue > * {
-    transition: opacity 0.5s ease;
+    transition:
+      opacity 0.5s ease,
+      translate 0.6s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .issue[data-dim] > * {
     opacity: 0.18;
+  }
+
+  .issue:not([data-dim]) > * {
+    translate: calc(var(--shift, 0) * var(--u));
   }
 
   /* 천천히 번져 나가는 고리 */

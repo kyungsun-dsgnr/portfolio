@@ -27,15 +27,18 @@ const HIT_RADIUS = 14;
 /** 점 격자의 위도 간격(도). 작을수록 촘촘합니다. */
 const LAT_STEP = 1.5;
 
-/** 매장이 있는 나라와, 그 나라를 대표해 이름표를 다는 좌표.
-    한 나라에 여러 매장이 있으면 대표 매장 자리에 답니다. */
-const COUNTRIES = (() => {
-  const seen = new Map<string, [number, number]>();
-  for (const store of STORES) {
-    if (!seen.has(store.country) || store.flagship) seen.set(store.country, store.at);
-  }
-  return [...seen].map(([country, at]) => ({ country, at }));
-})();
+/** 늘 이름표를 다는 도시. 대륙마다 하나씩 골라 이름표가 서로 겹치지 않게 둡니다. */
+const TAGGED = [
+  "Seoul",
+  "Los Angeles",
+  "Sydney",
+  "Kuala Lumpur",
+  "Milan",
+  "Dubai",
+];
+const COUNTRIES = TAGGED.map(
+  (city) => STORES.find((store) => store.city === city)!,
+);
 
 /** 지구본에 찍히는 점 하나. home 은 매장이 있는 나라인지. */
 type Dot = { at: [number, number]; home: boolean };
@@ -338,7 +341,8 @@ export function GlobeDots({ interactive = true, labels = false }: Props) {
             return;
           }
           delete tag.dataset.off;
-          tag.style.translate = `calc(${point[0]}px - 50%) calc(${point[1]}px - ${12 * unit}px - 100%)`;
+          // 호버 뱃지와 같은 자리 — 점 오른쪽으로 펼칩니다.
+          tag.style.translate = `calc(${point[0]}px + ${HIT_RADIUS}px) calc(${point[1]}px - 50%)`;
         });
       }
 
@@ -468,15 +472,18 @@ export function GlobeDots({ interactive = true, labels = false }: Props) {
       {labels &&
         COUNTRIES.map((entry, i) => (
           <div
-            key={entry.country}
+            key={entry.city}
             ref={(el) => {
               tagRefs.current[i] = el;
             }}
-            className="globe-tag"
+            className="globe-badge globe-tag"
+            data-on=""
             data-off=""
             aria-hidden
           >
-            {entry.country}
+            <span>{entry.country}</span>
+            <span className="globe-badge-divider">|</span>
+            <span>{entry.city}</span>
           </div>
         ))}
 

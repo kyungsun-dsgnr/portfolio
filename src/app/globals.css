@@ -661,13 +661,15 @@
   }
 }
 
-/* 지금 칸이 차오르는 동안 */
-@keyframes step-fill {
+/* 핀과 그 아래 카드가 떠오릅니다 */
+@keyframes tip-in {
   from {
-    transform: scaleX(0);
+    opacity: 0;
+    translate: 0 calc(8 * var(--u));
   }
   to {
-    transform: scaleX(1);
+    opacity: 1;
+    translate: 0 0;
   }
 }
 
@@ -776,29 +778,11 @@
     clip-path: inset(0 0 0 0 round 999px);
   }
 
-  /* 매장 보유국마다 늘 떠 있는 이름표. 점 바로 위에 놓입니다. */
-  .globe-tag {
-    position: absolute;
-    left: 0;
-    top: 0;
-    padding: calc(4 * var(--u)) calc(9 * var(--u));
-    border-radius: 999px;
-    background: var(--fg);
-    color: var(--bg);
-    font-family: var(--font-display);
-    font-size: calc(9 * var(--u));
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    pointer-events: none;
-    transition: opacity 260ms ease;
-  }
-
-  /* 지구 뒤로 넘어간 나라 */
+  /* 매장 보유국마다 늘 떠 있는 이름표. 호버 뱃지와 같은 모양이고,
+     지구 뒤로 넘어간 나라만 접힙니다. */
   .globe-tag[data-off] {
     opacity: 0;
+    clip-path: inset(0 100% 0 0 round 999px);
   }
 }
 
@@ -1056,60 +1040,104 @@
     scale: 1.5;
   }
 
-  /* ── 자동 전환 진행 막대 ───────────────────────
-     목업 아래에 세 칸. 지금 칸이 시간에 맞춰 차오릅니다. */
-  .store-steps {
+  /* 눌린 핀. 지도 이미지 안 핀 자리에 맞춰 테를 두릅니다. */
+  .store-pin {
     position: absolute;
-    left: 50%;
-    bottom: calc(16 * var(--u));
+    left: calc(197.4 * var(--u));
+    top: calc(128.9 * var(--u));
+    height: calc(30 * var(--u));
+    width: calc(30 * var(--u));
+    border-radius: 50%;
+    outline: calc(3 * var(--u)) solid rgb(25 25 25 / 0.28);
+    outline-offset: calc(3 * var(--u));
+    animation: tip-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* 누른 핀 아래로 뜨는 매장 카드. 목업이 아니라 실제 화면 크기를 씁니다. */
+  .store-tip {
+    position: absolute;
+    left: calc(16 * var(--u));
+    top: calc(190 * var(--u));
     display: flex;
-    width: calc(332 * var(--u));
-    gap: calc(6 * var(--u));
-    margin-left: calc(-166 * var(--u));
-    padding: 0 calc(32 * var(--u));
+    width: calc(300 * var(--u));
+    flex-direction: column;
+    gap: calc(4 * var(--u));
+    padding: calc(16 * var(--u));
+    border-radius: calc(8 * var(--u));
+    background: #ffffff;
+    animation: tip-in 380ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
   }
 
-  /* 막대 뒤를 아래로 갈수록 하얗게 덮어 화면과 겹쳐 보이지 않게 합니다. */
-  .store-scrim {
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    height: calc(140 * var(--u));
-    width: calc(332 * var(--u));
-    margin-left: calc(-166 * var(--u));
-    background: linear-gradient(to bottom, rgb(255 255 255 / 0), #ffffff 72%);
+  .store-tip-top {
+    display: flex;
+    justify-content: space-between;
+    gap: calc(8 * var(--u));
   }
 
-  .step {
-    height: calc(3 * var(--u));
-    flex: 1 1 0;
-    overflow: hidden;
-    background: rgb(25 25 25 / 0.15);
+  .store-tip-name {
+    color: #111111;
+    font-size: calc(12 * var(--u));
+    line-height: 1.416;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
 
-  .step-fill {
-    display: block;
-    height: 100%;
-    background: var(--fg);
-    transform: scaleX(0);
-    transform-origin: left center;
+  .store-tip-distance,
+  .store-tip-address {
+    color: #858585;
+    font-size: calc(10 * var(--u));
+    line-height: 1.5;
+    white-space: nowrap;
   }
 
-  /* 지나온 칸은 채운 채로 둡니다. */
-  .step[data-state="done"] .step-fill {
-    transform: scaleX(1);
+  .store-tip-hours {
+    display: flex;
+    gap: calc(4 * var(--u));
+    color: #858585;
+    font-size: calc(12 * var(--u));
+    font-weight: 300;
+    line-height: 1.416;
+    white-space: nowrap;
   }
 
-  .step[data-state="now"] .step-fill {
-    animation: step-fill var(--dwell) linear forwards;
+  .store-tip-tags {
+    display: flex;
+    align-items: center;
+    gap: calc(8 * var(--u));
+    padding-top: calc(4 * var(--u));
   }
 
-  /* 매장 카드 목록 */
+  .store-tip-tag {
+    display: flex;
+    height: calc(15 * var(--u));
+    align-items: center;
+    padding: 0 calc(4 * var(--u));
+    border-radius: calc(4 * var(--u));
+    background: #dfe3e8;
+    color: #858585;
+    font-size: calc(10 * var(--u));
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+
+  /* 매장 카드 목록. 자리는 지도와 같은 높이로 고정하고 안쪽만 움직입니다. */
   .store-list {
+    height: calc(495.37 * var(--u));
+    overflow: hidden;
+    padding: 0 calc(10.54 * var(--u));
+  }
+
+  .store-list-inner {
     display: flex;
     flex-direction: column;
     gap: calc(21.08 * var(--u));
-    padding: calc(10.54 * var(--u)) calc(10.54 * var(--u)) calc(28.11 * var(--u));
+    padding: calc(10.54 * var(--u)) 0 calc(28.11 * var(--u));
+    transition: translate 1.8s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  /* 현재 위치로 정렬한 뒤 목록이 자리 안에서 스스로 내려갑니다. */
+  .store-list[data-scrolled] .store-list-inner {
+    translate: 0 calc(-190 * var(--u));
   }
 
   .store-card {
@@ -1202,6 +1230,16 @@
 
   .store-open-item:last-child {
     border-bottom: 0;
+  }
+
+  /* 고른 지역 */
+  .store-open-item[data-on] {
+    color: #111111;
+    font-weight: 500;
+  }
+
+  .store-open-item:not([data-on]) {
+    color: #858585;
   }
 
   /* 펼쳐 놓은 상자는 테두리로 표시합니다. */

@@ -1062,14 +1062,15 @@
     padding-top: calc(3.52 * var(--u));
   }
 
-  /* 눌러야 하는 자리를 짚는 점. 대상의 오른쪽 위 모서리에 걸칩니다.
+  /* 눌러야 하는 자리를 짚는 점. 누르게 될 자리 한가운데에 얹힙니다.
      목업이 아니라 그 위에 얹는 주석이라 페이지 배율을 그대로 씁니다. */
   .store-dot {
     position: absolute;
-    right: calc(-4 * var(--u));
-    top: calc(-4 * var(--u));
+    left: 50%;
+    top: 50%;
     height: calc(8 * var(--u));
     width: calc(8 * var(--u));
+    translate: -50% -50%;
     border-radius: 50%;
     background: var(--fg);
   }

@@ -54,7 +54,10 @@ function rasterize(shape: FeatureCollection): Uint8ClampedArray | null {
   return ctx.getImageData(0, 0, RASTER_W, RASTER_H).data;
 }
 
-function landDots(land: FeatureCollection, homelands: FeatureCollection): Dot[] {
+function landDots(
+  land: FeatureCollection,
+  homelands: FeatureCollection,
+): Dot[] {
   const landPixels = rasterize(land);
   const homePixels = rasterize(homelands);
   if (!landPixels || !homePixels) return [];
@@ -92,9 +95,9 @@ export function GlobeDots({ interactive = true }: Props) {
   /* 투영은 그리기 루프와 마우스 판정 양쪽에서 쓰므로 ref 로 둡니다. */
   const projectionRef = useRef(geoOrthographic());
   /** 매장 보유국 폴리곤과, 뱃지에 쓸 짧은 국가명 */
-  const homelandsRef = useRef<{ shape: FeatureCollection["features"][number]; label: string }[]>(
-    [],
-  );
+  const homelandsRef = useRef<
+    { shape: FeatureCollection["features"][number]; label: string }[]
+  >([]);
   const badgeRef = useRef<HTMLDivElement>(null);
   /** 마우스가 지구본 위에 있으면 자동 회전을 멈춥니다. */
   const hovering = useRef(false);
@@ -117,8 +120,14 @@ export function GlobeDots({ interactive = true }: Props) {
         land: GeometryCollection;
         countries: GeometryCollection;
       }>;
-      const land = feature(topo, topo.objects.land) as unknown as FeatureCollection;
-      const countries = feature(topo, topo.objects.countries) as unknown as FeatureCollection;
+      const land = feature(
+        topo,
+        topo.objects.land,
+      ) as unknown as FeatureCollection;
+      const countries = feature(
+        topo,
+        topo.objects.countries,
+      ) as unknown as FeatureCollection;
 
       /* 매장 좌표를 품고 있는 나라만 골라 냅니다.
          이름은 지도 데이터의 정식 명칭("United States of America") 대신
@@ -128,8 +137,9 @@ export function GlobeDots({ interactive = true }: Props) {
           shape,
           label: STORES.find((store) => geoContains(shape, store.at))?.country,
         }))
-        .filter((entry): entry is { shape: typeof entry.shape; label: string } =>
-          Boolean(entry.label),
+        .filter(
+          (entry): entry is { shape: typeof entry.shape; label: string } =>
+            Boolean(entry.label),
         );
 
       const homelands: FeatureCollection = {
@@ -184,7 +194,9 @@ export function GlobeDots({ interactive = true }: Props) {
     function draw() {
       const now = performance.now();
       // 탭이 뒤에 있다 돌아왔을 때 한 번에 튀지 않게 상한을 둡니다.
-      const dt = lastFrame.current ? Math.min(0.05, (now - lastFrame.current) / 1000) : 0;
+      const dt = lastFrame.current
+        ? Math.min(0.05, (now - lastFrame.current) / 1000)
+        : 0;
       lastFrame.current = now;
 
       if (!dragging.current && dt) {
@@ -207,8 +219,8 @@ export function GlobeDots({ interactive = true }: Props) {
       ctx!.translate(width / 2, height / 2 + radius * 1.05);
       ctx!.scale(1, 0.12);
       const glow = ctx!.createRadialGradient(0, 0, 0, 0, 0, shade);
-      glow.addColorStop(0, "rgba(25, 25, 25, 0.16)");
-      glow.addColorStop(0.5, "rgba(25, 25, 25, 0.06)");
+      glow.addColorStop(0, "rgba(25, 25, 25, 0.06)");
+      glow.addColorStop(0.5, "rgba(25, 25, 25, 0.025)");
       glow.addColorStop(1, "rgba(25, 25, 25, 0)");
       ctx!.fillStyle = glow;
       ctx!.beginPath();
@@ -222,7 +234,10 @@ export function GlobeDots({ interactive = true }: Props) {
       ctx!.fillStyle = "#ffffff";
       ctx!.fill();
 
-      const center: [number, number] = [-rotation.current[0], -rotation.current[1]];
+      const center: [number, number] = [
+        -rotation.current[0],
+        -rotation.current[1],
+      ];
       /* 가장자리로 갈수록 옅어지게 세 겹으로 나누고, 매장 보유국은 따로 모읍니다.
          한 겹마다 fill 한 번이라 점이 수천 개여도 부담이 적습니다. */
       const plain: [number, number][][] = [[], [], []];
@@ -248,7 +263,8 @@ export function GlobeDots({ interactive = true }: Props) {
         bands.forEach((band, i) => {
           if (!band.length) return;
           ctx!.beginPath();
-          for (const [x, y] of band) ctx!.rect(x - size / 2, y - size / 2, size, size);
+          for (const [x, y] of band)
+            ctx!.rect(x - size / 2, y - size / 2, size, size);
           ctx!.fillStyle = `rgba(${rgb}, ${alpha[i]})`;
           ctx!.fill();
         });
@@ -416,7 +432,12 @@ export function GlobeDots({ interactive = true }: Props) {
 
       {/* 매장 보유국 위에서 오른쪽으로 펼쳐지는 이름표 */}
       {interactive && (
-        <div ref={badgeRef} className="globe-badge" data-on={label ? "" : undefined} aria-hidden>
+        <div
+          ref={badgeRef}
+          className="globe-badge"
+          data-on={label ? "" : undefined}
+          aria-hidden
+        >
           <span>{label?.country}</span>
           {label?.city && (
             <>

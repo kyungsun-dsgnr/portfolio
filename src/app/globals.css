@@ -729,3 +729,30 @@
     clip-path: inset(0 0 0 0 round 999px);
   }
 }
+
+@layer components {
+  /* 도는 지구본 위에 안경을 겹쳐 놓은 인트로 장면 */
+  .globe-scene {
+    position: relative;
+    height: 100%;
+    width: 100%;
+  }
+
+  /* 원본 합성 기준: 프레임 폭의 약 97%, 세로 중심은 60% 지점.
+     width 만 주고 height 는 비워 두어 이미지 자체 비율을 따릅니다. */
+  .globe-glasses {
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    width: 97%;
+    height: auto;
+    translate: -50% -50%;
+    pointer-events: none;
+  }
+
+  /* 손대지 않는 지구본에는 커서를 바꾸지 않습니다. */
+  .globe-canvas[data-static] {
+    cursor: default;
+    pointer-events: none;
+  }
+}

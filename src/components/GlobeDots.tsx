@@ -76,7 +76,12 @@ function landDots(land: FeatureCollection, homelands: FeatureCollection): Dot[] 
   return dots;
 }
 
-export function GlobeDots() {
+type Props = {
+  /** false 면 손대지 않고 계속 도는 장식이 됩니다. 뱃지와 매장 집기도 꺼집니다. */
+  interactive?: boolean;
+};
+
+export function GlobeDots({ interactive = true }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -181,7 +186,7 @@ export function GlobeDots() {
       if (!dragging.current && dt) {
         // 마우스를 올리면 돌던 것이 잦아들고, 벗어나면 다시 천천히 돕니다.
         // 프레임 수가 아니라 흐른 시간으로 계산해 화면 주사율과 무관하게 같은 속도가 납니다.
-        const idle = hovering.current ? 0 : IDLE_SPIN;
+        const idle = interactive && hovering.current ? 0 : IDLE_SPIN;
         const decay = Math.exp(-dt / GLIDE);
         const vx = velocity.current[0] * decay + idle * (1 - decay);
         velocity.current = [vx, 0];
@@ -270,7 +275,7 @@ export function GlobeDots() {
       cancelAnimationFrame(frame);
       observer.disconnect();
     };
-  }, [dots]);
+  }, [dots, interactive]);
 
   function pointerDown(event: React.PointerEvent<HTMLCanvasElement>) {
     // 포인터 캡처가 실패해도 드래그 상태는 어긋나지 않게 먼저 세웁니다.
@@ -355,35 +360,46 @@ export function GlobeDots() {
       <canvas
         ref={canvasRef}
         className="globe-canvas"
-        onPointerDown={pointerDown}
-        onPointerMove={pointerMove}
-        onPointerUp={(event) => {
-          dragging.current = false;
-          try {
-            event.currentTarget.releasePointerCapture(event.pointerId);
-          } catch {
-            // 캡처가 없었으면 놓을 것도 없습니다.
-          }
-        }}
-        onPointerLeave={() => {
-          dragging.current = false;
-          hovering.current = false;
-          activeRef.current = null;
-          setActive(null);
-          setCountry(null);
-        }}
+        data-static={interactive ? undefined : ""}
+        onPointerDown={interactive ? pointerDown : undefined}
+        onPointerMove={interactive ? pointerMove : undefined}
+        onPointerUp={
+          interactive
+            ? (event) => {
+                dragging.current = false;
+                try {
+                  event.currentTarget.releasePointerCapture(event.pointerId);
+                } catch {
+                  // 캡처가 없었으면 놓을 것도 없습니다.
+                }
+              }
+            : undefined
+        }
+        onPointerLeave={
+          interactive
+            ? () => {
+                dragging.current = false;
+                hovering.current = false;
+                activeRef.current = null;
+                setActive(null);
+                setCountry(null);
+              }
+            : undefined
+        }
       />
 
       {/* 매장 보유국 위에서 오른쪽으로 펼쳐지는 이름표 */}
-      <div ref={badgeRef} className="globe-badge" data-on={label ? "" : undefined} aria-hidden>
-        <span>{label?.country}</span>
-        {label?.city && (
-          <>
-            <span className="globe-badge-divider">|</span>
-            <span>{label.city}</span>
-          </>
-        )}
-      </div>
+      {interactive && (
+        <div ref={badgeRef} className="globe-badge" data-on={label ? "" : undefined} aria-hidden>
+          <span>{label?.country}</span>
+          {label?.city && (
+            <>
+              <span className="globe-badge-divider">|</span>
+              <span>{label.city}</span>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }

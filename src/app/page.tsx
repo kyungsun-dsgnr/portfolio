@@ -55,7 +55,14 @@ export default function Home() {
                   스토어를 탐색하는 디지털 경험을 설계합니다.
                 </>
               }
-              visual={<GlobeDots />}
+              visual={
+                <div className="globe-scene">
+                  <GlobeDots interactive={false} />
+                  {/* 지구본이 안경을 쓴 것처럼 앞에 겹칩니다. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img className="globe-glasses" src="/images/glasses.png" alt="" />
+                </div>
+              }
             />
           ),
         },

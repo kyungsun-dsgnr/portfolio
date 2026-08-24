@@ -777,9 +777,11 @@
     background: #fafafa;
   }
 
-  /* 이 장 헤드라인은 대문자로 바꾸지 않고, 한 단계 작은 크기를 씁니다. */
+  /* 이 장 헤드라인은 대문자로 바꾸지 않고, 한 단계 작은 크기로 오른쪽에 붙입니다.
+     본문은 줄이 많아 좌측 정렬을 유지합니다. */
   .compare-headline {
     font-size: calc(52 * var(--u));
+    text-align: right;
     text-transform: none;
   }
 

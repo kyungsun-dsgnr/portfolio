@@ -46,7 +46,7 @@ export function SceneCompare({ title, body, after, before }: Props) {
       </div>
 
       <h2
-        className="type-display compare-headline rise col-span-3 col-start-6 row-start-1 row-span-2"
+        className="type-display compare-headline rise col-start-5 col-span-4 row-start-1 row-span-2"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
         {title}

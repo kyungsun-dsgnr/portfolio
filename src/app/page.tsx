@@ -1,5 +1,6 @@
+import Image from "next/image";
+
 import { LightStage } from "@/components/LightStage";
-import { GlobeDots } from "@/components/GlobeDots";
 import { SceneCase } from "@/components/SceneCase";
 import { SceneIntro } from "@/components/SceneIntro";
 import { ScenePerspective } from "@/components/ScenePerspective";
@@ -55,11 +56,21 @@ export default function Home() {
                   스토어를 탐색하는 디지털 경험을 설계합니다.
                 </>
               }
-              visual={<GlobeDots />}
+              visual={
+                <Image
+                  src="/images/gentle-monster-intro.png"
+                  alt="점으로 그린 지구본 위에 놓인 젠틀몬스터 안경"
+                  fill
+                  sizes="(min-width: 1024px) 48vw, 90vw"
+                  className="object-contain"
+                  priority
+                />
+              }
             />
           ),
         },
         /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.
+           살릴 때 GlobeDots import 를 다시 넣어야 합니다.
         {
           id: "gentle-monster-2",
           node: (

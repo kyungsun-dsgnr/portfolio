@@ -1,5 +1,7 @@
 "use client";
 
+/** 4장 — 원칙 카드 넷 */
+
 import type { CSSProperties, ReactNode } from "react";
 
 import { useInView } from "@/components/useInView";

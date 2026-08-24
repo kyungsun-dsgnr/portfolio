@@ -1,14 +1,14 @@
 import { GlobeDots } from "@/components/GlobeDots";
 import { LightStage } from "@/components/LightStage";
-import { SceneCase } from "@/components/SceneCase";
-import { SceneAfter } from "@/components/SceneAfter";
-import { SceneIntro } from "@/components/SceneIntro";
-import { SceneProblem } from "@/components/SceneProblem";
-import { ScenePerspective } from "@/components/ScenePerspective";
-import { ScenePrinciples } from "@/components/ScenePrinciples";
-import { SceneStatement } from "@/components/SceneStatement";
-import { SceneWhy } from "@/components/SceneWhy";
-import { SceneWork } from "@/components/SceneWork";
+import { SceneCase } from "@/components/07-SceneCase";
+import { SceneAfter } from "@/components/10-SceneAfter";
+import { SceneIntro } from "@/components/01-SceneIntro";
+import { SceneProblem } from "@/components/08-SceneProblem";
+import { ScenePerspective } from "@/components/03-ScenePerspective";
+import { ScenePrinciples } from "@/components/04-ScenePrinciples";
+import { SceneStatement } from "@/components/02-SceneStatement";
+import { SceneWhy } from "@/components/09-SceneWhy";
+import { SceneWork } from "@/components/06-SceneWork";
 
 export default function Home() {
   return (

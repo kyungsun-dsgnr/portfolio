@@ -26,6 +26,8 @@ const TILT = -6;
 const HIT_RADIUS = 14;
 /** 이름표를 띄우는 한계 각도. 90도가 지평선이라, 가장자리에 닿기 전에 접습니다. */
 const TAG_LIMIT = Math.PI * 0.4;
+/** 멈춘 지구본이 첫 도시를 가운데에서 서쪽으로 미는 각도(도) */
+const STILL_TURN = 35;
 /** 점 격자의 위도 간격(도). 작을수록 촘촘합니다. */
 const LAT_STEP = 1.5;
 
@@ -134,10 +136,10 @@ export function GlobeDots({
   /** 마우스가 지구본 위에 있으면 자동 회전을 멈춥니다. */
   const hovering = useRef(false);
 
-  /* 멈춰 있을 때는 첫 도시를 가운데에서 조금 왼쪽에 두어
+  /* 멈춰 있을 때는 첫 도시를 가운데에서 왼쪽으로 밀어 두어
      오른쪽으로 펼쳐지는 이름표가 판넬 안에 들어옵니다. */
   const rotation = useRef<[number, number]>([
-    still ? -tagged[0].at[0] - 25 : -10,
+    still ? -tagged[0].at[0] - STILL_TURN : -10,
     TILT,
   ]);
   const velocity = useRef<[number, number]>([still ? 0 : IDLE_SPIN, 0]);
@@ -212,11 +214,16 @@ export function GlobeDots({
     function resize() {
       const box = wrap!.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-      width = box.width;
-      height = box.height;
-      canvas!.width = Math.round(width * dpr);
-      canvas!.height = Math.round(height * dpr);
-      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+      /* 배치는 확대가 걸리기 전 좌표계로 잽니다. 이름표를 translate 로 옮기는데
+         그 값은 위쪽 확대를 거치기 전 좌표라, 여기서 섞으면 자리가 어긋납니다. */
+      width = wrap!.offsetWidth;
+      height = wrap!.offsetHeight;
+      // 대신 확대된 만큼 더 촘촘히 그려 흐려지지 않게 합니다.
+      const zoom = width ? box.width / width : 1;
+      const ratio = dpr * zoom;
+      canvas!.width = Math.round(width * ratio);
+      canvas!.height = Math.round(height * ratio);
+      ctx!.setTransform(ratio, 0, 0, ratio, 0, 0);
       radius = (Math.min(width, height) / 2) * 0.92;
       projection.translate([width / 2, height / 2]).scale(radius);
       unit = radius / 320;

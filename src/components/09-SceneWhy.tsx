@@ -1,5 +1,7 @@
 "use client";
 
+/** 9장 — 시작점을 왜 옮기는지 */
+
 import type { CSSProperties } from "react";
 
 import { GlobeDots } from "@/components/GlobeDots";

@@ -1,5 +1,7 @@
 "use client";
 
+/** 3장 — 관점 */
+
 import type { CSSProperties } from "react";
 
 import { useInView } from "@/components/useInView";

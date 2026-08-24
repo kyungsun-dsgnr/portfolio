@@ -1,3 +1,4 @@
+/** 1장 — 조명을 켜는 표지 */
 import type { CSSProperties } from "react";
 
 import { LampScene } from "@/components/LampScene";

@@ -923,10 +923,110 @@
     transform-origin: top left;
   }
 
-  .after-shot .store-panel {
+  .after-shot .globe-mock {
     left: 0;
     width: 100%;
     margin-left: 0;
+  }
+}
+
+@layer components {
+  /* ── 제안하는 스토어 화면 목업 ─────────────────
+     기존 목업과 같은 332 폭이라 같은 배율로 키울 수 있습니다. */
+  .globe-mock {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: calc(332 * var(--u));
+    margin-left: calc(-166 * var(--u));
+    padding: calc(21.08 * var(--u)) 0 calc(28.11 * var(--u));
+    background: #f3f4f6;
+    color: #111111;
+    font-family: var(--font-body);
+    font-weight: 400;
+  }
+
+  /* 현재 국가 / 글로벌. 바깥 트랙은 옅은 회색, 고른 쪽만 흰색입니다. */
+  .globe-tabs {
+    display: flex;
+    margin: 0 calc(21.08 * var(--u));
+    padding: calc(3 * var(--u));
+    border-radius: calc(9 * var(--u));
+    background: #e4e6e8;
+  }
+
+  .globe-tab {
+    flex: 1 1 0;
+    padding: calc(7 * var(--u)) 0;
+    border-radius: calc(6 * var(--u));
+    color: #858585;
+    font-size: calc(12 * var(--u));
+    line-height: 1.3;
+    cursor: pointer;
+    transition:
+      background 260ms ease,
+      color 260ms ease;
+  }
+
+  .globe-tab[data-on] {
+    background: #ffffff;
+    box-shadow: 0 calc(1 * var(--u)) calc(3 * var(--u)) rgb(0 0 0 / 0.08);
+    color: #111111;
+  }
+
+  /* 선택 상자 두 개 대신 지금 보고 있는 범위를 한 줄로 적습니다. */
+  .globe-scope {
+    display: flex;
+    align-items: center;
+    gap: calc(3 * var(--u));
+    margin: calc(14 * var(--u)) calc(21.08 * var(--u)) 0;
+    font-size: calc(13 * var(--u));
+    font-weight: 300;
+    line-height: 1.4;
+  }
+
+  .globe-scope .store-icon {
+    flex: none;
+  }
+
+  /* 지구본이 놓이는 자리. 화면 폭을 꽉 채우고, 플로팅 버튼이 여기에 붙습니다. */
+  .globe-stage {
+    position: relative;
+    height: calc(220 * var(--u));
+    margin-top: calc(8 * var(--u));
+  }
+
+  .globe-locate {
+    position: absolute;
+    right: calc(21.08 * var(--u));
+    bottom: calc(10 * var(--u));
+    display: inline-flex;
+    align-items: center;
+    gap: calc(5 * var(--u));
+    padding: calc(7 * var(--u)) calc(11 * var(--u));
+    border-radius: 999px;
+    background: #ffffff;
+    box-shadow: 0 calc(2 * var(--u)) calc(6 * var(--u)) rgb(0 0 0 / 0.12);
+    font-size: calc(11 * var(--u));
+    line-height: 1.3;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  /* 지구본 아래 매장 목록. 카드는 기존 목업과 같은 것을 씁니다. */
+  .globe-list {
+    display: flex;
+    flex-direction: column;
+    gap: calc(14 * var(--u));
+    margin: calc(18 * var(--u)) calc(10.54 * var(--u)) 0;
+  }
+
+  .globe-list .store-card {
+    height: auto;
+  }
+
+  .globe-list .store-hours {
+    display: block;
   }
 }
 

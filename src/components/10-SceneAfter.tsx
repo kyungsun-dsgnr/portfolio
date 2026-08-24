@@ -1,8 +1,10 @@
 "use client";
 
+/** 10장 — 제안 화면 */
+
 import type { CSSProperties } from "react";
 
-import { StoreListMock } from "@/components/StoreListMock";
+import { StoreGlobeMock } from "@/components/StoreGlobeMock";
 import { useInView } from "@/components/useInView";
 
 /** 제안을 한 화면으로 보여 주는 장 */
@@ -34,7 +36,7 @@ export function SceneAfter() {
         style={{ "--delay": "0.18s" } as CSSProperties}
       >
         <div className="after-shot">
-          <StoreListMock />
+          <StoreGlobeMock />
         </div>
       </div>
     </div>

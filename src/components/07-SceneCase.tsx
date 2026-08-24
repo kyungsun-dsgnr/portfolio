@@ -1,5 +1,7 @@
 "use client";
 
+/** 7장 — 케이스 표지 (11장 예정) */
+
 import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
 

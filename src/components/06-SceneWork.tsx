@@ -1,5 +1,7 @@
 "use client";
 
+/** 6장 — 세 갈래 작업 */
+
 import Image from "next/image";
 import {
   useRef,

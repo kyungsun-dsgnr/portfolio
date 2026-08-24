@@ -1,5 +1,7 @@
 "use client";
 
+/** 2·5장 — 단어가 하나씩 떠오르는 문장 */
+
 import type { CSSProperties } from "react";
 
 import { useInView } from "@/components/useInView";

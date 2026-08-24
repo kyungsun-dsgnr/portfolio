@@ -1,5 +1,7 @@
 "use client";
 
+/** 8장 — 지금 화면을 짚는 장 */
+
 import {
   useCallback,
   useEffect,

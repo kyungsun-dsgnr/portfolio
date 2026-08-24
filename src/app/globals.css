@@ -736,14 +736,15 @@
     position: relative;
     height: 100%;
     width: 100%;
+    /* 안경이 좌측으로 넘쳐도 잘리지 않게 둡니다. */
+    overflow: visible;
   }
 
-  /* 원본 합성 기준: 프레임 폭의 약 97%, 세로 중심은 60% 지점.
-     width 만 주고 height 는 비워 두어 이미지 자체 비율을 따릅니다. */
+  /* width 만 주고 height 는 비워 두어 이미지 자체 비율을 따릅니다. */
   .globe-glasses {
     position: absolute;
     left: 50%;
-    top: 60%;
+    top: 50%;
     width: 97%;
     height: auto;
     translate: -50% -50%;

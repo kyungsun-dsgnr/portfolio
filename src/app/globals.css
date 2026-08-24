@@ -783,12 +783,25 @@
     overflow: hidden;
   }
 
-  .compare-after {
+  /* 큰 쪽은 흰 판 위에, 작은 쪽은 장 바탕 위에 그대로 놓입니다. */
+  .compare-big {
     background: #ffffff;
   }
 
-  .compare-before {
-    background: #f1f1f1;
+  /* 눌러서 큰 쪽과 자리를 바꿉니다. */
+  .compare-small {
+    cursor: pointer;
+    text-align: left;
+  }
+
+  /* 등장 애니메이션이 프레임의 opacity 를 붙잡고 있어(fill-mode: both)
+     흐려지는 건 안쪽 요소에 겁니다. */
+  .compare-small > * {
+    transition: opacity 0.4s ease;
+  }
+
+  .compare-small:hover > * {
+    opacity: 0.72;
   }
 
   /* 이 장 헤드라인은 대문자로 바꾸지 않고 한 단계 작은 크기를 씁니다. */
@@ -818,6 +831,12 @@
   .compare-caption .type-title {
     font-size: calc(24 * var(--u));
   }
+
+  /* 작은 쪽 설명은 프레임 맨 위 선에 바로 붙습니다. */
+  .compare-small .compare-caption {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
 }
 
 @layer components {
@@ -833,14 +852,14 @@
     font-weight: 400;
   }
 
-  .compare-after .store-panel {
+  .compare-big .store-panel {
     left: calc(262 * var(--u));
     top: calc(154 * var(--u));
   }
 
-  .compare-before .store-panel {
+  .compare-small .store-panel {
     left: calc(88 * var(--u));
-    top: calc(150 * var(--u));
+    top: calc(129 * var(--u));
   }
 
   /* 매장 수와 필터 버튼 */

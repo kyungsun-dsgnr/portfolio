@@ -12,8 +12,8 @@ import { STORES } from "@/data/gentle-monster-stores";
 const FRICTION = 0.94;
 /** 가만히 두면 이 속도로 천천히 돕니다(도/프레임) */
 const IDLE_SPIN = 0.06;
-/** 세로 회전은 극을 넘지 않게 묶습니다 */
-const MAX_TILT = 70;
+/** 받침대에 꽂힌 지구본처럼 축을 고정합니다. 세로로는 돌지 않아 극이 정면에 오지 않습니다. */
+const TILT = -6;
 /** 매장을 집을 수 있는 반경(px) */
 const HIT_RADIUS = 14;
 /** 점 격자의 위도 간격(도). 작을수록 촘촘합니다. */
@@ -66,7 +66,7 @@ export function GlobeDots() {
   const [dots, setDots] = useState<[number, number][] | null>(null);
   const [active, setActive] = useState<number | null>(null);
 
-  const rotation = useRef<[number, number]>([-10, -18]);
+  const rotation = useRef<[number, number]>([-10, TILT]);
   const velocity = useRef<[number, number]>([IDLE_SPIN, 0]);
   const dragging = useRef(false);
   const last = useRef<[number, number]>([0, 0]);
@@ -120,14 +120,9 @@ export function GlobeDots() {
 
     function draw() {
       if (!dragging.current) {
-        let [vx, vy] = velocity.current;
-        vx = vx * FRICTION + IDLE_SPIN * (1 - FRICTION);
-        vy *= FRICTION;
-        velocity.current = [vx, vy];
-        rotation.current = [
-          rotation.current[0] + vx,
-          Math.max(-MAX_TILT, Math.min(MAX_TILT, rotation.current[1] + vy)),
-        ];
+        const vx = velocity.current[0] * FRICTION + IDLE_SPIN * (1 - FRICTION);
+        velocity.current = [vx, 0];
+        rotation.current = [rotation.current[0] + vx, TILT];
       }
 
       projection.rotate(rotation.current);
@@ -170,19 +165,25 @@ export function GlobeDots() {
         visible.push({ i, x, y });
 
         const isActive = activeRef.current === i;
-        const r = (store.flagship ? 4 : 3) * unit * (isActive ? 1.7 : 1);
+        const r = (store.flagship ? 6 : 4.6) * unit * (isActive ? 1.45 : 1);
+
+        // 배경색 링을 먼저 깔아 회색 점밭에서 도시를 떼어 놓습니다.
+        ctx!.beginPath();
+        ctx!.arc(x, y, r * 1.75, 0, Math.PI * 2);
+        ctx!.fillStyle = "#fafafa";
+        ctx!.fill();
 
         if (isActive) {
           ctx!.beginPath();
-          ctx!.arc(x, y, r * 2.8, 0, Math.PI * 2);
-          ctx!.strokeStyle = "rgba(25, 25, 25, 0.45)";
-          ctx!.lineWidth = unit;
+          ctx!.arc(x, y, r * 2.5, 0, Math.PI * 2);
+          ctx!.strokeStyle = "rgba(25, 25, 25, 0.5)";
+          ctx!.lineWidth = unit * 1.2;
           ctx!.stroke();
         }
 
         ctx!.beginPath();
         ctx!.arc(x, y, r, 0, Math.PI * 2);
-        ctx!.fillStyle = isActive ? "rgba(25, 25, 25, 1)" : "rgba(25, 25, 25, 0.85)";
+        ctx!.fillStyle = "#191919";
         ctx!.fill();
       });
 
@@ -209,15 +210,12 @@ export function GlobeDots() {
     const box = event.currentTarget.getBoundingClientRect();
 
     if (dragging.current) {
+      // 가로로만 돕니다. 세로 움직임은 회전에 쓰지 않습니다.
       const dx = event.clientX - last.current[0];
-      const dy = event.clientY - last.current[1];
       last.current = [event.clientX, event.clientY];
       const speed = 220 / Math.min(box.width, box.height);
-      velocity.current = [dx * speed, -dy * speed];
-      rotation.current = [
-        rotation.current[0] + dx * speed,
-        Math.max(-MAX_TILT, Math.min(MAX_TILT, rotation.current[1] - dy * speed)),
-      ];
+      velocity.current = [dx * speed, 0];
+      rotation.current = [rotation.current[0] + dx * speed, TILT];
       return;
     }
 

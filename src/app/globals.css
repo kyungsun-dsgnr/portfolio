@@ -140,7 +140,7 @@
     background: #ffffff;
   }
 
-  .section:has(.compare-frame) {
+  .section:has(.compare-card) {
     background: var(--bg);
   }
 
@@ -777,10 +777,12 @@
 }
 
 @layer components {
-  /* 비포/애프터 장. 두 화면을 나란히 두되 크기로 위계를 줍니다. */
-  .compare-frame {
+  /* 비포/애프터 장. 두 화면을 나란히 두되 크기로 위계를 줍니다.
+     카드는 각자 자리를 지키고 크기만 서로 바뀝니다. */
+  .compare-card {
     position: relative;
     overflow: hidden;
+    text-align: left;
   }
 
   /* 큰 쪽은 회색 판 위에, 작은 쪽은 장 바탕 위에 그대로 놓입니다. */
@@ -788,13 +790,12 @@
     background: #f1f1f1;
   }
 
-  /* 눌러서 큰 쪽과 자리를 바꿉니다. */
+  /* 누르면 이 카드가 큰 자리로 올라옵니다. */
   .compare-small {
     cursor: pointer;
-    text-align: left;
   }
 
-  /* 등장 애니메이션이 프레임의 opacity 를 붙잡고 있어(fill-mode: both)
+  /* 등장 애니메이션이 카드의 opacity 를 붙잡고 있어(fill-mode: both)
      흐려지는 건 안쪽 요소에 겁니다. */
   .compare-small > * {
     transition: opacity 0.4s ease;
@@ -832,10 +833,14 @@
     font-size: calc(24 * var(--u));
   }
 
-  /* 작은 쪽 설명은 프레임 맨 위 선에 바로 붙고 오른쪽으로 맞춥니다. */
+  /* 작은 쪽 설명은 카드 맨 위 선에 바로 붙고 여백도 좁습니다. */
   .compare-small .compare-caption {
-    align-items: stretch;
     padding: 0 calc(16 * var(--u));
+  }
+
+  /* 오른쪽 카드일 때는 바깥선을 따라 오른쪽으로 맞춥니다. */
+  .compare-small.compare-right .compare-caption {
+    align-items: stretch;
     text-align: right;
   }
 }
@@ -853,8 +858,8 @@
     font-weight: 400;
   }
 
-  /* 어느 프레임에 있든 가로 가운데에 놓입니다. */
-  .compare-frame .store-panel {
+  /* 어느 카드에 있든 가로 가운데에 놓입니다. */
+  .compare-card .store-panel {
     left: 50%;
     margin-left: calc(-166 * var(--u));
   }

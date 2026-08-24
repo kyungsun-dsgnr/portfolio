@@ -128,6 +128,11 @@
     color: #fafafa;
   }
 
+  /* 세 작업 이미지가 흰 바탕이라 장 전체를 흰색으로 둡니다. */
+  .section:has(.work) {
+    background: #ffffff;
+  }
+
   /* 비율 고정 캔버스. 섹션마다 안쪽 레이아웃은 다릅니다. */
   .canvas {
     position: relative;
@@ -428,8 +433,9 @@
   }
 
   .work-visual {
+    position: relative;
     flex: 1 1 0;
-    background: var(--placeholder);
+    overflow: hidden;
   }
 
   /* 갈 곳이 있는 카드 위에서만 기본 커서를 감춥니다. */

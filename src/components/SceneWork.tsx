@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   useRef,
   useState,
@@ -18,6 +19,7 @@ const WORKS = [
     title: "Gentle Monster Explore",
     body: "거리감과 시선의 흐름을 바탕으로 브랜드 공간을 탐색하는 경험",
     place: "col-start-3 col-span-2",
+    image: "/images/work-gentle-monster.png",
     target: "gentle-monster",
   },
   {
@@ -25,6 +27,7 @@ const WORKS = [
     title: "Tamburins Compose",
     body: "감각을 이용해 선물꾸러미를 조합하는 방식으로 선물의 무드와 구성을 만드는 경험",
     place: "col-start-5 col-span-2",
+    image: "/images/work-tamburins.png",
     target: undefined,
   },
   {
@@ -32,6 +35,7 @@ const WORKS = [
     title: "Nudake Gift",
     body: "고르고 건네는 행동 기억을 바탕으로 선물의 감정을 구성하는 경험",
     place: "col-start-7 col-span-2",
+    image: "/images/work-nudake.png",
     target: undefined,
   },
 ];
@@ -98,8 +102,15 @@ export function SceneWork() {
               <p className="type-body">{work.body}</p>
             </div>
 
-            {/* 작업 이미지 자리 */}
-            <div className="work-visual" />
+            <div className="work-visual">
+              <Image
+                src={work.image}
+                alt={work.title}
+                fill
+                sizes="(min-width: 1024px) 24vw, 90vw"
+                className="object-cover"
+              />
+            </div>
           </>
         );
 

@@ -1075,6 +1075,13 @@
     background: var(--fg);
   }
 
+  /* 좁은 요소에서는 글자를 덮지 않도록 오른쪽 안쪽으로 비켜섭니다. */
+  .store-dot-side {
+    left: auto;
+    right: calc(2 * var(--u));
+    translate: 0 -50%;
+  }
+
   /* 천천히 번져 나가는 고리 */
   .store-dot::after {
     content: "";

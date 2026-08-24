@@ -107,6 +107,8 @@ type Props = {
 
 export function StoreListMock({ dots = false }: Props) {
   const dot = dots ? <span className="store-dot" /> : null;
+  /* 좁은 요소는 글자를 피해 오른쪽으로 비켜 놓습니다. */
+  const sideDot = dots ? <span className="store-dot store-dot-side" /> : null;
 
   return (
     <div className="store-panel" aria-hidden>
@@ -134,7 +136,7 @@ export function StoreListMock({ dots = false }: Props) {
         <p className="store-locate">
           <LocateIcon />
           현재 위치 사용
-          {dot}
+          {sideDot}
         </p>
       </div>
 
@@ -144,7 +146,7 @@ export function StoreListMock({ dots = false }: Props) {
         </span>
         <span className="store-tab">
           지도
-          {dot}
+          {sideDot}
         </span>
       </div>
 

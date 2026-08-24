@@ -23,7 +23,7 @@ const POINTS = [
     index: "03",
     title: "Exploratory Entry",
     body: "목록에 들어가기 전, 지구본을 돌려 도시를 발견하는 진입은 탐색의 감각을 더합니다.",
-    place: "col-start-7 col-span-2 row-start-5 row-span-2 issue-low",
+    place: "col-start-7 col-span-2 row-start-6",
   },
 ];
 

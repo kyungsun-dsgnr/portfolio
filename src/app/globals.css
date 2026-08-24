@@ -144,6 +144,11 @@
     background: var(--bg);
   }
 
+  /* 지금 화면을 짚는 장. 목업이 흰 판 위에 놓입니다. */
+  .section:has(.store-slot) {
+    background: #ffffff;
+  }
+
   /* 비율 고정 캔버스. 섹션마다 안쪽 레이아웃은 다릅니다. */
   .canvas {
     position: relative;

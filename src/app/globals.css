@@ -777,16 +777,15 @@
     background: #fafafa;
   }
 
-  /* 이 장 헤드라인은 대문자로 바꾸지 않고 오른쪽에 붙입니다. */
+  /* 이 장 헤드라인은 대문자로 바꾸지 않고, 한 단계 작은 크기를 씁니다. */
   .compare-headline {
-    text-align: right;
+    font-size: calc(52 * var(--u));
     text-transform: none;
   }
 
   .compare-body {
     font-size: calc(20 * var(--u));
     color: var(--fg);
-    text-align: right;
   }
 
   /* 큰 이미지 좌측 상단에 얹히는 설명 */

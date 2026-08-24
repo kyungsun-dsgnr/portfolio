@@ -75,7 +75,9 @@ export default function Home() {
                 <>
                   From Store List
                   <br />
-                  To Spatial Discovery
+                  To
+                  <br />
+                  Spatial Discovery
                 </>
               }
               body={

@@ -62,7 +62,7 @@ export function SceneCompare({ title, body, after, before }: Props) {
       {/* 누르면 큰 자리와 맞바꿉니다. */}
       <button
         type="button"
-        className="compare-swap rise col-span-3 col-start-6 row-start-5 row-span-2"
+        className="compare-swap rise col-start-7 col-span-2 row-start-5 row-span-2"
         style={{ "--delay": "0.26s" } as CSSProperties}
         onClick={() => setShowing(showing === "after" ? "before" : "after")}
       >

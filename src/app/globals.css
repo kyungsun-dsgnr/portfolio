@@ -140,7 +140,7 @@
     background: #ffffff;
   }
 
-  .section:has(.compare-card) {
+  .section:has(.after-frame) {
     background: var(--bg);
   }
 
@@ -446,7 +446,6 @@
   /* 번호는 제목·설명 묶음에서 한 단 떨어뜨립니다.
      비포/애프터 장의 설명도 같은 간격을 씁니다. */
   .work-head .card-index,
-  .compare-caption .card-index,
   .why-card .card-index,
   .issue .card-index {
     margin-bottom: calc(8 * var(--u));
@@ -906,70 +905,25 @@
 }
 
 @layer components {
-  /* 비포/애프터 장. 두 화면을 나란히 두되 크기로 위계를 줍니다.
-     카드는 각자 자리를 지키고 크기만 서로 바뀝니다. */
-  .compare-card {
+  /* ── 제안을 한 화면으로 보여 주는 장 ───────────
+     목업을 1.53 배로 키워 놓고, 장을 넘어가는 아래쪽은 캔버스가 자릅니다. */
+  .after-frame {
     position: relative;
-    overflow: hidden;
-    text-align: left;
   }
 
-  /* 배경색은 크기가 아니라 카드에 붙습니다. 작은 쪽은 장 바탕 위에 그대로 놓입니다. */
-  .compare-big.compare-before {
-    background: #f1f1f1;
-  }
-
-  .compare-big.compare-after {
-    background: #ffffff;
-  }
-
-  /* 누르면 이 카드가 큰 자리로 올라옵니다. */
-  .compare-small {
-    cursor: pointer;
-  }
-
-  /* 등장 애니메이션이 카드의 opacity 를 붙잡고 있어(fill-mode: both)
-     흐려지는 건 안쪽 요소에 겁니다. */
-  .compare-small > * {
-    transition: opacity 0.4s ease;
-  }
-
-  .compare-small:hover > * {
-    opacity: 0.72;
-  }
-
-  /* 이 장 헤드라인은 대문자로 바꾸지 않고 한 단계 작은 크기를 씁니다. */
-  .compare-headline {
-    font-size: calc(52 * var(--u));
-    text-transform: none;
-  }
-
-  /* 각 화면 위에 얹히는 설명 */
-  .compare-caption {
+  .after-shot {
     position: absolute;
+    left: calc(174 * var(--u));
+    top: calc(127 * var(--u));
+    width: calc(332 * var(--u));
+    scale: 1.5301;
+    transform-origin: top left;
+  }
+
+  .after-shot .store-panel {
     left: 0;
-    top: 0;
-    z-index: 1;
-    display: flex;
     width: 100%;
-    flex-direction: column;
-    gap: calc(8 * var(--u));
-    padding: calc(24 * var(--u)) calc(32 * var(--u));
-  }
-
-  .compare-caption .card-index {
-    text-transform: uppercase;
-  }
-
-  /* 화면 이름과 항목 제목은 다른 장 카드 제목보다 한 단계 큽니다. */
-  .compare-caption .type-title,
-  .issue .type-title {
-    font-size: calc(24 * var(--u));
-  }
-
-  /* 작은 쪽 설명은 카드 맨 위 선에 바로 붙고 여백도 좁습니다. */
-  .compare-small .compare-caption {
-    padding: 0 calc(16 * var(--u));
+    margin-left: 0;
   }
 }
 
@@ -1006,14 +960,6 @@
   /* 이 목업은 자리 안에서 아래로 내려 앉고, 아래쪽은 잘려 나갑니다. */
   .store-slot .store-panel {
     top: calc(52 * var(--u));
-  }
-
-  .compare-big .store-panel {
-    top: calc(154 * var(--u));
-  }
-
-  .compare-small .store-panel {
-    top: calc(126 * var(--u));
   }
 
   /* 매장 수와 필터 버튼 */

@@ -1,7 +1,7 @@
 import { GlobeDots } from "@/components/GlobeDots";
 import { LightStage } from "@/components/LightStage";
 import { SceneCase } from "@/components/SceneCase";
-import { SceneCompare } from "@/components/SceneCompare";
+import { SceneAfter } from "@/components/SceneAfter";
 import { SceneIntro } from "@/components/SceneIntro";
 import { SceneProblem } from "@/components/SceneProblem";
 import { ScenePerspective } from "@/components/ScenePerspective";
@@ -9,7 +9,6 @@ import { ScenePrinciples } from "@/components/ScenePrinciples";
 import { SceneStatement } from "@/components/SceneStatement";
 import { SceneWhy } from "@/components/SceneWhy";
 import { SceneWork } from "@/components/SceneWork";
-import { StoreListMock } from "@/components/StoreListMock";
 
 export default function Home() {
   return (
@@ -72,32 +71,7 @@ export default function Home() {
         },
         { id: "gentle-monster-problem", node: <SceneProblem /> },
         { id: "gentle-monster-why", node: <SceneWhy /> },
-        {
-          id: "gentle-monster-compare",
-          node: (
-            <SceneCompare
-              title={
-                <>
-                  From Store List
-                  <br />
-                  To Spatial Discovery
-                </>
-              }
-              after={{
-                label: "After",
-                name: "Globe-based Store Exploration",
-                parts: "지구본 / 도시 핀 / 선택 스토어 카드 / 줌인 흐름",
-                visual: <StoreListMock />,
-              }}
-              before={{
-                label: "Before",
-                name: "List-based Store Finder",
-                parts: "국가 선택 / 지역 선택 / 매장 목록",
-                visual: <StoreListMock />,
-              }}
-            />
-          ),
-        },
+        { id: "gentle-monster-after", node: <SceneAfter /> },
         /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.
         {
           id: "gentle-monster-2",

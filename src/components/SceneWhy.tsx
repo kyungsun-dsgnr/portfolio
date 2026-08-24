@@ -36,7 +36,7 @@ export function SceneWhy() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-display rise col-start-1 col-span-4 row-start-1 row-span-2">
+      <h2 className="type-lead rise col-start-1 col-span-4 row-start-1 row-span-2">
         Why change the starting point
       </h2>
 

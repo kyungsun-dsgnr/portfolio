@@ -160,6 +160,7 @@ export function GlobeDots({ interactive = true }: Props) {
     let width = 0;
     let height = 0;
     let unit = 1;
+    let radius = 0;
 
     function resize() {
       const box = wrap!.getBoundingClientRect();
@@ -169,7 +170,7 @@ export function GlobeDots({ interactive = true }: Props) {
       canvas!.width = Math.round(width * dpr);
       canvas!.height = Math.round(height * dpr);
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const radius = (Math.min(width, height) / 2) * 0.92;
+      radius = (Math.min(width, height) / 2) * 0.92;
       projection.translate([width / 2, height / 2]).scale(radius);
       unit = radius / 320;
     }
@@ -198,6 +199,22 @@ export function GlobeDots({ interactive = true }: Props) {
 
       projection.rotate(rotation.current);
       ctx!.clearRect(0, 0, width, height);
+
+      /* 지구본 아래 그림자. 구를 칠하기 전에 그려 뒤로 보냅니다.
+         납작한 타원이라 원형 그라디언트를 세로로 눌러서 씁니다. */
+      const shade = radius * 0.58;
+      ctx!.save();
+      ctx!.translate(width / 2, height / 2 + radius * 1.05);
+      ctx!.scale(1, 0.12);
+      const glow = ctx!.createRadialGradient(0, 0, 0, 0, 0, shade);
+      glow.addColorStop(0, "rgba(25, 25, 25, 0.16)");
+      glow.addColorStop(0.5, "rgba(25, 25, 25, 0.06)");
+      glow.addColorStop(1, "rgba(25, 25, 25, 0)");
+      ctx!.fillStyle = glow;
+      ctx!.beginPath();
+      ctx!.arc(0, 0, shade, 0, Math.PI * 2);
+      ctx!.fill();
+      ctx!.restore();
 
       // 페이지 바탕과 구분되도록 지구본 원 안쪽만 흰색으로 깝니다.
       ctx!.beginPath();

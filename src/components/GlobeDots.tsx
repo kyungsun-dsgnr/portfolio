@@ -101,6 +101,8 @@ type Props = {
   labels?: boolean;
   /** 이름표를 달 도시. 기본은 대륙마다 하나씩입니다. */
   tags?: string[];
+  /** 매장 점을 집거나 빈 곳을 눌렀을 때 알려 줍니다. 끌어 돌린 것과는 구분합니다. */
+  onPickStore?: (store: (typeof STORES)[number] | null) => void;
   /** 돌지 않고 멈춰 있는 지구본. 첫 도시가 정면에 옵니다. */
   still?: boolean;
 };
@@ -110,6 +112,7 @@ export function GlobeDots({
   labels = false,
   tags,
   still = false,
+  onPickStore,
 }: Props) {
   const tagged = useMemo(
     () => (tags ?? TAGGED).map((city) => STORES.find((store) => store.city === city)!),
@@ -119,8 +122,9 @@ export function GlobeDots({
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [dots, setDots] = useState<Dot[] | null>(null);
-  const [active, setActive] = useState<number | null>(null);
-  const [country, setCountry] = useState<string | null>(null);
+  /** 집어 둔 매장. 뱃지는 이때만 뜹니다. */
+  const [chosen, setChosen] = useState<number | null>(null);
+  const chosenRef = useRef<number | null>(null);
 
   /* 투영은 그리기 루프와 마우스 판정 양쪽에서 쓰므로 ref 로 둡니다. */
   const projectionRef = useRef(geoOrthographic());
@@ -135,6 +139,10 @@ export function GlobeDots({
   const tagSize = useRef<([number, number] | undefined)[]>([]);
   /** 마우스가 지구본 위에 있으면 자동 회전을 멈춥니다. */
   const hovering = useRef(false);
+  /** 위쪽에서 확대가 걸렸을 때의 배율. 좌표를 되돌리는 데 씁니다. */
+  const zoom = useRef(1);
+  /** 누른 뒤 끌린 거리. 짧으면 집은 것으로 봅니다. */
+  const dragged = useRef(0);
 
   /* 멈춰 있을 때는 첫 도시를 가운데에서 왼쪽으로 밀어 두어
      오른쪽으로 펼쳐지는 이름표가 판넬 안에 들어옵니다. */
@@ -219,8 +227,8 @@ export function GlobeDots({
       width = wrap!.offsetWidth;
       height = wrap!.offsetHeight;
       // 대신 확대된 만큼 더 촘촘히 그려 흐려지지 않게 합니다.
-      const zoom = width ? box.width / width : 1;
-      const ratio = dpr * zoom;
+      zoom.current = width ? box.width / width : 1;
+      const ratio = dpr * zoom.current;
       canvas!.width = Math.round(width * ratio);
       canvas!.height = Math.round(height * ratio);
       ctx!.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -357,6 +365,20 @@ export function GlobeDots({
 
       screen.current = visible;
 
+      /* 집어 둔 점 옆에 뱃지를 붙입니다. 오른쪽 자리가 모자라면 왼쪽으로 넘깁니다. */
+      const badge = badgeRef.current;
+      if (badge) {
+        const at = visible.find((point) => point.i === chosenRef.current);
+        if (at) {
+          const w = badge.offsetWidth;
+          const toLeft = at.x + HIT_RADIUS + w > width;
+          badge.toggleAttribute("data-left", toLeft);
+          const x = toLeft ? at.x - HIT_RADIUS - w : at.x + HIT_RADIUS;
+          badge.style.translate = `${x}px calc(${at.y}px - 50%)`;
+        }
+        badge.toggleAttribute("data-on", Boolean(at));
+      }
+
       /* 늘 떠 있는 나라 이름표. 앞면에 온 나라만 보이고 자리를 따라갑니다.
          캔버스가 아니라 DOM 이라 글꼴과 배경을 다른 뱃지와 같이 씁니다. */
       if (labels) {
@@ -398,10 +420,32 @@ export function GlobeDots({
     };
   }, [dots, interactive, labels, still, tagged]);
 
+  /** 화면 좌표에서 가장 가까운 매장 점을 찾아 둡니다.
+      그리기와 같은 좌표계로 되돌립니다 — 확대가 걸려 있으면 그만큼 나눕니다. */
+  function findStore(event: React.PointerEvent<HTMLCanvasElement>) {
+    const box = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - box.left) / zoom.current;
+    const y = (event.clientY - box.top) / zoom.current;
+
+    let found: number | null = null;
+    let best = HIT_RADIUS;
+    for (const point of screen.current) {
+      const d = Math.hypot(point.x - x, point.y - y);
+      if (d < best) {
+        best = d;
+        found = point.i;
+      }
+    }
+    activeRef.current = found;
+  }
+
   function pointerDown(event: React.PointerEvent<HTMLCanvasElement>) {
+    // 톡 누르기만 하면 move 가 오지 않으므로 여기서도 점을 찾아 둡니다.
+    findStore(event);
     // 포인터 캡처가 실패해도 드래그 상태는 어긋나지 않게 먼저 세웁니다.
     dragging.current = true;
     hovering.current = true;
+    dragged.current = 0;
     last.current = [event.clientX, event.clientY];
     lastMove.current = performance.now();
     velocity.current = [0, 0];
@@ -431,50 +475,15 @@ export function GlobeDots({
       // 놓았을 때 이어질 속도(도/초). 이벤트가 몰리면 과하게 잡히므로 묶어 둡니다.
       const speed = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, turned / dt));
       velocity.current = [speed, 0];
+      dragged.current += Math.abs(dx);
       return;
     }
 
-    const x = event.clientX - box.left;
-    const y = event.clientY - box.top;
-
-    let found: number | null = null;
-    let best = HIT_RADIUS;
-    for (const point of screen.current) {
-      const d = Math.hypot(point.x - x, point.y - y);
-      if (d < best) {
-        best = d;
-        found = point.i;
-      }
-    }
-    if (found !== activeRef.current) {
-      activeRef.current = found;
-      setActive(found);
-    }
-
-    // 화면 좌표를 위경도로 되돌려, 매장 보유국 위인지 봅니다.
-    // 검사 대상이 스무 나라 남짓이라 폴리곤 판정으로 충분합니다.
-    const geo = projectionRef.current.invert?.([x, y]);
-    const hit = geo
-      ? homelandsRef.current.find((land) => geoContains(land.shape, geo))
-      : undefined;
-    const name = hit?.label ?? null;
-
-    if (badgeRef.current) {
-      badgeRef.current.style.translate = `calc(${x}px + ${HIT_RADIUS}px) calc(${y}px - 50%)`;
-    }
-    setCountry((current) => (current === name ? current : name));
+    findStore(event);
   }
 
-  /* 뱃지가 유일한 표시입니다.
-     도시 점을 집으면 국가와 도시를, 나라만 스치면 국가만 보여 줍니다.
-     도시를 집었을 때는 국가명을 매장 데이터에서 가져오므로,
-     110m 지도에서 폴리곤이 잡히지 않는 도시(싱가포르 등)도 제대로 나옵니다. */
-  const store = active === null ? null : STORES[active];
-  const label = store
-    ? { country: store.country, city: store.city }
-    : country
-      ? { country, city: null }
-      : null;
+  /* 뱃지는 집은 점 옆에 붙습니다. 자리는 그리기 루프가 매 프레임 옮깁니다. */
+  const label = chosen === null ? null : STORES[chosen];
 
   return (
     <div ref={wrapRef} className="globe">
@@ -488,6 +497,13 @@ export function GlobeDots({
           interactive
             ? (event) => {
                 dragging.current = false;
+                // 돌리려고 끈 것이 아니라 점을 집은 것이면 뱃지를 띄우고 알립니다.
+                if (dragged.current < 4) {
+                  const hit = activeRef.current;
+                  chosenRef.current = hit;
+                  setChosen(hit);
+                  onPickStore?.(hit === null ? null : STORES[hit]);
+                }
                 try {
                   event.currentTarget.releasePointerCapture(event.pointerId);
                 } catch {
@@ -502,8 +518,6 @@ export function GlobeDots({
                 dragging.current = false;
                 hovering.current = false;
                 activeRef.current = null;
-                setActive(null);
-                setCountry(null);
               }
             : undefined
         }
@@ -533,12 +547,11 @@ export function GlobeDots({
         <div
           ref={badgeRef}
           className="globe-badge"
-          data-on={label ? "" : undefined}
           aria-hidden
         >
-          <span>{label?.country}</span>
-          {label?.city && (
+          {label && (
             <>
+              <span>{label.country}</span>
               <span className="globe-badge-divider">|</span>
               <span>{label.city}</span>
             </>

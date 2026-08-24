@@ -1,14 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 
 import { GlobeDots } from "@/components/GlobeDots";
 import { ChevronIcon, LocateIcon } from "@/components/StoreIcons";
-import { STORES } from "@/data/gentle-monster-stores";
-
-/** 지구본에 이름표를 다는 도시. 탭에 따라 갈립니다. */
-const HOME_TAGS = ["Seoul"];
-const WORLD_TAGS = ["Seoul", "Los Angeles", "Sydney", "Kuala Lumpur", "Milan", "Dubai"];
+import { STORES, type Store } from "@/data/gentle-monster-stores";
 
 /** 현재 국가 탭에서 보여 주는 가까운 매장 */
 const NEARBY = [
@@ -30,26 +27,45 @@ const NEARBY = [
     line: "영업 종료 - 내일 오전 11:00에 다시 오픈",
     where: "서울특별시 성동구 연무장길 42",
   },
+  {
+    name: "젠틀몬스터 더현대 서울",
+    aside: "11.4km",
+    line: "영업 중 - 오후 8:00에 종료",
+    where: "서울특별시 영등포구 여의대로 108, 더현대 서울 3F",
+  },
 ];
-
-/** 글로벌 탭에서 보여 주는 도시별 대표 매장 */
-const WORLDWIDE = STORES.filter((store) => store.flagship).map((store) => ({
-  name: store.name,
-  aside: store.city,
-  line: store.country,
-  where: "도시를 골라 매장을 확인합니다",
-}));
 
 const SERVICES = ["피팅 서비스", "간편 수리", "수리 제품 픽업"];
 
+/** 도시 하나를 목록 카드 한 줄로 */
+function card(store: Store) {
+  return {
+    name: store.name,
+    aside: store.city,
+    line: store.country,
+    where: "도시를 골라 매장을 확인합니다",
+  };
+}
+
 /**
  * 제안하는 스토어 화면.
- * 위에서부터 현재 국가/글로벌 전환, 좁힌 범위, 지구본, 그 아래 매장 목록입니다.
- * 탭은 실제로 작동해서 지구본과 목록이 함께 바뀝니다.
+ * 현재 국가 탭은 평면 지도, 글로벌 탭은 끌어 돌리는 지구본입니다.
+ * 지구본에서 점을 집으면 그 나라 매장만 아래에 남습니다.
  */
 export function StoreGlobeMock() {
   const [world, setWorld] = useState(false);
-  const stores = world ? WORLDWIDE : NEARBY;
+  const [picked, setPicked] = useState<Store | null>(null);
+
+  const stores = !world
+    ? NEARBY
+    : picked
+      ? STORES.filter((store) => store.country === picked.country).map(card)
+      : STORES.filter((store) => store.flagship).map(card);
+
+  function show(next: boolean) {
+    setWorld(next);
+    setPicked(null);
+  }
 
   return (
     <div className="globe-mock">
@@ -59,7 +75,7 @@ export function StoreGlobeMock() {
           type="button"
           className="globe-tab"
           data-on={!world || undefined}
-          onClick={() => setWorld(false)}
+          onClick={() => show(false)}
         >
           현재 국가
         </button>
@@ -67,7 +83,7 @@ export function StoreGlobeMock() {
           type="button"
           className="globe-tab"
           data-on={world || undefined}
-          onClick={() => setWorld(true)}
+          onClick={() => show(true)}
         >
           글로벌
         </button>
@@ -75,25 +91,26 @@ export function StoreGlobeMock() {
 
       {/* 선택 상자 대신 지금 보고 있는 범위만 한 줄로 */}
       <p className="globe-scope">
-        {world ? "전 세계 19개 도시" : "대한민국 · 서울"}
+        {world ? (picked?.country ?? "전 세계 19개 도시") : "대한민국 · 서울"}
         <ChevronIcon size={14} />
       </p>
 
       <div className="globe-stage">
-        <GlobeDots
-          interactive={false}
-          labels
-          still={!world}
-          tags={world ? WORLD_TAGS : HOME_TAGS}
-        />
+        {world ? (
+          <GlobeDots labels={false} onPickStore={setPicked} />
+        ) : (
+          <Image
+            src="/images/store-map.png"
+            alt=""
+            fill
+            sizes="25vw"
+            className="object-cover"
+          />
+        )}
 
         {/* 현재 위치로 돌아오는 플로팅 버튼 */}
-        <button
-          type="button"
-          className="globe-locate"
-          onClick={() => setWorld(false)}
-        >
-          <LocateIcon size={12} />
+        <button type="button" className="globe-locate" onClick={() => show(false)}>
+          <LocateIcon size={11} />
           현재 위치 사용
         </button>
       </div>

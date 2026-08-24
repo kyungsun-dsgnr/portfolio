@@ -785,9 +785,13 @@
     text-align: left;
   }
 
-  /* 큰 쪽은 회색 판 위에, 작은 쪽은 장 바탕 위에 그대로 놓입니다. */
-  .compare-big {
+  /* 배경색은 크기가 아니라 카드에 붙습니다. 작은 쪽은 장 바탕 위에 그대로 놓입니다. */
+  .compare-big.compare-before {
     background: #f1f1f1;
+  }
+
+  .compare-big.compare-after {
+    background: #ffffff;
   }
 
   /* 누르면 이 카드가 큰 자리로 올라옵니다. */
@@ -836,12 +840,6 @@
   /* 작은 쪽 설명은 카드 맨 위 선에 바로 붙고 여백도 좁습니다. */
   .compare-small .compare-caption {
     padding: 0 calc(16 * var(--u));
-  }
-
-  /* 오른쪽 카드일 때는 바깥선을 따라 오른쪽으로 맞춥니다. */
-  .compare-small.compare-right .compare-caption {
-    align-items: stretch;
-    text-align: right;
   }
 }
 

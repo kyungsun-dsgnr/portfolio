@@ -33,12 +33,15 @@ const PLACE = {
 
 function Card({
   view,
+  kind,
   side,
   big,
   delay,
   onSelect,
 }: {
   view: CompareView;
+  /** 배경색은 크기와 상관없이 이 값에 붙습니다. */
+  kind: "before" | "after";
   side: "left" | "right";
   big: boolean;
   delay: string;
@@ -50,7 +53,7 @@ function Card({
       disabled={big}
       onClick={onSelect}
       style={{ "--delay": delay } as CSSProperties}
-      className={`compare-card rise compare-${side} ${big ? "compare-big" : "compare-small"} ${PLACE[side][big ? "big" : "small"]}`}
+      className={`compare-card rise compare-${kind} ${big ? "compare-big" : "compare-small"} ${PLACE[side][big ? "big" : "small"]}`}
     >
       <div className="compare-caption">
         <span className="card-index">{view.label}</span>
@@ -85,6 +88,7 @@ export function SceneCompare({ title, after, before }: Props) {
 
       <Card
         view={before}
+        kind="before"
         side="left"
         big={beforeIsBig}
         delay="0.1s"
@@ -92,6 +96,7 @@ export function SceneCompare({ title, after, before }: Props) {
       />
       <Card
         view={after}
+        kind="after"
         side="right"
         big={!beforeIsBig}
         delay="0.18s"

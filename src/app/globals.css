@@ -913,21 +913,16 @@
 @layer components {
   /* ── 제안을 한 화면으로 보여 주는 장 ───────────
      목업을 1.53 배로 키워 놓고, 장을 넘어가는 아래쪽은 캔버스가 자릅니다. */
+  /* 판은 없습니다. 목업만 장 한가운데에 놓입니다.
+     자리는 여덟 단을 다 쓰지만 글자를 가리지 않게 빈 곳은 지나갑니다. */
   .after-frame {
-    position: relative;
-    /* 목업이 장 아래로 흘러 나가므로 흰 판도 캔버스 끝까지 내려갑니다. */
-    margin-bottom: calc(-30 * var(--u));
-    overflow-y: auto;
-    background: #ffffff;
-    scrollbar-width: none;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
   }
 
-  .after-frame::-webkit-scrollbar {
-    display: none;
-  }
-
-  .after-shot {
-    padding: calc(127 * var(--u)) 0 calc(40 * var(--u)) calc(174 * var(--u));
+  .after-frame > * {
+    pointer-events: auto;
   }
 }
 
@@ -935,14 +930,23 @@
   /* ── 제안하는 스토어 화면 목업 ─────────────────
      화면은 넓지만 글자는 기존 스토어 화면과 같은 크기입니다.
      화면이 넓어졌다고 글자가 커지지는 않으니까요. */
+  /* 휴대폰 한 대. 19.5:9 로 장 높이를 꽉 채우고, 안쪽만 스크롤됩니다. */
   .globe-mock {
     position: relative;
-    width: calc(508 * var(--u));
+    height: calc(740 * var(--u));
+    width: calc(341.5 * var(--u));
+    flex: none;
+    overflow-y: auto;
     padding: calc(21.08 * var(--u)) 0 calc(28.11 * var(--u));
     background: #f3f4f6;
     color: #111111;
     font-family: var(--font-store);
     font-weight: 400;
+    scrollbar-width: none;
+  }
+
+  .globe-mock::-webkit-scrollbar {
+    display: none;
   }
 
   /* 현재 국가 / 글로벌. 바깥 트랙은 옅은 회색, 고른 쪽만 흰색입니다. */
@@ -1062,7 +1066,7 @@
   /* 지구본과 지도가 놓이는 자리. 화면 폭을 꽉 채웁니다. */
   .globe-stage {
     position: relative;
-    height: calc(340 * var(--u));
+    height: calc(380 * var(--u));
     margin-top: calc(10.54 * var(--u));
     overflow: hidden;
   }

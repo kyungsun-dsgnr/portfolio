@@ -30,14 +30,12 @@ export function SceneAfter() {
         브랜드라는 감각을 함께 인식합니다.
       </p>
 
-      {/* 화면 하나를 크게. 아래쪽은 장을 넘어가 잘립니다. */}
+      {/* 화면 하나. 장 한가운데에 휴대폰 비율 그대로 섭니다. */}
       <div
-        className="after-frame rise col-start-4 col-span-5 row-start-1 row-span-6"
+        className="after-frame rise col-start-1 col-span-8 row-start-1 row-span-6"
         style={{ "--delay": "0.18s" } as CSSProperties}
       >
-        <div className="after-shot">
-          <StoreGlobeMock />
-        </div>
+        <StoreGlobeMock />
       </div>
     </div>
   );

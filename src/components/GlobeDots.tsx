@@ -234,7 +234,9 @@ export function GlobeDots({
       ctx!.setTransform(ratio, 0, 0, ratio, 0, 0);
       radius = (Math.min(width, height) / 2) * 0.92;
       projection.translate([width / 2, height / 2]).scale(radius);
-      unit = radius / 320;
+      /* 점 크기의 기준. 작은 자리에서는 1px 아래로 내려가 점이 사라지므로
+         바닥을 둡니다. 큰 지구본에서는 이 바닥이 걸리지 않습니다. */
+      unit = Math.max(0.5, radius / 320);
       tagSize.current = [];
     }
 

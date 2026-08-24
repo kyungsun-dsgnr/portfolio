@@ -231,7 +231,7 @@ export function GlobeDots({ interactive = true }: Props) {
       // 페이지 바탕과 구분되도록 지구본 원 안쪽만 흰색으로 깝니다.
       ctx!.beginPath();
       path(sphere);
-      ctx!.fillStyle = "#ffffff7f";
+      ctx!.fillStyle = "#ffffff4a";
       ctx!.fill();
 
       const center: [number, number] = [

@@ -3,62 +3,75 @@
 import type { CSSProperties } from "react";
 
 import { useInView } from "@/components/useInView";
+import { StoreListMock } from "@/components/StoreListMock";
 
-/** 지금 방식이 막히는 지점 셋 */
-const ISSUES = [
+/** 지금 화면이 하는 일과, 그 위에 더할 것 */
+const POINTS = [
   {
     index: "01",
-    title: "Needs a Name First",
-    body: "국가와 도시를 고를 수 있어야 목록이 열립니다. 어디에 있는지 모르면 첫 단계에서 멈춥니다.",
-    place: "col-start-3 col-span-3 row-start-5",
+    title: "Functional Search",
+    body: "현재 위치 기반으로 가까운 매장을 빠르게 찾을 수 있습니다.",
   },
   {
     index: "02",
-    title: "No Sense of Distance",
-    body: "목록은 거리와 방향을 담지 못합니다. 서울과 도쿄가 얼마나 가까운지 알 수 없습니다.",
-    place: "col-start-6 col-span-3 row-start-5",
+    title: "Global Presence",
+    body: "전 세계 도시의 스토어를 함께 보여주면 브랜드의 확장성과 존재감을 더 쉽게 인식할 수 있습니다.",
   },
   {
     index: "03",
-    title: "Nothing to Wander",
-    body: "고르는 행위만 있고 둘러보는 행위가 없습니다. 우연히 마주칠 여지가 남지 않습니다.",
-    place: "col-start-6 col-span-3 row-start-6",
+    title: "Exploratory Entry",
+    body: "목록에 들어가기 전, 지구본을 돌려 도시를 발견하는 진입은 탐색의 감각을 더합니다.",
   },
 ];
 
-/** 문제를 짚는 장 */
+/** 세 항목은 왼쪽부터 두 단씩 나란히 놓입니다. */
+const PLACE = ["col-start-1", "col-start-3", "col-start-5"];
+
+/** 지금 화면을 짚고 방향을 제안하는 장 */
 export function SceneProblem() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-lead rise col-start-1 col-span-7 row-start-1 row-span-3">
+      <h2 className="type-lead rise col-start-1 col-span-5 row-start-1 row-span-2">
         The list assumes
         <br />
         you already know where to look.
       </h2>
 
-      <p
-        className="type-body rise col-span-2 col-start-7 row-start-1"
+      <div
+        className="note-block rise col-start-1 col-span-3 row-start-3 row-span-2"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        스토어 찾기는 이름을 아는 사람에게만 열려 있습니다.
-        <br />
-        <br />
-        찾으려면 먼저 어디에 있는지 알아야 하고, 알고 있다면 굳이 찾을 이유가 없습니다.
-      </p>
+        <p className="type-body">
+          현재 스토어 탐색은 접속 국가와 현재 위치를 기준으로 가까운 매장을 빠르게 찾을 수
+          있도록 설계되어 있습니다.
+        </p>
+        <p className="type-body">
+          이 프로젝트는 그 기능 위에 Gentle Monster가 전 세계 여러 도시와 연결된 글로벌
+          브랜드라는 인식을 더하는 방향을 제안합니다.
+        </p>
+      </div>
 
-      {ISSUES.map((issue, i) => (
+      {POINTS.map((point, i) => (
         <div
-          key={issue.index}
-          className={`issue rise ${issue.place}`}
+          key={point.index}
+          className={`issue rise col-span-2 row-start-5 row-span-2 ${PLACE[i]}`}
           style={{ "--delay": `${0.18 + i * 0.08}s` } as CSSProperties}
         >
-          <span className="card-index">{issue.index}</span>
-          <h3 className="type-title">{issue.title}</h3>
-          <p className="type-body">{issue.body}</p>
+          <span className="card-index">{point.index}</span>
+          <h3 className="type-title">{point.title}</h3>
+          <p className="type-body">{point.body}</p>
         </div>
       ))}
+
+      {/* 지금 화면. 목업 너비 332 가 두 단(333)과 거의 같아 그대로 들어갑니다. */}
+      <div
+        className="store-slot rise col-start-7 col-span-2 row-start-1 row-span-6"
+        style={{ "--delay": "0.26s" } as CSSProperties}
+      >
+        <StoreListMock />
+      </div>
     </div>
   );
 }

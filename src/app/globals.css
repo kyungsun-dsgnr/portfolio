@@ -557,6 +557,11 @@
     margin-top: calc(22 * var(--u));
   }
 
+  /* 문단 여럿짜리 노트. 첫 줄은 행 선에 맞추고 문단 사이만 한 줄 띄웁니다. */
+  .note-block > .type-body + .type-body {
+    margin-top: calc(22 * var(--u));
+  }
+
   /* 섹션이 화면에 들어오면 떠오릅니다. 섹션을 벗어나면 다시 숨습니다. */
   .rise {
     opacity: 0;
@@ -849,17 +854,20 @@
      프레임보다 길어서 아래쪽은 프레임 밖으로 잘려 나갑니다. */
   .store-panel {
     position: absolute;
+    left: 50%;
+    top: 0;
     width: calc(332 * var(--u));
+    margin-left: calc(-166 * var(--u));
     background: #f3f4f6;
     color: #111111;
     font-family: var(--font-body);
     font-weight: 400;
   }
 
-  /* 어느 카드에 있든 가로 가운데에 놓입니다. */
-  .compare-card .store-panel {
-    left: 50%;
-    margin-left: calc(-166 * var(--u));
+  /* 목업만 따로 놓는 자리 */
+  .store-slot {
+    position: relative;
+    overflow: hidden;
   }
 
   .compare-big .store-panel {

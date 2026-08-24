@@ -704,7 +704,7 @@
   70%,
   100% {
     opacity: 0;
-    scale: 3;
+    scale: 2.2;
   }
 }
 
@@ -787,8 +787,8 @@
     opacity: 0;
     clip-path: inset(0 100% 0 0 round 999px);
     transition:
-      clip-path 340ms cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 140ms linear;
+      clip-path 620ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 300ms ease;
   }
 
   .globe-badge-divider {
@@ -1353,20 +1353,36 @@
     position: absolute;
     left: calc(50% + 4 * var(--u));
     top: 50%;
-    height: calc(8 * var(--u));
-    width: calc(8 * var(--u));
+    display: flex;
+    height: calc(18 * var(--u));
+    width: calc(18 * var(--u));
+    align-items: center;
+    justify-content: center;
     padding: 0;
     translate: -50% -50%;
     border-radius: 50%;
     background: var(--fg);
+    color: var(--bg);
+    font-family: var(--font-display);
+    font-size: calc(8 * var(--u));
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.02em;
     cursor: pointer;
     pointer-events: auto;
   }
 
-  /* 좁은 요소에서는 글자를 덮지 않도록 오른쪽 끝으로 비켜섭니다. */
+  /* 번호는 번지는 고리보다 앞에 둡니다. */
+  .store-dot span {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 좁은 요소에서는 글자를 덮지 않도록 왼쪽 바깥으로 나섭니다.
+     여백 자리만 살짝 물고 글자에는 닿지 않습니다. */
   .store-dot-side {
     left: auto;
-    right: calc(-2 * var(--u));
+    right: calc(100% - 6 * var(--u));
     translate: 0 -50%;
   }
 

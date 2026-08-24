@@ -207,7 +207,9 @@ export function StoreListMock({
         aria-pressed={picked === key}
         onClick={() => onPick?.(key)}
         className={`store-dot${side ? " store-dot-side" : ""}`}
-      />
+      >
+        <span>{key}</span>
+      </button>
     );
   };
 

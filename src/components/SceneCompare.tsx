@@ -21,23 +21,23 @@ type Props = {
 
 /**
  * 비포/애프터를 나란히 두되 크기로 위계를 주는 장.
- * 작은 쪽을 누르면 두 화면이 자리를 바꿉니다.
+ * 작은 쪽을 누르면 그 화면이 큰 자리로 올라옵니다.
  */
 export function SceneCompare({ title, after, before }: Props) {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
-  const [swapped, setSwapped] = useState(false);
+  const [grown, setGrown] = useState<"before" | "after">("before");
 
-  const big = swapped ? before : after;
-  const small = swapped ? after : before;
+  const big = grown === "before" ? before : after;
+  const small = grown === "before" ? after : before;
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-display compare-headline rise col-start-1 col-span-3 row-start-1 row-span-2">
+      <h2 className="type-display compare-headline rise col-start-6 col-span-3 row-start-1 row-span-2">
         {title}
       </h2>
 
       <div
-        className="compare-frame compare-big rise col-start-4 col-span-5 row-start-1 row-span-6"
+        className="compare-frame compare-big rise col-start-1 col-span-5 row-start-1 row-span-6"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
         <div className="compare-caption">
@@ -50,8 +50,8 @@ export function SceneCompare({ title, after, before }: Props) {
 
       <button
         type="button"
-        onClick={() => setSwapped((on) => !on)}
-        className="compare-frame compare-small rise col-start-1 col-span-3 row-start-4 row-span-3"
+        onClick={() => setGrown((now) => (now === "before" ? "after" : "before"))}
+        className="compare-frame compare-small rise col-start-6 col-span-3 row-start-4 row-span-3"
         style={{ "--delay": "0.18s" } as CSSProperties}
       >
         <div className="compare-caption">

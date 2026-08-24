@@ -783,9 +783,9 @@
     overflow: hidden;
   }
 
-  /* 큰 쪽은 흰 판 위에, 작은 쪽은 장 바탕 위에 그대로 놓입니다. */
+  /* 큰 쪽은 회색 판 위에, 작은 쪽은 장 바탕 위에 그대로 놓입니다. */
   .compare-big {
-    background: #ffffff;
+    background: #f1f1f1;
   }
 
   /* 눌러서 큰 쪽과 자리를 바꿉니다. */
@@ -832,10 +832,11 @@
     font-size: calc(24 * var(--u));
   }
 
-  /* 작은 쪽 설명은 프레임 맨 위 선에 바로 붙습니다. */
+  /* 작은 쪽 설명은 프레임 맨 위 선에 바로 붙고 오른쪽으로 맞춥니다. */
   .compare-small .compare-caption {
-    padding-top: 0;
-    padding-bottom: 0;
+    align-items: stretch;
+    padding: 0 calc(16 * var(--u));
+    text-align: right;
   }
 }
 
@@ -852,14 +853,18 @@
     font-weight: 400;
   }
 
+  /* 어느 프레임에 있든 가로 가운데에 놓입니다. */
+  .compare-frame .store-panel {
+    left: 50%;
+    margin-left: calc(-166 * var(--u));
+  }
+
   .compare-big .store-panel {
-    left: calc(262 * var(--u));
     top: calc(154 * var(--u));
   }
 
   .compare-small .store-panel {
-    left: calc(88 * var(--u));
-    top: calc(129 * var(--u));
+    top: calc(126 * var(--u));
   }
 
   /* 매장 수와 필터 버튼 */

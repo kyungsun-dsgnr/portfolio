@@ -661,6 +661,19 @@
   }
 }
 
+/* 클릭 유도 점에서 번져 나가는 고리 */
+@keyframes dot-pulse {
+  0% {
+    opacity: 0.45;
+    scale: 1;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    scale: 3;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -955,6 +968,7 @@
   }
 
   .store-locate {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: calc(3.51 * var(--u));
@@ -974,6 +988,7 @@
   }
 
   .store-tab {
+    position: relative;
     display: flex;
     height: calc(26.35 * var(--u));
     align-items: center;
@@ -1045,6 +1060,28 @@
     align-items: center;
     gap: calc(7.03 * var(--u));
     padding-top: calc(3.52 * var(--u));
+  }
+
+  /* 눌러야 하는 자리를 짚는 점. 대상의 오른쪽 위 모서리에 걸칩니다.
+     목업이 아니라 그 위에 얹는 주석이라 페이지 배율을 그대로 씁니다. */
+  .store-dot {
+    position: absolute;
+    right: calc(-4 * var(--u));
+    top: calc(-4 * var(--u));
+    height: calc(8 * var(--u));
+    width: calc(8 * var(--u));
+    border-radius: 50%;
+    background: var(--fg);
+  }
+
+  /* 천천히 번져 나가는 고리 */
+  .store-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--fg);
+    animation: dot-pulse 2.2s ease-out infinite;
   }
 
   .store-tag {

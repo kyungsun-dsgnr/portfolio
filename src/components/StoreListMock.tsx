@@ -100,7 +100,14 @@ function LocateIcon() {
   );
 }
 
-export function StoreListMock() {
+type Props = {
+  /** 눌러야 하는 자리에 점을 얹습니다. */
+  dots?: boolean;
+};
+
+export function StoreListMock({ dots = false }: Props) {
+  const dot = dots ? <span className="store-dot" /> : null;
+
   return (
     <div className="store-panel" aria-hidden>
       <div className="store-head">
@@ -121,11 +128,13 @@ export function StoreListMock() {
             <span className="store-select-label">시/군/구</span>
             <span className="store-select-value">경기</span>
             <ChevronIcon />
+            {dot}
           </div>
         </div>
         <p className="store-locate">
           <LocateIcon />
           현재 위치 사용
+          {dot}
         </p>
       </div>
 
@@ -133,7 +142,10 @@ export function StoreListMock() {
         <span className="store-tab" data-on>
           목록
         </span>
-        <span className="store-tab">지도</span>
+        <span className="store-tab">
+          지도
+          {dot}
+        </span>
       </div>
 
       <div className="store-list">

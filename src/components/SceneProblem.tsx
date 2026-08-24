@@ -44,7 +44,7 @@ export function SceneProblem() {
         className="store-slot rise col-start-4 col-span-2 row-start-1 row-span-6"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        <StoreListMock />
+        <StoreListMock dots />
       </div>
 
       {POINTS.map((point, i) => (

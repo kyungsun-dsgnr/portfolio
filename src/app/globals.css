@@ -909,6 +909,9 @@
      목업을 1.53 배로 키워 놓고, 장을 넘어가는 아래쪽은 캔버스가 자릅니다. */
   .after-frame {
     position: relative;
+    /* 목업이 장 아래로 흘러 나가므로 흰 판도 캔버스 끝까지 내려갑니다. */
+    margin-bottom: calc(-30 * var(--u));
+    background: #ffffff;
   }
 
   .after-shot {

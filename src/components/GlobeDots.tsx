@@ -105,6 +105,8 @@ type Props = {
   onPickStore?: (store: (typeof STORES)[number] | null) => void;
   /** 돌지 않고 멈춰 있는 지구본. 첫 도시가 정면에 옵니다. */
   still?: boolean;
+  /** 점 뒤에 깔리는 구의 흰 기운(0~1). 바탕과 구를 갈라 보이게 합니다. */
+  veil?: number;
 };
 
 export function GlobeDots({
@@ -112,6 +114,7 @@ export function GlobeDots({
   labels = false,
   tags,
   still = false,
+  veil = 0.29,
   onPickStore,
 }: Props) {
   const tagged = useMemo(
@@ -287,7 +290,7 @@ export function GlobeDots({
       // 페이지 바탕과 구분되도록 지구본 원 안쪽만 흰색으로 깝니다.
       ctx!.beginPath();
       path(sphere);
-      ctx!.fillStyle = "#ffffff4a";
+      ctx!.fillStyle = `rgba(255, 255, 255, ${veil})`;
       ctx!.fill();
 
       const center: [number, number] = [
@@ -420,7 +423,7 @@ export function GlobeDots({
       cancelAnimationFrame(frame);
       observer.disconnect();
     };
-  }, [dots, interactive, labels, still, tagged]);
+  }, [dots, interactive, labels, still, tagged, veil]);
 
   /** 화면 좌표에서 가장 가까운 매장 점을 찾아 둡니다.
       그리기와 같은 좌표계로 되돌립니다 — 확대가 걸려 있으면 그만큼 나눕니다. */

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 import { GlobeDots } from "@/components/GlobeDots";
-import { ChevronIcon, LocateIcon } from "@/components/StoreIcons";
+import { ChevronIcon, FilterIcon, LocateIcon } from "@/components/StoreIcons";
 import { STORES, type Store } from "@/data/gentle-monster-stores";
 
 /** 현재 국가 탭. 지역을 고르면 그 지역 매장만 남습니다. */
@@ -210,7 +210,7 @@ export function StoreGlobeMock({
         aria-label={key}
         aria-pressed={step === key}
         onClick={() => onPick?.(key)}
-        className={`store-dot${of === "globe" ? " globe-dot-stage" : " store-dot-right"}`}
+        className={`store-dot globe-dot-${of}`}
       >
         <span>{key}</span>
       </button>
@@ -245,6 +245,14 @@ export function StoreGlobeMock({
 
   return (
     <div className="globe-mock">
+      {/* 매장 수와 필터. 기존 화면과 같은 머리글입니다. */}
+      <div className="store-head">
+        <p className="store-count">
+          스토어 <span>{stores.length}</span>
+        </p>
+        <FilterIcon />
+      </div>
+
       {/* 접속 국가 안에서 볼지, 전 세계를 볼지 */}
       <div className="globe-tabs" role="group">
         <button
@@ -262,8 +270,9 @@ export function StoreGlobeMock({
           onClick={() => show(true)}
         >
           글로벌
-          {dot("tabs")}
         </button>
+
+        {dot("tabs")}
       </div>
 
       {/* 선택 상자 대신 지금 보고 있는 범위만 한 줄로. 눌러서 바꿉니다. */}
@@ -319,7 +328,13 @@ export function StoreGlobeMock({
 
       <div className="globe-stage">
         {showWorld ? (
-          <GlobeDots labels={false} onPickStore={fromGlobe} />
+          <GlobeDots
+            labels={false}
+            /* 나라를 고르면 그 자리에서 멈춥니다. */
+            still={Boolean(showCountry)}
+            veil={0.49}
+            onPickStore={fromGlobe}
+          />
         ) : (
           <Image
             src="/images/store-map.png"
@@ -342,10 +357,10 @@ export function StoreGlobeMock({
       <div className="globe-list">
         {stores.map((store, i) => (
           <article className="store-card" key={store.name}>
+            {i === 0 && dot("list")}
             <div className="store-card-top">
               <h4 className="store-name">{store.name}</h4>
               <span className="store-distance">{store.aside}</span>
-              {i === 0 && dot("list")}
             </div>
             <p className="store-hours">{store.line}</p>
             <p className="store-address">{store.where}</p>

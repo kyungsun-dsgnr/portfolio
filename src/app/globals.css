@@ -944,6 +944,7 @@
 
   /* 현재 국가 / 글로벌. 바깥 트랙은 옅은 회색, 고른 쪽만 흰색입니다. */
   .globe-tabs {
+    position: relative;
     display: flex;
     margin: 0 calc(21.08 * var(--u));
     padding: calc(3.51 * var(--u));
@@ -1061,7 +1062,7 @@
   .globe-stage {
     position: relative;
     height: calc(380 * var(--u));
-    margin-top: calc(10.54 * var(--u));
+    margin: calc(10.54 * var(--u)) calc(8 * var(--u)) 0;
     overflow: hidden;
   }
 
@@ -1090,12 +1091,23 @@
     scale: 1.4;
   }
 
-  /* 지구본을 짚는 점은 화면 위에 얹힙니다. */
-  .globe-dot-stage {
+  /* 화면 위 세 점. 각자 짚는 자리 오른쪽에 걸칩니다.
+     버튼 안에 버튼을 넣을 수 없어 모두 바깥에서 얹습니다.
+     .store-dot 이 뒤에 오므로 클래스를 겹쳐 우선순위를 올립니다. */
+  .store-dot.globe-dot-tabs,
+  .store-dot.globe-dot-list {
     left: auto;
-    right: calc(21.08 * var(--u));
-    top: calc(24 * var(--u));
-    translate: 0;
+    right: calc(-9 * var(--u));
+    top: 50%;
+    translate: 0 -50%;
+  }
+
+  /* 구의 오른쪽 끝. 반지름은 자리의 짧은 변 × 0.46 이라 여기서 계산해 둡니다. */
+  .store-dot.globe-dot-globe {
+    left: auto;
+    right: calc(13 * var(--u));
+    top: 50%;
+    translate: 0 -50%;
   }
 
   .globe-locate {
@@ -1124,6 +1136,7 @@
   }
 
   .globe-list .store-card {
+    position: relative;
     height: auto;
   }
 

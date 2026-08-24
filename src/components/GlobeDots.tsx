@@ -292,9 +292,11 @@ export function GlobeDots({ interactive = true, labels = false }: Props) {
         });
       }
 
-      // 매장이 없는 나라는 바탕처럼 옅게, 있는 나라는 또렷하게.
-      paint(plain, 2.1 * unit, "125, 125, 125", [0.5, 0.36, 0.2]);
-      paint(home, 2.7 * unit, "60, 60, 60", [0.95, 0.7, 0.42]);
+      /* 매장이 없는 나라는 바탕처럼 옅게, 있는 나라는 또렷하게.
+         크기는 같고 색과 진하기로만 갈립니다. */
+      const dot = 2 * unit;
+      paint(plain, dot, "125, 125, 125", [0.5, 0.36, 0.2]);
+      paint(home, dot, "60, 60, 60", [0.95, 0.7, 0.42]);
 
       // 매장
       const visible: { i: number; x: number; y: number }[] = [];

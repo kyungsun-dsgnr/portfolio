@@ -885,9 +885,9 @@
     overflow: hidden;
   }
 
-  /* 이 목업은 장 안에서 아래로 내려 앉고, 아래쪽은 잘려 나갑니다. */
+  /* 이 목업은 자리 안에서 아래로 내려 앉고, 아래쪽은 잘려 나갑니다. */
   .store-slot .store-panel {
-    top: calc(156 * var(--u));
+    top: calc(52 * var(--u));
   }
 
   .compare-big .store-panel {
@@ -1062,24 +1062,86 @@
     padding-top: calc(3.52 * var(--u));
   }
 
-  /* 눌러야 하는 자리를 짚는 점. 누르게 될 자리 한가운데에 얹힙니다.
+  /* 누른 자리가 제자리에서 1.5배로 커집니다. 자리는 그대로 두고 위로만 자랍니다. */
+  .store-select,
+  .store-locate,
+  .store-tab {
+    transition: scale 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  [data-hot] {
+    z-index: 2;
+    scale: 1.5;
+  }
+
+  /* 시/군/구를 켜면 그 아래로 지역 목록이 열립니다. 상자와 함께 커집니다. */
+  .store-open-list {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 5.98 * var(--u));
+    display: flex;
+    max-height: calc(237.14 * var(--u));
+    width: 100%;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0 calc(11.47 * var(--u));
+    border-radius: calc(7.03 * var(--u));
+    outline: calc(0.88 * var(--u)) solid #d8d8d8;
+    outline-offset: calc(-0.88 * var(--u));
+    background: #ffffff;
+  }
+
+  .store-open-item {
+    height: calc(43.04 * var(--u));
+    flex: none;
+    padding-top: calc(12.3 * var(--u));
+    border-bottom: calc(0.88 * var(--u)) solid #d8d8d8;
+    font-size: calc(10.54 * var(--u));
+    font-weight: 300;
+    line-height: 1.416;
+  }
+
+  .store-open-item:last-child {
+    border-bottom: 0;
+  }
+
+  /* 펼쳐 놓은 상자는 테두리로 표시합니다. */
+  .store-select[data-hot] {
+    outline: calc(0.88 * var(--u)) solid #111111;
+    outline-offset: calc(-0.88 * var(--u));
+  }
+
+  /* 눌러야 하는 자리를 짚는 점. 누르게 될 자리 위에 얹힙니다.
      목업이 아니라 그 위에 얹는 주석이라 페이지 배율을 그대로 씁니다. */
   .store-dot {
     position: absolute;
-    left: 50%;
+    left: calc(50% + 4 * var(--u));
     top: 50%;
     height: calc(8 * var(--u));
     width: calc(8 * var(--u));
+    padding: 0;
     translate: -50% -50%;
     border-radius: 50%;
     background: var(--fg);
+    cursor: pointer;
   }
 
-  /* 좁은 요소에서는 글자를 덮지 않도록 오른쪽 안쪽으로 비켜섭니다. */
+  /* 좁은 요소에서는 글자를 덮지 않도록 오른쪽 끝으로 비켜섭니다. */
   .store-dot-side {
     left: auto;
-    right: calc(2 * var(--u));
+    right: calc(-2 * var(--u));
     translate: 0 -50%;
+  }
+
+  /* 점을 고르면 짝이 되는 항목만 남고 나머지 항목은 물러납니다.
+     목업은 그대로 둡니다. 등장 애니메이션이 항목의 opacity 를 붙잡고 있어
+     (fill-mode: both) 흐려지는 건 안쪽 요소에 겁니다. */
+  .issue > * {
+    transition: opacity 0.5s ease;
+  }
+
+  .issue[data-dim] > * {
+    opacity: 0.18;
   }
 
   /* 천천히 번져 나가는 고리 */

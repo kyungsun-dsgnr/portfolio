@@ -29,6 +29,12 @@ const STORES = [
 
 const SERVICES = ["피팅 서비스", "간편 수리", "수리 제품 픽업"];
 
+/** 시/군/구를 켜면 펼쳐지는 지역 목록 */
+const DISTRICTS = ["경기", "대전", "대구", "부산", "서울", "인천", "제주", "충남", "광주"];
+
+/** STORES 는 거리순입니다. 현재 위치를 켜기 전에는 이 차례로 보여줍니다. */
+const BROWSE_ORDER = [2, 0, 3, 1];
+
 /** 두 줄에 손잡이가 하나씩 달린 필터 아이콘 */
 function FilterIcon() {
   return (
@@ -48,12 +54,12 @@ function FilterIcon() {
 }
 
 /** 선택 상자 오른쪽의 펼침 표시 */
-function ChevronIcon() {
+function ChevronIcon({ size = 17.57 }: { size?: number }) {
   return (
     <svg
       className="store-icon"
       viewBox="0 0 17.57 17.57"
-      style={{ width: "calc(17.57 * var(--u))", height: "calc(17.57 * var(--u))" }}
+      style={{ width: `calc(${size} * var(--u))`, height: `calc(${size} * var(--u))` }}
       fill="none"
       stroke="currentColor"
       strokeWidth="1.05"
@@ -65,12 +71,12 @@ function ChevronIcon() {
 }
 
 /** 현재 위치 표시 */
-function LocateIcon() {
+function LocateIcon({ size = 14.05 }: { size?: number }) {
   return (
     <svg
       className="store-icon"
       viewBox="0 0 14.05 14.05"
-      style={{ width: "calc(14.05 * var(--u))", height: "calc(14.05 * var(--u))" }}
+      style={{ width: `calc(${size} * var(--u))`, height: `calc(${size} * var(--u))` }}
       fill="currentColor"
       aria-hidden
     >
@@ -100,18 +106,44 @@ function LocateIcon() {
   );
 }
 
+/** 점이 붙은 자리와 그 자리를 설명하는 항목 번호 */
+const DOTS = {
+  locate: { key: "01", label: "현재 위치 사용" },
+  district: { key: "02", label: "시/군/구 선택" },
+  map: { key: "03", label: "지도 탭" },
+};
+
 type Props = {
   /** 눌러야 하는 자리에 점을 얹습니다. */
   dots?: boolean;
+  /** 골라 둔 점의 항목 번호 */
+  picked?: string | null;
+  onPick?: (key: string) => void;
 };
 
-export function StoreListMock({ dots = false }: Props) {
-  const dot = dots ? <span className="store-dot" /> : null;
-  /* 좁은 요소는 글자를 피해 오른쪽으로 비켜 놓습니다. */
-  const sideDot = dots ? <span className="store-dot store-dot-side" /> : null;
+export function StoreListMock({ dots = false, picked = null, onPick }: Props) {
+  const located = picked === DOTS.locate.key;
+  const zoomed = picked === DOTS.district.key;
+  /** 현재 위치를 켜기 전에는 지역으로 좁힌 차례, 켜면 거리순입니다. */
+  const stores = located ? STORES : BROWSE_ORDER.map((i) => STORES[i]);
+
+  /** 점 하나. 좁은 자리에서는 글자를 피해 오른쪽으로 비켜 놓습니다. */
+  const dot = (of: keyof typeof DOTS, side = false) => {
+    if (!dots) return null;
+    const { key, label } = DOTS[of];
+    return (
+      <button
+        type="button"
+        aria-label={label}
+        aria-pressed={picked === key}
+        onClick={() => onPick?.(key)}
+        className={`store-dot${side ? " store-dot-side" : ""}`}
+      />
+    );
+  };
 
   return (
-    <div className="store-panel" aria-hidden>
+    <div className="store-panel" aria-hidden={dots ? undefined : true}>
       <div className="store-head">
         <p className="store-count">
           스토어 <span>6</span>
@@ -126,17 +158,26 @@ export function StoreListMock({ dots = false }: Props) {
             <span className="store-select-value">대한민국</span>
             <ChevronIcon />
           </div>
-          <div className="store-select">
+          <div className="store-select" data-hot={zoomed || undefined}>
             <span className="store-select-label">시/군/구</span>
             <span className="store-select-value">경기</span>
             <ChevronIcon />
-            {dot}
+            {dot("district")}
+            {zoomed && (
+              <div className="store-open-list">
+                {DISTRICTS.map((name) => (
+                  <p className="store-open-item" key={name}>
+                    {name}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-        <p className="store-locate">
+        <p className="store-locate" data-hot={located || undefined}>
           <LocateIcon />
           현재 위치 사용
-          {sideDot}
+          {dot("locate", true)}
         </p>
       </div>
 
@@ -144,14 +185,14 @@ export function StoreListMock({ dots = false }: Props) {
         <span className="store-tab" data-on>
           목록
         </span>
-        <span className="store-tab">
+        <span className="store-tab" data-hot={picked === DOTS.map.key || undefined}>
           지도
-          {sideDot}
+          {dot("map", true)}
         </span>
       </div>
 
       <div className="store-list">
-        {STORES.map((store) => (
+        {stores.map((store) => (
           <article className="store-card" key={store.name}>
             <div className="store-card-top">
               <h4 className="store-name">{store.name}</h4>

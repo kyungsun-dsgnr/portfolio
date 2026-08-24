@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 
 import { useInView } from "@/components/useInView";
 import { StoreListMock } from "@/components/StoreListMock";
@@ -30,6 +30,8 @@ const POINTS = [
 /** 지금 화면을 짚고 방향을 제안하는 장 */
 export function SceneProblem() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
+  /** 목업 위의 점과 아래 항목은 번호로 짝지어져 있습니다. */
+  const [picked, setPicked] = useState<string | null>(null);
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
@@ -39,18 +41,24 @@ export function SceneProblem() {
         Toward Global Awareness
       </h2>
 
-      {/* 지금 화면. 가운데 두 단을 쓰고 아래쪽은 장 밖으로 잘려 나갑니다. */}
+      {/* 지금 화면. 자리는 네 단이지만 목업은 그 가운데 두 단만 씁니다.
+          남는 좌우는 크게 뜨는 이름표가 걸칠 자리입니다. */}
       <div
-        className="store-slot rise col-start-4 col-span-2 row-start-1 row-span-6"
+        className="store-slot rise col-start-3 col-span-4 row-start-2 row-span-5"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        <StoreListMock dots />
+        <StoreListMock
+          dots
+          picked={picked}
+          onPick={(key) => setPicked((now) => (now === key ? null : key))}
+        />
       </div>
 
       {POINTS.map((point, i) => (
         <div
           key={point.index}
           className={`issue rise ${point.place}`}
+          data-dim={picked && picked !== point.index ? true : undefined}
           style={{ "--delay": `${0.18 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">{point.index}</span>

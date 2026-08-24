@@ -446,11 +446,20 @@
     margin-bottom: calc(8 * var(--u));
   }
 
-  /* 문제를 짚는 항목. 번호 → 제목 → 설명 순서는 다른 장과 같습니다. */
+  /* 방향을 짚는 카드. 번호 → 제목 → 설명 순서는 다른 장과 같습니다.
+     칸을 다 채우지 않고 내용만큼만 높이를 갖습니다. */
   .issue {
     display: flex;
+    align-self: start;
     flex-direction: column;
     gap: calc(8 * var(--u));
+    padding: calc(24 * var(--u)) calc(32 * var(--u));
+    background: #f1f1f1;
+  }
+
+  /* 마지막 카드는 아래 여백 선에 바닥을 맞춥니다. */
+  .issue-low {
+    align-self: end;
   }
 
   .work-visual {

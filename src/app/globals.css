@@ -975,9 +975,29 @@
   }
 
   /* 선택 상자 두 개 대신 지금 보고 있는 범위를 한 줄로 적습니다. */
-  .globe-scope-wrap {
-    position: relative;
+  .globe-scope-row {
+    display: flex;
+    align-items: center;
+    gap: calc(5 * var(--u));
     margin: calc(14.05 * var(--u)) calc(21.08 * var(--u)) 0;
+  }
+
+  .globe-pick {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .globe-scope-sep,
+  .globe-scope-fixed {
+    color: #858585;
+    font-size: calc(10.54 * var(--u));
+    font-weight: 300;
+    line-height: 1.416;
+  }
+
+  .globe-scope[disabled] {
+    cursor: default;
+    opacity: 0.4;
   }
 
   .globe-scope {

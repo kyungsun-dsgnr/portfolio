@@ -81,6 +81,59 @@ const REGIONS: Record<string, { name: string; aside: string; line: string; where
 
 const REGION_NAMES = Object.keys(REGIONS);
 
+/** 글로벌 탭에서 고를 수 있는 나라와, 그 나라의 도시 */
+const COUNTRIES = [...new Set(STORES.map((store) => store.country))];
+const ALL_COUNTRIES = "전 세계";
+const ALL_CITIES = "전체 도시";
+
+/** 한 줄짜리 선택기. 누르면 아래로 목록이 열립니다. */
+function Pick({
+  text,
+  items,
+  open,
+  disabled,
+  onToggle,
+  onPick,
+}: {
+  text: string;
+  items: string[];
+  open: boolean;
+  disabled?: boolean;
+  onToggle: () => void;
+  onPick: (item: string) => void;
+}) {
+  return (
+    <span className="globe-pick">
+      <button
+        type="button"
+        className="globe-scope"
+        data-open={open || undefined}
+        disabled={disabled}
+        onClick={onToggle}
+      >
+        {text}
+        <ChevronIcon size={14} />
+      </button>
+
+      {open && (
+        <div className="globe-scope-list">
+          {items.map((item) => (
+            <button
+              type="button"
+              key={item}
+              className="globe-scope-item"
+              data-on={item === text || undefined}
+              onClick={() => onPick(item)}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      )}
+    </span>
+  );
+}
+
 const SERVICES = ["피팅 서비스", "간편 수리", "수리 제품 픽업"];
 
 /** 도시 하나를 목록 카드 한 줄로 */
@@ -100,20 +153,36 @@ function card(store: Store) {
  */
 export function StoreGlobeMock() {
   const [world, setWorld] = useState(false);
-  const [picked, setPicked] = useState<Store | null>(null);
   const [region, setRegion] = useState(REGION_NAMES[0]);
-  const [open, setOpen] = useState(false);
+  /** 글로벌 탭의 두 선택기. 지구본에서 점을 집으면 둘 다 채워집니다. */
+  const [country, setCountry] = useState<string | null>(null);
+  const [city, setCity] = useState<string | null>(null);
+  const [open, setOpen] = useState<null | "region" | "country" | "city">(null);
 
   const stores = !world
     ? REGIONS[region]
-    : picked
-      ? STORES.filter((store) => store.country === picked.country).map(card)
-      : STORES.filter((store) => store.flagship).map(card);
+    : city
+      ? STORES.filter((store) => store.city === city).map(card)
+      : country
+        ? STORES.filter((store) => store.country === country).map(card)
+        : STORES.filter((store) => store.flagship).map(card);
 
   function show(next: boolean) {
     setWorld(next);
-    setPicked(null);
-    setOpen(false);
+    setCountry(null);
+    setCity(null);
+    setOpen(null);
+  }
+
+  /** 지구본에서 집은 매장을 두 선택기에 옮겨 담습니다. */
+  function fromGlobe(store: Store | null) {
+    setCountry(store?.country ?? null);
+    setCity(store?.city ?? null);
+    setOpen(null);
+  }
+
+  function toggle(which: "region" | "country" | "city") {
+    setOpen((now) => (now === which ? null : which));
   }
 
   return (
@@ -138,41 +207,60 @@ export function StoreGlobeMock() {
         </button>
       </div>
 
-      {/* 선택 상자 대신 지금 보고 있는 범위만 한 줄로. 눌러서 지역을 바꿉니다. */}
-      <div className="globe-scope-wrap">
-        <button
-          type="button"
-          className="globe-scope"
-          data-open={open || undefined}
-          onClick={() => (world ? setPicked(null) : setOpen((now) => !now))}
-        >
-          {world ? (picked?.country ?? "전 세계 19개 도시") : `대한민국 · ${region}`}
-          <ChevronIcon size={14} />
-        </button>
-
-        {open && !world && (
-          <div className="globe-scope-list">
-            {REGION_NAMES.map((name) => (
-              <button
-                type="button"
-                key={name}
-                className="globe-scope-item"
-                data-on={name === region || undefined}
-                onClick={() => {
-                  setRegion(name);
-                  setOpen(false);
-                }}
-              >
-                {name}
-              </button>
-            ))}
-          </div>
+      {/* 선택 상자 대신 지금 보고 있는 범위만 한 줄로. 눌러서 바꿉니다. */}
+      <div className="globe-scope-row">
+        {world ? (
+          <>
+            <Pick
+              text={country ?? ALL_COUNTRIES}
+              items={[ALL_COUNTRIES, ...COUNTRIES]}
+              open={open === "country"}
+              onToggle={() => toggle("country")}
+              onPick={(item) => {
+                setCountry(item === ALL_COUNTRIES ? null : item);
+                setCity(null);
+                setOpen(null);
+              }}
+            />
+            <span className="globe-scope-sep">·</span>
+            <Pick
+              text={city ?? ALL_CITIES}
+              items={[
+                ALL_CITIES,
+                ...STORES.filter((store) => store.country === country).map(
+                  (store) => store.city,
+                ),
+              ]}
+              open={open === "city"}
+              disabled={!country}
+              onToggle={() => toggle("city")}
+              onPick={(item) => {
+                setCity(item === ALL_CITIES ? null : item);
+                setOpen(null);
+              }}
+            />
+          </>
+        ) : (
+          <>
+            <span className="globe-scope-fixed">대한민국</span>
+            <span className="globe-scope-sep">·</span>
+            <Pick
+              text={region}
+              items={REGION_NAMES}
+              open={open === "region"}
+              onToggle={() => toggle("region")}
+              onPick={(item) => {
+                setRegion(item);
+                setOpen(null);
+              }}
+            />
+          </>
         )}
       </div>
 
       <div className="globe-stage">
         {world ? (
-          <GlobeDots labels={false} onPickStore={setPicked} />
+          <GlobeDots labels={false} onPickStore={fromGlobe} />
         ) : (
           <Image
             src="/images/store-map.png"

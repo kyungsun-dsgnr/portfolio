@@ -13,7 +13,7 @@ const H = 643;
 
 /* 상자에 담기는 것들. 자리는 도면 좌표로 적고 비율로 옮깁니다.
    밑동은 앞면(y 501)에 가려지므로, 보이는 것은 그 위쪽뿐입니다.
-   밑동을 상자 안쪽 바닥(y 520)에 두어, 앞으로 바닥이 남고 뒤에 놓인 것처럼 보입니다.
+   둘 다 밑동이 상자 안쪽 바닥 같은 선(y 576)에 닿아 나란히 섭니다.
    그 자리는 바닥이 좁아지는 쪽이라 폭도 그만큼 줄였습니다.
    둘을 합친 폭(160~503)의 가운데가 바닥 뒤쪽(66~596)의 가운데와 맞아 좌우 여백이 같습니다. */
 const GOODS = [
@@ -21,7 +21,7 @@ const GOODS = [
     id: "wash",
     src: "/images/tamburins-handwash.png",
     left: 371,
-    top: 136,
+    top: 192,
     width: 132,
     height: 384,
     tilt: "5.5deg",
@@ -31,7 +31,7 @@ const GOODS = [
     id: "perfume",
     src: "/images/tamburins-perfume.png",
     left: 160,
-    top: 356,
+    top: 382,
     width: 193,
     height: 194,
     tilt: "-11deg",
@@ -71,7 +71,9 @@ export function TamburinsGiftBox() {
       return clear;
     }
     timers.current.push(window.setTimeout(() => setOpen(true), 420));
-    timers.current.push(window.setTimeout(() => setPlaced(true), 1180));
+    /* 뚜껑이 다 열린 뒤에 떨어뜨립니다. 도는 동안에는 뚜껑 면이 화면 쪽으로
+       기울어 있어, 그 앞을 지나가는 제품이 뚜껑에 가려집니다. */
+    timers.current.push(window.setTimeout(() => setPlaced(true), 1460));
     return clear;
   }, [inView]);
 

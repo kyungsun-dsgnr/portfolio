@@ -29,7 +29,8 @@ type Node = {
   tone?: Tone;
   /** 앞 걸음. 같은 줄이면 곧게, 아래 줄이면 단 가운데를 타고 내려옵니다. */
   from?: string;
-  pain?: string;
+  /** 이 걸음에서 걸리는 지점. 번호는 마디에 붙고, 손을 올리면 내용이 뜹니다. */
+  pain?: { no: string; text: string };
 };
 
 /* 지금 tamburins.com 에서 선물 하나를 사는 길입니다.
@@ -42,13 +43,46 @@ const NODES: Node[] = [
     step: 1,
     line: 0,
     from: "home",
-    pain: "01",
+    pain: {
+      no: "01",
+      text: "목록에서는 세트에 어떤 향이 들어가는지 알 수 없습니다.",
+    },
   },
-  { id: "set", label: "Gift Set", step: 2, line: 0, from: "custom" },
-  { id: "scent1", label: "Scent 1 / 2", step: 3, line: 0, from: "set" },
+  {
+    id: "set",
+    label: "Gift Set",
+    step: 2,
+    line: 0,
+    from: "custom",
+    pain: {
+      no: "02",
+      text: "향은 세트 상세에서 선택 창을 따로 열어야 고를 수 있습니다.",
+    },
+  },
+  {
+    id: "scent1",
+    label: "Scent 1 / 2",
+    step: 3,
+    line: 0,
+    from: "set",
+    pain: {
+      no: "03",
+      text: "세트에 든 제품 수만큼 창을 넘겨 하나씩 고릅니다. 품절과 향 설명은 창을 열어야 드러납니다.",
+    },
+  },
   { id: "scent2", label: "Scent 2 / 2", step: 3, line: 1, from: "scent1" },
   { id: "bag", label: "Add to Bag", step: 4, line: 1, from: "scent2" },
-  { id: "cart", label: "Cart", step: 5, line: 1, from: "bag" },
+  {
+    id: "cart",
+    label: "Cart",
+    step: 5,
+    line: 1,
+    from: "bag",
+    pain: {
+      no: "04",
+      text: "고른 구성은 담은 뒤 장바구니에서야 한자리에서 확인됩니다.",
+    },
+  },
   {
     id: "order",
     label: "Order",
@@ -130,7 +164,13 @@ export function SceneFlow() {
             }
           >
             {node.label}
-            {node.pain && <em className="flow-pain">{node.pain}</em>}
+            {node.pain && (
+              <>
+                <em className="flow-pain">{node.pain.no}</em>
+                {/* 손을 올리면 무엇이 걸리는지 그 자리에서 읽힙니다. */}
+                <span className="flow-tip">{node.pain.text}</span>
+              </>
+            )}
           </span>
         ))}
       </div>

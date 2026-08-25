@@ -193,10 +193,13 @@
     pointer-events: none;
   }
 
+  /* 선은 이 포트폴리오가 쓰는 굵기와 짙기를 따릅니다 —
+     목업 테두리가 1px 0.1, 잇는 선이 0.5px 0.22, 플로우 알약이 1px 0.35 입니다.
+     상자는 화면에서 가장 큰 도형이라 그 사이에서 가볍게 잡습니다. */
   .gift-ink {
     fill: none;
-    stroke: rgb(25 25 25 / 0.5);
-    stroke-width: 1.4;
+    stroke: rgb(25 25 25 / 0.26);
+    stroke-width: 1;
     stroke-linecap: round;
     stroke-linejoin: round;
     vector-effect: non-scaling-stroke;
@@ -219,7 +222,7 @@
 
   /* 뚜껑에 달린 앞 날개. 안쪽으로 접히는 면이라 가장 어둡습니다. */
   .gift-face-flap {
-    fill: #f1efec;
+    fill: #f5f4f1;
   }
 
   /* 상자 안쪽. 빛이 덜 들어 한 톤 눌립니다. */
@@ -238,13 +241,13 @@
   }
 
   .gift-stage[data-open] .gift-mark {
-    opacity: 0.9;
+    opacity: 0.72;
     transition-delay: 420ms;
   }
 
   /* 이름 아래 한 줄. 뚜껑에 찍힌 활자와 같은 결로 두껍고 자간이 넓습니다. */
   .gift-sub {
-    fill: rgb(25 25 25 / 0.85);
+    fill: rgb(25 25 25 / 0.6);
     stroke: none;
     font-family: var(--font-display);
     font-size: 21px;
@@ -255,16 +258,14 @@
 
   /* 바닥에 닿은 자리에 아주 옅은 그림자. 노브의 그림자와 같은 세기입니다. */
   .gift-shade {
-    filter: drop-shadow(0 calc(3 * var(--u)) calc(7 * var(--u)) rgb(0 0 0 / 0.09));
+    filter: drop-shadow(0 calc(3 * var(--u)) calc(8 * var(--u)) rgb(0 0 0 / 0.06));
   }
 
-  /* 담기는 것들은 뚜껑 판보다 한 겹 앞에 둡니다.
-     뚜껑이 도는 동안에는 그 면이 화면 쪽으로 기울어, 깊이로만 따지면
-     떨어지는 제품보다 앞에 설 수 있습니다. */
+  /* 담기는 것들. 앞뒤는 도면 겹의 차례대로입니다 —
+     뒤쪽 벽 · 뚜껑 · 제품 · 앞면 순이라 밑동이 앞면에 가려집니다. */
   .gift-goods {
     position: absolute;
     inset: 0;
-    transform: translateZ(2px);
     pointer-events: none;
   }
 
@@ -503,6 +504,38 @@
   .flow-pill[data-tone="ghost"] {
     border-color: rgb(25 25 25 / 0.14);
     color: rgb(25 25 25 / 0.3);
+  }
+
+  /* 걸리는 지점에 손을 올리면 뜨는 쪽지. 마디 바로 위에 섭니다. */
+  .flow-tip {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 12 * var(--u));
+    z-index: 2;
+    width: calc(236 * var(--u));
+    translate: -50% calc(4 * var(--u));
+    padding: calc(12 * var(--u)) calc(14 * var(--u));
+    border-radius: calc(6 * var(--u));
+    background: var(--fg);
+    box-shadow: 0 calc(3 * var(--u)) calc(16 * var(--u)) rgb(25 25 25 / 0.16);
+    color: rgb(250 250 250 / 0.92);
+    font-family: var(--font-body);
+    font-size: calc(12 * var(--u));
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1.45;
+    text-align: left;
+    white-space: normal;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 200ms ease,
+      translate 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .flow-pill:hover .flow-tip {
+    opacity: 1;
+    translate: -50% 0;
   }
 
   /* 걸리는 지점 번호. 알약 왼쪽 위 모서리에 걸칩니다. */

@@ -1,4 +1,4 @@
-import { GlobeDots } from "@/components/GlobeDots";
+// 내려 둔 표지에서 씁니다: import { GlobeDots } from "@/components/GlobeDots";
 import { GlobePaper } from "@/components/GlobePaper";
 import { LightStage } from "@/components/LightStage";
 import { SceneCase } from "@/components/07-SceneCase";
@@ -51,40 +51,42 @@ export default function Home() {
           ),
         },
         { id: "work", label: "Work", node: <SceneWork /> },
-        {
-          id: "gentle-monster",
-          label: "GM Explore",
-          node: (
-            <SceneCase
-              title="Gentle Monster Explore"
-              logo={{
-                src: "/images/gentle-monster-logo.png",
-                alt: "Gentle Monster",
-              }}
-              body={
-                <>
-                  우리는 지구본을 돌리고, 대륙의 위치를 가늠하고, 원하는 국가에
-                  가까이 다가가는 방식에 익숙합니다.
-                  <br />
-                  <br />이 프로젝트는 그 행동 기억을 바탕으로 Gentle Monster의
-                  글로벌 스토어를 탐색하는 디지털 경험을 설계합니다.
-                </>
-              }
-              visual={
-                <div className="globe-scene">
-                  <GlobeDots interactive={false} labels />
-                  {/* 지구본이 안경을 쓴 것처럼 앞에 겹칩니다. */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    className="globe-glasses"
-                    src="/images/glasses.png"
-                    alt=""
-                  />
-                </div>
-              }
-            />
-          ),
-        },
+        // 점으로 찍은 지구본 표지. 지금은 내려 두었습니다. 주석을 풀면 다시 섭니다.
+        // {
+        // id: "gentle-monster",
+        // label: "GM Explore",
+        // node: (
+        // <SceneCase
+        // title="Gentle Monster Explore"
+        // logo={{
+        // src: "/images/gentle-monster-logo.png",
+        // alt: "Gentle Monster",
+        // }}
+        // body={
+        // <>
+        // 우리는 지구본을 돌리고, 대륙의 위치를 가늠하고, 원하는 국가에
+        // 가까이 다가가는 방식에 익숙합니다.
+        // <br />
+        // <br />이 프로젝트는 그 행동 기억을 바탕으로 Gentle Monster의
+        // 글로벌 스토어를 탐색하는 디지털 경험을 설계합니다.
+        // </>
+        // }
+        // visual={
+        // <div className="globe-scene">
+        // <GlobeDots interactive={false} labels />
+        // {/* 지구본이 안경을 쓴 것처럼 앞에 겹칩니다. */}
+        // {/* eslint-disable-next-line @next/next/no-img-element */}
+        // <img
+        // className="globe-glasses"
+        // src="/images/glasses.png"
+        // alt=""
+        // />
+        // </div>
+        // }
+        // />
+        // ),
+        // },
+
         /* 표지 한 벌 더. 점으로 찍던 지구본 대신 종이에 인쇄한 듯한 지구본을 둡니다. */
         {
           id: "gentle-monster-paper",
@@ -133,20 +135,9 @@ export default function Home() {
         },
         { id: "gentle-monster-after", label: "Proposal", node: <SceneAfter /> },
 
-        /* 상자 그림 크기만 다른 세 벌. 비교해서 하나만 남기면 됩니다. */
         {
           id: "tamburins",
           label: "Tamburins",
-          node: <SceneTamburinsCover />,
-        },
-        {
-          id: "tamburins-90",
-          label: "Tamburins 90",
-          node: <SceneTamburinsCover scale={0.9} />,
-        },
-        {
-          id: "tamburins-80",
-          label: "Tamburins 80",
           node: <SceneTamburinsCover scale={0.8} />,
         },
         /* 선(SVG)으로 그린 상자 표지. 지금은 내려 두었습니다.
@@ -165,7 +156,7 @@ export default function Home() {
         },
         {
           id: "tamburins-screens",
-          label: "Screens",
+          label: "Current Experience",
           node: <SceneScreens />,
         },
         /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.

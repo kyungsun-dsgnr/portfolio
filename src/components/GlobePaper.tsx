@@ -2,11 +2,13 @@
 
 /** 종이에 인쇄한 듯한 지구본. 나라 경계와 눈금선만 얇게 남고 천천히 돕니다. */
 
-import { geoGraticule10, geoOrthographic, geoPath } from "d3-geo";
-import { useEffect, useRef, useState } from "react";
+import { geoDistance, geoGraticule10, geoOrthographic, geoPath } from "d3-geo";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { mesh } from "topojson-client";
 import type { GeometryCollection, Topology } from "topojson-specification";
 import type { MultiLineString } from "geojson";
+
+import { STORES } from "@/data/gentle-monster-stores";
 
 /** 가만히 두면 이 속도로 천천히 돕니다(도/초) */
 const SPIN = 3.4;
@@ -14,10 +16,28 @@ const SPIN = 3.4;
 const TILT = -8;
 /** 눈금선. 10도 간격입니다. */
 const GRID = geoGraticule10();
+/** 이름표를 띄우는 한계 각도. 90도가 지평선이라 가장자리에 닿기 전에 접습니다. */
+const TAG_LIMIT = Math.PI * 0.4;
+/** 이름표를 점 오른쪽으로 띄우는 거리 */
+const TAG_GAP = 14;
+/** 늘 이름표를 다는 도시. 대륙마다 하나씩 골라 서로 겹치지 않게 둡니다. */
+const TAGGED = [
+  "Seoul",
+  "Los Angeles",
+  "Sydney",
+  "Kuala Lumpur",
+  "Milan",
+  "Dubai",
+];
 
 export function GlobePaper() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const tagRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const tagged = useMemo(
+    () => TAGGED.map((city) => STORES.find((store) => store.city === city)!),
+    [],
+  );
   const [borders, setBorders] = useState<MultiLineString | null>(null);
   /** 판이 화면 안에 있는지. 밖에 있으면 그리지 않고 쉽니다. */
   const seen = useRef(true);
@@ -30,9 +50,7 @@ export function GlobePaper() {
         countries: GeometryCollection;
       }>;
       /* 나라와 나라가 맞닿은 선만 뽑습니다. 폴리곤을 다 그리면 같은 선이 두 번 겹칩니다. */
-      setBorders(
-        mesh(topo, topo.objects.countries) as MultiLineString,
-      );
+      setBorders(mesh(topo, topo.objects.countries) as MultiLineString);
     });
     return () => {
       alive = false;
@@ -129,6 +147,59 @@ export function GlobePaper() {
       ctx!.lineWidth = 0.7;
       ctx!.stroke();
 
+      /* 매장이 있는 도시. 앞면에 온 것만 찍습니다. */
+      const center: [number, number] = [-turn, -TILT];
+      const unit = Math.max(0.5, radius / 320);
+
+      for (const store of STORES) {
+        if (geoDistance(store.at, center) > Math.PI / 2) continue;
+        const point = projection(store.at);
+        if (!point) continue;
+        const r = (store.flagship ? 6 : 4.6) * unit;
+
+        /* 바탕색 링을 먼저 깔아 눈금선 위에서 점을 떼어 놓습니다. */
+        ctx!.beginPath();
+        ctx!.arc(point[0], point[1], r * 1.75, 0, Math.PI * 2);
+        ctx!.fillStyle = "#f2f0e6";
+        ctx!.fill();
+
+        ctx!.beginPath();
+        ctx!.arc(point[0], point[1], r, 0, Math.PI * 2);
+        ctx!.fillStyle = "#191919";
+        ctx!.fill();
+      }
+
+      /* 이름표는 캔버스가 아니라 DOM 이라 글꼴과 배경을 다른 장과 같이 씁니다. */
+      tagged.forEach((entry, i) => {
+        const tag = tagRefs.current[i];
+        if (!tag) return;
+
+        const point =
+          geoDistance(entry.at, center) > TAG_LIMIT
+            ? null
+            : projection(entry.at);
+        if (!point) {
+          tag.dataset.off = "";
+          return;
+        }
+
+        const left = point[0] + TAG_GAP;
+        const top = point[1] - tag.offsetHeight / 2;
+        /* 한 귀퉁이라도 판을 벗어나면 그 자리에서 접습니다. */
+        if (
+          left < 0 ||
+          top < 0 ||
+          left + tag.offsetWidth > width ||
+          top + tag.offsetHeight > height
+        ) {
+          tag.dataset.off = "";
+          return;
+        }
+
+        delete tag.dataset.off;
+        tag.style.translate = `${left}px calc(${point[1]}px - 50%)`;
+      });
+
       frame = requestAnimationFrame(draw);
     }
 
@@ -150,11 +221,29 @@ export function GlobePaper() {
       eye.disconnect();
       observer.disconnect();
     };
-  }, [borders]);
+  }, [borders, tagged]);
 
   return (
     <div ref={wrapRef} className="globe">
       <canvas ref={canvasRef} className="globe-canvas" data-static="" />
+
+      {/* 늘 떠 있는 나라 이름표 */}
+      {tagged.map((entry, i) => (
+        <div
+          key={entry.city}
+          ref={(el) => {
+            tagRefs.current[i] = el;
+          }}
+          className="globe-badge globe-tag"
+          data-on=""
+          data-off=""
+          aria-hidden
+        >
+          <span>{entry.country}</span>
+          <span className="globe-badge-divider">|</span>
+          <span>{entry.city}</span>
+        </div>
+      ))}
     </div>
   );
 }

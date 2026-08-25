@@ -5,6 +5,7 @@ import {
   geoDistance,
   geoEquirectangular,
   geoOrthographic,
+  geoProjection,
   geoPath,
 } from "d3-geo";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -28,6 +29,21 @@ const HIT_RADIUS = 14;
 const TAG_LIMIT = Math.PI * 0.4;
 /** 멈춘 지구본이 첫 도시를 가운데에서 서쪽으로 미는 각도(도) */
 const STILL_TURN = 35;
+/** 펼쳐질 때 지도가 커지는 배수 */
+const SPREAD_ZOOM = 1.9;
+
+/** 구와 평면 사이를 오가는 투영.
+    t=0 이면 정사영(지구본), t=1 이면 등장방형(평면 지도)입니다.
+    두 raw 를 그대로 섞어 그 사이를 부드럽게 지나갑니다. */
+const QUARTER = Math.PI / 2;
+function blended(t: number) {
+  const raw = (lambda: number, phi: number): [number, number] => [
+    (1 - t) * Math.cos(phi) * Math.sin(lambda) + (t * lambda) / QUARTER,
+    (1 - t) * Math.sin(phi) + (t * phi) / QUARTER,
+  ];
+  // 뒷면은 계속 접어 둡니다. 고른 나라가 가운데 오므로 이웃은 다 보입니다.
+  return geoProjection(raw).clipAngle(90);
+}
 /** 점 격자의 위도 간격(도). 작을수록 촘촘합니다. */
 const LAT_STEP = 1.5;
 
@@ -105,6 +121,8 @@ type Props = {
   onPickStore?: (store: (typeof STORES)[number] | null) => void;
   /** 이름표를 누르면 그 아래로 매장 카드가 열립니다. */
   card?: boolean;
+  /** 이 도시를 고른 채로 시작합니다. */
+  openAt?: string;
   /** 돌지 않고 멈춰 있는 지구본. 첫 도시가 정면에 옵니다. */
   still?: boolean;
   /** 점 뒤에 깔리는 구의 흰 기운(0~1). 바탕과 구를 갈라 보이게 합니다. */
@@ -119,7 +137,12 @@ export function GlobeDots({
   veil = 0.29,
   onPickStore,
   card = false,
+  openAt,
 }: Props) {
+  /** 처음부터 골라 둘 매장 */
+  const opening = openAt
+    ? STORES.findIndex((store) => store.city === openAt)
+    : -1;
   const tagged = useMemo(
     () => (tags ?? TAGGED).map((city) => STORES.find((store) => store.city === city)!),
     [tags],
@@ -129,8 +152,16 @@ export function GlobeDots({
 
   const [dots, setDots] = useState<Dot[] | null>(null);
   /** 집어 둔 매장. 뱃지는 이때만 뜹니다. */
-  const [chosen, setChosen] = useState<number | null>(null);
-  const chosenRef = useRef<number | null>(null);
+  const [chosen, setChosen] = useState<number | null>(
+    opening < 0 ? null : opening,
+  );
+  const chosenRef = useRef<number | null>(opening < 0 ? null : opening);
+  /* 구에서 평면으로 펴진 정도(0~1)와 그 목표. 매장이 여럿인 나라를 고르면 펴집니다. */
+  const spread = useRef(0);
+  const spreadTo = useRef(0);
+  const spreadAt = useRef(0);
+  /** 펼칠 때 가운데로 데려올 경도·위도 */
+  const facing = useRef<[number, number] | null>(null);
   /** 이름표를 눌러 카드를 펼친 참 */
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
@@ -157,10 +188,17 @@ export function GlobeDots({
   /* 멈춰 있을 때는 첫 도시를 가운데에서 왼쪽으로 밀어 두어
      오른쪽으로 펼쳐지는 이름표가 판넬 안에 들어옵니다. */
   const rotation = useRef<[number, number]>([
-    still ? -tagged[0].at[0] - STILL_TURN : -10,
+    opening >= 0
+      ? -STORES[opening].at[0] - STILL_TURN
+      : still
+        ? -tagged[0].at[0] - STILL_TURN
+        : -10,
     TILT,
   ]);
-  const velocity = useRef<[number, number]>([still ? 0 : IDLE_SPIN, 0]);
+  const velocity = useRef<[number, number]>([
+    still || opening >= 0 ? 0 : IDLE_SPIN,
+    0,
+  ]);
   /** 프레임/이벤트 간격을 재서 회전을 시간 기준으로 굴립니다. */
   const lastFrame = useRef(0);
   const lastMove = useRef(0);
@@ -220,9 +258,11 @@ export function GlobeDots({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const projection = projectionRef.current;
+    let projection = projectionRef.current;
     // 구를 흰색으로 채울 때 씁니다. 반지름/중심을 따로 계산하지 않아도 됩니다.
-    const path = geoPath(projection, ctx);
+    let path = geoPath(projection, ctx);
+    // 투영을 갈아 끼우면 크기를 다시 일러 줘야 합니다.
+    const sized = { current: false };
     const sphere = { type: "Sphere" } as const;
     let width = 0;
     let height = 0;
@@ -244,6 +284,7 @@ export function GlobeDots({
       ctx!.setTransform(ratio, 0, 0, ratio, 0, 0);
       radius = (Math.min(width, height) / 2) * 0.92;
       projection.translate([width / 2, height / 2]).scale(radius);
+      sized.current = true;
       /* 점 크기의 기준. 작은 자리에서는 1px 아래로 내려가 점이 사라지므로
          바닥을 둡니다. 큰 지구본에서는 이 바닥이 걸리지 않습니다. */
       unit = Math.max(0.5, radius / 320);
@@ -275,7 +316,42 @@ export function GlobeDots({
         const decay = Math.exp(-dt / GLIDE);
         const vx = velocity.current[0] * decay + idle * (1 - decay);
         velocity.current = [vx, 0];
-        rotation.current = [rotation.current[0] + vx * dt, TILT];
+        rotation.current = [rotation.current[0] + vx * dt, rotation.current[1]];
+      }
+
+      /* 펼침은 시간을 두고 따라갑니다. 목표 나라도 가운데로 데려옵니다. */
+      if (dt) {
+        const ease = 1 - Math.exp(-dt / 0.32);
+        spread.current += (spreadTo.current - spread.current) * ease;
+        if (facing.current) {
+          const [lon, lat] = facing.current;
+          const turn = ((-lon - rotation.current[0] + 540) % 360) - 180;
+          rotation.current = [
+            rotation.current[0] + turn * ease,
+            rotation.current[1] + (-lat - rotation.current[1]) * ease,
+          ];
+        } else {
+          // 접힐 때는 기울기를 원래대로 되돌립니다.
+          rotation.current = [
+            rotation.current[0],
+            rotation.current[1] + (TILT - rotation.current[1]) * ease,
+          ];
+        }
+      }
+
+      // 펴진 만큼 투영을 새로 만듭니다. 값이 거의 안 변하면 그대로 씁니다.
+      if (Math.abs(spread.current - spreadAt.current) > 0.004) {
+        spreadAt.current = spread.current;
+        projection = blended(spread.current);
+        projectionRef.current = projection;
+        path = geoPath(projection, ctx);
+        sized.current = false;
+      }
+      if (!sized.current) {
+        projection
+          .translate([width / 2, height / 2])
+          .scale(radius * (1 + SPREAD_ZOOM * spread.current));
+        sized.current = true;
       }
 
       projection.rotate(rotation.current);
@@ -500,7 +576,7 @@ export function GlobeDots({
       lastMove.current = now;
 
       const turned = dx * (220 / Math.min(box.width, box.height));
-      rotation.current = [rotation.current[0] + turned, TILT];
+      rotation.current = [rotation.current[0] + turned, rotation.current[1]];
       // 놓았을 때 이어질 속도(도/초). 이벤트가 몰리면 과하게 잡히므로 묶어 둡니다.
       const speed = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, turned / dt));
       velocity.current = [speed, 0];
@@ -533,7 +609,25 @@ export function GlobeDots({
                   setChosen(hit);
                   openRef.current = false;
                   setOpen(false);
-                  onPickStore?.(hit === null ? null : STORES[hit]);
+
+                  /* 매장이 여럿인 나라를 고르면 지도가 평면으로 펴지면서
+                     그 나라 쪽으로 커집니다. 나머지 매장까지 함께 보입니다. */
+                  const store = hit === null ? null : STORES[hit];
+                  const kin = store
+                    ? STORES.filter((one) => one.country === store.country)
+                    : [];
+                  if (kin.length > 1) {
+                    spreadTo.current = 1;
+                    facing.current = [
+                      kin.reduce((sum, one) => sum + one.at[0], 0) / kin.length,
+                      kin.reduce((sum, one) => sum + one.at[1], 0) / kin.length,
+                    ];
+                  } else {
+                    spreadTo.current = 0;
+                    facing.current = null;
+                  }
+
+                  onPickStore?.(store);
                 }
                 try {
                   event.currentTarget.releasePointerCapture(event.pointerId);

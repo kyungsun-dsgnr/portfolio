@@ -926,6 +926,8 @@
      판 전체가 지구본이고, 글은 그 위에 얹힙니다. */
   .field {
     position: relative;
+    /* 펴진 지도가 판 밖으로 나가지 않게 자릅니다. */
+    overflow: hidden;
   }
 
   .field-note {

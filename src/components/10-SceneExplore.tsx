@@ -15,7 +15,8 @@ export function SceneExplore() {
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       {/* 판 전체가 지구본입니다. 끌어 돌리고 점을 눌러 봅니다. */}
       <div className="field rise col-start-1 col-span-8 row-start-1 row-span-6">
-        <GlobeDots card />
+        {/* 서울을 고른 채로 시작합니다. */}
+        <GlobeDots card openAt="Seoul" />
       </div>
 
       <h2 className="type-lead rise col-start-1 col-span-3 row-start-1 row-span-2">

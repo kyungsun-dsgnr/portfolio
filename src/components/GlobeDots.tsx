@@ -777,7 +777,10 @@ export function GlobeDots({
             const x = toLeft
               ? at.x - HIT_RADIUS - box.offsetWidth
               : at.x + HIT_RADIUS;
-            box.style.translate = `${x}px calc(${at.y}px + ${badge.offsetHeight}px)`;
+            const top = at.y + badge.offsetHeight;
+            box.style.translate = `${x}px ${top}px`;
+            // 판 아래로 넘치지 않을 만큼만 쌓고, 남은 카드는 그 안에서 굴립니다.
+            box.style.maxHeight = `${Math.max(120, height - top - 8)}px`;
           }
           box.toggleAttribute("data-on", Boolean(at) && openRef.current);
         }
@@ -886,6 +889,9 @@ export function GlobeDots({
     findStore(event);
   }
 
+  /* 한 점에 여럿이 묶여 있으면 같은 카드가 그 수만큼 아래로 이어집니다. */
+  const list = group.length ? group : label ? [label] : [];
+
   /* 휠·핀치로 배율을 바꿉니다. 지구본까지 되돌아온 뒤로는 페이지가 대신 넘어갑니다.
      React 의 onWheel 은 preventDefault 가 막히는 경우가 있어 직접 답니다. */
   useEffect(() => {
@@ -992,42 +998,25 @@ export function GlobeDots({
       {/* 이름표를 누르면 그 아래로 열리는 매장 카드 */}
       {card && (
         <div ref={cardRef} className="globe-card" aria-hidden>
-          {label && open && group.length > 1 && (
-            <>
-              {/* 여럿이 겹친 자리는 한 곳씩 펴서 보여 줍니다. */}
-              <div className="store-tip-top">
-                <h5 className="store-tip-name">{label.city}</h5>
-                <span className="store-tip-distance">
-                  매장 {group.length}곳
-                </span>
+          {open &&
+            list.map((one) => (
+              <div className="globe-tip" key={one.name}>
+                <div className="store-tip-top">
+                  <h5 className="store-tip-name">{one.name}</h5>
+                  <span className="store-tip-distance">{one.city}</span>
+                </div>
+                <p className="store-tip-address">{one.country}</p>
+                <div className="store-tip-tags">
+                  {["피팅 서비스", "간편 수리", "수리 제품 픽업"].map(
+                    (service) => (
+                      <span className="store-tip-tag" key={service}>
+                        {service}
+                      </span>
+                    ),
+                  )}
+                </div>
               </div>
-              <ul className="store-tip-list">
-                {group.map((one) => (
-                  <li className="store-tip-row" key={one.name}>
-                    <span className="store-tip-name">{one.name}</span>
-                    <span className="store-tip-distance">{one.city}</span>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-
-          {label && open && group.length <= 1 && (
-            <>
-              <div className="store-tip-top">
-                <h5 className="store-tip-name">{label.name}</h5>
-                <span className="store-tip-distance">{label.city}</span>
-              </div>
-              <p className="store-tip-address">{label.country}</p>
-              <div className="store-tip-tags">
-                {["피팅 서비스", "간편 수리", "수리 제품 픽업"].map((service) => (
-                  <span className="store-tip-tag" key={service}>
-                    {service}
-                  </span>
-                ))}
-              </div>
-            </>
-          )}
+            ))}
         </div>
       )}
 

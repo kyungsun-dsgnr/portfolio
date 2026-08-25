@@ -1165,6 +1165,7 @@
   }
 
   /* 이름표 아래로 열리는 매장 카드. 글자는 다른 목업과 같은 얼굴입니다. */
+  /* 카드가 쌓이는 자리. 겹친 매장 수만큼 같은 카드가 아래로 이어집니다. */
   .globe-card {
     font-family: var(--font-store);
     position: absolute;
@@ -1173,11 +1174,9 @@
     display: flex;
     width: calc(300 * var(--u));
     flex-direction: column;
-    gap: calc(4 * var(--u));
-    padding: calc(16 * var(--u));
-    border-radius: calc(8 * var(--u));
-    background: #ffffff;
-    box-shadow: 0 calc(4 * var(--u)) calc(14 * var(--u)) rgb(0 0 0 / 0.1);
+    gap: calc(8 * var(--u));
+    overflow-y: auto;
+    scrollbar-width: none;
     pointer-events: none;
     opacity: 0;
     transition:
@@ -1185,7 +1184,24 @@
       translate 0s;
   }
 
+  .globe-card::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 누른 핀 아래로 뜨는 매장 카드 한 장 */
+  .globe-tip {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: calc(4 * var(--u));
+    padding: calc(16 * var(--u));
+    border-radius: calc(8 * var(--u));
+    background: #ffffff;
+    box-shadow: 0 calc(4 * var(--u)) calc(14 * var(--u)) rgb(0 0 0 / 0.1);
+  }
+
   .globe-card[data-on] {
+    pointer-events: auto;
     opacity: 1;
   }
 
@@ -1483,30 +1499,6 @@
     font-weight: 300;
     line-height: 1.416;
     white-space: nowrap;
-  }
-
-  /* 한 자리에 겹친 매장들. 카드 안에서만 스크롤합니다. */
-  .store-tip-list {
-    display: flex;
-    max-height: calc(132 * var(--u));
-    flex-direction: column;
-    gap: calc(6 * var(--u));
-    overflow-y: auto;
-    padding-top: calc(6 * var(--u));
-    border-top: 1px solid #ececec;
-    margin-top: calc(4 * var(--u));
-  }
-
-  .store-tip-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: calc(10 * var(--u));
-  }
-
-  .store-tip-row .store-tip-name {
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .store-tip-tags {

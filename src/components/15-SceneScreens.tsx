@@ -36,14 +36,11 @@ export function SceneScreens() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <div className="rise col-start-1 col-span-4 row-start-1 row-span-2">
-        <p className="eyebrow">03 / Current Experience</p>
-        <h2 className="type-lead">
-          One gift,
-          <br />
-          across multiple screens.
-        </h2>
-      </div>
+      <h2 className="type-lead rise col-start-1 col-span-4 row-start-1 row-span-2">
+        One gift,
+        <br />
+        across multiple screens.
+      </h2>
 
       <div
         className="steps rise col-start-1 col-span-8 row-start-3 row-span-4"
@@ -71,9 +68,10 @@ export function SceneScreens() {
         ))}
       </div>
 
+      {/* 제목 맞은편, 화면이 시작되기 전 자리에 한 문장을 둡니다. */}
       <p
-        className="type-body rise self-end col-start-1 col-span-3 row-start-6"
-        style={{ "--delay": "0.5s" } as CSSProperties}
+        className="type-body rise col-start-6 col-span-3 row-start-1"
+        style={{ "--delay": "0.24s" } as CSSProperties}
       >
         세트 구성과 향 선택이 서로 다른 화면에 나뉘어 순차적으로 진행됩니다.
       </p>

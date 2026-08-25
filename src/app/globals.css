@@ -620,17 +620,6 @@
     letter-spacing: 0.02em;
   }
 
-  /* 장 머리에 붙는 작은 줄 */
-  .eyebrow {
-    margin-bottom: calc(18 * var(--u));
-    color: rgb(25 25 25 / 0.45);
-    font-family: var(--font-display);
-    font-size: calc(12 * var(--u));
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
   /* ── 하단 목차 ─────────────────────────────────
      평소에는 손잡이만 화면 끝에 걸치고, 다가가면 통째로 올라옵니다. */
   .pager {

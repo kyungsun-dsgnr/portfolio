@@ -271,9 +271,11 @@
     letter-spacing: 0;
   }
 
-  /* 마디 아래에 붙는 설명. 마디와 같은 왼쪽 선에서 시작합니다. */
+  /* 마디 아래에 붙는 설명. 마디와 같은 왼쪽 선에서 시작합니다.
+     잇는 선이 지나가는 자리라 바탕을 깔아 글자 위로 선이 겹치지 않게 합니다. */
   .flow-note {
     position: absolute;
+    background: var(--bg);
     color: var(--fg-soft);
     font-family: var(--font-body);
     font-size: calc(12 * var(--u));

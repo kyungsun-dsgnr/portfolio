@@ -19,6 +19,8 @@ const TOP = 43;
 const BEND = 9;
 /** 마디 아래에 붙는 설명의 폭. 두 칸을 씁니다. */
 const NOTE_W = 250;
+/** 글 둘레의 여백. 잇는 선이 글자에 닿지 않게 이만큼 물러섭니다. */
+const NOTE_PAD = 7;
 
 type Tone = "start" | "plain" | "ghost";
 type Node = {
@@ -229,9 +231,10 @@ export function SceneFlow() {
             className="flow-note"
             style={
               {
-                left: `calc(${place(node).x} * var(--u))`,
-                top: `calc(${place(node).y + PILL_H + 11} * var(--u))`,
-                width: `calc(${NOTE_W} * var(--u))`,
+                left: `calc(${place(node).x - NOTE_PAD} * var(--u))`,
+                top: `calc(${place(node).y + PILL_H + 11 - NOTE_PAD} * var(--u))`,
+                width: `calc(${NOTE_W + 2 * NOTE_PAD} * var(--u))`,
+                padding: `calc(${NOTE_PAD} * var(--u))`,
               } as CSSProperties
             }
           >

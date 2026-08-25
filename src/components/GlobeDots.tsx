@@ -54,6 +54,10 @@ function clipFor(t: number) {
 const FLAT = 1.7;
 /** 손으로 키울 수 있는 한계 배율 */
 const MAX_MAG = 40;
+/** 확대해도 점이 이만큼 떨어져 보이도록 다시 찍습니다(px). 지구본일 때 간격과 같습니다. */
+const DOT_GAP = 3.2;
+/** 가장 촘촘한 단계. 한 단계마다 간격이 절반이 됩니다. */
+const MAX_LEVEL = 6;
 
 /** 점 격자의 위도 간격(도). 작을수록 촘촘합니다. */
 const LAT_STEP = 1.5;
@@ -72,48 +76,132 @@ const TAGGED = [
 /** 지구본에 찍히는 점 하나. home 은 매장이 있는 나라인지. */
 type Dot = { at: [number, number]; home: boolean };
 
-/** 펼쳤을 때 그 나라만 촘촘히 다시 찍습니다.
-    전체 격자는 1.5도라 나라 하나를 채울 만큼 크게 키우면 점이 몇 개 남지 않습니다.
-    범위가 좁아 폴리곤 검사를 그대로 써도 충분히 빠릅니다. */
-const COUNTRY_ROWS = 44;
-function countryDots(shape: FeatureCollection["features"][number]): Dot[] {
-  const [[west, south], [east, north]] = geoBounds(shape);
-  const step = Math.max(0.05, (north - south) / COUNTRY_ROWS);
-  const dots: Dot[] = [];
-
-  for (let lat = south; lat <= north; lat += step) {
-    const lonStep = step / Math.max(0.2, Math.cos((lat * Math.PI) / 180));
-    for (let lon = west; lon <= east; lon += lonStep) {
-      if (geoContains(shape, [lon, lat])) dots.push({ at: [lon, lat], home: true });
-    }
-  }
-
-  return dots;
-}
-
 const RASTER_W = 720;
 const RASTER_H = 360;
 
 /** 도형을 등장방형으로 한 번 그려 놓고, 픽셀이 칠해졌는지로 포함 여부를 봅니다.
  *  폴리곤 포함 검사를 수만 번 하는 것보다 훨씬 빠릅니다. */
-function rasterize(shape: FeatureCollection): Uint8ClampedArray | null {
+function rasterize(
+  shape: FeatureCollection,
+  w = RASTER_W,
+  h = RASTER_H,
+): Uint8ClampedArray | null {
   const off = document.createElement("canvas");
-  off.width = RASTER_W;
-  off.height = RASTER_H;
+  off.width = w;
+  off.height = h;
   const ctx = off.getContext("2d");
   if (!ctx) return null;
 
   const projection = geoEquirectangular()
-    .scale(RASTER_W / (2 * Math.PI))
-    .translate([RASTER_W / 2, RASTER_H / 2]);
+    .scale(w / (2 * Math.PI))
+    .translate([w / 2, h / 2]);
 
   ctx.beginPath();
   geoPath(projection, ctx)(shape);
   ctx.fillStyle = "#000";
   ctx.fill();
 
-  return ctx.getImageData(0, 0, RASTER_W, RASTER_H).data;
+  return ctx.getImageData(0, 0, w, h).data;
 }
+
+/** 도형을 주어진 투영으로 칠해서 알파만 돌려줍니다. */
+function inkMask(
+  shape: FeatureCollection,
+  projection: ReturnType<typeof geoEquirectangular>,
+  w: number,
+  h: number,
+) {
+  const off = document.createElement("canvas");
+  off.width = w;
+  off.height = h;
+  const ctx = off.getContext("2d");
+  if (!ctx) return null;
+  ctx.beginPath();
+  geoPath(projection, ctx)(shape);
+  ctx.fillStyle = "#000";
+  ctx.fill();
+  return ctx.getImageData(0, 0, w, h).data;
+}
+
+/**
+ * 보이는 자리만 원하는 간격으로 다시 찍습니다.
+ * 세계 전체를 촘촘한 해상도로 들고 있으면 무거우니,
+ * 그때 보이는 만큼만 점 간격의 절반 크기로 그려서 땅인지 봅니다.
+ */
+function windowDots(
+  land: FeatureCollection,
+  homelands: FeatureCollection,
+  lon0: number,
+  lat0: number,
+  halfLon: number,
+  halfLat: number,
+  step: number,
+): Dot[] {
+  const wide = Math.min(2048, Math.max(64, Math.round((4 * halfLon) / step)));
+  const tall = Math.min(
+    2048,
+    Math.max(16, Math.round((wide * halfLat) / halfLon)),
+  );
+  const rad = Math.PI / 180;
+  const sc = wide / 2 / (halfLon * rad);
+  const projection = geoEquirectangular()
+    .rotate([-lon0, 0])
+    .scale(sc)
+    .translate([wide / 2, tall / 2 + sc * lat0 * rad]);
+
+  const inked = inkMask(land, projection, wide, tall);
+  const homed = inkMask(homelands, projection, wide, tall);
+  if (!inked || !homed) return [];
+
+  const dots: Dot[] = [];
+  const south = Math.max(-84, lat0 - halfLat);
+  const north = Math.min(84, lat0 + halfLat);
+
+  /* 격자를 세계 좌표에 걸어 두면 화면을 옮겨 다시 찍어도 점이 제자리를 지킵니다.
+     화면 기준으로 찍으면 지도를 끌 때마다 점이 자잘하게 흔들립니다. */
+  for (let lat = Math.ceil(south / step) * step; lat <= north; lat += step) {
+    const lonStep = step / Math.max(0.2, Math.cos(lat * rad));
+    const east = lon0 + halfLon;
+    const y = Math.round(tall / 2 - (lat - lat0) * sc * rad);
+    if (y < 0 || y >= tall) continue;
+
+    for (
+      let lon = Math.ceil((lon0 - halfLon) / lonStep) * lonStep;
+      lon <= east;
+      lon += lonStep
+    ) {
+      const off = ((((lon - lon0 + 180) % 360) + 360) % 360) - 180;
+      const x = Math.round(wide / 2 + off * sc * rad);
+      if (x < 0 || x >= wide) continue;
+      const i = (y * wide + x) * 4 + 3;
+      if (inked[i] <= 128) continue;
+      const around = ((((lon + 180) % 360) + 360) % 360) - 180;
+      dots.push({ at: [around, lat], home: homed[i] > 128 });
+    }
+  }
+
+  // 짙은 점을 뒤로 모아 두면 색깔마다 한 번씩만 칠하면 됩니다.
+  dots.sort((a, b) => Number(a.home) - Number(b.home));
+  return dots;
+}
+
+/** 겹쳐 보여 하나로 묶인 매장. i 는 대표 매장입니다. */
+type Clump = { i: number; x: number; y: number; members: number[] };
+
+/** 한 단계의 촘촘한 격자. 단계가 바뀔 때는 둘을 겹쳐서 넘깁니다. */
+type Grid = {
+  level: number;
+  lon: number;
+  lat: number;
+  half: [number, number];
+  dots: Dot[];
+  /** 짙은 점이 시작되는 자리 */
+  homeFrom: number;
+  alpha: number;
+  /** 화면 좌표를 담아 둡니다. 돌리거나 키우지 않았으면 다시 계산하지 않습니다. */
+  key?: string;
+  xy?: Float32Array;
+};
 
 function landDots(
   land: FeatureCollection,
@@ -196,8 +284,10 @@ export function GlobeDots({
   const fitSpan = useRef<[number, number] | null>(null);
   /** 그 폭에서 구한 배율. 손으로 더 키우거나 줄일 때 기준이 됩니다. */
   const fitMag = useRef(1);
-  /** 펼친 나라만 촘촘히 다시 찍은 점 */
-  const closeUp = useRef<Dot[]>([]);
+  /* 확대했을 때 쓰는 촘촘한 격자. 앞이 지금 단계, 뒤는 물러나는 중인 이전 단계입니다. */
+  const grids = useRef<Grid[]>([]);
+  const landRef = useRef<FeatureCollection | null>(null);
+  const homelandRef = useRef<FeatureCollection | null>(null);
   /* 화면에 찍히는 매장. 평소에는 도시 하나에 하나이고,
      나라를 펼치면 그 나라 안 개별 매장이 뒤에 덧붙습니다.
      앞쪽 차례는 그대로라 이미 고른 매장의 번호가 어긋나지 않습니다. */
@@ -249,7 +339,10 @@ export function GlobeDots({
   const dragging = useRef(false);
   const last = useRef<[number, number]>([0, 0]);
   const activeRef = useRef<number | null>(null);
-  const screen = useRef<{ i: number; x: number; y: number }[]>([]);
+  const screen = useRef<Clump[]>([]);
+  /** 집어 둔 점에 묶인 매장. 카드에 목록으로 폅니다. */
+  const [group, setGroup] = useState<(typeof STORES)[number][]>([]);
+  const groupAt = useRef("");
 
   useEffect(() => {
     let alive = true;
@@ -287,6 +380,8 @@ export function GlobeDots({
       };
 
       homelandsRef.current = picked;
+      landRef.current = land;
+      homelandRef.current = homelands;
       setDots(landDots(land, homelands));
     });
     return () => {
@@ -399,13 +494,21 @@ export function GlobeDots({
           (width * 0.82 * QUARTER) / dLon,
           (height * 0.82 * QUARTER) / dLat,
         );
-        fitMag.current = Math.max(1, want / radius);
+        fitMag.current = Math.min(MAX_MAG, Math.max(1, want / radius));
         fitSpan.current = null;
         magTo.current = fitMag.current;
       }
-      projection
-        .translate([width / 2, height / 2])
-        .scale(radius * mag.current);
+      const scale = radius * mag.current;
+      projection.translate([width / 2, height / 2]).scale(scale);
+      /* 점 간격이 화면에서 일정해 보이도록, 배율에 맞는 격자 단계를 고릅니다.
+         한 단계 오를 때마다 간격이 절반이 됩니다. */
+      const level = Math.max(
+        0,
+        Math.min(
+          MAX_LEVEL,
+          Math.round(Math.log2((LAT_STEP * scale) / (DOT_GAP * 90))),
+        ),
+      );
 
       projection.rotate(rotation.current);
       ctx!.clearRect(0, 0, width, height);
@@ -474,69 +577,188 @@ export function GlobeDots({
       /* 매장이 없는 나라는 바탕처럼 옅게, 있는 나라는 또렷하게.
          크기는 같고 색과 진하기로만 갈립니다.
          펼쳐 크게 볼 때는 1.5도 격자가 너무 성겨서 함께 물러납니다. */
-      /* 배율을 올리면 점 사이가 벌어지므로 점도 조금 굵어집니다. */
-      const dot = 2 * unit * Math.min(1.7, 1 + (mag.current - 1) * 0.12);
-      /* 한 나라를 깊이 들여다볼 때만 성긴 세계 격자가 물러납니다.
-         촘촘한 점이 없는 채로 물러나면 화면이 비어 버립니다. */
-      const deep = closeUp.current.length
-        ? Math.min(1, Math.max(0, (mag.current - 2) / 4))
-        : 0;
-      const thin = 1 - 0.8 * deep;
-      paint(plain, dot, "125, 125, 125", [0.5 * thin, 0.36 * thin, 0.2 * thin]);
-      paint(home, dot, "60, 60, 60", [0.95 * thin, 0.7 * thin, 0.42 * thin]);
+      const dot = 2 * unit;
 
-      /* 펼친 나라는 촘촘한 점으로 다시 채웁니다. */
-      if (spread.current > 0.02 && closeUp.current.length) {
-        ctx!.beginPath();
-        for (const one of closeUp.current) {
-          if (geoDistance(one.at, center) > reach) continue;
-          const point = projection(one.at);
-          if (!point) continue;
-          ctx!.rect(point[0] - dot / 2, point[1] - dot / 2, dot, dot);
+      /* 키울수록 1.5도 격자로는 성겨집니다. 보이는 자리만 그만큼 촘촘히 다시 찍고,
+         단계가 바뀌는 사이에는 둘을 겹쳐 넘겨 점이 튀지 않게 합니다. */
+      /* 다 펴진 뒤에만 씁니다. 접힌 기가 남은 동안에는 뒷면이 앞으로 접혀 와서
+         화면 밖 점까지 앞에 겹쳐 찍힙니다. 그때는 성긴 격자가 각도로 걸러 줍니다. */
+      const flat = spread.current > 0.999;
+      const step = LAT_STEP / 2 ** level;
+      const halfLon = ((width / 2) * 90) / scale;
+      const halfLat = ((height / 2) * 90) / scale;
+      const front = grids.current[0];
+      const worn =
+        !front ||
+        front.level !== level ||
+        halfLon > front.half[0] ||
+        halfLat > front.half[1] ||
+        // 같은 단계에서 더 키웠으면 넓게 찍어 둔 자리가 남아돕니다.
+        front.half[0] > halfLon * 2.5 ||
+        Math.abs(front.lon - center[0]) > front.half[0] * 0.2 ||
+        Math.abs(front.lat - center[1]) > front.half[1] * 0.2;
+
+      if (level > 0 && flat && worn && landRef.current && homelandRef.current) {
+        // 화면보다 넉넉히 찍어 두어 조금 돌린다고 곧바로 다시 찍지 않게 합니다.
+        const half: [number, number] = [
+          Math.min(180, halfLon * 1.45),
+          Math.min(84, halfLat * 1.45),
+        ];
+        const fresh = windowDots(
+          landRef.current,
+          homelandRef.current,
+          center[0],
+          center[1],
+          half[0],
+          half[1],
+          step,
+        );
+        const at = fresh.findIndex((one) => one.home);
+        const older = front && front.alpha > 0.02 ? [front] : [];
+        grids.current = [
+          {
+            level,
+            lon: center[0],
+            lat: center[1],
+            half,
+            dots: fresh,
+            homeFrom: at < 0 ? fresh.length : at,
+            alpha: 0,
+          },
+          ...older,
+        ];
+      }
+
+      /* 맨 앞 단계가 짙어지고 나머지는 물러납니다. 지구본으로 돌아오면 모두 물러납니다. */
+      if (dt) {
+        const ease = 1 - Math.exp(-dt / 0.18);
+        grids.current.forEach((grid, i) => {
+          const to = level > 0 && flat && i === 0 ? 1 : 0;
+          grid.alpha += (to - grid.alpha) * ease;
+        });
+        grids.current = grids.current.filter(
+          (grid, i) => i === 0 || grid.alpha > 0.02,
+        );
+        if ((level === 0 || !flat) && grids.current[0]?.alpha <= 0.02)
+          grids.current = [];
+      }
+
+      /* 촘촘한 격자가 자리를 채운 만큼 성긴 격자는 물러납니다. */
+      const fine = grids.current.reduce((most, g) => Math.max(most, g.alpha), 0);
+      const thin = 1 - fine;
+      if (thin > 0.02) {
+        paint(plain, dot, "125, 125, 125", [0.5 * thin, 0.36 * thin, 0.2 * thin]);
+        paint(home, dot, "60, 60, 60", [0.95 * thin, 0.7 * thin, 0.42 * thin]);
+      }
+
+      /* 촘촘한 격자. 돌리지도 키우지도 않았다면 지난 프레임의 자리를 그대로 씁니다. */
+      const key = `${scale.toFixed(2)}|${rotation.current[0].toFixed(3)}|${rotation.current[1].toFixed(3)}|${spread.current.toFixed(3)}`;
+      for (const grid of grids.current) {
+        if (grid.alpha < 0.02) continue;
+        if (grid.key !== key || !grid.xy) {
+          const xy = new Float32Array(grid.dots.length * 2);
+          grid.dots.forEach((one, i) => {
+            const point = projection(one.at);
+            xy[i * 2] = point ? point[0] : NaN;
+            xy[i * 2 + 1] = point ? point[1] : NaN;
+          });
+          grid.key = key;
+          grid.xy = xy;
         }
-        ctx!.fillStyle = `rgba(60, 60, 60, ${0.95 * spread.current})`;
-        ctx!.fill();
+
+        const xy = grid.xy;
+        const shade = (from: number, to: number, rgb: string, alpha: number) => {
+          ctx!.beginPath();
+          for (let i = from; i < to; i++) {
+            const x = xy[i * 2];
+            const y = xy[i * 2 + 1];
+            if (Number.isNaN(x) || x < -dot || x > width + dot) continue;
+            if (y < -dot || y > height + dot) continue;
+            ctx!.rect(x - dot / 2, y - dot / 2, dot, dot);
+          }
+          ctx!.fillStyle = `rgba(${rgb}, ${alpha * grid.alpha})`;
+          ctx!.fill();
+        };
+        shade(0, grid.homeFrom, "125, 125, 125", 0.5);
+        shade(grid.homeFrom, grid.dots.length, "60, 60, 60", 0.95);
       }
 
       // 매장
-      const visible: { i: number; x: number; y: number }[] = [];
+      const spots: { i: number; x: number; y: number }[] = [];
       pins.current.forEach((store, i) => {
         if (geoDistance(store.at, center) > reach) return;
         const point = projection(store.at);
         if (!point) return;
+        spots.push({ i, x: point[0], y: point[1] });
+      });
 
-        const [x, y] = point;
-        visible.push({ i, x, y });
+      /* 집는 반경보다 가까이 붙은 매장은 눌러서 가릴 수 없으니 하나로 묶습니다.
+         같은 나라끼리만 묶어 이름표의 나라·도시가 어긋나지 않게 합니다. */
+      const clumps: Clump[] = [];
+      const taken = new Set<number>();
+      for (const spot of spots) {
+        if (taken.has(spot.i)) continue;
+        const country = pins.current[spot.i].country;
+        const kin = spots.filter(
+          (other) =>
+            !taken.has(other.i) &&
+            pins.current[other.i].country === country &&
+            Math.hypot(other.x - spot.x, other.y - spot.y) <= HIT_RADIUS,
+        );
+        kin.forEach((one) => taken.add(one.i));
+        const members = kin.map((one) => one.i).sort((a, b) => a - b);
+        clumps.push({
+          // 도시 대표 매장이 목록 앞쪽에 있어 가장 작은 번호가 대표가 됩니다.
+          i: members[0],
+          x: kin.reduce((sum, one) => sum + one.x, 0) / kin.length,
+          y: kin.reduce((sum, one) => sum + one.y, 0) / kin.length,
+          members,
+        });
+      }
 
-        const isActive = activeRef.current === i;
-        const r = (store.flagship ? 6 : 4.6) * unit * (isActive ? 1.45 : 1);
+      for (const clump of clumps) {
+        const store = pins.current[clump.i];
+        const isActive = activeRef.current === clump.i;
+        // 묶인 수만큼 점이 커집니다. 몇 곳이 겹쳐 있는지가 크기로 보입니다.
+        const many = 1 + Math.min(0.9, (clump.members.length - 1) * 0.17);
+        const r =
+          (store.flagship ? 6 : 4.6) * unit * many * (isActive ? 1.45 : 1);
 
         // 배경색 링을 먼저 깔아 회색 점밭에서 도시를 떼어 놓습니다.
         ctx!.beginPath();
-        ctx!.arc(x, y, r * 1.75, 0, Math.PI * 2);
+        ctx!.arc(clump.x, clump.y, r * 1.75, 0, Math.PI * 2);
         ctx!.fillStyle = "#fafafa";
         ctx!.fill();
 
         if (isActive) {
           ctx!.beginPath();
-          ctx!.arc(x, y, r * 2.5, 0, Math.PI * 2);
+          ctx!.arc(clump.x, clump.y, r * 2.5, 0, Math.PI * 2);
           ctx!.strokeStyle = "rgba(25, 25, 25, 0.5)";
           ctx!.lineWidth = unit * 1.2;
           ctx!.stroke();
         }
 
         ctx!.beginPath();
-        ctx!.arc(x, y, r, 0, Math.PI * 2);
+        ctx!.arc(clump.x, clump.y, r, 0, Math.PI * 2);
         ctx!.fillStyle = "#191919";
         ctx!.fill();
-      });
+      }
 
-      screen.current = visible;
+      screen.current = clumps;
+
+      /* 집어 둔 점에 묶인 매장이 바뀌면 카드 목록도 바꿉니다.
+         나라를 펼치면 도시 하나가 여러 매장으로 갈라지므로 매 프레임 확인합니다. */
+      const mine = clumps.find((one) => one.i === chosenRef.current);
+      const roll = mine ? mine.members.join(",") : "";
+      if (roll !== groupAt.current) {
+        groupAt.current = roll;
+        setGroup(mine ? mine.members.map((m) => pins.current[m]) : []);
+      }
 
       /* 집어 둔 점 옆에 뱃지를 붙입니다. 오른쪽 자리가 모자라면 왼쪽으로 넘깁니다. */
       const badge = badgeRef.current;
       if (badge) {
-        const at = visible.find((point) => point.i === chosenRef.current);
+        const at = mine;
         if (at) {
           const w = badge.offsetWidth;
           const toLeft = at.x + HIT_RADIUS + w > width;
@@ -733,7 +955,6 @@ export function GlobeDots({
                       (Math.max(0.5, east - west) * Math.PI) / 180,
                       (Math.max(0.5, north - south) * Math.PI) / 180,
                     ];
-                    closeUp.current = countryDots(land.shape);
                     // 그 나라 안 개별 매장을 뒤에 덧붙여 함께 보여 줍니다.
                     pins.current = [
                       ...STORES,
@@ -744,7 +965,6 @@ export function GlobeDots({
                     fitMag.current = 1;
                     facing.current = null;
                     fitSpan.current = null;
-                    closeUp.current = [];
                     pins.current = STORES;
                   }
 
@@ -772,7 +992,27 @@ export function GlobeDots({
       {/* 이름표를 누르면 그 아래로 열리는 매장 카드 */}
       {card && (
         <div ref={cardRef} className="globe-card" aria-hidden>
-          {label && open && (
+          {label && open && group.length > 1 && (
+            <>
+              {/* 여럿이 겹친 자리는 한 곳씩 펴서 보여 줍니다. */}
+              <div className="store-tip-top">
+                <h5 className="store-tip-name">{label.city}</h5>
+                <span className="store-tip-distance">
+                  매장 {group.length}곳
+                </span>
+              </div>
+              <ul className="store-tip-list">
+                {group.map((one) => (
+                  <li className="store-tip-row" key={one.name}>
+                    <span className="store-tip-name">{one.name}</span>
+                    <span className="store-tip-distance">{one.city}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+
+          {label && open && group.length <= 1 && (
             <>
               <div className="store-tip-top">
                 <h5 className="store-tip-name">{label.name}</h5>

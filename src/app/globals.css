@@ -1485,6 +1485,30 @@
     white-space: nowrap;
   }
 
+  /* 한 자리에 겹친 매장들. 카드 안에서만 스크롤합니다. */
+  .store-tip-list {
+    display: flex;
+    max-height: calc(132 * var(--u));
+    flex-direction: column;
+    gap: calc(6 * var(--u));
+    overflow-y: auto;
+    padding-top: calc(6 * var(--u));
+    border-top: 1px solid #ececec;
+    margin-top: calc(4 * var(--u));
+  }
+
+  .store-tip-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: calc(10 * var(--u));
+  }
+
+  .store-tip-row .store-tip-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .store-tip-tags {
     display: flex;
     align-items: center;

@@ -178,10 +178,6 @@
     display: block;
     width: 100%;
     aspect-ratio: 663 / 643;
-    border: 0;
-    background: none;
-    padding: 0;
-    cursor: pointer;
     perspective: calc(1400 * var(--u));
     transform-style: preserve-3d;
   }
@@ -228,6 +224,33 @@
     pointer-events: none;
   }
 
+  /* 손을 올린 것만 잠깐 들렸다 제자리로 내려옵니다.
+     떨어지는 겹과 따로 두어야 손을 뗄 때 처음부터 다시 떨어지지 않습니다. */
+  .gift-lift {
+    position: absolute;
+    inset: 0;
+  }
+
+  .gift-item[data-in] {
+    pointer-events: auto;
+  }
+
+  .gift-item:hover .gift-lift {
+    animation: gift-bob 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes gift-bob {
+    0% {
+      transform: translateY(0);
+    }
+    38% {
+      transform: translateY(-14%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
   /* 닫힌 상자의 윗면. 뚜껑이 거의 다 누운 뒤에 들어서서 바뀌는 순간이 보이지 않습니다. */
   .gift-top {
     opacity: 1;
@@ -246,13 +269,21 @@
     transform-origin: 50% 61.6%;
     transform-style: preserve-3d;
     rotate: x -89deg;
-    transition: rotate 720ms cubic-bezier(0.4, 0, 0.2, 1);
+    /* 다 누우면 옆에서 본 꼴이라 가장자리에 실선 자국이 남습니다.
+       접히는 동작이 끝난 뒤 아예 걷어 냅니다. */
+    visibility: hidden;
+    transition:
+      rotate 720ms cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0ms linear 900ms;
     will-change: rotate;
   }
 
   .gift-stage[data-open] .gift-lid {
     rotate: x 0deg;
-    transition: rotate 860ms cubic-bezier(0.22, 1, 0.36, 1) 120ms;
+    visibility: visible;
+    transition:
+      rotate 860ms cubic-bezier(0.22, 1, 0.36, 1) 120ms,
+      visibility 0ms linear 0ms;
   }
 
   /* 앞 날개. 열 때는 먼저 펴지고, 닫을 때는 뚜껑이 내려앉은 뒤 접힙니다. */
@@ -283,7 +314,7 @@
 
   .gift-item[data-in] {
     opacity: 1;
-    animation: gift-drop 1.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: gift-drop 1.9s cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: var(--delay, 0s);
   }
 

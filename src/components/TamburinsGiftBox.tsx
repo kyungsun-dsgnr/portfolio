@@ -12,25 +12,27 @@ const W = 663;
 const H = 643;
 
 /* 상자에 담기는 것들. 자리는 도면 좌표로 적고 비율로 옮깁니다.
-   밑동은 앞면(y 501)에 가려지므로, 보이는 것은 그 위쪽뿐입니다. */
+   밑동은 앞면(y 501)에 가려지므로, 보이는 것은 그 위쪽뿐입니다.
+   둘을 합친 폭(162~500)의 가운데가 상자 안쪽(61~601)의 가운데와 맞아
+   좌우 여백이 101 로 같습니다. */
 const GOODS = [
   {
     id: "wash",
     src: "/images/tamburins-handwash.png",
-    left: 318,
-    top: 232,
-    width: 112,
-    height: 326,
+    left: 370,
+    top: 221,
+    width: 130,
+    height: 379,
     tilt: "5.5deg",
-    delay: "0.16s",
+    delay: "0.34s",
   },
   {
     id: "perfume",
     src: "/images/tamburins-perfume.png",
-    left: 158,
-    top: 398,
-    width: 156,
-    height: 157,
+    left: 162,
+    top: 409,
+    width: 190,
+    height: 191,
     tilt: "-11deg",
     delay: "0s",
   },
@@ -39,9 +41,9 @@ const GOODS = [
 const pc = (value: number, of: number) => `${(value / of) * 100}%`;
 
 /**
- * 뚜껑이 뒤쪽 모서리를 축으로 열리고 닫힙니다.
- * 열리면 향수와 핸드워시가 위에서 떨어져 담기고, 닫기 전에 상자 안으로 가라앉습니다.
- * 장에 들어서면 한 번 저절로 열리고, 그다음부터는 눌러서 여닫습니다.
+ * 뚜껑이 뒤쪽 모서리를 축으로 열립니다. 장에 들어서면 한 번 열리고,
+ * 향수와 핸드워시가 위에서 떨어져 담깁니다.
+ * 담긴 뒤에는 손을 올린 것만 잠깐 들렸다 내려옵니다.
  */
 export function TamburinsGiftBox() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
@@ -72,27 +74,9 @@ export function TamburinsGiftBox() {
     return clear;
   }, [inView]);
 
-  /* 누르면 여닫습니다. 닫을 때는 안에 든 것이 먼저 가라앉고 뚜껑이 내려옵니다. */
-  function toggle() {
-    clear();
-    if (open) {
-      setPlaced(false);
-      timers.current.push(window.setTimeout(() => setOpen(false), 260));
-      return;
-    }
-    setOpen(true);
-    timers.current.push(window.setTimeout(() => setPlaced(true), 760));
-  }
-
   return (
     <div ref={ref} className="gift">
-      <button
-        type="button"
-        className="gift-stage"
-        data-open={open || undefined}
-        onClick={toggle}
-        aria-label={open ? "상자 닫기" : "상자 열기"}
-      >
+      <div className="gift-stage" data-open={open || undefined}>
         {/* 상자 뒤쪽 — 안쪽 벽과 바닥 */}
         <svg className="gift-layer" viewBox={`0 0 ${W} ${H}`} aria-hidden>
           <g className="gift-ink">
@@ -102,59 +86,6 @@ export function TamburinsGiftBox() {
             <path d="M66 481 L51 501" />
             <path d="M596 481 L611 501" />
             <path d="M1 501 H661" />
-          </g>
-        </svg>
-
-        {/* 담기는 것들 */}
-        <div className="gift-goods">
-          {GOODS.map((one) => (
-            <span
-              key={one.id}
-              className="gift-item"
-              data-in={placed || undefined}
-              style={
-                {
-                  left: pc(one.left, W),
-                  top: pc(one.top, H),
-                  width: pc(one.width, W),
-                  height: pc(one.height, H),
-                  "--tilt": one.tilt,
-                  "--delay": one.delay,
-                } as CSSProperties
-              }
-            >
-              <Image
-                alt=""
-                src={one.src}
-                fill
-                sizes="30vw"
-                className="object-contain"
-              />
-            </span>
-          ))}
-        </div>
-
-        {/* 상자 앞쪽 — 안에 든 것의 밑동을 가립니다 */}
-        <svg className="gift-layer" viewBox={`0 0 ${W} ${H}`} aria-hidden>
-          <g className="gift-ink">
-            <path
-              d="M1 501 L16 631 H646 L661 501 Z"
-              className="gift-fill"
-              fillRule="evenodd"
-              clipRule="evenodd"
-            />
-            <path d="M16 631 H646" />
-            <path d="M16 631 L9 641" />
-            <path d="M646 631 L652 641" />
-            <path d="M9 641 H653" />
-          </g>
-        </svg>
-
-        {/* 닫힌 상자의 윗면. 뚜껑은 다 눕는 순간 옆에서 본 꼴이라 보이지 않으므로,
-            그 자리에 이 면이 대신 들어섭니다. */}
-        <svg className="gift-layer gift-top" viewBox={`0 0 ${W} ${H}`} aria-hidden>
-          <g className="gift-ink">
-            <path d="M61 396 H601 L661 501 H1 Z" className="gift-fill" />
           </g>
         </svg>
 
@@ -187,7 +118,66 @@ export function TamburinsGiftBox() {
             </g>
           </svg>
         </div>
-      </button>
+
+        {/* 담기는 것들 */}
+        <div className="gift-goods">
+          {GOODS.map((one) => (
+            <span
+              key={one.id}
+              className="gift-item"
+              data-in={placed || undefined}
+              style={
+                {
+                  left: pc(one.left, W),
+                  top: pc(one.top, H),
+                  width: pc(one.width, W),
+                  height: pc(one.height, H),
+                  "--tilt": one.tilt,
+                  "--delay": one.delay,
+                } as CSSProperties
+              }
+            >
+              <span className="gift-lift">
+                <Image
+                  alt=""
+                  src={one.src}
+                  fill
+                  sizes="30vw"
+                  className="object-contain"
+                />
+              </span>
+            </span>
+          ))}
+        </div>
+
+        {/* 상자 앞쪽 — 안에 든 것의 밑동을 가립니다 */}
+        <svg className="gift-layer" viewBox={`0 0 ${W} ${H}`} aria-hidden>
+          <g className="gift-ink">
+            <path
+              d="M1 501 L16 631 H646 L661 501 Z"
+              className="gift-fill"
+              fillRule="evenodd"
+              clipRule="evenodd"
+            />
+            <path d="M16 631 H646" />
+            <path d="M16 631 L9 641" />
+            <path d="M646 631 L652 641" />
+            <path d="M9 641 H653" />
+          </g>
+        </svg>
+
+        {/* 닫힌 상자의 윗면. 뚜껑은 다 눕는 순간 옆에서 본 꼴이라 보이지 않으므로,
+            그 자리에 이 면이 대신 들어섭니다. */}
+        <svg
+          className="gift-layer gift-top"
+          viewBox={`0 0 ${W} ${H}`}
+          aria-hidden
+        >
+          <g className="gift-ink">
+            <path d="M61 396 H601 L661 501 H1 Z" className="gift-fill" />
+          </g>
+        </svg>
+      </div>
     </div>
   );
 }

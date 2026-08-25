@@ -161,8 +161,31 @@
   }
 
   [data-visible] .tam-drop {
-    animation: drop-in 1.25s both;
+    animation: drop-in 1.9s both;
     animation-delay: var(--delay, 0s);
+  }
+
+  /* 손을 올리면 제품이 조금 들렸다가 도로 담깁니다.
+     떨어지는 겹과 따로 두어야 손을 뗄 때 처음부터 다시 떨어지지 않습니다. */
+  .tam-bob {
+    position: absolute;
+    inset: 0;
+  }
+
+  .tam-drop:hover .tam-bob {
+    animation: bob 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes bob {
+    0% {
+      transform: translateY(0);
+    }
+    38% {
+      transform: translateY(calc(-24 * var(--u)));
+    }
+    100% {
+      transform: translateY(0);
+    }
   }
 
   @keyframes drop-in {

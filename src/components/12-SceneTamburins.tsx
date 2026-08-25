@@ -113,13 +113,15 @@ export function SceneTamburins() {
               } as CSSProperties
             }
           >
-            <Image
-              alt=""
-              src={one.src}
-              fill
-              sizes="50vw"
-              className="object-contain"
-            />
+            <div className="tam-bob">
+              <Image
+                alt=""
+                src={one.src}
+                fill
+                sizes="50vw"
+                className="object-contain"
+              />
+            </div>
           </div>
         ))}
 

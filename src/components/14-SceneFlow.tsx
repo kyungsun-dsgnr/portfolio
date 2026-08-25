@@ -6,146 +6,73 @@ import type { CSSProperties } from "react";
 
 import { useInView } from "@/components/useInView";
 
-/* 다이어그램은 3–8단 여섯 단(1031×740) 안에서 제 좌표계를 씁니다.
-   칸 하나가 알약 하나이고, 단계가 오른쪽으로 한 칸씩 밀립니다. */
-const PANEL_W = 1031;
-const PANEL_H = 740;
-const PILL_W = 118;
-const PILL_H = 30;
-const STEP_X = 130;
-const STEP_Y = 62;
-const TOP = 43;
+/* 선물 하나를 사기까지 여덟 걸음. 그리드도 여덟 단이라 한 걸음이 한 단에 섭니다.
+   알약 폭은 단 폭과 같고, 걸음 사이 간격은 그리드 간격과 같습니다. */
+const COL = 158.5;
+const GAP = 16;
+const STEP_X = COL + GAP;
+/** 여덟 단을 가로지르는 판 */
+const PANEL_W = 8 * COL + 7 * GAP;
+/** 두 행 높이 */
+const PANEL_H = 2 * 110 + GAP;
+const PILL_H = 34;
+/** 같은 단에서 한 번 더 묻는 칸이 본선에서 벗어나는 높이 */
+const TWICE_Y = 62;
 /** 꺾이는 자리를 둥글게 만드는 반지름 */
 const BEND = 9;
-/** 마디 아래에 붙는 설명의 폭. 두 칸을 씁니다. */
-const NOTE_W = 250;
-/** 글 둘레의 여백. 잇는 선이 글자에 닿지 않게 이만큼 물러섭니다. */
-const NOTE_PAD = 7;
 
 type Tone = "start" | "plain" | "ghost";
 type Node = {
   id: string;
   label: string;
-  /** 단계(가로) 와 줄(세로) */
+  /** 몇 번째 걸음인지(0~7). 그대로 그리드 단이 됩니다. */
   step: number;
-  row: number;
+  /** 본선에서 위아래로 벗어난 정도 */
+  off?: number;
   tone?: Tone;
-  /** 이 마디로 들어오는 앞 마디들 */
   from?: string[];
-  /** 이 마디에서 걸리는 지점. 번호는 마디에, 글은 마디 아래에 붙습니다. */
-  pain?: { no: string; text: string };
+  /** 이 걸음에서 걸리는 지점. 무엇이 걸리는지는 다음 장에서 화면과 함께 풉니다. */
+  pain?: string;
 };
 
-/* 지금 tamburins.com 에서 선물 하나를 고르는 데 거치는 화면들입니다.
-   커스텀 기프트 목록 → 세트 상세 → 향 선택 창(1/2, 2/2) → 쇼핑백 순서이고,
-   향은 세트에 든 제품 수만큼 한 칸씩 나뉘어 물어봅니다.
-   회색 마디는 선물을 고르는 길에서 벗어나는 갈래입니다.
-   걸리는 지점은 그 마디 아래에 바로 적어, 어디서 막히는지 눈이 옮겨 가지 않게 합니다. */
+/* 지금 tamburins.com 에서 선물 하나를 고르는 길입니다.
+   한 줄로 곧게 가다가 향을 고르는 데서만 두 갈래로 갈라졌다 다시 모입니다 —
+   세트에 든 제품 수만큼 창을 넘겨 하나씩 골라야 하는 자리입니다. */
 const NODES: Node[] = [
-  { id: "home", label: "Home", step: 0, row: 5, tone: "start" },
-
-  {
-    id: "gift",
-    label: "Custom Gifts",
-    step: 1,
-    row: 1,
-    from: ["home"],
-    pain: {
-      no: "01",
-      text: "목록에서는 세트에 어떤 향이 들어가는지 알 수 없습니다.",
-    },
-  },
-  {
-    id: "best",
-    label: "Best Gifts",
-    step: 1,
-    row: 6,
-    tone: "ghost",
-    from: ["home"],
-  },
-  { id: "shop", label: "Shop", step: 1, row: 8, tone: "ghost", from: ["home"] },
-  {
-    id: "cs",
-    label: "Store & CS",
-    step: 1,
-    row: 10,
-    tone: "ghost",
-    from: ["home"],
-  },
-
-  { id: "set", label: "Gift Set", step: 2, row: 1, from: ["gift"] },
-
-  {
-    id: "option",
-    label: "Select Option",
-    step: 3,
-    row: 1,
-    from: ["set"],
-    pain: {
-      no: "03",
-      text: "품절과 향 설명은 선택 창을 열어야 드러납니다.",
-    },
-  },
-  {
-    id: "info",
-    label: "Product Info",
-    step: 3,
-    row: 3,
-    tone: "ghost",
-    from: ["set"],
-  },
-
+  { id: "home", label: "Home", step: 0, tone: "start" },
+  { id: "gift", label: "Custom Gifts", step: 1, from: ["home"], pain: "01" },
+  { id: "set", label: "Gift Set", step: 2, from: ["gift"] },
+  { id: "option", label: "Select Option", step: 3, from: ["set"], pain: "03" },
+  /* 향은 한 걸음 안에서 두 번 묻습니다. 갈라지는 것이 아니라 같은 자리를 다시 지납니다. */
   {
     id: "scent1",
     label: "Scent 1 / 2",
     step: 4,
-    row: 0,
+    off: -TWICE_Y,
     from: ["option"],
-    pain: {
-      no: "02",
-      text: "향은 세트에 든 제품 수만큼 창을 넘겨 하나씩 고릅니다.",
-    },
+    pain: "02",
   },
-  { id: "scent2", label: "Scent 2 / 2", step: 4, row: 4, from: ["option"] },
-
-  {
-    id: "bag",
-    label: "Add to Bag",
-    step: 5,
-    row: 2,
-    from: ["scent1", "scent2"],
-  },
-  {
-    id: "cart",
-    label: "Cart",
-    step: 6,
-    row: 2,
-    from: ["bag"],
-    pain: {
-      no: "04",
-      text: "고른 구성은 담은 뒤 장바구니에서야 확인됩니다.",
-    },
-  },
-  {
-    id: "order",
-    label: "Order",
-    step: 7,
-    row: 2,
-    tone: "ghost",
-    from: ["cart"],
-  },
+  { id: "scent2", label: "Scent 2 / 2", step: 4, from: ["scent1"] },
+  { id: "bag", label: "Add to Bag", step: 5, from: ["scent2"] },
+  { id: "cart", label: "Cart", step: 6, from: ["bag"], pain: "04" },
+  { id: "order", label: "Order", step: 7, tone: "ghost", from: ["cart"] },
 ];
 
 const place = (node: Node) => ({
   x: node.step * STEP_X,
-  y: TOP + node.row * STEP_Y,
+  y: (PANEL_H - PILL_H) / 2 + (node.off ?? 0),
 });
 
-/** 앞 마디 오른쪽에서 다음 마디 왼쪽으로, 가운데에서 한 번 꺾어 들어갑니다. */
+/** 앞 걸음 오른쪽에서 다음 걸음 왼쪽으로. 높이가 다르면 단 사이 여백에서 한 번 꺾습니다.
+    같은 단 안에서 이어질 때는 단 가운데를 곧게 내려갑니다. */
 function elbow(from: Node, to: Node) {
   const a = place(from);
   const b = place(to);
-  const x1 = a.x + PILL_W;
+  if (from.step === to.step) {
+    const x = a.x + COL / 2;
+    return `M ${x} ${a.y + PILL_H} V ${b.y}`;
+  }
+  const x1 = a.x + COL;
   const y1 = a.y + PILL_H / 2;
   const x2 = b.x;
   const y2 = b.y + PILL_H / 2;
@@ -168,14 +95,14 @@ const at = (node: Node) => {
   return {
     left: `calc(${x} * var(--u))`,
     top: `calc(${y} * var(--u))`,
-    width: `calc(${PILL_W} * var(--u))`,
+    width: `calc(${COL} * var(--u))`,
     height: `calc(${PILL_H} * var(--u))`,
   } as CSSProperties;
 };
 
 /**
- * 지금 선물을 사는 흐름. 제목과 노트가 왼쪽 두 단에 서고,
- * 다이어그램이 남은 여섯 단을 씁니다.
+ * 지금 선물을 사는 흐름. 여덟 걸음이 여덟 단에 하나씩 서고,
+ * 향을 고르는 자리에서만 본선이 갈라졌다 모입니다.
  */
 export function SceneFlow() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
@@ -183,26 +110,14 @@ export function SceneFlow() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-lead rise col-start-1 col-span-2 row-start-1 row-span-2">
+      <h2 className="type-lead rise col-start-1 col-span-3 row-start-1 row-span-2">
         User Flow
       </h2>
 
-      <p
-        className="type-body rise self-end col-start-1 col-span-2 row-start-6"
-        style={{ "--delay": "0.1s" } as CSSProperties}
-      >
-        지금 tamburins.com 에서 선물 하나를 고르는 길입니다. 걸리는 지점은 그
-        자리에 적었습니다.
-      </p>
-
-      <div
-        className="flow rise col-start-3 col-span-6 row-start-1 row-span-6"
-        style={{ "--delay": "0.16s" } as CSSProperties}
-      >
+      <div className="flow rise col-start-1 col-span-8 row-start-3 row-span-2">
         <svg
           className="flow-lines"
           viewBox={`0 0 ${PANEL_W} ${PANEL_H}`}
-          preserveAspectRatio="none"
           aria-hidden
         >
           {NODES.flatMap((node) =>
@@ -220,28 +135,18 @@ export function SceneFlow() {
             style={at(node)}
           >
             {node.label}
-            {node.pain && <em className="flow-pain">{node.pain.no}</em>}
+            {node.pain && <em className="flow-pain">{node.pain}</em>}
           </span>
         ))}
-
-        {/* 걸리는 지점은 그 마디 바로 아래에 적습니다. */}
-        {NODES.filter((node) => node.pain).map((node) => (
-          <p
-            key={`${node.id}-pain`}
-            className="flow-note"
-            style={
-              {
-                left: `calc(${place(node).x - NOTE_PAD} * var(--u))`,
-                top: `calc(${place(node).y + PILL_H + 11 - NOTE_PAD} * var(--u))`,
-                width: `calc(${NOTE_W + 2 * NOTE_PAD} * var(--u))`,
-                padding: `calc(${NOTE_PAD} * var(--u))`,
-              } as CSSProperties
-            }
-          >
-            {node.pain!.text}
-          </p>
-        ))}
       </div>
+
+      <p
+        className="type-body rise self-end col-start-1 col-span-3 row-start-6"
+        style={{ "--delay": "0.14s" } as CSSProperties}
+      >
+        선물 하나를 사기까지 여덟 걸음입니다. 네 번째 걸음에서는 세트에 든 제품
+        수만큼 같은 창을 다시 지납니다.
+      </p>
     </div>
   );
 }

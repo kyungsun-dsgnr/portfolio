@@ -1,6 +1,7 @@
 import { GlobeDots } from "@/components/GlobeDots";
 import { LightStage } from "@/components/LightStage";
 import { SceneCase } from "@/components/07-SceneCase";
+import { SceneTamburins } from "@/components/12-SceneTamburins";
 import { SceneAfter } from "@/components/11-SceneAfter";
 import { SceneExplore } from "@/components/10-SceneExplore";
 import { SceneIntro } from "@/components/01-SceneIntro";
@@ -93,13 +94,10 @@ export default function Home() {
         },
         { id: "gentle-monster-after", label: "Proposal", node: <SceneAfter /> },
 
-        /* 두 번째 프로젝트 표지. 앞 케이스와 같은 틀을 씁니다.
-           제목·로고·본문과 우측에 들어갈 것은 받는 대로 채웁니다.
-           visual 을 비워 두면 그 자리는 회색 영역으로 섭니다. */
         {
           id: "tamburins",
           label: "Tamburins",
-          node: <SceneCase title="Tamburins" body={<>{"내용 준비 중"}</>} />,
+          node: <SceneTamburins />,
         },
         /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.
         {

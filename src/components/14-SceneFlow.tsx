@@ -6,131 +6,181 @@ import type { CSSProperties } from "react";
 
 import { useInView } from "@/components/useInView";
 
-/* 선물 하나를 사기까지 여섯 걸음. 한 걸음이 한 단에 섭니다.
+/* 여덟 걸음이 여덟 단에 하나씩 섭니다.
    알약 폭은 단 폭과 같고, 걸음 사이 간격은 그리드 간격과 같습니다. */
 const COL = 158.5;
 const GAP = 16;
 const STEP_X = COL + GAP;
-/** 여섯 단을 가로지르는 판 */
-const STEPS = 6;
-const PANEL_W = STEPS * COL + (STEPS - 1) * GAP;
-/** 두 행 높이 */
-const PANEL_H = 2 * 110 + GAP;
+const PANEL_W = 8 * COL + 7 * GAP;
+/** 다섯 행 높이 */
+const PANEL_H = 5 * 110 + 4 * GAP;
 const PILL_H = 34;
+/** 선물 사는 길이 놓이는 높이 */
+const LINE_Y = 8;
 /** 한 걸음이 화면 둘일 때, 두 번째 화면이 본선 아래로 내려오는 높이 */
-const UNDER = 62;
+const UNDER = 56;
+/** 나머지 갈래가 시작되는 높이와, 갈래 사이 간격 */
+const MAP_Y = 132;
+const MAP_STEP = 48;
+/** 꺾이는 자리를 둥글게 만드는 반지름 */
+const BEND = 9;
+
 type Tone = "start" | "plain" | "ghost";
-type Node = {
+
+/** 선물을 사기까지 지나는 화면들. 한 걸음이 한 단입니다. */
+const FLOW: {
   id: string;
   label: string;
-  /** 몇 번째 걸음인지. 그대로 그리드 단이 됩니다. */
-  step: number;
   tone?: Tone;
-  from?: string[];
-  /** 이 걸음에서 걸리는 지점. 무엇이 걸리는지는 다음 장에서 화면과 함께 풉니다. */
   pain?: string;
-  /** 같은 걸음의 두 번째 화면. 본선 아래에 붙습니다. */
   under?: { label: string; tone?: Tone };
-};
-
-/* 지금 tamburins.com 에서 선물 하나를 고르는 길입니다.
-   걸음은 한 줄로 곧게 이어지고, 한 걸음이 화면 둘인 자리에서는
-   두 번째 화면이 그 아래에 붙습니다 — 고르는 자리, 향을 묻는 자리, 담고 주문하는 자리. */
-const NODES: Node[] = [
-  { id: "home", label: "Home", step: 0, tone: "start" },
+}[] = [
+  { id: "home", label: "Home", tone: "start" },
+  { id: "gift", label: "Gift" },
   {
-    id: "gift",
+    id: "custom",
     label: "Custom Gifts",
-    step: 1,
-    from: ["home"],
     pain: "01",
-    under: { label: "Gift Set" },
+    under: { label: "Best Gifts", tone: "ghost" },
   },
-  { id: "option", label: "Select Option", step: 2, from: ["gift"], pain: "03" },
+  { id: "set", label: "Gift Set" },
+  { id: "option", label: "Select Option", pain: "03" },
   {
     id: "scent",
     label: "Scent 1 / 2",
-    step: 3,
-    from: ["option"],
     pain: "02",
     under: { label: "Scent 2 / 2" },
   },
-  { id: "bag", label: "Add to Bag", step: 4, from: ["scent"] },
+  { id: "bag", label: "Add to Bag" },
   {
     id: "cart",
     label: "Cart",
-    step: 5,
-    from: ["bag"],
     pain: "04",
     under: { label: "Order", tone: "ghost" },
   },
 ];
 
-const place = (node: Node) => ({
-  x: node.step * STEP_X,
-  y: (PANEL_H - PILL_H) / 2,
-});
+/* 선물을 사는 길에서 벗어나는 갈래. 홈에서 함께 나가지만 이 프로젝트가 다루는 자리는 아닙니다.
+   갈래 이름은 둘째 단에 알약으로, 그 안의 화면은 셋째 단에 목록으로 적습니다.
+   서른 개가 넘는 화면을 모두 알약으로 세우면 정작 흐름이 묻힙니다. */
+const MAP: { label: string; pages: string[] }[] = [
+  {
+    label: "Perfume",
+    pages: ["퍼퓸", "헤어 퍼퓸", "퍼퓸 밤", "퍼퓸 오일", "퍼퓸 웨어"],
+  },
+  { label: "Body", pages: ["헤어 오일", "샤워리바디"] },
+  {
+    label: "Hand & Lip",
+    pages: [
+      "쉘 퍼퓸 핸드",
+      "에그 립밤",
+      "체인 핸드",
+      "퍼퓸드 핸드",
+      "핸드앤립 웨어",
+    ],
+  },
+  {
+    label: "Home Fragrance",
+    pages: ["카 디퓨저", "룸 프래그런스", "퍼퓸 캔들"],
+  },
+  {
+    label: "Scent Note",
+    pages: ["우디", "머스크", "플로럴", "시트러스", "프루티"],
+  },
+  {
+    label: "Collection",
+    pages: ["썸머테일스", "선샤인", "블루히노키", "보타리", "이브닝글로우"],
+  },
+  { label: "Store", pages: ["대한민국", "일본", "중국", "태국"] },
+  {
+    label: "Customer Service",
+    pages: ["자주 묻는 질문", "1:1 문의하기", "기업 구매", "공지사항"],
+  },
+  { label: "My Page", pages: ["주문 내역", "비회원 주문 조회"] },
+];
+
+/** 갈래는 같은 간격으로 나란히 내려갑니다. */
+const MAP_AT = MAP.map((_branch, i) => MAP_Y + i * MAP_STEP);
+
+const px = (value: number) => `calc(${value} * var(--u))`;
 
 /** 걸음과 걸음은 같은 높이에 서므로 곧은 가로선으로 잇습니다. */
-function link(from: Node, to: Node) {
-  const a = place(from);
-  const b = place(to);
-  return `M ${a.x + COL} ${a.y + PILL_H / 2} H ${b.x}`;
-}
+const link = (step: number) =>
+  `M ${step * STEP_X + COL} ${LINE_Y + PILL_H / 2} H ${(step + 1) * STEP_X}`;
 
 /** 같은 걸음의 두 번째 화면으로는 단 가운데를 곧게 내려갑니다. */
-function drop(node: Node) {
-  const a = place(node);
-  const x = a.x + COL / 2;
-  return `M ${x} ${a.y + PILL_H} V ${a.y + UNDER}`;
-}
-
-const at = (node: Node, below = false) => {
-  const { x, y } = place(node);
-  return {
-    left: `calc(${x} * var(--u))`,
-    top: `calc(${y + (below ? UNDER : 0)} * var(--u))`,
-    width: `calc(${COL} * var(--u))`,
-    height: `calc(${PILL_H} * var(--u))`,
-  } as CSSProperties;
+const drop = (step: number) => {
+  const x = step * STEP_X + COL / 2;
+  return `M ${x} ${LINE_Y + PILL_H} V ${LINE_Y + UNDER}`;
 };
 
+/** 홈에서 갈라져 나가는 갈래. 첫 단과 둘째 단 사이 여백에서 한 번 꺾습니다. */
+function branch(y: number) {
+  const x1 = COL;
+  const y1 = LINE_Y + PILL_H / 2;
+  const x2 = STEP_X;
+  const y2 = y + PILL_H / 2;
+  const mid = (x1 + x2) / 2;
+  return [
+    `M ${x1} ${y1}`,
+    `H ${mid - BEND}`,
+    `Q ${mid} ${y1} ${mid} ${y1 + BEND}`,
+    `V ${y2 - BEND}`,
+    `Q ${mid} ${y2} ${mid + BEND} ${y2}`,
+    `H ${x2}`,
+  ].join(" ");
+}
+
+/** 갈래에서 그 안의 화면 목록으로 */
+const leaf = (y: number) =>
+  `M ${STEP_X + COL} ${y + PILL_H / 2} H ${2 * STEP_X}`;
+
 /**
- * 지금 선물을 사는 흐름. 한 걸음이 한 단에 서고,
- * 화면 둘로 나뉘는 걸음은 본선을 사이에 두고 위아래로 붙습니다.
+ * 지금 선물을 사는 흐름과, 그 옆으로 벗어나는 나머지 갈래.
+ * 걸음은 한 줄로 곧게 가고, 갈래는 그 아래에 모입니다.
  */
 export function SceneFlow() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
-  const byId = new Map(NODES.map((node) => [node.id, node]));
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-lead rise col-start-1 col-span-3 row-start-1 row-span-2">
+      <h2 className="type-lead rise col-start-1 col-span-3 row-start-1">
         User Flow
       </h2>
 
-      <div className="flow rise col-start-1 col-span-6 row-start-3 row-span-2">
+      <div className="flow rise col-start-1 col-span-8 row-start-2 row-span-5">
         <svg
           className="flow-lines"
           viewBox={`0 0 ${PANEL_W} ${PANEL_H}`}
           aria-hidden
         >
-          {NODES.flatMap((node) => [
-            ...(node.from ?? []).map((id) => (
-              <path key={`${id}-${node.id}`} d={link(byId.get(id)!, node)} />
-            )),
-            ...(node.under
-              ? [<path key={`${node.id}-under`} d={drop(node)} />]
-              : []),
-          ])}
+          {FLOW.slice(0, -1).map((node, i) => (
+            <path key={`${node.id}-next`} d={link(i)} />
+          ))}
+          {FLOW.map((node, i) =>
+            node.under ? <path key={`${node.id}-under`} d={drop(i)} /> : null,
+          )}
+          {MAP.map((one, i) => (
+            <path key={`${one.label}-branch`} d={branch(MAP_AT[i])} />
+          ))}
+          {MAP.map((one, i) => (
+            <path key={`${one.label}-leaf`} d={leaf(MAP_AT[i])} />
+          ))}
         </svg>
 
-        {NODES.map((node) => (
+        {FLOW.map((node, i) => (
           <span
             key={node.id}
             className="flow-pill"
             data-tone={node.tone ?? "plain"}
-            style={at(node)}
+            style={
+              {
+                left: px(i * STEP_X),
+                top: px(LINE_Y),
+                width: px(COL),
+                height: px(PILL_H),
+              } as CSSProperties
+            }
           >
             {node.label}
             {node.pain && <em className="flow-pain">{node.pain}</em>}
@@ -138,15 +188,59 @@ export function SceneFlow() {
         ))}
 
         {/* 한 걸음이 화면 둘인 자리. 두 번째 화면이 본선 아래에 붙습니다. */}
-        {NODES.filter((node) => node.under).map((node) => (
+        {FLOW.map((node, i) =>
+          node.under ? (
+            <span
+              key={`${node.id}-under`}
+              className="flow-pill"
+              data-tone={node.under.tone ?? "plain"}
+              style={
+                {
+                  left: px(i * STEP_X),
+                  top: px(LINE_Y + UNDER),
+                  width: px(COL),
+                  height: px(PILL_H),
+                } as CSSProperties
+              }
+            >
+              {node.under.label}
+            </span>
+          ) : null,
+        )}
+
+        {MAP.map((one, i) => (
           <span
-            key={`${node.id}-under`}
+            key={one.label}
             className="flow-pill"
-            data-tone={node.under!.tone ?? "plain"}
-            style={at(node, true)}
+            data-tone="ghost"
+            style={
+              {
+                left: px(STEP_X),
+                top: px(MAP_AT[i]),
+                width: px(COL),
+                height: px(PILL_H),
+              } as CSSProperties
+            }
           >
-            {node.under!.label}
+            {one.label}
           </span>
+        ))}
+
+        {MAP.map((one, i) => (
+          <p
+            key={`${one.label}-pages`}
+            className="flow-pages"
+            style={
+              {
+                left: px(2 * STEP_X),
+                top: px(MAP_AT[i]),
+                height: px(PILL_H),
+                width: px(3 * COL + 2 * GAP),
+              } as CSSProperties
+            }
+          >
+            {one.pages.join(" · ")}
+          </p>
         ))}
       </div>
     </div>

@@ -34,3 +34,36 @@ export const STORES: Store[] = [
   { city: "Los Angeles", country: "United States", name: "Gentle Monster Los Angeles", at: [-118.2437, 34.0522] },
   { city: "Sydney", country: "Australia", name: "Gentle Monster Sydney", at: [151.2093, -33.8688] },
 ];
+
+/**
+ * 도시 안에 흩어진 개별 매장.
+ * 나라를 펼쳐 크게 볼 때만 드러납니다 — 지구본 상태에서는 도시 하나에 점 하나입니다.
+ * 좌표는 도시 안 대략적인 자리이고, 실제 주소는 브랜드 공식 페이지를 따릅니다.
+ */
+export const SPOTS: Store[] = [
+  { city: "Seoul", country: "South Korea", name: "젠틀몬스터 신세계 강남", at: [127.0043, 37.5045] },
+  { city: "Seoul", country: "South Korea", name: "젠틀몬스터 성수", at: [127.0557, 37.5445] },
+  { city: "Seoul", country: "South Korea", name: "젠틀몬스터 더현대 서울", at: [126.9285, 37.5259] },
+  { city: "Seoul", country: "South Korea", name: "젠틀몬스터 롯데월드몰", at: [127.1028, 37.5133] },
+  { city: "Suwon", country: "South Korea", name: "젠틀몬스터 갤러리아 광교", at: [127.0533, 37.2857] },
+  { city: "Seongnam", country: "South Korea", name: "젠틀몬스터 현대 판교", at: [127.1116, 37.3947] },
+  { city: "Goyang", country: "South Korea", name: "젠틀몬스터 스타필드 고양", at: [126.8895, 37.6469] },
+  { city: "Daejeon", country: "South Korea", name: "젠틀몬스터 신세계 대전", at: [127.3893, 36.3745] },
+  { city: "Daegu", country: "South Korea", name: "젠틀몬스터 신세계 대구", at: [128.5966, 35.8776] },
+  { city: "Jeju", country: "South Korea", name: "젠틀몬스터 제주", at: [126.5219, 33.5127] },
+  { city: "Busan", country: "South Korea", name: "젠틀몬스터 신세계 센텀시티", at: [129.13, 35.169] },
+
+  { city: "Tokyo", country: "Japan", name: "Gentle Monster Shinjuku", at: [139.7003, 35.6909] },
+  { city: "Tokyo", country: "Japan", name: "Gentle Monster Ginza", at: [139.765, 35.6717] },
+  { city: "Osaka", country: "Japan", name: "Gentle Monster Osaka", at: [135.5023, 34.6937] },
+  { city: "Fukuoka", country: "Japan", name: "Gentle Monster Fukuoka", at: [130.4017, 33.5904] },
+
+  { city: "Shanghai", country: "China", name: "Gentle Monster Xintiandi", at: [121.4753, 31.2222] },
+  { city: "Guangzhou", country: "China", name: "Gentle Monster Guangzhou", at: [113.2644, 23.1291] },
+  { city: "Shenzhen", country: "China", name: "Gentle Monster Shenzhen", at: [114.0579, 22.5431] },
+  { city: "Hangzhou", country: "China", name: "Gentle Monster Hangzhou", at: [120.1551, 30.2741] },
+
+  { city: "San Francisco", country: "United States", name: "Gentle Monster San Francisco", at: [-122.4194, 37.7749] },
+  { city: "Miami", country: "United States", name: "Gentle Monster Miami", at: [-80.1918, 25.7617] },
+  { city: "Chicago", country: "United States", name: "Gentle Monster Chicago", at: [-87.6298, 41.8781] },
+];

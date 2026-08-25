@@ -14,7 +14,7 @@ import { feature } from "topojson-client";
 import type { GeometryCollection, Topology } from "topojson-specification";
 import type { FeatureCollection } from "geojson";
 
-import { STORES } from "@/data/gentle-monster-stores";
+import { SPOTS, STORES } from "@/data/gentle-monster-stores";
 
 /** 손을 뗀 뒤 속도가 잦아드는 시간 상수(초). 클수록 오래 미끄러집니다. */
 const GLIDE = 0.45;
@@ -39,9 +39,22 @@ function blended(t: number) {
     (1 - t) * Math.cos(phi) * Math.sin(lambda) + (t * lambda) / QUARTER,
     (1 - t) * Math.sin(phi) + (t * phi) / QUARTER,
   ];
-  // 뒷면은 계속 접어 둡니다. 고른 나라가 가운데 오므로 이웃은 다 보입니다.
-  return geoProjection(raw).clipAngle(90);
+  return geoProjection(raw).clipAngle(clipFor(t));
 }
+/**
+ * 뒤로 넘어간 면을 얼마나 접어 둘지(도).
+ * 구일 때는 반구까지만 보이고, 거의 평면이 되면 뒷면까지 펴서 대륙이 죽 이어집니다.
+ * 접힌 기가 남은 동안 펴 버리면 가장자리가 겹쳐 보여서, 다 펴진 끝에서만 엽니다.
+ */
+function clipFor(t: number) {
+  const open = Math.max(0, (t - 0.82) / 0.18);
+  return 90 + 89 * open * open;
+}
+/** 이 배율에서 구가 완전히 평면이 됩니다. 그 위로는 커지기만 합니다. */
+const FLAT = 1.7;
+/** 손으로 키울 수 있는 한계 배율 */
+const MAX_MAG = 40;
+
 /** 점 격자의 위도 간격(도). 작을수록 촘촘합니다. */
 const LAT_STEP = 1.5;
 
@@ -169,20 +182,30 @@ export function GlobeDots({
 
   const [dots, setDots] = useState<Dot[] | null>(null);
   /** 집어 둔 매장. 뱃지는 이때만 뜹니다. */
-  const [chosen, setChosen] = useState<number | null>(
-    opening < 0 ? null : opening,
-  );
   const chosenRef = useRef<number | null>(opening < 0 ? null : opening);
-  /* 구에서 평면으로 펴진 정도(0~1)와 그 목표. 매장이 여럿인 나라를 고르면 펴집니다. */
+  /* 배율. 1 이 지구본이고, 키우면 평면으로 펴지면서 커집니다.
+     매장이 여럿인 나라를 고르면 그 나라에 맞는 배율로 저절로 갑니다. */
+  const mag = useRef(1);
+  const magTo = useRef(1);
+  /** 배율에서 끌어낸 펴진 정도(0~1)와, 투영을 마지막으로 새로 만든 값 */
   const spread = useRef(0);
-  const spreadTo = useRef(0);
   const spreadAt = useRef(0);
   /** 펼칠 때 가운데로 데려올 경도·위도 */
   const facing = useRef<[number, number] | null>(null);
   /** 펼친 나라가 화면을 채우도록 맞출 경도·위도 폭(라디안) */
   const fitSpan = useRef<[number, number] | null>(null);
+  /** 그 폭에서 구한 배율. 손으로 더 키우거나 줄일 때 기준이 됩니다. */
+  const fitMag = useRef(1);
   /** 펼친 나라만 촘촘히 다시 찍은 점 */
   const closeUp = useRef<Dot[]>([]);
+  /* 화면에 찍히는 매장. 평소에는 도시 하나에 하나이고,
+     나라를 펼치면 그 나라 안 개별 매장이 뒤에 덧붙습니다.
+     앞쪽 차례는 그대로라 이미 고른 매장의 번호가 어긋나지 않습니다. */
+  const pins = useRef<(typeof STORES)[number][]>(STORES);
+  /** 뱃지에 쓸 매장. pins 는 그리기용이라 화면 그릴 때는 이 값을 봅니다. */
+  const [label, setLabel] = useState<(typeof STORES)[number] | null>(
+    opening < 0 ? null : STORES[opening],
+  );
   /** 이름표를 눌러 카드를 펼친 참 */
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
@@ -328,7 +351,10 @@ export function GlobeDots({
         // 프레임 수가 아니라 흐른 시간으로 계산해 화면 주사율과 무관하게 같은 속도가 납니다.
         /* 점을 집어 둔 동안에는 멈춥니다. 이름표가 따라 움직이면 읽기 어렵습니다. */
         const idle =
-          still || chosenRef.current !== null || (interactive && hovering.current)
+          still ||
+          chosenRef.current !== null ||
+          mag.current > 1.02 ||
+          (interactive && hovering.current)
             ? 0
             : IDLE_SPIN;
         const decay = Math.exp(-dt / GLIDE);
@@ -340,7 +366,9 @@ export function GlobeDots({
       /* 펼침은 시간을 두고 따라갑니다. 목표 나라도 가운데로 데려옵니다. */
       if (dt) {
         const ease = 1 - Math.exp(-dt / 0.32);
-        spread.current += (spreadTo.current - spread.current) * ease;
+        mag.current += (magTo.current - mag.current) * ease;
+        // FLAT 배까지 키우는 동안 구가 평면으로 펴지고, 그 뒤로는 커지기만 합니다.
+        spread.current = Math.min(1, Math.max(0, (mag.current - 1) / (FLAT - 1)));
         if (facing.current) {
           const [lon, lat] = facing.current;
           const turn = ((-lon - rotation.current[0] + 540) % 360) - 180;
@@ -364,18 +392,20 @@ export function GlobeDots({
         projectionRef.current = projection;
         path = geoPath(projection, ctx);
       }
-      /* 펼친 나라가 판을 거의 채우도록 배율을 맞춥니다. */
-      let want = radius;
+      /* 고른 나라가 판을 거의 채울 배율. 손으로 더 키우거나 줄일 수 있습니다. */
       if (fitSpan.current) {
         const [dLon, dLat] = fitSpan.current;
-        want = Math.min(
+        const want = Math.min(
           (width * 0.82 * QUARTER) / dLon,
           (height * 0.82 * QUARTER) / dLat,
         );
+        fitMag.current = Math.max(1, want / radius);
+        fitSpan.current = null;
+        magTo.current = fitMag.current;
       }
       projection
         .translate([width / 2, height / 2])
-        .scale(radius + (want - radius) * spread.current);
+        .scale(radius * mag.current);
 
       projection.rotate(rotation.current);
       ctx!.clearRect(0, 0, width, height);
@@ -411,13 +441,16 @@ export function GlobeDots({
       const plain: [number, number][][] = [[], [], []];
       const home: [number, number][][] = [[], [], []];
 
+      /* 접어 둔 만큼만 그립니다. 평면이 되면 뒷면 대륙까지 들어옵니다. */
+      const reach = (clipFor(spread.current) * Math.PI) / 180;
+
       for (const dot of dots!) {
         const d = geoDistance(dot.at, center);
-        if (d > Math.PI / 2) continue;
+        if (d > reach) continue;
         const point = projection(dot.at);
         if (!point) continue;
         // 0(정면) ~ 1(가장자리)
-        const edge = d / (Math.PI / 2);
+        const edge = Math.min(1, d / reach);
         const band = edge < 0.55 ? 0 : edge < 0.82 ? 1 : 2;
         (dot.home ? home : plain)[band].push(point);
       }
@@ -441,8 +474,14 @@ export function GlobeDots({
       /* 매장이 없는 나라는 바탕처럼 옅게, 있는 나라는 또렷하게.
          크기는 같고 색과 진하기로만 갈립니다.
          펼쳐 크게 볼 때는 1.5도 격자가 너무 성겨서 함께 물러납니다. */
-      const dot = 2 * unit;
-      const thin = 1 - 0.8 * spread.current;
+      /* 배율을 올리면 점 사이가 벌어지므로 점도 조금 굵어집니다. */
+      const dot = 2 * unit * Math.min(1.7, 1 + (mag.current - 1) * 0.12);
+      /* 한 나라를 깊이 들여다볼 때만 성긴 세계 격자가 물러납니다.
+         촘촘한 점이 없는 채로 물러나면 화면이 비어 버립니다. */
+      const deep = closeUp.current.length
+        ? Math.min(1, Math.max(0, (mag.current - 2) / 4))
+        : 0;
+      const thin = 1 - 0.8 * deep;
       paint(plain, dot, "125, 125, 125", [0.5 * thin, 0.36 * thin, 0.2 * thin]);
       paint(home, dot, "60, 60, 60", [0.95 * thin, 0.7 * thin, 0.42 * thin]);
 
@@ -450,7 +489,7 @@ export function GlobeDots({
       if (spread.current > 0.02 && closeUp.current.length) {
         ctx!.beginPath();
         for (const one of closeUp.current) {
-          if (geoDistance(one.at, center) > Math.PI / 2) continue;
+          if (geoDistance(one.at, center) > reach) continue;
           const point = projection(one.at);
           if (!point) continue;
           ctx!.rect(point[0] - dot / 2, point[1] - dot / 2, dot, dot);
@@ -461,8 +500,8 @@ export function GlobeDots({
 
       // 매장
       const visible: { i: number; x: number; y: number }[] = [];
-      STORES.forEach((store, i) => {
-        if (geoDistance(store.at, center) > Math.PI / 2) return;
+      pins.current.forEach((store, i) => {
+        if (geoDistance(store.at, center) > reach) return;
         const point = projection(store.at);
         if (!point) return;
 
@@ -625,8 +664,35 @@ export function GlobeDots({
     findStore(event);
   }
 
+  /* 휠·핀치로 배율을 바꿉니다. 지구본까지 되돌아온 뒤로는 페이지가 대신 넘어갑니다.
+     React 의 onWheel 은 preventDefault 가 막히는 경우가 있어 직접 답니다. */
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || !interactive) return;
+
+    function onWheel(event: WheelEvent) {
+      // 트랙패드 핀치는 ctrl 을 얹은 휠로 옵니다. 한 번에 크게 움직입니다.
+      const step = event.ctrlKey ? 0.012 : 0.0016;
+      const next = Math.min(
+        MAX_MAG,
+        Math.max(1, magTo.current * Math.exp(-event.deltaY * step)),
+      );
+      if (next === magTo.current) return;
+      event.preventDefault();
+      magTo.current = next;
+
+      /* 펼치기 시작하면 집어 둔 매장을 가운데로 데려옵니다.
+         구일 때는 살짝 비켜 두는 편이 보기 좋지만, 평면에서는 초점이 가장자리로 밀립니다. */
+      if (!facing.current && chosenRef.current !== null) {
+        facing.current = pins.current[chosenRef.current].at;
+      }
+    }
+
+    canvas.addEventListener("wheel", onWheel, { passive: false });
+    return () => canvas.removeEventListener("wheel", onWheel);
+  }, [interactive]);
+
   /* 뱃지는 집은 점 옆에 붙습니다. 자리는 그리기 루프가 매 프레임 옮깁니다. */
-  const label = chosen === null ? null : STORES[chosen];
 
   return (
     <div ref={wrapRef} className="globe">
@@ -644,13 +710,13 @@ export function GlobeDots({
                 if (dragged.current < 4) {
                   const hit = activeRef.current;
                   chosenRef.current = hit;
-                  setChosen(hit);
+                  setLabel(hit === null ? null : pins.current[hit]);
                   openRef.current = false;
                   setOpen(false);
 
                   /* 매장이 여럿인 나라를 고르면 지도가 평면으로 펴지면서
                      그 나라 쪽으로 커집니다. 나머지 매장까지 함께 보입니다. */
-                  const store = hit === null ? null : STORES[hit];
+                  const store = hit === null ? null : pins.current[hit];
                   const kin = store
                     ? STORES.filter((one) => one.country === store.country)
                     : [];
@@ -662,18 +728,24 @@ export function GlobeDots({
 
                   if (kin.length > 1 && land) {
                     const [[west, south], [east, north]] = geoBounds(land.shape);
-                    spreadTo.current = 1;
                     facing.current = [(west + east) / 2, (south + north) / 2];
                     fitSpan.current = [
                       (Math.max(0.5, east - west) * Math.PI) / 180,
                       (Math.max(0.5, north - south) * Math.PI) / 180,
                     ];
                     closeUp.current = countryDots(land.shape);
+                    // 그 나라 안 개별 매장을 뒤에 덧붙여 함께 보여 줍니다.
+                    pins.current = [
+                      ...STORES,
+                      ...SPOTS.filter((one) => one.country === store!.country),
+                    ];
                   } else {
-                    spreadTo.current = 0;
+                    magTo.current = 1;
+                    fitMag.current = 1;
                     facing.current = null;
                     fitSpan.current = null;
                     closeUp.current = [];
+                    pins.current = STORES;
                   }
 
                   onPickStore?.(store);

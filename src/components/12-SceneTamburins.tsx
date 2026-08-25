@@ -62,27 +62,33 @@ const GOODS: (Layer & { tilt: string; delay: string; fall: number })[] = [
 ];
 
 /** 디자인 px 을 화면 크기로 옮깁니다. */
-const at = (box: {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-}) =>
-  ({
-    left: `calc(${box.left} * var(--u))`,
-    top: `calc(${box.top} * var(--u))`,
-    width: `calc(${box.width} * var(--u))`,
-    height: `calc(${box.height} * var(--u))`,
-  }) as CSSProperties;
+/** 그림이 차지하는 원래 칸. 배율을 줄이면 이 칸을 기준으로 가운데에 다시 앉힙니다. */
+const ART = { left: 32, width: 618.91, height: 740 };
+
+/** 도면 좌표를 배율에 맞춰 화면 크기로 옮깁니다. */
+const at = (
+  box: { left: number; top: number; width: number; height: number },
+  scale: number,
+) => {
+  const shiftX = (682 - ART.width * scale) / 2;
+  const shiftY = (740 - ART.height * scale) / 2;
+  return {
+    left: `calc(${(shiftX + (box.left - ART.left) * scale).toFixed(2)} * var(--u))`,
+    top: `calc(${(shiftY + box.top * scale).toFixed(2)} * var(--u))`,
+    width: `calc(${(box.width * scale).toFixed(2)} * var(--u))`,
+    height: `calc(${(box.height * scale).toFixed(2)} * var(--u))`,
+  } as CSSProperties;
+};
 
 /**
  * 선물 상자에 제품이 담긴 모습. 케이스 표지의 비주얼 자리에 그대로 들어갑니다.
  * 자리 값은 682×740 칸을 기준으로 잡혀 있어, 그 크기의 칸이면 어디에 놓아도 맞습니다.
  */
-export function TamburinsBox() {
+/** scale 은 그림 전체를 줄이는 배율입니다. 1 이면 칸을 가득 채웁니다. */
+export function TamburinsBox({ scale = 1 }: { scale?: number }) {
   return (
     <div className="tam-box relative h-full w-full overflow-hidden">
-      <div className="absolute" style={at(BOX)}>
+      <div className="absolute" style={at(BOX, scale)}>
         <Image
           alt=""
           src={BOX.src}
@@ -100,10 +106,10 @@ export function TamburinsBox() {
           className="tam-drop absolute"
           style={
             {
-              ...at(one),
+              ...at(one, scale),
               "--tilt": one.tilt,
               "--delay": one.delay,
-              "--fall": one.fall,
+              "--fall": (one.fall * scale).toFixed(1),
             } as CSSProperties
           }
         >
@@ -120,7 +126,7 @@ export function TamburinsBox() {
       ))}
 
       {/* 상자 앞면이 맨 앞에 서서 제품 밑동을 가립니다. */}
-      <div className="absolute" style={at(FRONT)}>
+      <div className="absolute" style={at(FRONT, scale)}>
         <Image
           alt=""
           src={FRONT.src}

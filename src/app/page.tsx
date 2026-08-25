@@ -3,8 +3,9 @@ import { GlobePaper } from "@/components/GlobePaper";
 import { LightStage } from "@/components/LightStage";
 import { SceneCase } from "@/components/07-SceneCase";
 import { SceneFlow } from "@/components/14-SceneFlow";
-import { SceneGiftBox } from "@/components/13-SceneGiftBox";
-import { TamburinsBox } from "@/components/12-SceneTamburins";
+import { SceneScreens } from "@/components/15-SceneScreens";
+// 내려 둔 장에서 씁니다: import { SceneGiftBox } from "@/components/13-SceneGiftBox";
+import { SceneTamburinsCover } from "@/components/12-SceneTamburinsCover";
 import { SceneAfter } from "@/components/11-SceneAfter";
 import { SceneExplore } from "@/components/10-SceneExplore";
 import { SceneIntro } from "@/components/01-SceneIntro";
@@ -132,37 +133,40 @@ export default function Home() {
         },
         { id: "gentle-monster-after", label: "Proposal", node: <SceneAfter /> },
 
+        /* 상자 그림 크기만 다른 세 벌. 비교해서 하나만 남기면 됩니다. */
         {
           id: "tamburins",
           label: "Tamburins",
-          node: (
-            <SceneCase
-              title="Tamburins Compose"
-              logo={{ src: "/images/tamburins-logo.png", alt: "Tamburins" }}
-              body={
-                <>
-                  선물을 준비할 때, 무엇을 담을지 선택하고 하나의 구성으로
-                  완성합니다.
-                  <br />
-                  <br />이 프로젝트는 그 경험을 바탕으로 Tamburins의 분산된
-                  선물세트 구성 경험과 선물 선택 과정을 하나의 Gift Composition
-                  경험으로 재구성합니다.
-                </>
-              }
-              visual={<TamburinsBox />}
-            />
-          ),
+          node: <SceneTamburinsCover />,
         },
-
+        {
+          id: "tamburins-90",
+          label: "Tamburins 90",
+          node: <SceneTamburinsCover scale={0.9} />,
+        },
+        {
+          id: "tamburins-80",
+          label: "Tamburins 80",
+          node: <SceneTamburinsCover scale={0.8} />,
+        },
+        /* 선(SVG)으로 그린 상자 표지. 지금은 내려 두었습니다.
+           다시 쓰려면 아래 주석을 풀면 되고, 컴포넌트는 그대로 남아 있습니다.
         {
           id: "tamburins-box",
           label: "Gift Box",
           node: <SceneGiftBox />,
         },
+        */
+
         {
           id: "tamburins-flow",
           label: "Current Flow",
           node: <SceneFlow />,
+        },
+        {
+          id: "tamburins-screens",
+          label: "Screens",
+          node: <SceneScreens />,
         },
         /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.
         {

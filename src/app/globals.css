@@ -154,9 +154,13 @@
     background: #ffffff;
   }
 
-  /* 12장 — 장 전체가 흰색입니다. 상자가 놓인 자리에 따로 판을 두지 않습니다. */
+  /* 12장 — 장은 흰색으로 두고, 상자가 놓인 판만 한 톤 눌러 앉힙니다. */
   .section:has(.tam-box) {
     background: #ffffff;
+  }
+
+  .tam-box {
+    background: #fafafa;
   }
 
   /* ── 열리고 닫히는 선물 상자 ───────────────────
@@ -579,6 +583,28 @@
     font-weight: 500;
     line-height: 1.4;
     letter-spacing: 0.01em;
+  }
+
+  /* ── 15장 화면 넷 ──────────────────────────────
+     한 칸이 두 단. 화면은 세로가 길어 칸 높이에 맞추고 가운데에 둡니다. */
+  .shot {
+    display: flex;
+    flex-direction: column;
+    gap: calc(14 * var(--u));
+  }
+
+  .shot-head {
+    display: flex;
+    flex-direction: column;
+    gap: calc(6 * var(--u));
+  }
+
+  .shot-frame {
+    height: 100%;
+    /* 휴대폰 화면 비율 */
+    aspect-ratio: 9 / 19.5;
+    align-self: center;
+    background: var(--placeholder);
   }
 
   /* ── 하단 목차 ─────────────────────────────────

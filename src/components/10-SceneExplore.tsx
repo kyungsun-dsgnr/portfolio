@@ -16,7 +16,7 @@ export function SceneExplore() {
       {/* 판 전체가 지구본입니다. 끌어 돌리고 점을 눌러 봅니다. */}
       <div className="field rise col-start-1 col-span-8 row-start-1 row-span-6">
         {/* 회색 판 위라 구를 밝게 깔아야 점이 읽힙니다. */}
-        <GlobeDots veil={0.85} />
+        <GlobeDots veil={0.85} card />
       </div>
 
       <h2 className="type-lead rise col-start-1 col-span-3 row-start-1 row-span-2">

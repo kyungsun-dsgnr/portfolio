@@ -12,9 +12,10 @@ export function FilterIcon({ size = 21.08 }: { size?: number }) {
       aria-hidden
     >
       <rect x="3.51" y="6.94" width="14.05" height="1.05" />
-      <rect x="13.41" y="4.83" width="1.05" height="3.63" />
+      {/* 손잡이 둘은 줄 위에서 1 씩 내려 앉습니다. */}
+      <rect x="13.41" y="5.83" width="1.05" height="3.63" />
       <rect x="3.51" y="13.09" width="14.05" height="1.05" />
-      <rect x="8.38" y="10.98" width="1.05" height="3.63" />
+      <rect x="8.38" y="11.98" width="1.05" height="3.63" />
     </svg>
   );
 }

@@ -103,6 +103,8 @@ type Props = {
   tags?: string[];
   /** 매장 점을 집거나 빈 곳을 눌렀을 때 알려 줍니다. 끌어 돌린 것과는 구분합니다. */
   onPickStore?: (store: (typeof STORES)[number] | null) => void;
+  /** 이름표를 누르면 그 아래로 매장 카드가 열립니다. */
+  card?: boolean;
   /** 돌지 않고 멈춰 있는 지구본. 첫 도시가 정면에 옵니다. */
   still?: boolean;
   /** 점 뒤에 깔리는 구의 흰 기운(0~1). 바탕과 구를 갈라 보이게 합니다. */
@@ -116,6 +118,7 @@ export function GlobeDots({
   still = false,
   veil = 0.29,
   onPickStore,
+  card = false,
 }: Props) {
   const tagged = useMemo(
     () => (tags ?? TAGGED).map((city) => STORES.find((store) => store.city === city)!),
@@ -128,6 +131,10 @@ export function GlobeDots({
   /** 집어 둔 매장. 뱃지는 이때만 뜹니다. */
   const [chosen, setChosen] = useState<number | null>(null);
   const chosenRef = useRef<number | null>(null);
+  /** 이름표를 눌러 카드를 펼친 참 */
+  const [open, setOpen] = useState(false);
+  const openRef = useRef(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   /* 투영은 그리기 루프와 마우스 판정 양쪽에서 쓰므로 ref 로 둡니다. */
   const projectionRef = useRef(geoOrthographic());
@@ -260,8 +267,11 @@ export function GlobeDots({
       if (!dragging.current && dt) {
         // 마우스를 올리면 돌던 것이 잦아들고, 벗어나면 다시 천천히 돕니다.
         // 프레임 수가 아니라 흐른 시간으로 계산해 화면 주사율과 무관하게 같은 속도가 납니다.
+        /* 점을 집어 둔 동안에는 멈춥니다. 이름표가 따라 움직이면 읽기 어렵습니다. */
         const idle =
-          still || (interactive && hovering.current) ? 0 : IDLE_SPIN;
+          still || chosenRef.current !== null || (interactive && hovering.current)
+            ? 0
+            : IDLE_SPIN;
         const decay = Math.exp(-dt / GLIDE);
         const vx = velocity.current[0] * decay + idle * (1 - decay);
         velocity.current = [vx, 0];
@@ -382,6 +392,20 @@ export function GlobeDots({
           badge.style.translate = `${x}px calc(${at.y}px - 50%)`;
         }
         badge.toggleAttribute("data-on", Boolean(at));
+
+        // 카드는 이름표 바로 아래에 같은 선으로 붙습니다.
+        const box = cardRef.current;
+        if (box) {
+          if (at) {
+            const w = badge.offsetWidth;
+            const toLeft = at.x + HIT_RADIUS + w > width;
+            const x = toLeft
+              ? at.x - HIT_RADIUS - box.offsetWidth
+              : at.x + HIT_RADIUS;
+            box.style.translate = `${x}px calc(${at.y}px + ${badge.offsetHeight}px)`;
+          }
+          box.toggleAttribute("data-on", Boolean(at) && openRef.current);
+        }
       }
 
       /* 늘 떠 있는 나라 이름표. 앞면에 온 나라만 보이고 자리를 따라갑니다.
@@ -507,6 +531,8 @@ export function GlobeDots({
                   const hit = activeRef.current;
                   chosenRef.current = hit;
                   setChosen(hit);
+                  openRef.current = false;
+                  setOpen(false);
                   onPickStore?.(hit === null ? null : STORES[hit]);
                 }
                 try {
@@ -527,6 +553,28 @@ export function GlobeDots({
             : undefined
         }
       />
+
+      {/* 이름표를 누르면 그 아래로 열리는 매장 카드 */}
+      {card && (
+        <div ref={cardRef} className="globe-card" aria-hidden>
+          {label && open && (
+            <>
+              <div className="store-tip-top">
+                <h5 className="store-tip-name">{label.name}</h5>
+                <span className="store-tip-distance">{label.city}</span>
+              </div>
+              <p className="store-tip-address">{label.country}</p>
+              <div className="store-tip-tags">
+                {["피팅 서비스", "간편 수리", "수리 제품 픽업"].map((service) => (
+                  <span className="store-tip-tag" key={service}>
+                    {service}
+                  </span>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       {/* 늘 떠 있는 나라 이름표 */}
       {labels &&
@@ -552,6 +600,15 @@ export function GlobeDots({
         <div
           ref={badgeRef}
           className="globe-badge"
+          data-tap={card || undefined}
+          onClick={
+            card
+              ? () => {
+                  openRef.current = !openRef.current;
+                  setOpen(openRef.current);
+                }
+              : undefined
+          }
           aria-hidden
         >
           {label && (

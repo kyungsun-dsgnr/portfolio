@@ -1095,6 +1095,36 @@
     text-transform: none;
   }
 
+  /* 누를 수 있는 이름표 */
+  .globe-badge[data-tap] {
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  /* 이름표 아래로 열리는 매장 카드 */
+  .globe-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    width: calc(300 * var(--u));
+    flex-direction: column;
+    gap: calc(4 * var(--u));
+    padding: calc(16 * var(--u));
+    border-radius: calc(8 * var(--u));
+    background: #ffffff;
+    box-shadow: 0 calc(4 * var(--u)) calc(14 * var(--u)) rgb(0 0 0 / 0.1);
+    pointer-events: none;
+    opacity: 0;
+    transition:
+      opacity 260ms ease,
+      translate 0s;
+  }
+
+  .globe-card[data-on] {
+    opacity: 1;
+  }
+
   /* 오른쪽 자리가 모자라면 왼쪽에 붙고, 펼쳐지는 방향도 뒤집습니다. */
   .globe-badge[data-left] {
     clip-path: inset(0 0 0 100% round 999px);

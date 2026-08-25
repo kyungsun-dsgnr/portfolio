@@ -1,7 +1,7 @@
 import { GlobeDots } from "@/components/GlobeDots";
 import { LightStage } from "@/components/LightStage";
 import { SceneCase } from "@/components/07-SceneCase";
-import { SceneTamburins } from "@/components/12-SceneTamburins";
+import { TamburinsBox } from "@/components/12-SceneTamburins";
 import { SceneAfter } from "@/components/11-SceneAfter";
 import { SceneExplore } from "@/components/10-SceneExplore";
 import { SceneIntro } from "@/components/01-SceneIntro";
@@ -97,7 +97,23 @@ export default function Home() {
         {
           id: "tamburins",
           label: "Tamburins",
-          node: <SceneTamburins />,
+          node: (
+            <SceneCase
+              title="Tamburins Compose"
+              logo={{ src: "/images/tamburins-logo.png", alt: "Tamburins" }}
+              body={
+                <>
+                  선물을 준비할 때, 무엇을 담을지 선택하고 하나의 구성으로
+                  완성합니다.
+                  <br />
+                  <br />이 프로젝트는 그 경험을 바탕으로 Tamburins의 분산된
+                  선물세트 구성 경험과 선물 선택 과정을 하나의 Gift Composition
+                  경험으로 재구성합니다.
+                </>
+              }
+              visual={<TamburinsBox />}
+            />
+          ),
         },
         /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.
         {

@@ -1,7 +1,8 @@
 import { GlobeDots } from "@/components/GlobeDots";
 import { LightStage } from "@/components/LightStage";
 import { SceneCase } from "@/components/07-SceneCase";
-import { SceneFlow } from "@/components/13-SceneFlow";
+import { SceneFlow } from "@/components/14-SceneFlow";
+import { SceneGiftBox } from "@/components/13-SceneGiftBox";
 import { TamburinsBox } from "@/components/12-SceneTamburins";
 import { SceneAfter } from "@/components/11-SceneAfter";
 import { SceneExplore } from "@/components/10-SceneExplore";
@@ -117,6 +118,11 @@ export default function Home() {
           ),
         },
 
+        {
+          id: "tamburins-box",
+          label: "Gift Box",
+          node: <SceneGiftBox />,
+        },
         {
           id: "tamburins-flow",
           label: "Current Flow",

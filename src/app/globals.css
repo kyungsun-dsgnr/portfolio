@@ -163,6 +163,155 @@
     background: #fafafa;
   }
 
+  /* ── 열리고 닫히는 선물 상자 ───────────────────
+     도면 한 벌(663×643)을 겹으로 나눠 쌓고, 뚜껑만 뒤쪽 모서리를 축으로 돌립니다.
+     선은 포트폴리오의 다른 장과 같은 결로 얇게 두고, 채움은 판 색과 같은 색입니다. */
+  .gift {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+  }
+
+  .gift-stage {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 663 / 643;
+    border: 0;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    perspective: calc(1400 * var(--u));
+    transform-style: preserve-3d;
+  }
+
+  .gift-layer {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    overflow: visible;
+  }
+
+  .gift-ink {
+    fill: none;
+    stroke: rgb(25 25 25 / 0.5);
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .gift-ink * {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* 겹끼리 비치지 않도록 판과 같은 색으로 채웁니다. */
+  .gift-fill {
+    fill: #fafafa;
+  }
+
+  .gift-mark {
+    opacity: 0;
+    transition: opacity 260ms ease;
+  }
+
+  .gift-stage[data-open] .gift-mark {
+    opacity: 0.9;
+    transition-delay: 420ms;
+  }
+
+  .gift-goods {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  /* 닫힌 상자의 윗면. 뚜껑이 거의 다 누운 뒤에 들어서서 바뀌는 순간이 보이지 않습니다. */
+  .gift-top {
+    opacity: 1;
+    transition: opacity 140ms linear 560ms;
+  }
+
+  .gift-stage[data-open] .gift-top {
+    opacity: 0;
+    transition: opacity 120ms linear 0ms;
+  }
+
+  /* 뚜껑 전체. 뒤쪽 모서리(도면 y 396)가 축입니다. */
+  .gift-lid {
+    position: absolute;
+    inset: 0;
+    transform-origin: 50% 61.6%;
+    transform-style: preserve-3d;
+    rotate: x -89deg;
+    transition: rotate 720ms cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: rotate;
+  }
+
+  .gift-stage[data-open] .gift-lid {
+    rotate: x 0deg;
+    transition: rotate 860ms cubic-bezier(0.22, 1, 0.36, 1) 120ms;
+  }
+
+  /* 앞 날개. 열 때는 먼저 펴지고, 닫을 때는 뚜껑이 내려앉은 뒤 접힙니다. */
+  .gift-flap {
+    transform-origin: 50% 6.38%;
+    rotate: x -90deg;
+    transition: rotate 260ms cubic-bezier(0.4, 0, 0.2, 1) 620ms;
+    backface-visibility: hidden;
+  }
+
+  .gift-stage[data-open] .gift-flap {
+    rotate: x 0deg;
+    transition: rotate 300ms cubic-bezier(0.22, 1, 0.36, 1) 0ms;
+  }
+
+  /* 담기는 것. 위에서 비스듬히 떨어져 제자리에 반듯하게 섭니다. */
+  .gift-item {
+    position: absolute;
+    transform-origin: bottom center;
+    opacity: 0;
+    translate: 0 -260%;
+    rotate: var(--tilt, -10deg);
+    transition:
+      translate 260ms cubic-bezier(0.4, 0, 1, 1),
+      rotate 260ms ease,
+      opacity 180ms ease;
+  }
+
+  .gift-item[data-in] {
+    opacity: 1;
+    animation: gift-drop 1.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--delay, 0s);
+  }
+
+  @keyframes gift-drop {
+    0% {
+      translate: 0 -260%;
+      rotate: var(--tilt, -10deg);
+      opacity: 0;
+    }
+    18% {
+      opacity: 1;
+    }
+    52% {
+      translate: 0 0;
+      rotate: var(--tilt, -10deg);
+      animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1);
+    }
+    70% {
+      translate: 0 -7%;
+      rotate: calc(var(--tilt, -10deg) * 0.4);
+    }
+    100% {
+      translate: 0 0;
+      rotate: 0deg;
+      opacity: 1;
+    }
+  }
+
   /* 12장 — 제품이 위에서 떨어져 상자에 담깁니다.
      밑동을 축으로 돌아서, 상자 앞면에 가려진 발은 제자리에 있는 것처럼 보입니다. */
   .tam-drop {

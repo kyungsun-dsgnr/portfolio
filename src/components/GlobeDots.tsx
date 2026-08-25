@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  geoBounds,
   geoContains,
   geoDistance,
   geoEquirectangular,
@@ -29,9 +30,6 @@ const HIT_RADIUS = 14;
 const TAG_LIMIT = Math.PI * 0.4;
 /** 멈춘 지구본이 첫 도시를 가운데에서 서쪽으로 미는 각도(도) */
 const STILL_TURN = 35;
-/** 펼쳐질 때 지도가 커지는 배수 */
-const SPREAD_ZOOM = 1.9;
-
 /** 구와 평면 사이를 오가는 투영.
     t=0 이면 정사영(지구본), t=1 이면 등장방형(평면 지도)입니다.
     두 raw 를 그대로 섞어 그 사이를 부드럽게 지나갑니다. */
@@ -60,6 +58,25 @@ const TAGGED = [
 
 /** 지구본에 찍히는 점 하나. home 은 매장이 있는 나라인지. */
 type Dot = { at: [number, number]; home: boolean };
+
+/** 펼쳤을 때 그 나라만 촘촘히 다시 찍습니다.
+    전체 격자는 1.5도라 나라 하나를 채울 만큼 크게 키우면 점이 몇 개 남지 않습니다.
+    범위가 좁아 폴리곤 검사를 그대로 써도 충분히 빠릅니다. */
+const COUNTRY_ROWS = 44;
+function countryDots(shape: FeatureCollection["features"][number]): Dot[] {
+  const [[west, south], [east, north]] = geoBounds(shape);
+  const step = Math.max(0.05, (north - south) / COUNTRY_ROWS);
+  const dots: Dot[] = [];
+
+  for (let lat = south; lat <= north; lat += step) {
+    const lonStep = step / Math.max(0.2, Math.cos((lat * Math.PI) / 180));
+    for (let lon = west; lon <= east; lon += lonStep) {
+      if (geoContains(shape, [lon, lat])) dots.push({ at: [lon, lat], home: true });
+    }
+  }
+
+  return dots;
+}
 
 const RASTER_W = 720;
 const RASTER_H = 360;
@@ -162,6 +179,10 @@ export function GlobeDots({
   const spreadAt = useRef(0);
   /** 펼칠 때 가운데로 데려올 경도·위도 */
   const facing = useRef<[number, number] | null>(null);
+  /** 펼친 나라가 화면을 채우도록 맞출 경도·위도 폭(라디안) */
+  const fitSpan = useRef<[number, number] | null>(null);
+  /** 펼친 나라만 촘촘히 다시 찍은 점 */
+  const closeUp = useRef<Dot[]>([]);
   /** 이름표를 눌러 카드를 펼친 참 */
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
@@ -261,8 +282,6 @@ export function GlobeDots({
     let projection = projectionRef.current;
     // 구를 흰색으로 채울 때 씁니다. 반지름/중심을 따로 계산하지 않아도 됩니다.
     let path = geoPath(projection, ctx);
-    // 투영을 갈아 끼우면 크기를 다시 일러 줘야 합니다.
-    const sized = { current: false };
     const sphere = { type: "Sphere" } as const;
     let width = 0;
     let height = 0;
@@ -284,7 +303,6 @@ export function GlobeDots({
       ctx!.setTransform(ratio, 0, 0, ratio, 0, 0);
       radius = (Math.min(width, height) / 2) * 0.92;
       projection.translate([width / 2, height / 2]).scale(radius);
-      sized.current = true;
       /* 점 크기의 기준. 작은 자리에서는 1px 아래로 내려가 점이 사라지므로
          바닥을 둡니다. 큰 지구본에서는 이 바닥이 걸리지 않습니다. */
       unit = Math.max(0.5, radius / 320);
@@ -345,14 +363,19 @@ export function GlobeDots({
         projection = blended(spread.current);
         projectionRef.current = projection;
         path = geoPath(projection, ctx);
-        sized.current = false;
       }
-      if (!sized.current) {
-        projection
-          .translate([width / 2, height / 2])
-          .scale(radius * (1 + SPREAD_ZOOM * spread.current));
-        sized.current = true;
+      /* 펼친 나라가 판을 거의 채우도록 배율을 맞춥니다. */
+      let want = radius;
+      if (fitSpan.current) {
+        const [dLon, dLat] = fitSpan.current;
+        want = Math.min(
+          (width * 0.82 * QUARTER) / dLon,
+          (height * 0.82 * QUARTER) / dLat,
+        );
       }
+      projection
+        .translate([width / 2, height / 2])
+        .scale(radius + (want - radius) * spread.current);
 
       projection.rotate(rotation.current);
       ctx!.clearRect(0, 0, width, height);
@@ -416,10 +439,25 @@ export function GlobeDots({
       }
 
       /* 매장이 없는 나라는 바탕처럼 옅게, 있는 나라는 또렷하게.
-         크기는 같고 색과 진하기로만 갈립니다. */
+         크기는 같고 색과 진하기로만 갈립니다.
+         펼쳐 크게 볼 때는 1.5도 격자가 너무 성겨서 함께 물러납니다. */
       const dot = 2 * unit;
-      paint(plain, dot, "125, 125, 125", [0.5, 0.36, 0.2]);
-      paint(home, dot, "60, 60, 60", [0.95, 0.7, 0.42]);
+      const thin = 1 - 0.8 * spread.current;
+      paint(plain, dot, "125, 125, 125", [0.5 * thin, 0.36 * thin, 0.2 * thin]);
+      paint(home, dot, "60, 60, 60", [0.95 * thin, 0.7 * thin, 0.42 * thin]);
+
+      /* 펼친 나라는 촘촘한 점으로 다시 채웁니다. */
+      if (spread.current > 0.02 && closeUp.current.length) {
+        ctx!.beginPath();
+        for (const one of closeUp.current) {
+          if (geoDistance(one.at, center) > Math.PI / 2) continue;
+          const point = projection(one.at);
+          if (!point) continue;
+          ctx!.rect(point[0] - dot / 2, point[1] - dot / 2, dot, dot);
+        }
+        ctx!.fillStyle = `rgba(60, 60, 60, ${0.95 * spread.current})`;
+        ctx!.fill();
+      }
 
       // 매장
       const visible: { i: number; x: number; y: number }[] = [];
@@ -616,15 +654,26 @@ export function GlobeDots({
                   const kin = store
                     ? STORES.filter((one) => one.country === store.country)
                     : [];
-                  if (kin.length > 1) {
+                  const land = store
+                    ? homelandsRef.current.find(
+                        (one) => one.label === store.country,
+                      )
+                    : undefined;
+
+                  if (kin.length > 1 && land) {
+                    const [[west, south], [east, north]] = geoBounds(land.shape);
                     spreadTo.current = 1;
-                    facing.current = [
-                      kin.reduce((sum, one) => sum + one.at[0], 0) / kin.length,
-                      kin.reduce((sum, one) => sum + one.at[1], 0) / kin.length,
+                    facing.current = [(west + east) / 2, (south + north) / 2];
+                    fitSpan.current = [
+                      (Math.max(0.5, east - west) * Math.PI) / 180,
+                      (Math.max(0.5, north - south) * Math.PI) / 180,
                     ];
+                    closeUp.current = countryDots(land.shape);
                   } else {
                     spreadTo.current = 0;
                     facing.current = null;
+                    fitSpan.current = null;
+                    closeUp.current = [];
                   }
 
                   onPickStore?.(store);

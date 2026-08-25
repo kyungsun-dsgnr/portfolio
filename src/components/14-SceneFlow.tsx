@@ -17,110 +17,79 @@ const PANEL_W = STEPS * COL + (STEPS - 1) * GAP;
 /** 두 행 높이 */
 const PANEL_H = 2 * 110 + GAP;
 const PILL_H = 34;
-/** 한 걸음이 화면 둘로 나뉠 때, 둘이 본선을 사이에 두고 벌어지는 높이 */
-const SPLIT = 31;
-/** 꺾이는 자리를 둥글게 만드는 반지름 */
-const BEND = 9;
-
+/** 한 걸음이 화면 둘일 때, 두 번째 화면이 본선 아래로 내려오는 높이 */
+const UNDER = 62;
 type Tone = "start" | "plain" | "ghost";
 type Node = {
   id: string;
   label: string;
   /** 몇 번째 걸음인지. 그대로 그리드 단이 됩니다. */
   step: number;
-  /** 본선에서 위아래로 벗어난 정도 */
-  off?: number;
   tone?: Tone;
   from?: string[];
   /** 이 걸음에서 걸리는 지점. 무엇이 걸리는지는 다음 장에서 화면과 함께 풉니다. */
   pain?: string;
+  /** 같은 걸음의 두 번째 화면. 본선 아래에 붙습니다. */
+  under?: { label: string; tone?: Tone };
 };
 
 /* 지금 tamburins.com 에서 선물 하나를 고르는 길입니다.
-   한 걸음이 화면 둘로 나뉘는 자리가 셋 있습니다 — 고르는 자리, 향을 묻는 자리,
-   담고 주문하는 자리. 둘은 본선을 사이에 두고 위아래로 붙어 한 걸음으로 읽힙니다. */
+   걸음은 한 줄로 곧게 이어지고, 한 걸음이 화면 둘인 자리에서는
+   두 번째 화면이 그 아래에 붙습니다 — 고르는 자리, 향을 묻는 자리, 담고 주문하는 자리. */
 const NODES: Node[] = [
   { id: "home", label: "Home", step: 0, tone: "start" },
-
   {
     id: "gift",
     label: "Custom Gifts",
     step: 1,
-    off: -SPLIT,
     from: ["home"],
     pain: "01",
+    under: { label: "Gift Set" },
   },
-  { id: "set", label: "Gift Set", step: 1, off: SPLIT, from: ["gift"] },
-
-  { id: "option", label: "Select Option", step: 2, from: ["set"], pain: "03" },
-
+  { id: "option", label: "Select Option", step: 2, from: ["gift"], pain: "03" },
   {
-    id: "scent1",
+    id: "scent",
     label: "Scent 1 / 2",
     step: 3,
-    off: -SPLIT,
     from: ["option"],
     pain: "02",
+    under: { label: "Scent 2 / 2" },
   },
-  { id: "scent2", label: "Scent 2 / 2", step: 3, off: SPLIT, from: ["scent1"] },
-
-  { id: "bag", label: "Add to Bag", step: 4, from: ["scent2"] },
-
+  { id: "bag", label: "Add to Bag", step: 4, from: ["scent"] },
   {
     id: "cart",
     label: "Cart",
     step: 5,
-    off: -SPLIT,
     from: ["bag"],
     pain: "04",
-  },
-  {
-    id: "order",
-    label: "Order",
-    step: 5,
-    off: SPLIT,
-    tone: "ghost",
-    from: ["cart"],
+    under: { label: "Order", tone: "ghost" },
   },
 ];
 
 const place = (node: Node) => ({
   x: node.step * STEP_X,
-  y: (PANEL_H - PILL_H) / 2 + (node.off ?? 0),
+  y: (PANEL_H - PILL_H) / 2,
 });
 
-/** 앞 걸음 오른쪽에서 다음 걸음 왼쪽으로. 높이가 다르면 단 사이 여백에서 한 번 꺾습니다.
-    같은 단 안에서 이어질 때는 단 가운데를 곧게 내려갑니다. */
-function elbow(from: Node, to: Node) {
+/** 걸음과 걸음은 같은 높이에 서므로 곧은 가로선으로 잇습니다. */
+function link(from: Node, to: Node) {
   const a = place(from);
   const b = place(to);
-  if (from.step === to.step) {
-    const x = a.x + COL / 2;
-    return `M ${x} ${a.y + PILL_H} V ${b.y}`;
-  }
-  const x1 = a.x + COL;
-  const y1 = a.y + PILL_H / 2;
-  const x2 = b.x;
-  const y2 = b.y + PILL_H / 2;
-  if (Math.abs(y1 - y2) < 1) return `M ${x1} ${y1} H ${x2}`;
-
-  const mid = (x1 + x2) / 2;
-  const way = y2 > y1 ? 1 : -1;
-  return [
-    `M ${x1} ${y1}`,
-    `H ${mid - BEND}`,
-    `Q ${mid} ${y1} ${mid} ${y1 + way * BEND}`,
-    `V ${y2 - way * BEND}`,
-    `Q ${mid} ${y2} ${mid + BEND} ${y2}`,
-    `H ${x2}`,
-  ].join(" ");
+  return `M ${a.x + COL} ${a.y + PILL_H / 2} H ${b.x}`;
 }
 
-const at = (node: Node) => {
+/** 같은 걸음의 두 번째 화면으로는 단 가운데를 곧게 내려갑니다. */
+function drop(node: Node) {
+  const a = place(node);
+  const x = a.x + COL / 2;
+  return `M ${x} ${a.y + PILL_H} V ${a.y + UNDER}`;
+}
+
+const at = (node: Node, below = false) => {
   const { x, y } = place(node);
   return {
     left: `calc(${x} * var(--u))`,
-    top: `calc(${y} * var(--u))`,
+    top: `calc(${y + (below ? UNDER : 0)} * var(--u))`,
     width: `calc(${COL} * var(--u))`,
     height: `calc(${PILL_H} * var(--u))`,
   } as CSSProperties;
@@ -146,11 +115,14 @@ export function SceneFlow() {
           viewBox={`0 0 ${PANEL_W} ${PANEL_H}`}
           aria-hidden
         >
-          {NODES.flatMap((node) =>
-            (node.from ?? []).map((id) => (
-              <path key={`${id}-${node.id}`} d={elbow(byId.get(id)!, node)} />
+          {NODES.flatMap((node) => [
+            ...(node.from ?? []).map((id) => (
+              <path key={`${id}-${node.id}`} d={link(byId.get(id)!, node)} />
             )),
-          )}
+            ...(node.under
+              ? [<path key={`${node.id}-under`} d={drop(node)} />]
+              : []),
+          ])}
         </svg>
 
         {NODES.map((node) => (
@@ -164,16 +136,19 @@ export function SceneFlow() {
             {node.pain && <em className="flow-pain">{node.pain}</em>}
           </span>
         ))}
-      </div>
 
-      {/* 흐름 옆에 붙여 남은 두 단을 채웁니다. 아래는 비워 둡니다. */}
-      <p
-        className="type-body rise self-center col-start-7 col-span-2 row-start-3 row-span-2"
-        style={{ "--delay": "0.14s" } as CSSProperties}
-      >
-        선물 하나를 사기까지 여섯 걸음입니다. 세 걸음은 화면 둘로 나뉘고, 향은
-        세트에 든 제품 수만큼 같은 창을 다시 지납니다.
-      </p>
+        {/* 한 걸음이 화면 둘인 자리. 두 번째 화면이 본선 아래에 붙습니다. */}
+        {NODES.filter((node) => node.under).map((node) => (
+          <span
+            key={`${node.id}-under`}
+            className="flow-pill"
+            data-tone={node.under!.tone ?? "plain"}
+            style={at(node, true)}
+          >
+            {node.under!.label}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }

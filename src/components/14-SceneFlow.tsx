@@ -13,10 +13,12 @@ const PANEL_H = 740;
 const PILL_W = 118;
 const PILL_H = 30;
 const STEP_X = 130;
-const STEP_Y = 78;
+const STEP_Y = 62;
 const TOP = 43;
 /** 꺾이는 자리를 둥글게 만드는 반지름 */
 const BEND = 9;
+/** 마디 아래에 붙는 설명의 폭. 두 칸을 씁니다. */
+const NOTE_W = 250;
 
 type Tone = "start" | "plain" | "ghost";
 type Node = {
@@ -28,24 +30,17 @@ type Node = {
   tone?: Tone;
   /** 이 마디로 들어오는 앞 마디들 */
   from?: string[];
-  /** 이 마디에서 걸리는 지점. 왼쪽 목록의 번호와 맞춥니다. */
-  pain?: string;
+  /** 이 마디에서 걸리는 지점. 번호는 마디에, 글은 마디 아래에 붙습니다. */
+  pain?: { no: string; text: string };
 };
-
-/** 흐름에서 걸리는 지점. 번호가 다이어그램의 마디에 붙습니다. */
-const PAINS = [
-  { no: "01", text: "목록에서는 세트에 어떤 향이 들어가는지 알 수 없습니다." },
-  { no: "02", text: "향은 제품 수만큼 창을 넘겨 하나씩 고릅니다." },
-  { no: "03", text: "품절과 향 설명은 선택 창을 열어야 드러납니다." },
-  { no: "04", text: "고른 구성은 담은 뒤 장바구니에서야 확인됩니다." },
-];
 
 /* 지금 tamburins.com 에서 선물 하나를 고르는 데 거치는 화면들입니다.
    커스텀 기프트 목록 → 세트 상세 → 향 선택 창(1/2, 2/2) → 쇼핑백 순서이고,
    향은 세트에 든 제품 수만큼 한 칸씩 나뉘어 물어봅니다.
-   회색 마디는 선물을 고르는 길에서 벗어나는 갈래입니다. */
+   회색 마디는 선물을 고르는 길에서 벗어나는 갈래입니다.
+   걸리는 지점은 그 마디 아래에 바로 적어, 어디서 막히는지 눈이 옮겨 가지 않게 합니다. */
 const NODES: Node[] = [
-  { id: "home", label: "Home", step: 0, row: 4, tone: "start" },
+  { id: "home", label: "Home", step: 0, row: 5, tone: "start" },
 
   {
     id: "gift",
@@ -53,22 +48,25 @@ const NODES: Node[] = [
     step: 1,
     row: 1,
     from: ["home"],
-    pain: "01",
+    pain: {
+      no: "01",
+      text: "목록에서는 세트에 어떤 향이 들어가는지 알 수 없습니다.",
+    },
   },
   {
     id: "best",
     label: "Best Gifts",
     step: 1,
-    row: 4,
+    row: 6,
     tone: "ghost",
     from: ["home"],
   },
-  { id: "shop", label: "Shop", step: 1, row: 6, tone: "ghost", from: ["home"] },
+  { id: "shop", label: "Shop", step: 1, row: 8, tone: "ghost", from: ["home"] },
   {
     id: "cs",
     label: "Store & CS",
     step: 1,
-    row: 8,
+    row: 10,
     tone: "ghost",
     from: ["home"],
   },
@@ -81,7 +79,10 @@ const NODES: Node[] = [
     step: 3,
     row: 1,
     from: ["set"],
-    pain: "03",
+    pain: {
+      no: "03",
+      text: "품절과 향 설명은 선택 창을 열어야 드러납니다.",
+    },
   },
   {
     id: "info",
@@ -98,23 +99,36 @@ const NODES: Node[] = [
     step: 4,
     row: 0,
     from: ["option"],
-    pain: "02",
+    pain: {
+      no: "02",
+      text: "향은 세트에 든 제품 수만큼 창을 넘겨 하나씩 고릅니다.",
+    },
   },
-  { id: "scent2", label: "Scent 2 / 2", step: 4, row: 2, from: ["option"] },
+  { id: "scent2", label: "Scent 2 / 2", step: 4, row: 4, from: ["option"] },
 
   {
     id: "bag",
     label: "Add to Bag",
     step: 5,
-    row: 1,
+    row: 2,
     from: ["scent1", "scent2"],
   },
-  { id: "cart", label: "Cart", step: 6, row: 1, from: ["bag"], pain: "04" },
+  {
+    id: "cart",
+    label: "Cart",
+    step: 6,
+    row: 2,
+    from: ["bag"],
+    pain: {
+      no: "04",
+      text: "고른 구성은 담은 뒤 장바구니에서야 확인됩니다.",
+    },
+  },
   {
     id: "order",
     label: "Order",
     step: 7,
-    row: 1,
+    row: 2,
     tone: "ghost",
     from: ["cart"],
   },
@@ -171,18 +185,13 @@ export function SceneFlow() {
         User Flow
       </h2>
 
-      {/* 걸리는 지점을 모아 두고, 번호로 다이어그램의 마디와 잇습니다. */}
-      <ol
-        className="flow-pains rise self-start col-start-1 col-span-2 row-start-3 row-span-3"
+      <p
+        className="type-body rise self-end col-start-1 col-span-2 row-start-6"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        {PAINS.map((pain) => (
-          <li key={pain.no}>
-            <span className="flow-pains-no">{pain.no}</span>
-            {pain.text}
-          </li>
-        ))}
-      </ol>
+        지금 tamburins.com 에서 선물 하나를 고르는 길입니다. 걸리는 지점은 그
+        자리에 적었습니다.
+      </p>
 
       <div
         className="flow rise col-start-3 col-span-6 row-start-1 row-span-6"
@@ -209,8 +218,25 @@ export function SceneFlow() {
             style={at(node)}
           >
             {node.label}
-            {node.pain && <em className="flow-pain">{node.pain}</em>}
+            {node.pain && <em className="flow-pain">{node.pain.no}</em>}
           </span>
+        ))}
+
+        {/* 걸리는 지점은 그 마디 바로 아래에 적습니다. */}
+        {NODES.filter((node) => node.pain).map((node) => (
+          <p
+            key={`${node.id}-pain`}
+            className="flow-note"
+            style={
+              {
+                left: `calc(${place(node).x} * var(--u))`,
+                top: `calc(${place(node).y + PILL_H + 11} * var(--u))`,
+                width: `calc(${NOTE_W} * var(--u))`,
+              } as CSSProperties
+            }
+          >
+            {node.pain!.text}
+          </p>
         ))}
       </div>
     </div>

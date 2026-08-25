@@ -271,24 +271,14 @@
     letter-spacing: 0;
   }
 
-  .flow-pains {
-    display: flex;
-    flex-direction: column;
-    gap: calc(14 * var(--u));
+  /* 마디 아래에 붙는 설명. 마디와 같은 왼쪽 선에서 시작합니다. */
+  .flow-note {
+    position: absolute;
     color: var(--fg-soft);
     font-family: var(--font-body);
-    font-size: calc(13 * var(--u));
+    font-size: calc(12 * var(--u));
     font-weight: 500;
     line-height: 1.45;
-  }
-
-  .flow-pains-no {
-    display: block;
-    color: var(--fg);
-    font-family: var(--font-display);
-    font-size: calc(10 * var(--u));
-    font-weight: 700;
-    letter-spacing: 0.06em;
   }
 
   .flow-pill {

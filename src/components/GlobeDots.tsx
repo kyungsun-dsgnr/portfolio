@@ -278,6 +278,8 @@ export function GlobeDots({
   const [dots, setDots] = useState<Dot[] | null>(null);
   /** 집어 둔 매장. 뱃지는 이때만 뜹니다. */
   const chosenRef = useRef<number | null>(opening < 0 ? null : opening);
+  /** 손으로 점을 집은 적이 있는지. 처음부터 골라 둔 것과 가릅니다. */
+  const byHand = useRef(false);
   /* 배율. 1 이 지구본이고, 키우면 평면으로 펴지면서 커집니다.
      매장이 여럿인 나라를 고르면 그 나라에 맞는 배율로 저절로 갑니다. */
   const mag = useRef(1);
@@ -337,7 +339,7 @@ export function GlobeDots({
     TILT,
   ]);
   const velocity = useRef<[number, number]>([
-    still || opening >= 0 ? 0 : IDLE_SPIN,
+    still ? 0 : IDLE_SPIN,
     0,
   ]);
   /** 프레임/이벤트 간격을 재서 회전을 시간 기준으로 굴립니다. */
@@ -495,10 +497,11 @@ export function GlobeDots({
       if (!dragging.current && dt) {
         // 마우스를 올리면 돌던 것이 잦아들고, 벗어나면 다시 천천히 돕니다.
         // 프레임 수가 아니라 흐른 시간으로 계산해 화면 주사율과 무관하게 같은 속도가 납니다.
-        /* 점을 집어 둔 동안에는 멈춥니다. 이름표가 따라 움직이면 읽기 어렵습니다. */
+        /* 손으로 점을 집은 뒤로는 멈춥니다. 이름표가 따라 움직이면 읽기 어렵습니다.
+           처음부터 골라 둔 것만으로는 멈추지 않습니다. 들어서면 계속 돌아야 합니다. */
         const idle =
           still ||
-          chosenRef.current !== null ||
+          (byHand.current && chosenRef.current !== null) ||
           mag.current > 1.02 ||
           (interactive && hovering.current)
             ? 0
@@ -1051,6 +1054,7 @@ export function GlobeDots({
                 // 돌리려고 끈 것이 아니라 점을 집은 것이면 뱃지를 띄우고 알립니다.
                 if (dragged.current < 4) {
                   const hit = activeRef.current;
+                  byHand.current = true;
                   chosenRef.current = hit;
                   setLabel(hit === null ? null : pins.current[hit]);
                   openRef.current = false;

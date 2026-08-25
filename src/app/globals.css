@@ -154,6 +154,33 @@
     background: #ffffff;
   }
 
+  /* 12장 — 상자에 아무렇게나 놓인 제품이 제자리에 반듯하게 섭니다.
+     밑동을 축으로 돌아서, 상자 앞면에 가려진 발은 제자리에 있는 것처럼 보입니다. */
+  .tam-stand {
+    transform-origin: bottom center;
+  }
+
+  [data-visible] .tam-stand {
+    animation: stand-up 1.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--delay, 0s);
+  }
+
+  @keyframes stand-up {
+    0% {
+      rotate: var(--tilt, -10deg);
+      translate: 0 calc(-7 * var(--u));
+    }
+    58% {
+      /* 반듯해지는 지점을 조금 지나쳤다가 돌아옵니다. 놓인 것이 자리를 잡는 느낌입니다. */
+      rotate: calc(var(--tilt, -10deg) * -0.14);
+      translate: 0 0;
+    }
+    100% {
+      rotate: 0deg;
+      translate: 0 0;
+    }
+  }
+
   /* ── 하단 목차 ─────────────────────────────────
      평소에는 손잡이만 화면 끝에 걸치고, 다가가면 통째로 올라옵니다. */
   .pager {

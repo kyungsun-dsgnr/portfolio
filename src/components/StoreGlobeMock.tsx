@@ -226,7 +226,8 @@ export function StoreGlobeMock({
         type="button"
         ref={(el) => dotRef?.(key, el)}
         aria-label={key}
-        aria-pressed={step === key}
+        /* 안내가 없는 화면에서는 셋 다 켜 둡니다. 가리키는 순서가 없습니다. */
+        aria-pressed={step === null || step === key}
         onClick={() => onPick?.(key)}
         className={`store-dot globe-dot-${of}`}
       >

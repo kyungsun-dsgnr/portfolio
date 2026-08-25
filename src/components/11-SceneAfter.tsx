@@ -13,10 +13,6 @@ import {
 import { StoreGlobeMock } from "@/components/StoreGlobeMock";
 import { useInView } from "@/components/useInView";
 
-/** 한 칸이 머무는 시간 */
-const DWELL = 5500;
-/** 칸에 들어선 뒤 이어지는 동작까지의 사이 */
-const BEAT = 1400;
 /** 잇는 선이 글자에서 떨어져 있는 거리(디자인 px) */
 const GAP = 16;
 /** 장 전체가 떠오르고 자리를 잡기까지 걸리는 시간 */
@@ -47,42 +43,13 @@ const POINTS = [
 /** 제안을 한 화면으로 보여 주는 장 */
 export function SceneAfter() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
-  const [stage, setStage] = useState({ picked: POINTS[0].index, phase: 0 });
-  const { picked, phase } = stage;
 
-  /* 장이 보이는 동안 01 부터 03 까지 한 번 훑고 멈춥니다. */
-  useEffect(() => {
-    if (!inView) {
-      const id = setTimeout(
-        () => setStage({ picked: POINTS[0].index, phase: 0 }),
-        0,
-      );
-      return () => clearTimeout(id);
-    }
-    const now = POINTS.findIndex((point) => point.index === picked);
-    if (now === POINTS.length - 1) return;
-
-    const id = setTimeout(
-      () => setStage({ picked: POINTS[now + 1].index, phase: 0 }),
-      DWELL,
-    );
-    return () => clearTimeout(id);
-  }, [inView, picked]);
-
-  /* 칸에 들어서고 잠시 뒤 화면이 한 걸음 더 나갑니다. */
-  useEffect(() => {
-    if (phase >= 1) return;
-    const id = setTimeout(
-      () => setStage((now) => ({ ...now, phase: 1 })),
-      BEAT,
-    );
-    return () => clearTimeout(id);
-  }, [picked, phase]);
-
-  /* 고른 항목과 그 점을 잇는 선 */
+  /* 셋을 차례로 훑지 않고 한꺼번에 켜 둡니다. 세 항목 모두 제 점과 이어집니다. */
   const cards = useRef<Record<string, HTMLButtonElement | null>>({});
   const dots = useRef<Record<string, HTMLButtonElement | null>>({});
-  const [link, setLink] = useState<{ d: string; len: number } | null>(null);
+  const [links, setLinks] = useState<
+    Record<string, { d: string; len: number }>
+  >({});
 
   const dotRef = useCallback((key: string, el: HTMLButtonElement | null) => {
     dots.current[key] = el;
@@ -95,37 +62,51 @@ export function SceneAfter() {
   }, [inView]);
 
   useEffect(() => {
-    const card = cards.current[picked];
-    const dot = dots.current[picked];
-    const grid = card?.closest(".page-grid");
-    if (!ready || !card || !dot || !grid) return;
+    const grid = cards.current[POINTS[0].index]?.closest(".page-grid");
+    if (!ready || !grid) return;
 
     function measure() {
       const g = grid!.getBoundingClientRect();
-      const c = card!.getBoundingClientRect();
-      const d = dot!.getBoundingClientRect();
-      const toX = d.left + d.width / 2 - g.left;
-      const toY = d.top + d.height / 2 - g.top;
+      const drawn: Record<string, { d: string; len: number }> = {};
 
-      const range = document.createRange();
-      range.selectNodeContents(card!);
-      const lines = [...range.getClientRects()].filter(
-        (line) => line.width > 0,
-      );
-      const last = card!.lastElementChild!.getBoundingClientRect();
-      const gap = GAP * (g.width / 1440);
-      const toRight = c.left - g.left < toX;
-      const edge = toRight
-        ? Math.max(...lines.map((line) => line.right)) + gap
-        : Math.min(...lines.map((line) => line.left)) - gap;
-      const fromX = edge - g.left;
-      const fromY = (c.top + last.bottom) / 2 - g.top;
-      const midX = (fromX + toX) / 2;
-      setLink({
-        d: `M ${toX} ${toY} L ${midX} ${toY} L ${midX} ${fromY} L ${fromX} ${fromY}`,
-        len:
-          Math.abs(midX - fromX) + Math.abs(toY - fromY) + Math.abs(toX - midX),
-      });
+      for (const point of POINTS) {
+        const card = cards.current[point.index];
+        const dot = dots.current[point.index];
+        if (!card || !dot) continue;
+
+        const c = card.getBoundingClientRect();
+        const d = dot.getBoundingClientRect();
+        const toX = d.left + d.width / 2 - g.left;
+        const toY = d.top + d.height / 2 - g.top;
+
+        /* 글줄의 실제 끝에서 떠납니다. 항목 상자가 아니라 글자를 기준으로 해야
+           줄이 짧은 항목에서도 선이 글자에 바로 붙습니다. */
+        const range = document.createRange();
+        range.selectNodeContents(card);
+        const lines = [...range.getClientRects()].filter(
+          (line) => line.width > 0,
+        );
+        if (!lines.length) continue;
+        const last = card.lastElementChild!.getBoundingClientRect();
+        const gap = GAP * (g.width / 1440);
+        const toRight = c.left - g.left < toX;
+        const edge = toRight
+          ? Math.max(...lines.map((line) => line.right)) + gap
+          : Math.min(...lines.map((line) => line.left)) - gap;
+        const fromX = edge - g.left;
+        const fromY = (c.top + last.bottom) / 2 - g.top;
+        const midX = (fromX + toX) / 2;
+
+        drawn[point.index] = {
+          d: `M ${toX} ${toY} L ${midX} ${toY} L ${midX} ${fromY} L ${fromX} ${fromY}`,
+          len:
+            Math.abs(midX - fromX) +
+            Math.abs(toY - fromY) +
+            Math.abs(toX - midX),
+        };
+      }
+
+      setLinks(drawn);
     }
 
     const frame = requestAnimationFrame(measure);
@@ -137,7 +118,7 @@ export function SceneAfter() {
       clearTimeout(settled);
       observer.disconnect();
     };
-  }, [picked, phase, ready]);
+  }, [ready]);
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
@@ -152,33 +133,33 @@ export function SceneAfter() {
         className="after-frame rise col-start-4 col-span-2 row-start-1 row-span-6"
         style={{ "--delay": "0.18s" } as CSSProperties}
       >
-        <StoreGlobeMock
-          dots
-          step={picked}
-          phase={phase}
-          dotRef={dotRef}
-          onPick={(key) => setStage({ picked: key, phase: 0 })}
-        />
+        {/* 점은 자리를 가리키기만 합니다. 순회하지 않으니 셋 다 켜 둡니다. */}
+        <StoreGlobeMock dots step={null} phase={1} dotRef={dotRef} />
       </div>
 
-      {ready && link && (
-        <svg className="link" key={picked} aria-hidden>
-          <defs>
-            <mask id={`after-${picked}`} maskUnits="userSpaceOnUse">
+      {ready &&
+        POINTS.map((point) => {
+          const link = links[point.index];
+          if (!link) return null;
+          return (
+            <svg className="link" key={point.index} aria-hidden>
+              <defs>
+                <mask id={`after-${point.index}`} maskUnits="userSpaceOnUse">
+                  <path
+                    className="link-reveal"
+                    d={link.d}
+                    style={{ "--len": link.len } as CSSProperties}
+                  />
+                </mask>
+              </defs>
               <path
-                className="link-reveal"
+                className="link-dash"
                 d={link.d}
-                style={{ "--len": link.len } as CSSProperties}
+                mask={`url(#after-${point.index})`}
               />
-            </mask>
-          </defs>
-          <path
-            className="link-dash"
-            d={link.d}
-            mask={`url(#after-${picked})`}
-          />
-        </svg>
-      )}
+            </svg>
+          );
+        })}
 
       {POINTS.map((point, i) => (
         <button
@@ -188,8 +169,6 @@ export function SceneAfter() {
             cards.current[point.index] = el;
           }}
           className={`issue rise ${point.place}`}
-          data-dim={picked !== point.index ? true : undefined}
-          onClick={() => setStage({ picked: point.index, phase: 0 })}
           style={{ "--delay": `${0.18 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">{point.index}</span>

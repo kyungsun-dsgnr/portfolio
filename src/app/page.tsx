@@ -49,14 +49,17 @@ export default function Home() {
           node: (
             <SceneCase
               title="Gentle Monster Explore"
-              logo={{ src: "/images/gentle-monster-logo.png", alt: "Gentle Monster" }}
+              logo={{
+                src: "/images/gentle-monster-logo.png",
+                alt: "Gentle Monster",
+              }}
               body={
                 <>
-                  우리는 지구본을 돌리고, 대륙의 위치를 가늠하고, 원하는 국가에 가까이
-                  다가가는 방식에 익숙합니다.
+                  우리는 지구본을 돌리고, 대륙의 위치를 가늠하고, 원하는 국가에
+                  가까이 다가가는 방식에 익숙합니다.
                   <br />
-                  <br />이 프로젝트는 그 행동 기억을 바탕으로 Gentle Monster의 글로벌
-                  스토어를 탐색하는 디지털 경험을 설계합니다.
+                  <br />이 프로젝트는 그 행동 기억을 바탕으로 Gentle Monster의
+                  글로벌 스토어를 탐색하는 디지털 경험을 설계합니다.
                 </>
               }
               visual={
@@ -64,7 +67,11 @@ export default function Home() {
                   <GlobeDots interactive={false} labels />
                   {/* 지구본이 안경을 쓴 것처럼 앞에 겹칩니다. */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img className="globe-glasses" src="/images/glasses.png" alt="" />
+                  <img
+                    className="globe-glasses"
+                    src="/images/glasses.png"
+                    alt=""
+                  />
                 </div>
               }
             />
@@ -74,6 +81,14 @@ export default function Home() {
         { id: "gentle-monster-why", node: <SceneWhy /> },
         { id: "gentle-monster-explore", node: <SceneExplore /> },
         { id: "gentle-monster-after", node: <SceneAfter /> },
+
+        /* 두 번째 프로젝트 표지. 앞 케이스와 같은 틀을 씁니다.
+           제목·로고·본문과 우측에 들어갈 것은 받는 대로 채웁니다.
+           visual 을 비워 두면 그 자리는 회색 영역으로 섭니다. */
+        {
+          id: "tamburins",
+          node: <SceneCase title="Tamburins" body={<>{"내용 준비 중"}</>} />,
+        },
         /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.
         {
           id: "gentle-monster-2",

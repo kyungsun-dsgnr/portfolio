@@ -64,9 +64,12 @@ export function SceneAfter() {
   useEffect(() => {
     const grid = cards.current[POINTS[0].index]?.closest(".page-grid");
     if (!ready || !grid) return;
+    /* 점 셋은 목업 안에 있어 목업을 굴리면 함께 움직입니다. */
+    const screen = grid.querySelector<HTMLElement>(".globe-mock");
 
     function measure() {
       const g = grid!.getBoundingClientRect();
+      const view = screen?.getBoundingClientRect();
       const drawn: Record<string, { d: string; len: number }> = {};
 
       for (const point of POINTS) {
@@ -76,6 +79,10 @@ export function SceneAfter() {
 
         const c = card.getBoundingClientRect();
         const d = dot.getBoundingClientRect();
+        /* 점이 화면 밖으로 굴러 나가면 선도 함께 걷습니다.
+           남겨 두면 아무것도 없는 자리를 가리킵니다. */
+        const mid = d.top + d.height / 2;
+        if (view && (mid < view.top || mid > view.bottom)) continue;
         const toX = d.left + d.width / 2 - g.left;
         const toY = d.top + d.height / 2 - g.top;
 
@@ -113,10 +120,24 @@ export function SceneAfter() {
     const settled = setTimeout(measure, 520);
     const observer = new ResizeObserver(measure);
     observer.observe(grid);
+
+    /* 굴릴 때마다 다시 잽니다. 한 프레임에 한 번으로 묶어 둡니다. */
+    let queued = 0;
+    function onScroll() {
+      if (queued) return;
+      queued = requestAnimationFrame(() => {
+        queued = 0;
+        measure();
+      });
+    }
+    screen?.addEventListener("scroll", onScroll, { passive: true });
+
     return () => {
       cancelAnimationFrame(frame);
+      cancelAnimationFrame(queued);
       clearTimeout(settled);
       observer.disconnect();
+      screen?.removeEventListener("scroll", onScroll);
     };
   }, [ready]);
 

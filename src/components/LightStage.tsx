@@ -16,12 +16,20 @@ const LightContext = createContext<LightValue | null>(null);
 
 export function useLight() {
   const value = useContext(LightContext);
-  if (!value) throw new Error("useLight 는 <LightStage> 안에서만 쓸 수 있습니다.");
+  if (!value)
+    throw new Error("useLight 는 <LightStage> 안에서만 쓸 수 있습니다.");
   return value;
 }
 
 /** 조명이 다 켜진 뒤 다음 섹션으로 넘어가기까지 두는 사이 */
 const ADVANCE_DELAY = 900;
+
+/** 다음 장으로 넘기는 데 필요한 휠 이동량. 클수록 뻑뻑합니다. */
+const WHEEL_STEP = 320;
+/** 한 장 넘긴 뒤 다시 받지 않는 시간(ms). 관성으로 두 장씩 넘어가지 않게 합니다. */
+const WHEEL_REST = 700;
+/** 이 시간 이상 쉬었다 다시 굴리면 모아 둔 양을 버립니다. */
+const WHEEL_FORGET = 260;
 
 /**
  * 조명 상태 저장소이자 섹션 스크롤 영역.
@@ -38,6 +46,7 @@ export function LightStage({ sections }: { sections: Section[] }) {
   /** 100% 에 막 도달한 순간에만 넘깁니다. 이미 100% 인 채로 올라온 경우는 그대로 둡니다. */
   const wasFull = useRef(false);
   const timers = useRef<number[]>([]);
+  const rootRef = useRef<HTMLElement>(null);
 
   function clearTimers() {
     timers.current.forEach(clearTimeout);
@@ -45,6 +54,82 @@ export function LightStage({ sections }: { sections: Section[] }) {
   }
 
   useEffect(() => clearTimers, []);
+
+  /* 장 넘김에 저항을 둡니다. 살짝 굴렸다고 넘어가면 읽던 자리를 잃습니다.
+     기본 스크롤 대신 모아 둔 양이 한 걸음을 넘을 때만 다음 장으로 옮깁니다. */
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    let charge = 0;
+    let last = 0;
+    let resting = false;
+
+    /** 손끝 아래에 아직 굴러갈 데가 있으면 그 쪽에 맡깁니다(목업 목록, 매장 카드). */
+    function inner(from: EventTarget | null) {
+      let node = from instanceof HTMLElement ? from : null;
+      while (node && node !== root) {
+        const flow = getComputedStyle(node).overflowY;
+        if (
+          (flow === "auto" || flow === "scroll") &&
+          node.scrollHeight > node.clientHeight + 1
+        ) {
+          return node;
+        }
+        node = node.parentElement;
+      }
+      return null;
+    }
+
+    function onWheel(event: WheelEvent) {
+      // 지구본이 확대에 쓴 휠입니다.
+      if (event.defaultPrevented) return;
+
+      const box = inner(event.target);
+      if (box) {
+        const up = event.deltaY < 0;
+        const done = up
+          ? box.scrollTop <= 0
+          : box.scrollTop + box.clientHeight >= box.scrollHeight - 1;
+        if (!done) return;
+      }
+
+      event.preventDefault();
+
+      const now = performance.now();
+      if (now - last > WHEEL_FORGET) charge = 0;
+      last = now;
+      if (resting) return;
+
+      charge += event.deltaY;
+      if (Math.abs(charge) < WHEEL_STEP) return;
+
+      const step = root!.clientHeight;
+      const at = Math.round(root!.scrollTop / step);
+      const to = Math.max(
+        0,
+        Math.min(sections.length - 1, at + (charge > 0 ? 1 : -1)),
+      );
+      charge = 0;
+      if (to === at) return;
+
+      resting = true;
+      const reduced = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      root!.scrollTo({
+        top: to * step,
+        behavior: reduced ? "auto" : "smooth",
+      });
+      window.setTimeout(() => {
+        resting = false;
+        charge = 0;
+      }, WHEEL_REST);
+    }
+
+    root.addEventListener("wheel", onWheel, { passive: false });
+    return () => root.removeEventListener("wheel", onWheel);
+  }, [sections.length]);
 
   function handleLevel(next: number) {
     setLevel(next);
@@ -58,7 +143,9 @@ export function LightStage({ sections }: { sections: Section[] }) {
     if (wasFull.current) return;
     wasFull.current = true;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     timers.current.push(
       window.setTimeout(() => {
         nextRef.current?.scrollIntoView({
@@ -71,7 +158,11 @@ export function LightStage({ sections }: { sections: Section[] }) {
 
   return (
     <LightContext.Provider value={{ level, setLevel: handleLevel }}>
-      <main className="scroll-root" style={{ "--light": level } as CSSProperties}>
+      <main
+        ref={rootRef}
+        className="scroll-root"
+        style={{ "--light": level } as CSSProperties}
+      >
         {sections.map((section, index) => (
           <section
             key={section.id}

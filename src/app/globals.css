@@ -1083,7 +1083,8 @@
   .globe-tabs {
     position: relative;
     display: flex;
-    margin: 0 calc(21.08 * var(--u));
+    /* 머리글과 조금 떨어뜨립니다. */
+    margin: calc(8 * var(--u)) calc(21.08 * var(--u)) 0;
     padding: calc(3.51 * var(--u));
     border-radius: calc(10.54 * var(--u));
     background: #ededed;

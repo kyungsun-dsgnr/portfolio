@@ -13,26 +13,27 @@ const H = 643;
 
 /* 상자에 담기는 것들. 자리는 도면 좌표로 적고 비율로 옮깁니다.
    밑동은 앞면(y 501)에 가려지므로, 보이는 것은 그 위쪽뿐입니다.
-   둘을 합친 폭(162~500)의 가운데가 상자 안쪽(61~601)의 가운데와 맞아
-   좌우 여백이 101 로 같습니다. */
+   밑동을 상자 안쪽 바닥(y 520)에 두어, 앞으로 바닥이 남고 뒤에 놓인 것처럼 보입니다.
+   그 자리는 바닥이 좁아지는 쪽이라 폭도 그만큼 줄였습니다.
+   둘을 합친 폭(160~503)의 가운데가 바닥 뒤쪽(66~596)의 가운데와 맞아 좌우 여백이 같습니다. */
 const GOODS = [
   {
     id: "wash",
     src: "/images/tamburins-handwash.png",
-    left: 370,
-    top: 221,
-    width: 130,
-    height: 379,
+    left: 371,
+    top: 136,
+    width: 132,
+    height: 384,
     tilt: "5.5deg",
     delay: "0.34s",
   },
   {
     id: "perfume",
     src: "/images/tamburins-perfume.png",
-    left: 162,
-    top: 409,
-    width: 190,
-    height: 191,
+    left: 160,
+    top: 356,
+    width: 193,
+    height: 194,
     tilt: "-11deg",
     delay: "0s",
   },
@@ -80,7 +81,7 @@ export function TamburinsGiftBox() {
         {/* 상자 뒤쪽 — 안쪽 벽과 바닥 */}
         <svg className="gift-layer" viewBox={`0 0 ${W} ${H}`} aria-hidden>
           <g className="gift-ink">
-            <path d="M61 396 H601 L596 481 H66 Z" className="gift-fill" />
+            <path d="M61 396 H601 L596 481 H66 Z" className="gift-face-inner" />
             <path d="M61 396 L1 501" />
             <path d="M601 396 L661 501" />
             <path d="M66 481 L51 501" />
@@ -93,10 +94,11 @@ export function TamburinsGiftBox() {
         <div className="gift-lid" aria-hidden>
           <svg className="gift-layer" viewBox={`0 0 ${W} ${H}`}>
             <g className="gift-ink">
-              <path d="M71 41 H591 L601 396 H61 Z" className="gift-fill" />
+              <path d="M71 41 H591 L601 396 H61 Z" className="gift-face-lid" />
               <path d="M71 41 H591" />
               <path d="M61 396 H601" />
             </g>
+
             <image
               className="gift-mark"
               href="/images/tamburins-mark.png"
@@ -106,12 +108,16 @@ export function TamburinsGiftBox() {
               height="46"
               preserveAspectRatio="xMidYMid meet"
             />
+            {/* 이름 아래 한 줄. 실제 상자의 비율대로 이름 폭의 3분의 1쯤입니다. */}
+            <text className="gift-mark gift-sub" x="331" y="252">
+              PERFUME
+            </text>
           </svg>
 
           {/* 자석이 붙는 앞 날개. 닫힐 때 마지막에 접힙니다. */}
           <svg className="gift-layer gift-flap" viewBox={`0 0 ${W} ${H}`}>
             <g className="gift-ink">
-              <path d="M61 1 H601 L591 41 H71 Z" className="gift-fill" />
+              <path d="M61 1 H601 L591 41 H71 Z" className="gift-face-flap" />
               <path d="M61 1 L71 41" />
               <path d="M601 1 L591 41" />
               <path d="M71 41 H591" />
@@ -151,11 +157,22 @@ export function TamburinsGiftBox() {
         </div>
 
         {/* 상자 앞쪽 — 안에 든 것의 밑동을 가립니다 */}
-        <svg className="gift-layer" viewBox={`0 0 ${W} ${H}`} aria-hidden>
+        <svg
+          className="gift-layer gift-shade"
+          viewBox={`0 0 ${W} ${H}`}
+          aria-hidden
+        >
+          <defs>
+            {/* 앞면은 위가 조금 밝고 아래로 갈수록 눌립니다. */}
+            <linearGradient id="gift-front-tone" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#fcfbfa" />
+              <stop offset="1" stopColor="#f7f6f3" />
+            </linearGradient>
+          </defs>
           <g className="gift-ink">
             <path
               d="M1 501 L16 631 H646 L661 501 Z"
-              className="gift-fill"
+              className="gift-face-front"
               fillRule="evenodd"
               clipRule="evenodd"
             />

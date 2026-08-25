@@ -36,8 +36,8 @@ const WHEEL_FORGET = 260;
  * 밝기를 --light (0~1) 로 내려보내 CSS 쪽에서도 반응할 수 있게 하고,
  * 노브가 끝까지 돌아가면 잠깐 뒤 다음 섹션으로 넘깁니다.
  */
-/** 각 장. id 는 카드에서 해당 장으로 건너뛸 때 쓰입니다. */
-export type Section = { id: string; node: ReactNode };
+/** 각 장. id 는 카드에서 해당 장으로 건너뛸 때 쓰이고, label 은 하단 목차에 적힙니다. */
+export type Section = { id: string; node: ReactNode; label?: string };
 
 export function LightStage({ sections }: { sections: Section[] }) {
   const [level, setLevel] = useState(0);
@@ -47,6 +47,8 @@ export function LightStage({ sections }: { sections: Section[] }) {
   const wasFull = useRef(false);
   const timers = useRef<number[]>([]);
   const rootRef = useRef<HTMLElement>(null);
+  /** 지금 보고 있는 장. 하단 목차에서 표시합니다. */
+  const [at, setAt] = useState(0);
 
   function clearTimers() {
     timers.current.forEach(clearTimeout);
@@ -54,6 +56,41 @@ export function LightStage({ sections }: { sections: Section[] }) {
   }
 
   useEffect(() => clearTimers, []);
+
+  /* 지금 몇 번째 장인지 따라갑니다. 한 프레임에 한 번으로 묶습니다. */
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    let queued = 0;
+    function onScroll() {
+      if (queued) return;
+      queued = requestAnimationFrame(() => {
+        queued = 0;
+        setAt(Math.round(root!.scrollTop / root!.clientHeight));
+      });
+    }
+
+    onScroll();
+    root.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(queued);
+      root.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  /** 목차에서 고른 장으로 옮깁니다. */
+  function go(index: number) {
+    const root = rootRef.current;
+    if (!root) return;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    root.scrollTo({
+      top: index * root.clientHeight,
+      behavior: reduced ? "auto" : "smooth",
+    });
+  }
 
   /* 장 넘김에 저항을 둡니다. 살짝 굴렸다고 넘어가면 읽던 자리를 잃습니다.
      기본 스크롤 대신 모아 둔 양이 한 걸음을 넘을 때만 다음 장으로 옮깁니다. */
@@ -174,6 +211,28 @@ export function LightStage({ sections }: { sections: Section[] }) {
           </section>
         ))}
       </main>
+
+      {/* 하단 목차. 평소에는 손잡이만 걸쳐 두고, 다가가면 올라옵니다. */}
+      <nav className="pager" aria-label="목차">
+        <span className="pager-grip" aria-hidden />
+        <ol className="pager-list">
+          {sections.map((section, index) => (
+            <li key={section.id}>
+              <button
+                type="button"
+                className="pager-item"
+                aria-current={index === at ? "true" : undefined}
+                onClick={() => go(index)}
+              >
+                <span className="pager-no">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span>{section.label ?? section.id}</span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </nav>
     </LightContext.Provider>
   );
 }

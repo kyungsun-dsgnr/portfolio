@@ -154,6 +154,90 @@
     background: #ffffff;
   }
 
+  /* ── 하단 목차 ─────────────────────────────────
+     평소에는 손잡이만 화면 끝에 걸치고, 다가가면 통째로 올라옵니다. */
+  .pager {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: calc(10 * var(--u)) 0 calc(16 * var(--u));
+    /* 손잡이 높이만 남기고 내려 둡니다. */
+    translate: 0 calc(100% - 20 * var(--u));
+    transition: translate 460ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* 화면 끝에 딱 붙기 전에도 잡히도록 위쪽에 보이지 않는 자리를 둡니다. */
+  .pager::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 100%;
+    left: 0;
+    height: calc(28 * var(--u));
+  }
+
+  .pager:hover,
+  .pager:focus-within {
+    translate: 0 0;
+  }
+
+  .pager-grip {
+    height: calc(3 * var(--u));
+    width: calc(56 * var(--u));
+    margin-bottom: calc(11 * var(--u));
+    border-radius: 999px;
+    background: rgb(25 25 25 / 0.22);
+    transition:
+      background 300ms ease,
+      opacity 300ms ease;
+  }
+
+  .pager:hover .pager-grip,
+  .pager:focus-within .pager-grip {
+    background: rgb(25 25 25 / 0.1);
+  }
+
+  .pager-list {
+    display: flex;
+    align-items: baseline;
+    gap: calc(16 * var(--u));
+    padding: calc(9 * var(--u)) calc(20 * var(--u));
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.92);
+    box-shadow: 0 calc(4 * var(--u)) calc(22 * var(--u)) rgb(25 25 25 / 0.1);
+    backdrop-filter: blur(calc(8 * var(--u)));
+  }
+
+  .pager-item {
+    display: flex;
+    align-items: baseline;
+    gap: calc(5 * var(--u));
+    color: rgb(25 25 25 / 0.35);
+    font-family: var(--font-display);
+    font-size: calc(10 * var(--u));
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 240ms ease;
+  }
+
+  .pager-item:hover,
+  .pager-item[aria-current="true"] {
+    color: var(--fg);
+  }
+
+  .pager-no {
+    font-size: calc(8 * var(--u));
+    opacity: 0.6;
+  }
+
   /* 지금 화면을 짚는 장. 목업이 흰 판 위에 놓입니다. */
   .section:has(.store-slot) {
     background: #ffffff;

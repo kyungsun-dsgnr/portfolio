@@ -26,20 +26,20 @@ const ENTER = 1500;
 const POINTS = [
   {
     index: "01",
-    title: "Two Starting Points",
-    body: "접속한 국가 안에서 볼지, 전 세계를 볼지 한 번의 전환으로 오갑니다.",
+    title: "One Flow, Two Starts",
+    body: "가까운 매장을 찾는 현재 국가 뷰와 세계를 둘러보는 글로벌 뷰를 한 번의 전환으로 오갑니다.",
     place: "col-start-1 col-span-2 row-start-4 row-span-2",
   },
   {
     index: "02",
-    title: "Spin and Find",
-    body: "지구본을 돌려 도시를 찾고, 점을 눌러 그 도시에 어떤 매장이 있는지 확인합니다.",
+    title: "Turn, Select, Discover",
+    body: "지구본을 돌리고 도시를 선택해 해당 지역의 스토어를 발견합니다.",
     place: "col-start-7 col-span-2 row-start-2 row-span-2",
   },
   {
     index: "03",
-    title: "Same Familiar List",
-    body: "발견한 뒤에는 지금 쓰던 것과 같은 매장 정보로 이어져, 익숙한 흐름을 그대로 씁니다.",
+    title: "Continue to Details",
+    body: "도시를 선택한 뒤에는 기존 매장 목록과 상세 정보로 자연스럽게 이어집니다.",
     place: "col-start-7 col-span-2 row-start-5 row-span-2 issue-low",
   },
 ];
@@ -134,9 +134,9 @@ export function SceneAfter() {
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-lead rise col-start-1 col-span-3 row-start-1 row-span-2">
-        From Store List
+        From Local Search
         <br />
-        To Spatial Discovery
+        to Global Discovery
       </h2>
 
       {/* 화면 하나. 앞 장 목업과 같은 두 단에 섭니다. */}

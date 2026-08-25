@@ -20,17 +20,21 @@ export function SceneExplore() {
       </div>
 
       <h2 className="type-lead rise col-start-1 col-span-3 row-start-1 row-span-2">
-        Turn it and see
+        Turn the World,
+        <br />
+        Find a City
       </h2>
 
       <div
         className="field-note rise self-end col-start-1 col-span-3 row-start-6"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        <h3 className="type-title">Explore</h3>
+        <h3 className="type-title">Familiar Interaction</h3>
         <p className="type-body">
-          지구본을 끌어 돌리고, 도시를 눌러 그곳의 매장을 확인해 보세요.
+          지구본을 돌리고 도시를 가리키는 익숙한 행동을 글로벌 스토어 탐색 방식으로
+          옮겼습니다.
         </p>
+        <p className="field-hint">드래그해 돌리고, 도시를 선택해 보세요.</p>
       </div>
     </div>
   );

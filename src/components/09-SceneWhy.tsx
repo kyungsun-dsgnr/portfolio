@@ -4,30 +4,25 @@
 
 import type { CSSProperties } from "react";
 
-import { GlobeDots } from "@/components/GlobeDots";
-
 import { StoreListMock } from "@/components/StoreListMock";
 import { useInView } from "@/components/useInView";
 
-/** 마지막 칸 지구본은 멈춘 채 서울만 이름표를 답니다. */
-const SEOUL = ["Seoul"];
-
-/** 시작점을 옮기는 이유 셋. 마지막 칸만 한 행 더 높아 글이 위에서 시작합니다. */
+/** 시작점을 하나 더 두는 이유 셋. 마지막 칸만 한 행 더 높아 글이 위에서 시작합니다. */
 const REASONS = [
   {
     index: "01",
-    title: "Current Start",
-    body: "접속 국가와 현재 위치를 기준으로 탐색이 시작됩니다.",
+    title: "Local Start",
+    body: "접속 국가와 현재 위치를 기준으로 가까운 매장을 찾습니다.",
   },
   {
     index: "02",
-    title: "Narrowed Exploration",
-    body: "사용자는 여러 도시의 매장을 둘러보기보다, 선택한 지역 안에서 가까운 매장을 확인하는 흐름에 머무릅니다.",
+    title: "Quick Store Search",
+    body: "지역을 선택해 필요한 매장 정보를 빠르게 확인합니다.",
   },
   {
     index: "03",
-    title: "New Start",
-    body: "탐색의 시작점을 세계로 넓혀, 사용자가 도시를 이동하며 글로벌 스토어를 발견하게 합니다.",
+    title: "Global Start",
+    body: "세계의 도시를 둘러보며 브랜드의 글로벌 스토어를 발견합니다.",
     tall: true,
   },
 ];
@@ -39,23 +34,19 @@ export function SceneWhy() {
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-lead rise col-start-1 col-span-4 row-start-1 row-span-2">
-        Why change
+        Why Add Another
         <br />
-        the starting point
+        Starting Point?
       </h2>
 
       <p
         className="type-body rise col-start-5 col-span-4 row-start-1 row-span-2"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        현재 스토어 페이지는 접속 국가와 현재 위치를 기준으로 가까운 매장을 빠르게
-        보여줍니다.
+        현재 스토어 탐색은 접속 국가와 현재 위치를 기준으로 가까운 매장을 빠르게 찾는
+        데 최적화되어 있습니다.
         <br />
-        하지만 탐색은 곧바로 지역 선택과 리스트 확인으로 좁혀져, 사용자가 여러 도시의
-        매장을 둘러볼 여지는 제한됩니다.
-        <br />
-        <br />
-        매장 정보를 단순한 목록으로 보여주는 방식에서 나아가, 도시를 이동하며 발견하는
+        <br />이 기능적 흐름은 유지하면서, 세계의 도시를 둘러보는 두 번째 시작점을 더해
         글로벌 브랜드 경험으로 확장합니다.
       </p>
 
@@ -73,10 +64,26 @@ export function SceneWhy() {
               <p className="type-body">{reason.body}</p>
             </div>
 
-            {/* 칸마다 그 말에 해당하는 조각만 보여 줍니다. */}
+            {/* 칸마다 그 말에 해당하는 조각만 보여 줍니다.
+                마지막 칸은 지구본 대신 전환 그림입니다 — 지구본은 다음 장에서
+                처음 크게 나오는 편이 낫습니다. */}
             <div className="why-visual">
               {reason.tall ? (
-                <GlobeDots interactive={false} still labels tags={SEOUL} />
+                <div className="switch-map">
+                  <div className="switch-tabs">
+                    <span data-on>현재 국가</span>
+                    <span>글로벌</span>
+                  </div>
+
+                  <svg className="switch-arrow" viewBox="0 0 24 40" aria-hidden>
+                    <path d="M12 4v32M6 30l6 6 6-6" />
+                  </svg>
+
+                  <div className="switch-tabs">
+                    <span>현재 국가</span>
+                    <span data-on>글로벌</span>
+                  </div>
+                </div>
               ) : (
                 <div className="why-mock">
                   {reason.index === "01" ? (

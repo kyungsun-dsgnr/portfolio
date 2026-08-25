@@ -181,7 +181,7 @@
       transform: translateY(0);
     }
     38% {
-      transform: translateY(calc(-24 * var(--u)));
+      transform: translateY(calc(-48 * var(--u)));
     }
     100% {
       transform: translateY(0);

@@ -6,18 +6,19 @@ import type { CSSProperties } from "react";
 
 import { useInView } from "@/components/useInView";
 
-/* 선물 하나를 사기까지 여덟 걸음. 그리드도 여덟 단이라 한 걸음이 한 단에 섭니다.
+/* 선물 하나를 사기까지 여섯 걸음. 한 걸음이 한 단에 섭니다.
    알약 폭은 단 폭과 같고, 걸음 사이 간격은 그리드 간격과 같습니다. */
 const COL = 158.5;
 const GAP = 16;
 const STEP_X = COL + GAP;
-/** 여덟 단을 가로지르는 판 */
-const PANEL_W = 8 * COL + 7 * GAP;
+/** 여섯 단을 가로지르는 판 */
+const STEPS = 6;
+const PANEL_W = STEPS * COL + (STEPS - 1) * GAP;
 /** 두 행 높이 */
 const PANEL_H = 2 * 110 + GAP;
 const PILL_H = 34;
-/** 같은 단에서 한 번 더 묻는 칸이 본선에서 벗어나는 높이 */
-const TWICE_Y = 62;
+/** 한 걸음이 화면 둘로 나뉠 때, 둘이 본선을 사이에 두고 벌어지는 높이 */
+const SPLIT = 31;
 /** 꺾이는 자리를 둥글게 만드는 반지름 */
 const BEND = 9;
 
@@ -25,7 +26,7 @@ type Tone = "start" | "plain" | "ghost";
 type Node = {
   id: string;
   label: string;
-  /** 몇 번째 걸음인지(0~7). 그대로 그리드 단이 됩니다. */
+  /** 몇 번째 걸음인지. 그대로 그리드 단이 됩니다. */
   step: number;
   /** 본선에서 위아래로 벗어난 정도 */
   off?: number;
@@ -36,26 +37,51 @@ type Node = {
 };
 
 /* 지금 tamburins.com 에서 선물 하나를 고르는 길입니다.
-   한 줄로 곧게 가다가 향을 고르는 데서만 두 갈래로 갈라졌다 다시 모입니다 —
-   세트에 든 제품 수만큼 창을 넘겨 하나씩 골라야 하는 자리입니다. */
+   한 걸음이 화면 둘로 나뉘는 자리가 셋 있습니다 — 고르는 자리, 향을 묻는 자리,
+   담고 주문하는 자리. 둘은 본선을 사이에 두고 위아래로 붙어 한 걸음으로 읽힙니다. */
 const NODES: Node[] = [
   { id: "home", label: "Home", step: 0, tone: "start" },
-  { id: "gift", label: "Custom Gifts", step: 1, from: ["home"], pain: "01" },
-  { id: "set", label: "Gift Set", step: 2, from: ["gift"] },
-  { id: "option", label: "Select Option", step: 3, from: ["set"], pain: "03" },
-  /* 향은 한 걸음 안에서 두 번 묻습니다. 갈라지는 것이 아니라 같은 자리를 다시 지납니다. */
+
+  {
+    id: "gift",
+    label: "Custom Gifts",
+    step: 1,
+    off: -SPLIT,
+    from: ["home"],
+    pain: "01",
+  },
+  { id: "set", label: "Gift Set", step: 1, off: SPLIT, from: ["gift"] },
+
+  { id: "option", label: "Select Option", step: 2, from: ["set"], pain: "03" },
+
   {
     id: "scent1",
     label: "Scent 1 / 2",
-    step: 4,
-    off: -TWICE_Y,
+    step: 3,
+    off: -SPLIT,
     from: ["option"],
     pain: "02",
   },
-  { id: "scent2", label: "Scent 2 / 2", step: 4, from: ["scent1"] },
-  { id: "bag", label: "Add to Bag", step: 5, from: ["scent2"] },
-  { id: "cart", label: "Cart", step: 6, from: ["bag"], pain: "04" },
-  { id: "order", label: "Order", step: 7, tone: "ghost", from: ["cart"] },
+  { id: "scent2", label: "Scent 2 / 2", step: 3, off: SPLIT, from: ["scent1"] },
+
+  { id: "bag", label: "Add to Bag", step: 4, from: ["scent2"] },
+
+  {
+    id: "cart",
+    label: "Cart",
+    step: 5,
+    off: -SPLIT,
+    from: ["bag"],
+    pain: "04",
+  },
+  {
+    id: "order",
+    label: "Order",
+    step: 5,
+    off: SPLIT,
+    tone: "ghost",
+    from: ["cart"],
+  },
 ];
 
 const place = (node: Node) => ({
@@ -101,8 +127,8 @@ const at = (node: Node) => {
 };
 
 /**
- * 지금 선물을 사는 흐름. 여덟 걸음이 여덟 단에 하나씩 서고,
- * 향을 고르는 자리에서만 본선이 갈라졌다 모입니다.
+ * 지금 선물을 사는 흐름. 한 걸음이 한 단에 서고,
+ * 화면 둘로 나뉘는 걸음은 본선을 사이에 두고 위아래로 붙습니다.
  */
 export function SceneFlow() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
@@ -114,7 +140,7 @@ export function SceneFlow() {
         User Flow
       </h2>
 
-      <div className="flow rise col-start-1 col-span-8 row-start-3 row-span-2">
+      <div className="flow rise col-start-1 col-span-6 row-start-3 row-span-2">
         <svg
           className="flow-lines"
           viewBox={`0 0 ${PANEL_W} ${PANEL_H}`}
@@ -140,12 +166,13 @@ export function SceneFlow() {
         ))}
       </div>
 
+      {/* 흐름 옆에 붙여 남은 두 단을 채웁니다. 아래는 비워 둡니다. */}
       <p
-        className="type-body rise self-end col-start-1 col-span-3 row-start-6"
+        className="type-body rise self-center col-start-7 col-span-2 row-start-3 row-span-2"
         style={{ "--delay": "0.14s" } as CSSProperties}
       >
-        선물 하나를 사기까지 여덟 걸음입니다. 네 번째 걸음에서는 세트에 든 제품
-        수만큼 같은 창을 다시 지납니다.
+        선물 하나를 사기까지 여섯 걸음입니다. 세 걸음은 화면 둘로 나뉘고, 향은
+        세트에 든 제품 수만큼 같은 창을 다시 지납니다.
       </p>
     </div>
   );

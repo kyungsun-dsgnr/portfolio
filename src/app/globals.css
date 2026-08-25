@@ -163,6 +163,84 @@
     background: #fafafa;
   }
 
+  /* ── 유리로 된 선물 상자 ───────────────────────
+     면마다 뒤가 비칩니다. 뒤에 아무것도 없는 면은 판 색이 그대로 비쳐 조용하고,
+     담긴 것이 뒤에 있는 앞면에서만 형체가 흐릿하게 드러납니다. */
+  .glass-face {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      158deg,
+      rgb(255 255 255 / 0.62) 0%,
+      rgb(244 246 249 / 0.34) 100%
+    );
+    /* 흐림 반경은 --u 를 쓰지 않습니다. 빌드가 filter 안의 calc(var()) 를 걷어 냅니다. */
+    backdrop-filter: blur(7px) saturate(1.06);
+  }
+
+  /* 세워 둔 뚜껑. 빛을 가장 많이 받는 면입니다. */
+  .glass-lid {
+    background: linear-gradient(
+      158deg,
+      rgb(255 255 255 / 0.7) 0%,
+      rgb(246 248 250 / 0.44) 100%
+    );
+  }
+
+  /* 접히는 앞 날개. 안쪽으로 도는 면이라 한 톤 어둡습니다. */
+  .glass-flap {
+    background: linear-gradient(
+      158deg,
+      rgb(236 239 243 / 0.66) 0%,
+      rgb(228 232 238 / 0.5) 100%
+    );
+  }
+
+  /* 앞면. 이 면 뒤에 제품이 서 있어, 유리 너머로 밑동이 비칩니다. */
+  .glass-front {
+    background: linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 0.4) 0%,
+      rgb(240 243 247 / 0.58) 100%
+    );
+    backdrop-filter: blur(5px) saturate(1.1);
+  }
+
+  /* 닫힌 상자의 윗면 */
+  .glass-top {
+    opacity: 1;
+    transition: opacity 140ms linear 560ms;
+  }
+
+  .gift-stage[data-open] .glass-top {
+    opacity: 0;
+    transition: opacity 120ms linear 0ms;
+  }
+
+  /* 유리 상자의 모서리. 선으로 그린 상자보다 한 단 더 옅습니다. */
+  .glass .gift-ink {
+    stroke: rgb(25 25 25 / 0.18);
+  }
+
+  .glass-edge {
+    filter: drop-shadow(0 calc(3 * var(--u)) calc(10 * var(--u)) rgb(0 0 0 / 0.05));
+  }
+
+  /* 뚜껑에 달린 앞 날개는 뚜껑과 함께 돌다가 마지막에 접힙니다. */
+  .gift-flap {
+    position: absolute;
+    inset: 0;
+    transform-origin: 50% 6.38%;
+    rotate: x -90deg;
+    transition: rotate 260ms cubic-bezier(0.4, 0, 0.2, 1) 620ms;
+    backface-visibility: hidden;
+  }
+
+  .gift-stage[data-open] .gift-flap {
+    rotate: x 0deg;
+    transition: rotate 300ms cubic-bezier(0.22, 1, 0.36, 1) 0ms;
+  }
+
   /* ── 열리고 닫히는 선물 상자 ───────────────────
      도면 한 벌(663×643)을 겹으로 나눠 쌓고, 뚜껑만 뒤쪽 모서리를 축으로 돌립니다.
      선은 포트폴리오의 다른 장과 같은 결로 얇게 두고, 채움은 판 색과 같은 색입니다. */

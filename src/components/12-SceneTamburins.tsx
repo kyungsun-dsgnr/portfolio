@@ -62,6 +62,15 @@ const GOODS: (Layer & { tilt: string; delay: string; fall: number })[] = [
 ];
 
 /** 디자인 px 을 화면 크기로 옮깁니다. */
+/* 그림 전체를 이 배율로 줄여 칸 가운데에 앉힙니다.
+   자리 값은 원본 도면 좌표 그대로 두고, 옮기는 자리에서 한 번에 환산합니다. */
+const SCALE = 0.6;
+/** 그림이 차지하던 원래 칸 */
+const ART = { left: 32, width: 618.91, height: 740 };
+/** 줄인 그림을 칸(682×740) 가운데로 보내는 값 */
+const SHIFT_X = (682 - ART.width * SCALE) / 2;
+const SHIFT_Y = (740 - ART.height * SCALE) / 2;
+
 const at = (box: {
   left: number;
   top: number;
@@ -69,10 +78,10 @@ const at = (box: {
   height: number;
 }) =>
   ({
-    left: `calc(${box.left} * var(--u))`,
-    top: `calc(${box.top} * var(--u))`,
-    width: `calc(${box.width} * var(--u))`,
-    height: `calc(${box.height} * var(--u))`,
+    left: `calc(${(SHIFT_X + (box.left - ART.left) * SCALE).toFixed(2)} * var(--u))`,
+    top: `calc(${(SHIFT_Y + box.top * SCALE).toFixed(2)} * var(--u))`,
+    width: `calc(${(box.width * SCALE).toFixed(2)} * var(--u))`,
+    height: `calc(${(box.height * SCALE).toFixed(2)} * var(--u))`,
   }) as CSSProperties;
 
 /**
@@ -103,7 +112,7 @@ export function TamburinsBox() {
               ...at(one),
               "--tilt": one.tilt,
               "--delay": one.delay,
-              "--fall": one.fall,
+              "--fall": (one.fall * SCALE).toFixed(1),
             } as CSSProperties
           }
         >

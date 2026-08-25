@@ -2,6 +2,7 @@ import { GlobeDots } from "@/components/GlobeDots";
 import { LightStage } from "@/components/LightStage";
 import { SceneCase } from "@/components/07-SceneCase";
 import { SceneCompose } from "@/components/13-SceneCompose";
+import { SceneFlow } from "@/components/14-SceneFlow";
 import { TamburinsBox } from "@/components/12-SceneTamburins";
 import { SceneAfter } from "@/components/11-SceneAfter";
 import { SceneExplore } from "@/components/10-SceneExplore";
@@ -122,6 +123,7 @@ export default function Home() {
           label: "Statement",
           node: <SceneCompose />,
         },
+        { id: "tamburins-flow", label: "Flow", node: <SceneFlow /> },
         /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.
         {
           id: "gentle-monster-2",

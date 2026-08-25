@@ -228,6 +228,98 @@
     }
   }
 
+  /* ── 유저 플로우 ───────────────────────────────
+     알약 마디와 가는 선. 자리는 안쪽 좌표계(1031×740)를 --u 로 옮겨 씁니다. */
+  .flow {
+    position: relative;
+  }
+
+  /* 선은 8장 목업의 잇는 선과 같은 색·굵기입니다. 그쪽은 점선, 여기는 실선입니다.
+     viewBox 로 늘어나도 굵기가 함께 늘지 않도록 배율에서 뺍니다. */
+  .flow-lines {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    overflow: visible;
+    fill: none;
+    stroke: rgb(25 25 25 / 0.22);
+    stroke-width: 0.5;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .flow-lines path {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* 걸리는 지점 번호. 마디 오른쪽 위에 붙습니다. */
+  .flow-pain {
+    position: absolute;
+    right: calc(-5 * var(--u));
+    top: calc(-7 * var(--u));
+    display: flex;
+    height: calc(15 * var(--u));
+    width: calc(15 * var(--u));
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--fg);
+    color: #ffffff;
+    font-size: calc(8 * var(--u));
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  .flow-pains {
+    display: flex;
+    flex-direction: column;
+    gap: calc(14 * var(--u));
+    color: var(--fg-soft);
+    font-family: var(--font-body);
+    font-size: calc(13 * var(--u));
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  .flow-pains-no {
+    display: block;
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: calc(10 * var(--u));
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+
+  .flow-pill {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(25 25 25 / 0.35);
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: calc(11 * var(--u));
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  /* 흐름이 시작되는 마디 */
+  .flow-pill[data-tone="start"] {
+    border-color: var(--fg);
+    background: var(--fg);
+    color: #ffffff;
+  }
+
+  /* 이 프로젝트에서 다루지 않는 갈래 */
+  .flow-pill[data-tone="ghost"] {
+    border-color: rgb(25 25 25 / 0.14);
+    color: rgb(25 25 25 / 0.3);
+  }
+
   /* ── 하단 목차 ─────────────────────────────────
      평소에는 손잡이만 화면 끝에 걸치고, 다가가면 통째로 올라옵니다. */
   .pager {

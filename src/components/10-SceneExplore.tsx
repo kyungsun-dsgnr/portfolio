@@ -25,14 +25,30 @@ export function SceneExplore() {
         Find a City
       </h2>
 
+      {/* 지구본이 휠을 가져가므로 다음 장으로 넘어갈 버튼을 따로 둡니다. */}
+      <button
+        type="button"
+        className="page-next rise self-end col-start-4 col-span-2 row-start-6"
+        style={{ "--delay": "0.2s" } as CSSProperties}
+        onClick={() =>
+          document
+            .getElementById("gentle-monster-after")
+            ?.scrollIntoView({ behavior: "smooth" })
+        }
+      >
+        <span>Next</span>
+        <span className="scroll-cue-chevron" aria-hidden />
+      </button>
+
       <div
         className="field-note rise self-end col-start-1 col-span-3 row-start-6"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
         <h3 className="type-title">Familiar Interaction</h3>
         <p className="type-body">
-          지구본을 돌리고 도시를 가리키는 익숙한 행동을 글로벌 스토어 탐색 방식으로
-          옮겼습니다.
+          지구본을 돌리고 도시를 가리키는 익숙한 행동을
+          <br />
+          글로벌 스토어 탐색 방식으로 옮겼습니다.
         </p>
       </div>
     </div>

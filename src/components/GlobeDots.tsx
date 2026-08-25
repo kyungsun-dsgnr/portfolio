@@ -56,8 +56,8 @@ function clipFor(t: number) {
 const FLAT = 1.7;
 /** 손으로 키울 수 있는 한계 배율 */
 const MAX_MAG = 40;
-/** 확대해도 점이 이만큼 떨어져 보이도록 다시 찍습니다(px). 지구본일 때 간격과 같습니다. */
-const DOT_GAP = 3.2;
+/** 확대해도 점이 이만큼 떨어져 보이도록 다시 찍습니다(px). 클수록 성깁니다. */
+const DOT_GAP = 6;
 /** 가장 촘촘한 단계. 한 단계마다 간격이 절반이 됩니다. */
 const MAX_LEVEL = 6;
 
@@ -73,7 +73,6 @@ const TAGGED = [
   "Milan",
   "Dubai",
 ];
-
 
 /** 지구본에 찍히는 점 하나. home 은 매장이 있는 나라인지. */
 type Dot = { at: [number, number]; home: boolean };
@@ -247,6 +246,8 @@ type Props = {
   still?: boolean;
   /** 점 뒤에 깔리는 구의 흰 기운(0~1). 바탕과 구를 갈라 보이게 합니다. */
   veil?: number;
+  /** 어두운 판 위에 놓입니다. 점과 핀의 밝기를 뒤집습니다. */
+  dark?: boolean;
 };
 
 export function GlobeDots({
@@ -255,6 +256,7 @@ export function GlobeDots({
   tags,
   still = false,
   veil = 0.29,
+  dark = false,
   onPickStore,
   card = false,
   openAt,
@@ -264,7 +266,10 @@ export function GlobeDots({
     ? STORES.findIndex((store) => store.city === openAt)
     : -1;
   const tagged = useMemo(
-    () => (tags ?? TAGGED).map((city) => STORES.find((store) => store.city === city)!),
+    () =>
+      (tags ?? TAGGED).map((city) =>
+        STORES.find((store) => store.city === city)!,
+      ),
     [tags],
   );
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -341,6 +346,32 @@ export function GlobeDots({
   const dragging = useRef(false);
   const last = useRef<[number, number]>([0, 0]);
   const activeRef = useRef<number | null>(null);
+  /* 캔버스 색은 CSS 가 닿지 않으므로 여기서 두 벌을 들고 있습니다. */
+  const ink = useMemo(
+    () =>
+      dark
+        ? {
+            // 어두운 판에서는 땅을 모두 흰빛으로 두고 밝기로만 가릅니다.
+            plain: "250, 250, 250",
+            home: "250, 250, 250",
+            pin: "#fafafa",
+            ring: "#191919",
+            edge: "rgba(250, 250, 250, 0.55)",
+            shade: "250, 250, 250",
+          }
+        : {
+            plain: "125, 125, 125",
+            home: "60, 60, 60",
+            pin: "#191919",
+            ring: "#fafafa",
+            edge: "rgba(25, 25, 25, 0.5)",
+            shade: "25, 25, 25",
+          },
+    [dark],
+  );
+
+  /** 판이 화면 안에 있는지. 밖에 있으면 그리지 않고 쉽니다. */
+  const seen = useRef(true);
   const screen = useRef<Clump[]>([]);
   /** 집어 둔 점에 묶인 매장. 카드에 목록으로 폅니다. */
   const [group, setGroup] = useState<(typeof STORES)[number][]>([]);
@@ -429,6 +460,17 @@ export function GlobeDots({
       tagSize.current = [];
     }
 
+    /* 화면 밖으로 나간 지구본은 그리지 않습니다.
+       한 쪽에 여럿이 놓여 있어서, 안 보이는 것까지 매 프레임 그리면
+       지금 보고 있는 지구본이 그만큼 느려집니다. */
+    const eye = new IntersectionObserver(
+      ([entry]) => {
+        seen.current = entry.isIntersecting;
+      },
+      { rootMargin: "20%" },
+    );
+    eye.observe(wrap);
+
     const observer = new ResizeObserver(resize);
     observer.observe(wrap);
     resize();
@@ -436,6 +478,13 @@ export function GlobeDots({
     let frame = 0;
 
     function draw() {
+      if (!seen.current) {
+        // 돌아왔을 때 흐른 시간이 한꺼번에 밀려들지 않게 시계를 끊어 둡니다.
+        lastFrame.current = 0;
+        frame = requestAnimationFrame(draw);
+        return;
+      }
+
       const now = performance.now();
       // 탭이 뒤에 있다 돌아왔을 때 한 번에 튀지 않게 상한을 둡니다.
       const dt = lastFrame.current
@@ -465,7 +514,10 @@ export function GlobeDots({
         const ease = 1 - Math.exp(-dt / 0.32);
         mag.current += (magTo.current - mag.current) * ease;
         // FLAT 배까지 키우는 동안 구가 평면으로 펴지고, 그 뒤로는 커지기만 합니다.
-        spread.current = Math.min(1, Math.max(0, (mag.current - 1) / (FLAT - 1)));
+        spread.current = Math.min(
+          1,
+          Math.max(0, (mag.current - 1) / (FLAT - 1)),
+        );
         if (facing.current) {
           const [lon, lat] = facing.current;
           const turn = ((-lon - rotation.current[0] + 540) % 360) - 180;
@@ -512,19 +564,23 @@ export function GlobeDots({
         ),
       );
 
+      const __t0 = performance.now();
       projection.rotate(rotation.current);
       ctx!.clearRect(0, 0, width, height);
 
       /* 지구본 아래 그림자. 구를 칠하기 전에 그려 뒤로 보냅니다.
          납작한 타원이라 원형 그라디언트를 세로로 눌러서 씁니다. */
+      /* 그림자와 흰 기운은 '구'를 떼어 보이게 하는 것들입니다.
+         평면이 되면 구가 아니라 판이라, 남아 있으면 네모난 자국으로 드러납니다. */
+      const round = 1 - spread.current;
       const shade = radius * 0.58;
       ctx!.save();
       ctx!.translate(width / 2, height / 2 + radius * 1.05);
       ctx!.scale(1, 0.12);
       const glow = ctx!.createRadialGradient(0, 0, 0, 0, 0, shade);
-      glow.addColorStop(0, "rgba(25, 25, 25, 0.005)");
-      glow.addColorStop(0.5, "rgba(25, 25, 25, 0.002)");
-      glow.addColorStop(1, "rgba(25, 25, 25, 0)");
+      glow.addColorStop(0, `rgba(${ink.shade}, ${0.005 * round})`);
+      glow.addColorStop(0.5, `rgba(${ink.shade}, ${0.002 * round})`);
+      glow.addColorStop(1, `rgba(${ink.shade}, 0)`);
       ctx!.fillStyle = glow;
       ctx!.beginPath();
       ctx!.arc(0, 0, shade, 0, Math.PI * 2);
@@ -534,7 +590,7 @@ export function GlobeDots({
       // 페이지 바탕과 구분되도록 지구본 원 안쪽만 흰색으로 깝니다.
       ctx!.beginPath();
       path(sphere);
-      ctx!.fillStyle = `rgba(255, 255, 255, ${veil})`;
+      ctx!.fillStyle = `rgba(255, 255, 255, ${veil * round})`;
       ctx!.fill();
 
       const center: [number, number] = [
@@ -586,6 +642,9 @@ export function GlobeDots({
       /* 다 펴진 뒤에만 씁니다. 접힌 기가 남은 동안에는 뒷면이 앞으로 접혀 와서
          화면 밖 점까지 앞에 겹쳐 찍힙니다. 그때는 성긴 격자가 각도로 걸러 줍니다. */
       const flat = spread.current > 0.999;
+      /* 배율이 아직 움직이는 중. 이때 격자를 다시 찍으면 프레임마다 버려질 것을
+         만드느라 화면이 끊깁니다. 멈춘 뒤에 한 번만 찍습니다. */
+      const busy = Math.abs(magTo.current - mag.current) > mag.current * 0.015;
       const step = LAT_STEP / 2 ** level;
       const halfLon = ((width / 2) * 90) / scale;
       const halfLat = ((height / 2) * 90) / scale;
@@ -600,7 +659,14 @@ export function GlobeDots({
         Math.abs(front.lon - center[0]) > front.half[0] * 0.2 ||
         Math.abs(front.lat - center[1]) > front.half[1] * 0.2;
 
-      if (level > 0 && flat && worn && landRef.current && homelandRef.current) {
+      if (
+        level > 0 &&
+        flat &&
+        !busy &&
+        worn &&
+        landRef.current &&
+        homelandRef.current
+      ) {
         // 화면보다 넉넉히 찍어 두어 조금 돌린다고 곧바로 다시 찍지 않게 합니다.
         const half: [number, number] = [
           Math.min(180, halfLon * 1.45),
@@ -635,7 +701,7 @@ export function GlobeDots({
       if (dt) {
         const ease = 1 - Math.exp(-dt / 0.18);
         grids.current.forEach((grid, i) => {
-          const to = level > 0 && flat && i === 0 ? 1 : 0;
+          const to = level > 0 && flat && !busy && i === 0 ? 1 : 0;
           grid.alpha += (to - grid.alpha) * ease;
         });
         grids.current = grids.current.filter(
@@ -646,17 +712,21 @@ export function GlobeDots({
       }
 
       /* 촘촘한 격자가 자리를 채운 만큼 성긴 격자는 물러납니다. */
-      const fine = grids.current.reduce((most, g) => Math.max(most, g.alpha), 0);
+      const fine = grids.current.reduce(
+        (most, g) => Math.max(most, g.alpha),
+        0,
+      );
       const thin = 1 - fine;
       if (thin > 0.02) {
-        paint(plain, dot, "125, 125, 125", [0.5 * thin, 0.36 * thin, 0.2 * thin]);
-        paint(home, dot, "60, 60, 60", [0.95 * thin, 0.7 * thin, 0.42 * thin]);
+        paint(plain, dot, ink.plain, [0.5 * thin, 0.36 * thin, 0.2 * thin]);
+        paint(home, dot, ink.home, [0.95 * thin, 0.7 * thin, 0.42 * thin]);
       }
 
       /* 촘촘한 격자. 돌리지도 키우지도 않았다면 지난 프레임의 자리를 그대로 씁니다. */
       const key = `${scale.toFixed(2)}|${rotation.current[0].toFixed(3)}|${rotation.current[1].toFixed(3)}|${spread.current.toFixed(3)}`;
       for (const grid of grids.current) {
-        if (grid.alpha < 0.02) continue;
+        const lit = grid.alpha;
+        if (lit < 0.02) continue;
         if (grid.key !== key || !grid.xy) {
           const xy = new Float32Array(grid.dots.length * 2);
           grid.dots.forEach((one, i) => {
@@ -669,7 +739,12 @@ export function GlobeDots({
         }
 
         const xy = grid.xy;
-        const shade = (from: number, to: number, rgb: string, alpha: number) => {
+        const shade = (
+          from: number,
+          to: number,
+          rgb: string,
+          alpha: number,
+        ) => {
           ctx!.beginPath();
           for (let i = from; i < to; i++) {
             const x = xy[i * 2];
@@ -678,11 +753,11 @@ export function GlobeDots({
             if (y < -dot || y > height + dot) continue;
             ctx!.rect(x - dot / 2, y - dot / 2, dot, dot);
           }
-          ctx!.fillStyle = `rgba(${rgb}, ${alpha * grid.alpha})`;
+          ctx!.fillStyle = `rgba(${rgb}, ${alpha * lit})`;
           ctx!.fill();
         };
-        shade(0, grid.homeFrom, "125, 125, 125", 0.5);
-        shade(grid.homeFrom, grid.dots.length, "60, 60, 60", 0.95);
+        shade(0, grid.homeFrom, ink.plain, 0.5);
+        shade(grid.homeFrom, grid.dots.length, ink.home, 0.95);
       }
 
       // 매장
@@ -729,20 +804,20 @@ export function GlobeDots({
         // 배경색 링을 먼저 깔아 회색 점밭에서 도시를 떼어 놓습니다.
         ctx!.beginPath();
         ctx!.arc(clump.x, clump.y, r * 1.75, 0, Math.PI * 2);
-        ctx!.fillStyle = "#fafafa";
+        ctx!.fillStyle = ink.ring;
         ctx!.fill();
 
         if (isActive) {
           ctx!.beginPath();
           ctx!.arc(clump.x, clump.y, r * 2.5, 0, Math.PI * 2);
-          ctx!.strokeStyle = "rgba(25, 25, 25, 0.5)";
+          ctx!.strokeStyle = ink.edge;
           ctx!.lineWidth = unit * 1.2;
           ctx!.stroke();
         }
 
         ctx!.beginPath();
         ctx!.arc(clump.x, clump.y, r, 0, Math.PI * 2);
-        ctx!.fillStyle = "#191919";
+        ctx!.fillStyle = ink.pin;
         ctx!.fill();
       }
 
@@ -804,11 +879,19 @@ export function GlobeDots({
           }
 
           // 호버 뱃지와 같은 자리 — 점 오른쪽으로 펼칩니다.
-          const size = (tagSize.current[i] ??= [tag.offsetWidth, tag.offsetHeight]);
+          const size = (tagSize.current[i] ??= [
+            tag.offsetWidth,
+            tag.offsetHeight,
+          ]);
           const left = point[0] + HIT_RADIUS;
           const top = point[1] - size[1] / 2;
           // 한 귀퉁이라도 판넬을 벗어나면 그 자리에서 접습니다.
-          if (left < 0 || top < 0 || left + size[0] > width || top + size[1] > height) {
+          if (
+            left < 0 ||
+            top < 0 ||
+            left + size[0] > width ||
+            top + size[1] > height
+          ) {
             tag.dataset.off = "";
             return;
           }
@@ -818,6 +901,9 @@ export function GlobeDots({
         });
       }
 
+      const w = window as unknown as Record<string, number>;
+      w.__drawMs = performance.now() - __t0;
+      w.__frames = (w.__frames ?? 0) + 1;
       frame = requestAnimationFrame(draw);
     }
 
@@ -825,9 +911,10 @@ export function GlobeDots({
 
     return () => {
       cancelAnimationFrame(frame);
+      eye.disconnect();
       observer.disconnect();
     };
-  }, [dots, interactive, labels, still, tagged, veil]);
+  }, [dots, ink, interactive, labels, still, tagged, veil]);
 
   /** 화면 좌표에서 가장 가까운 매장 점을 찾아 둡니다.
       그리기와 같은 좌표계로 되돌립니다 — 확대가 걸려 있으면 그만큼 나눕니다. */
@@ -904,6 +991,20 @@ export function GlobeDots({
 
   /* 한 점에 여럿이 묶여 있으면 같은 카드가 그 수만큼 아래로 이어집니다. */
   const list = group.length ? group : label ? [label] : [];
+  /* 절반을 넘는 도시가 있으면 그 도시의 점으로 봅니다.
+     서울 다섯에 성남·고양 하나씩이면 서울이고,
+     서울·부산·제주가 하나씩 묶인 점은 어느 도시라 할 수 없어 나라만 적습니다. */
+  const tally = new Map<string, number>();
+  for (const one of list) tally.set(one.city, (tally.get(one.city) ?? 0) + 1);
+  let head = "";
+  let most = 0;
+  tally.forEach((count, city) => {
+    if (count > most) {
+      most = count;
+      head = city;
+    }
+  });
+  const cityName = most * 2 > list.length ? head : null;
 
   /* 휠·핀치로 배율을 바꿉니다. 지구본까지 되돌아온 뒤로는 페이지가 대신 넘어갑니다.
      React 의 onWheel 은 preventDefault 가 막히는 경우가 있어 직접 답니다. */
@@ -968,7 +1069,9 @@ export function GlobeDots({
                     : undefined;
 
                   if (kin.length > 1 && land) {
-                    const [[west, south], [east, north]] = geoBounds(land.shape);
+                    const [[west, south], [east, north]] = geoBounds(
+                      land.shape,
+                    );
                     facing.current = [(west + east) / 2, (south + north) / 2];
                     fitSpan.current = [
                       (Math.max(0.5, east - west) * Math.PI) / 180,
@@ -1071,8 +1174,18 @@ export function GlobeDots({
           {label && (
             <>
               <span>{label.country}</span>
-              <span className="globe-badge-divider">|</span>
-              <span>{label.city}</span>
+              {/* 한 점에 여럿이 묶였으면 몇 곳인지 함께 적습니다. */}
+              {cityName ? (
+                <>
+                  <span className="globe-badge-divider">|</span>
+                  <span>
+                    {cityName}
+                    {list.length > 1 ? ` (${list.length})` : ""}
+                  </span>
+                </>
+              ) : (
+                <span>({list.length})</span>
+              )}
             </>
           )}
         </div>

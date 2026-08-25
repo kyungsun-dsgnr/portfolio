@@ -252,51 +252,6 @@
     vector-effect: non-scaling-stroke;
   }
 
-  /* 걸리는 지점 번호. 마디 오른쪽 위에 붙습니다. */
-  .flow-pain {
-    position: absolute;
-    right: calc(-5 * var(--u));
-    top: calc(-7 * var(--u));
-    display: flex;
-    height: calc(15 * var(--u));
-    width: calc(15 * var(--u));
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: var(--fg);
-    color: #ffffff;
-    font-size: calc(8 * var(--u));
-    font-style: normal;
-    font-weight: 700;
-    letter-spacing: 0;
-  }
-
-  /* 갈래 안의 화면들. 서른 개가 넘어 알약으로 다 세우면 흐름이 묻히므로
-     한 줄로 이어 적습니다. 갈래 알약과 같은 높이에서 가운데를 맞춥니다. */
-  .flow-pages {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    color: rgb(25 25 25 / 0.42);
-    font-family: var(--font-body);
-    font-size: calc(10.5 * var(--u));
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    white-space: nowrap;
-  }
-
-  /* 마디 아래에 붙는 설명. 마디와 같은 왼쪽 선에서 시작합니다.
-     잇는 선이 지나가는 자리라 바탕을 깔아 글자 위로 선이 겹치지 않게 합니다. */
-  .flow-note {
-    position: absolute;
-    background: var(--bg);
-    color: var(--fg-soft);
-    font-family: var(--font-body);
-    font-size: calc(12 * var(--u));
-    font-weight: 500;
-    line-height: 1.45;
-  }
-
   .flow-pill {
     position: absolute;
     display: flex;
@@ -307,7 +262,7 @@
     background: #ffffff;
     color: var(--fg);
     font-family: var(--font-display);
-    font-size: calc(11 * var(--u));
+    font-size: calc(12.22 * var(--u));
     font-weight: 500;
     letter-spacing: 0.01em;
     white-space: nowrap;
@@ -324,6 +279,53 @@
   .flow-pill[data-tone="ghost"] {
     border-color: rgb(25 25 25 / 0.14);
     color: rgb(25 25 25 / 0.3);
+  }
+
+  /* 걸리는 지점 번호. 알약 왼쪽 위 모서리에 걸칩니다. */
+  .flow-pain {
+    position: absolute;
+    left: calc(13 * var(--u));
+    top: calc(-9 * var(--u));
+    display: flex;
+    height: calc(17 * var(--u));
+    width: calc(17 * var(--u));
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--fg);
+    color: #ffffff;
+    font-size: calc(8.89 * var(--u));
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  /* 다이어그램 아래에 나란히 서는 두 덩어리 — 흐름과, 그 안에서 하는 판단. */
+  .flow-brief {
+    display: flex;
+    gap: var(--grid-gap);
+    color: rgb(25 25 25 / 0.9);
+  }
+
+  .flow-brief > div {
+    flex: 1 1 0;
+  }
+
+  .flow-brief-title {
+    font-family: var(--font-display);
+    font-size: calc(24 * var(--u));
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+  }
+
+  .flow-brief p {
+    margin-top: calc(22 * var(--u));
+    font-family: var(--font-body);
+    font-size: calc(16 * var(--u));
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
   }
 
   /* ── 하단 목차 ─────────────────────────────────

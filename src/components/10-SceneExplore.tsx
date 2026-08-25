@@ -41,7 +41,7 @@ export function SceneExplore() {
       </button>
 
       <div
-        className="field-note rise self-end col-start-1 col-span-3 row-start-6"
+        className="field-note rise self-start col-start-1 col-span-3 row-start-3 row-span-2"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
         <h3 className="type-title">Familiar Interaction</h3>

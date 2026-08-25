@@ -25,6 +25,10 @@
     (100dvh - 2 * var(--viewport-margin)) / 800
   );
 
+  /* 지구본 이름표와 매장 카드의 단위. 목업 안에서는 나머지와 같은 크기지만,
+     지구본만 놓인 넓은 판에서는 그만큼 키웁니다. */
+  --tip: var(--u);
+
   --canvas-w: calc(var(--design-w) * var(--u));
   --canvas-h: calc(var(--design-h) * var(--u));
 
@@ -847,13 +851,13 @@
     top: 0;
     display: flex;
     align-items: center;
-    gap: calc(7 * var(--u));
-    padding: calc(6 * var(--u)) calc(12 * var(--u));
+    gap: calc(7 * var(--tip));
+    padding: calc(6 * var(--tip)) calc(12 * var(--tip));
     border-radius: 999px;
     background: var(--fg);
     color: var(--bg);
     font-family: var(--font-display);
-    font-size: calc(11 * var(--u));
+    font-size: calc(11 * var(--tip));
     font-weight: 700;
     line-height: 1.1;
     letter-spacing: 0.08em;
@@ -925,6 +929,7 @@
   /* ── 지구본만 놓고 만져 보는 장 ─────────────────
      판 전체가 지구본이고, 글은 그 위에 얹힙니다. */
   .field {
+    --tip: calc(1.4 * var(--u));
     position: relative;
     /* 펴진 지도가 판 밖으로 나가지 않게 자릅니다. */
     overflow: hidden;
@@ -1172,7 +1177,7 @@
     left: 0;
     top: 0;
     display: flex;
-    width: calc(300 * var(--u));
+    width: calc(300 * var(--tip));
     flex-direction: column;
     gap: calc(8 * var(--u));
     overflow-y: auto;
@@ -1193,11 +1198,11 @@
     display: flex;
     flex: 0 0 auto;
     flex-direction: column;
-    gap: calc(4 * var(--u));
-    padding: calc(16 * var(--u));
-    border-radius: calc(8 * var(--u));
+    gap: calc(4 * var(--tip));
+    padding: calc(16 * var(--tip));
+    border-radius: calc(8 * var(--tip));
     background: #ffffff;
-    box-shadow: 0 calc(4 * var(--u)) calc(14 * var(--u)) rgb(0 0 0 / 0.1);
+    box-shadow: 0 calc(4 * var(--tip)) calc(14 * var(--tip)) rgb(0 0 0 / 0.1);
   }
 
   .globe-card[data-on] {
@@ -1472,12 +1477,12 @@
   .store-tip-top {
     display: flex;
     justify-content: space-between;
-    gap: calc(8 * var(--u));
+    gap: calc(8 * var(--tip));
   }
 
   .store-tip-name {
     color: #111111;
-    font-size: calc(12 * var(--u));
+    font-size: calc(12 * var(--tip));
     line-height: 1.416;
     text-transform: uppercase;
     white-space: nowrap;
@@ -1486,7 +1491,7 @@
   .store-tip-distance,
   .store-tip-address {
     color: #858585;
-    font-size: calc(10 * var(--u));
+    font-size: calc(10 * var(--tip));
     line-height: 1.5;
     white-space: nowrap;
   }
@@ -1504,19 +1509,19 @@
   .store-tip-tags {
     display: flex;
     align-items: center;
-    gap: calc(8 * var(--u));
-    padding-top: calc(4 * var(--u));
+    gap: calc(8 * var(--tip));
+    padding-top: calc(4 * var(--tip));
   }
 
   .store-tip-tag {
     display: flex;
-    height: calc(15 * var(--u));
+    height: calc(15 * var(--tip));
     align-items: center;
-    padding: 0 calc(4 * var(--u));
-    border-radius: calc(4 * var(--u));
+    padding: 0 calc(4 * var(--tip));
+    border-radius: calc(4 * var(--tip));
     background: #dfe3e8;
     color: #858585;
-    font-size: calc(10 * var(--u));
+    font-size: calc(10 * var(--tip));
     line-height: 1.5;
     white-space: nowrap;
   }

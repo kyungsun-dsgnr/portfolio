@@ -22,6 +22,8 @@ const GLIDE = 0.45;
 const IDLE_SPIN = 3.6;
 /** 드래그가 만들어 낼 수 있는 최대 속도(도/초) */
 const MAX_SPEED = 720;
+/** 손끝 1px 이 판 짧은 쪽을 가로지를 때 도는 각도의 기준(도). 작을수록 무겁게 돕니다. */
+const DRAG_TURN = 165;
 /** 받침대에 꽂힌 지구본처럼 축을 고정합니다. 세로로는 돌지 않아 극이 정면에 오지 않습니다. */
 const TILT = -6;
 /** 매장을 집을 수 있는 반경(px) */
@@ -471,8 +473,8 @@ export function GlobeDots({
             rotation.current[0] + turn * ease,
             rotation.current[1] + (-lat - rotation.current[1]) * ease,
           ];
-        } else {
-          // 접힐 때는 기울기를 원래대로 되돌립니다.
+        } else if (spread.current < 0.999) {
+          // 접힐 때는 기울기를 원래대로 되돌립니다. 평면에서는 옮긴 자리를 둡니다.
           rotation.current = [
             rotation.current[0],
             rotation.current[1] + (TILT - rotation.current[1]) * ease,
@@ -869,20 +871,31 @@ export function GlobeDots({
     const box = event.currentTarget.getBoundingClientRect();
 
     if (dragging.current) {
-      // 가로로만 돕니다. 세로 움직임은 회전에 쓰지 않습니다.
       const dx = event.clientX - last.current[0];
+      const dy = event.clientY - last.current[1];
       last.current = [event.clientX, event.clientY];
 
       const now = performance.now();
       const dt = Math.max(0.008, (now - (lastMove.current || now)) / 1000);
       lastMove.current = now;
 
-      const turned = dx * (220 / Math.min(box.width, box.height));
-      rotation.current = [rotation.current[0] + turned, rotation.current[1]];
+      /* 키운 만큼 나누어 둡니다. 그러지 않으면 확대할수록 같은 손짓에
+         지도가 몇 배씩 튀어 손을 대기 어려워집니다. */
+      const rate = DRAG_TURN / Math.min(box.width, box.height) / mag.current;
+      const turned = dx * rate;
+      // 평면일 때만 위아래로도 옮깁니다. 구일 때는 축을 세워 둡니다.
+      const lifted =
+        spread.current > 0.999
+          ? Math.max(-84, Math.min(84, rotation.current[1] - dy * rate))
+          : rotation.current[1];
+      rotation.current = [rotation.current[0] + turned, lifted];
+      // 손으로 옮겼으면 골라 둔 나라로 되돌리지 않습니다.
+      if (dragged.current > 4) facing.current = null;
       // 놓았을 때 이어질 속도(도/초). 이벤트가 몰리면 과하게 잡히므로 묶어 둡니다.
       const speed = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, turned / dt));
-      velocity.current = [speed, 0];
-      dragged.current += Math.abs(dx);
+      // 지구본은 손을 떼면 미끄러지지만, 펼친 지도는 놓은 자리에 섭니다.
+      velocity.current = [spread.current > 0.999 ? 0 : speed, 0];
+      dragged.current += Math.hypot(dx, dy);
       return;
     }
 
@@ -900,7 +913,7 @@ export function GlobeDots({
 
     function onWheel(event: WheelEvent) {
       // 트랙패드 핀치는 ctrl 을 얹은 휠로 옵니다. 한 번에 크게 움직입니다.
-      const step = event.ctrlKey ? 0.012 : 0.0016;
+      const step = event.ctrlKey ? 0.008 : 0.0011;
       const next = Math.min(
         MAX_MAG,
         Math.max(1, magTo.current * Math.exp(-event.deltaY * step)),

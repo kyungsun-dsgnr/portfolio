@@ -4,9 +4,12 @@
 
 import type { CSSProperties } from "react";
 
-import { StoreGlobeMock } from "@/components/StoreGlobeMock";
+import { GlobeDots } from "@/components/GlobeDots";
 import { StoreListMock } from "@/components/StoreListMock";
 import { useInView } from "@/components/useInView";
+
+/** 마지막 칸 지구본은 멈춘 채 서울만 이름표를 답니다. */
+const SEOUL = ["Seoul"];
 
 /** 시작점을 하나 더 두는 이유 셋. 마지막 칸만 한 행 더 높아 글이 위에서 시작합니다. */
 const REASONS = [
@@ -19,8 +22,6 @@ const REASONS = [
     index: "before-02",
     title: "Quick Store Search",
     body: "지역을 선택해 필요한 매장 정보를 빠르게 확인합니다.",
-    /** 목록이 보이도록 화면을 조금 끌어올려 둡니다. */
-    scrolled: true,
   },
   {
     index: "after",
@@ -67,20 +68,19 @@ export function SceneWhy() {
               <p className="type-body">{reason.body}</p>
             </div>
 
-            {/* 화면은 통째로 보여 주고, 그 말과 관계없는 데는 흐려 둡니다. */}
+            {/* 칸마다 그 말에 해당하는 조각만 보여 줍니다. */}
             <div className="why-visual">
-              <div className="why-mock" data-scrolled={reason.scrolled}>
-                {reason.tall ? (
-                  <StoreGlobeMock focus="tabs" initialWorld />
-                ) : (
-                  <StoreListMock
-                    /* 번호는 언제든 바뀌므로 차례로 가릅니다. */
-                    focus={i === 0 ? ["locate"] : ["selects", "results"]}
-                    picked={i === 0 ? null : "02"}
-                    phase={2}
-                  />
-                )}
-              </div>
+              {reason.tall ? (
+                <GlobeDots interactive={false} still labels tags={SEOUL} />
+              ) : (
+                <div className="why-mock">
+                  {i === 0 ? (
+                    <StoreListMock show={["filters"]} />
+                  ) : (
+                    <StoreListMock show={["results"]} picked="02" phase={2} />
+                  )}
+                </div>
+              )}
             </div>
           </div>
         ))}

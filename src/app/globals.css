@@ -571,21 +571,6 @@
     opacity: 0.5;
   }
 
-  /* 이 칸에서는 화면 전체를 위에서부터 보여 줍니다. */
-  .why-mock .globe-mock {
-    height: auto;
-    width: 100%;
-    overflow: visible;
-  }
-
-  .why-mock .globe-stage {
-    height: calc(200 * var(--u));
-  }
-
-  /* 목록이 보이도록 화면을 조금 끌어올린 칸 */
-  .why-mock[data-scrolled] .store-panel {
-    top: calc(-70 * var(--u));
-  }
 
   .why-mock .store-panel {
     left: 0;

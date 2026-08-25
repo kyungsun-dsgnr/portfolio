@@ -81,7 +81,7 @@ const at = (box: {
  */
 export function TamburinsBox() {
   return (
-    <div className="relative h-full w-full overflow-hidden">
+    <div className="tam-box relative h-full w-full overflow-hidden">
       <div className="absolute" style={at(BOX)}>
         <Image
           alt=""

@@ -154,30 +154,45 @@
     background: #ffffff;
   }
 
-  /* 12장 — 상자에 아무렇게나 놓인 제품이 제자리에 반듯하게 섭니다.
+  /* 12장 — 제품이 위에서 떨어져 상자에 담깁니다.
      밑동을 축으로 돌아서, 상자 앞면에 가려진 발은 제자리에 있는 것처럼 보입니다. */
-  .tam-stand {
+  .tam-drop {
     transform-origin: bottom center;
   }
 
-  [data-visible] .tam-stand {
-    animation: stand-up 1.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+  [data-visible] .tam-drop {
+    animation: drop-in 1.25s both;
     animation-delay: var(--delay, 0s);
   }
 
-  @keyframes stand-up {
+  @keyframes drop-in {
     0% {
+      /* 판 위쪽 밖에서 시작합니다. 판이 넘치는 부분을 잘라 내므로 보이지 않습니다. */
+      translate: 0 calc(-1 * var(--fall, 620) * var(--u));
       rotate: var(--tilt, -10deg);
-      translate: 0 calc(-7 * var(--u));
+      /* 떨어지는 동안 점점 빨라집니다. */
+      animation-timing-function: cubic-bezier(0.5, 0, 0.85, 0.4);
     }
-    58% {
-      /* 반듯해지는 지점을 조금 지나쳤다가 돌아옵니다. 놓인 것이 자리를 잡는 느낌입니다. */
-      rotate: calc(var(--tilt, -10deg) * -0.14);
+    52% {
+      /* 닿는 순간. 아직 비스듬합니다. */
       translate: 0 0;
+      rotate: var(--tilt, -10deg);
+      animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1);
+    }
+    68% {
+      /* 살짝 튀어 오르며 반듯해지기 시작합니다. */
+      translate: 0 calc(-0.045 * var(--fall, 620) * var(--u));
+      rotate: calc(var(--tilt, -10deg) * 0.42);
+      animation-timing-function: cubic-bezier(0.4, 0, 0.3, 1);
+    }
+    86% {
+      /* 반듯한 자리를 조금 지나쳤다가 */
+      translate: 0 0;
+      rotate: calc(var(--tilt, -10deg) * -0.12);
     }
     100% {
-      rotate: 0deg;
       translate: 0 0;
+      rotate: 0deg;
     }
   }
 

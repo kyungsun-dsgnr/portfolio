@@ -38,8 +38,9 @@ const FRONT: Layer = {
 };
 
 /* 상자에 담기는 것들. 밑동이 상자 앞면에 가려지도록 앞면보다 뒤에 놓입니다.
-   기울기와 시차를 서로 다르게 두어 둘이 한 몸처럼 움직이지 않게 합니다. */
-const GOODS: (Layer & { tilt: string; delay: string })[] = [
+   기울기와 시차를 서로 다르게 두어 둘이 한 몸처럼 떨어지지 않게 합니다.
+   fall 은 판 위쪽 밖에서 시작하도록 제 자리보다 조금 더 잡은 값입니다. */
+const GOODS: (Layer & { tilt: string; delay: string; fall: number })[] = [
   {
     src: "/images/tamburins-perfume.png",
     left: 126.38,
@@ -47,7 +48,8 @@ const GOODS: (Layer & { tilt: string; delay: string })[] = [
     width: 213.06,
     height: 214.43,
     tilt: "-11deg",
-    delay: "0.55s",
+    delay: "0.5s",
+    fall: 620,
   },
   {
     src: "/images/tamburins-handwash.png",
@@ -56,7 +58,8 @@ const GOODS: (Layer & { tilt: string; delay: string })[] = [
     width: 164.61,
     height: 480.06,
     tilt: "5.5deg",
-    delay: "0.78s",
+    delay: "0.74s",
+    fall: 600,
   },
 ];
 
@@ -96,16 +99,17 @@ export function SceneTamburins() {
           />
         </div>
 
-        {/* 아무렇게나 놓였다가 제자리에 반듯하게 섭니다. */}
+        {/* 위에서 떨어져 상자에 담기고, 닿은 자리에서 반듯하게 섭니다. */}
         {GOODS.map((one) => (
           <div
             key={one.src}
-            className="tam-stand absolute"
+            className="tam-drop absolute"
             style={
               {
                 ...at(one),
                 "--tilt": one.tilt,
                 "--delay": one.delay,
+                "--fall": one.fall,
               } as CSSProperties
             }
           >

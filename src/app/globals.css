@@ -147,7 +147,7 @@
   }
 
   .section:has(.after-frame) {
-    background: var(--bg);
+    background: #ffffff;
   }
 
   /* 지금 화면을 짚는 장. 목업이 흰 판 위에 놓입니다. */
@@ -1094,10 +1094,18 @@
   /* 화면 위 세 점. 각자 짚는 자리 오른쪽에 걸칩니다.
      버튼 안에 버튼을 넣을 수 없어 모두 바깥에서 얹습니다.
      .store-dot 이 뒤에 오므로 클래스를 겹쳐 우선순위를 올립니다. */
-  .store-dot.globe-dot-tabs,
+  /* 탭 묶음 왼쪽에 걸칩니다. */
+  .store-dot.globe-dot-tabs {
+    left: calc(-9 * var(--u));
+    right: auto;
+    top: 50%;
+    translate: 0 -50%;
+  }
+
+  /* 카드 오른쪽에 걸치되 화면 밖으로 잘리지 않을 만큼만 나갑니다. */
   .store-dot.globe-dot-list {
     left: auto;
-    right: calc(-9 * var(--u));
+    right: calc(-4 * var(--u));
     top: 50%;
     translate: 0 -50%;
   }

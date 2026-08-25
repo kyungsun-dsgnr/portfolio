@@ -1,7 +1,8 @@
 import { GlobeDots } from "@/components/GlobeDots";
 import { LightStage } from "@/components/LightStage";
 import { SceneCase } from "@/components/07-SceneCase";
-import { SceneAfter } from "@/components/10-SceneAfter";
+import { SceneAfter } from "@/components/11-SceneAfter";
+import { SceneExplore } from "@/components/10-SceneExplore";
 import { SceneIntro } from "@/components/01-SceneIntro";
 import { SceneProblem } from "@/components/08-SceneProblem";
 import { ScenePerspective } from "@/components/03-ScenePerspective";
@@ -71,6 +72,7 @@ export default function Home() {
         },
         { id: "gentle-monster-problem", node: <SceneProblem /> },
         { id: "gentle-monster-why", node: <SceneWhy /> },
+        { id: "gentle-monster-explore", node: <SceneExplore /> },
         { id: "gentle-monster-after", node: <SceneAfter /> },
         /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.
         {

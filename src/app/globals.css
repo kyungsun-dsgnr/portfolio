@@ -455,6 +455,7 @@
   .why-card .card-index,
   .issue .card-index {
     margin-bottom: calc(8 * var(--u));
+    text-transform: uppercase;
   }
 
   /* 문제를 짚는 항목. 번호 → 제목 → 설명 순서는 다른 장과 같습니다. */
@@ -557,11 +558,33 @@
     overflow: hidden;
   }
 
-  /* 목업 조각은 칸 위쪽에 붙고, 넘치는 부분은 칸에서 잘립니다.
+  /* 목업은 칸 위쪽에 붙고, 넘치는 부분은 칸에서 잘립니다.
      폭은 글이 놓인 폭과 같게 늘립니다. */
   .why-mock {
     position: relative;
     height: 100%;
+  }
+
+  /* 그 칸이 말하는 자리만 또렷하게 두고 나머지는 물러납니다. */
+  [data-blur] {
+    filter: blur(calc(2 * var(--u)));
+    opacity: 0.5;
+  }
+
+  /* 이 칸에서는 화면 전체를 위에서부터 보여 줍니다. */
+  .why-mock .globe-mock {
+    height: auto;
+    width: 100%;
+    overflow: visible;
+  }
+
+  .why-mock .globe-stage {
+    height: calc(200 * var(--u));
+  }
+
+  /* 목록이 보이도록 화면을 조금 끌어올린 칸 */
+  .why-mock[data-scrolled] .store-panel {
+    top: calc(-70 * var(--u));
   }
 
   .why-mock .store-panel {
@@ -918,7 +941,6 @@
      판 전체가 지구본이고, 글은 그 위에 얹힙니다. */
   .field {
     position: relative;
-    background: var(--placeholder);
   }
 
   .field-note {
@@ -1155,8 +1177,9 @@
     pointer-events: auto;
   }
 
-  /* 이름표 아래로 열리는 매장 카드 */
+  /* 이름표 아래로 열리는 매장 카드. 글자는 다른 목업과 같은 얼굴입니다. */
   .globe-card {
+    font-family: var(--font-store);
     position: absolute;
     left: 0;
     top: 0;

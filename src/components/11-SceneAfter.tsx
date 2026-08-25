@@ -53,7 +53,10 @@ export function SceneAfter() {
   /* 장이 보이는 동안 01 부터 03 까지 한 번 훑고 멈춥니다. */
   useEffect(() => {
     if (!inView) {
-      const id = setTimeout(() => setStage({ picked: POINTS[0].index, phase: 0 }), 0);
+      const id = setTimeout(
+        () => setStage({ picked: POINTS[0].index, phase: 0 }),
+        0,
+      );
       return () => clearTimeout(id);
     }
     const now = POINTS.findIndex((point) => point.index === picked);
@@ -69,7 +72,10 @@ export function SceneAfter() {
   /* 칸에 들어서고 잠시 뒤 화면이 한 걸음 더 나갑니다. */
   useEffect(() => {
     if (phase >= 1) return;
-    const id = setTimeout(() => setStage((now) => ({ ...now, phase: 1 })), BEAT);
+    const id = setTimeout(
+      () => setStage((now) => ({ ...now, phase: 1 })),
+      BEAT,
+    );
     return () => clearTimeout(id);
   }, [picked, phase]);
 
@@ -103,7 +109,9 @@ export function SceneAfter() {
 
       const range = document.createRange();
       range.selectNodeContents(card!);
-      const lines = [...range.getClientRects()].filter((line) => line.width > 0);
+      const lines = [...range.getClientRects()].filter(
+        (line) => line.width > 0,
+      );
       const last = card!.lastElementChild!.getBoundingClientRect();
       const gap = GAP * (g.width / 1440);
       const toRight = c.left - g.left < toX;
@@ -134,9 +142,9 @@ export function SceneAfter() {
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-lead rise col-start-1 col-span-3 row-start-1 row-span-2">
-        From Local Search
+        Local Search,
         <br />
-        to Global Discovery
+        Global Discovery
       </h2>
 
       {/* 화면 하나. 앞 장 목업과 같은 두 단에 섭니다. */}

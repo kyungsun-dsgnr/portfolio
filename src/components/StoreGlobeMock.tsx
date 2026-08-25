@@ -168,6 +168,10 @@ type Props = {
   phase?: number;
   onPick?: (key: string) => void;
   dotRef?: (key: string, el: HTMLButtonElement | null) => void;
+  /** 이 부분만 또렷하게 두고 나머지는 흐립니다. */
+  focus?: "head" | "tabs" | "scope" | "stage" | "list";
+  /** 처음부터 글로벌 쪽을 보여 줍니다. */
+  initialWorld?: boolean;
 };
 
 export function StoreGlobeMock({
@@ -176,8 +180,13 @@ export function StoreGlobeMock({
   phase = 0,
   onPick,
   dotRef,
+  focus,
+  initialWorld = false,
 }: Props) {
-  const [world, setWorld] = useState(false);
+  const blur = (part: NonNullable<Props["focus"]>) =>
+    focus && focus !== part ? true : undefined;
+
+  const [world, setWorld] = useState(initialWorld);
   const [region, setRegion] = useState(REGION_NAMES[0]);
   /** 글로벌 탭의 두 선택기. 지구본에서 점을 집으면 둘 다 채워집니다. */
   const [country, setCountry] = useState<string | null>(null);
@@ -246,7 +255,7 @@ export function StoreGlobeMock({
   return (
     <div className="globe-mock">
       {/* 매장 수와 필터. 기존 화면과 같은 머리글입니다. */}
-      <div className="store-head">
+      <div className="store-head" data-blur={blur("head")}>
         <p className="store-count">
           스토어 <span>{stores.length}</span>
         </p>
@@ -254,7 +263,7 @@ export function StoreGlobeMock({
       </div>
 
       {/* 접속 국가 안에서 볼지, 전 세계를 볼지 */}
-      <div className="globe-tabs" role="group">
+      <div className="globe-tabs" role="group" data-blur={blur("tabs")}>
         <button
           type="button"
           className="globe-tab"
@@ -276,7 +285,7 @@ export function StoreGlobeMock({
       </div>
 
       {/* 선택 상자 대신 지금 보고 있는 범위만 한 줄로. 눌러서 바꿉니다. */}
-      <div className="globe-scope-row">
+      <div className="globe-scope-row" data-blur={blur("scope")}>
         {showWorld ? (
           <>
             <Pick
@@ -326,7 +335,7 @@ export function StoreGlobeMock({
         )}
       </div>
 
-      <div className="globe-stage">
+      <div className="globe-stage" data-blur={blur("stage")}>
         {showWorld ? (
           <GlobeDots
             labels={false}
@@ -354,7 +363,7 @@ export function StoreGlobeMock({
         {dot("globe")}
       </div>
 
-      <div className="globe-list">
+      <div className="globe-list" data-blur={blur("list")}>
         {stores.map((store, i) => (
           <article className="store-card" key={store.name}>
             {i === 0 && dot("list")}

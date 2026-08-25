@@ -4,23 +4,26 @@
 
 import type { CSSProperties } from "react";
 
+import { StoreGlobeMock } from "@/components/StoreGlobeMock";
 import { StoreListMock } from "@/components/StoreListMock";
 import { useInView } from "@/components/useInView";
 
 /** 시작점을 하나 더 두는 이유 셋. 마지막 칸만 한 행 더 높아 글이 위에서 시작합니다. */
 const REASONS = [
   {
-    index: "01",
+    index: "before-01",
     title: "Local Start",
     body: "접속 국가와 현재 위치를 기준으로 가까운 매장을 찾습니다.",
   },
   {
-    index: "02",
+    index: "before-02",
     title: "Quick Store Search",
     body: "지역을 선택해 필요한 매장 정보를 빠르게 확인합니다.",
+    /** 목록이 보이도록 화면을 조금 끌어올려 둡니다. */
+    scrolled: true,
   },
   {
-    index: "03",
+    index: "after",
     title: "Global Start",
     body: "세계의 도시를 둘러보며 브랜드의 글로벌 스토어를 발견합니다.",
     tall: true,
@@ -43,11 +46,11 @@ export function SceneWhy() {
         className="type-body rise col-start-5 col-span-4 row-start-1 row-span-2"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        현재 스토어 탐색은 접속 국가와 현재 위치를 기준으로 가까운 매장을 빠르게 찾는
-        데 최적화되어 있습니다.
+        현재 스토어 탐색은 접속 국가와 현재 위치를 기준으로 가까운 매장을 빠르게
+        찾는 데 최적화되어 있습니다.
         <br />
-        <br />이 기능적 흐름은 유지하면서, 세계의 도시를 둘러보는 두 번째 시작점을 더해
-        글로벌 브랜드 경험으로 확장합니다.
+        <br />이 기능적 흐름은 유지하면서, 세계의 도시를 둘러보는 두 번째
+        시작점을 더해 글로벌 브랜드 경험으로 확장합니다.
       </p>
 
       <div className="card-row why-row col-start-1 col-span-8 row-start-3 row-span-4">
@@ -64,35 +67,20 @@ export function SceneWhy() {
               <p className="type-body">{reason.body}</p>
             </div>
 
-            {/* 칸마다 그 말에 해당하는 조각만 보여 줍니다.
-                마지막 칸은 지구본 대신 전환 그림입니다 — 지구본은 다음 장에서
-                처음 크게 나오는 편이 낫습니다. */}
+            {/* 화면은 통째로 보여 주고, 그 말과 관계없는 데는 흐려 둡니다. */}
             <div className="why-visual">
-              {reason.tall ? (
-                <div className="switch-map">
-                  <div className="switch-tabs">
-                    <span data-on>현재 국가</span>
-                    <span>글로벌</span>
-                  </div>
-
-                  <svg className="switch-arrow" viewBox="0 0 24 40" aria-hidden>
-                    <path d="M12 4v32M6 30l6 6 6-6" />
-                  </svg>
-
-                  <div className="switch-tabs">
-                    <span>현재 국가</span>
-                    <span data-on>글로벌</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="why-mock">
-                  {reason.index === "01" ? (
-                    <StoreListMock show={["filters"]} />
-                  ) : (
-                    <StoreListMock show={["results"]} picked="02" phase={2} />
-                  )}
-                </div>
-              )}
+              <div className="why-mock" data-scrolled={reason.scrolled}>
+                {reason.tall ? (
+                  <StoreGlobeMock focus="tabs" initialWorld />
+                ) : (
+                  <StoreListMock
+                    /* 번호는 언제든 바뀌므로 차례로 가릅니다. */
+                    focus={i === 0 ? ["locate"] : ["selects", "results"]}
+                    picked={i === 0 ? null : "02"}
+                    phase={2}
+                  />
+                )}
+              </div>
             </div>
           </div>
         ))}

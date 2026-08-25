@@ -106,10 +106,15 @@ type Props = {
   dotRef?: (key: string, el: HTMLButtonElement | null) => void;
   /** 화면의 일부만 보여 줍니다. 기본은 전부입니다. */
   show?: Part[];
+  /** 여기 적은 자리만 또렷하게 두고 나머지는 흐립니다. */
+  focus?: Spot[];
 };
 
 type Part = "head" | "filters" | "tabs" | "results";
 const ALL: Part[] = ["head", "filters", "tabs", "results"];
+
+/** 흐릴 때는 필터 안을 선택 상자와 현재 위치로 나눠 봅니다. */
+type Spot = "head" | "selects" | "locate" | "tabs" | "results";
 
 export function StoreListMock({
   dots = false,
@@ -118,8 +123,11 @@ export function StoreListMock({
   onPick,
   dotRef,
   show = ALL,
+  focus,
 }: Props) {
   const has = (part: Part) => show.includes(part);
+  /** 초점이 정해져 있으면 그 자리만 남기고 흐립니다. */
+  const blur = (spot: Spot) => (focus && !focus.includes(spot) ? true : undefined);
   const located = picked === DOTS.locate.key;
   const zoomed = picked === DOTS.district.key;
   /** 지도 탭을 켜면 목록 자리에 지도가 들어섭니다. */
@@ -162,7 +170,7 @@ export function StoreListMock({
       aria-hidden={dots ? undefined : true}
     >
       {has("head") && (
-      <div className="store-head">
+      <div className="store-head" data-blur={blur("head")}>
         <p className="store-count">
           스토어 <span>{stores.length}</span>
         </p>
@@ -172,7 +180,7 @@ export function StoreListMock({
 
       {has("filters") && (
       <div className="store-filters">
-        <div className="store-selects">
+        <div className="store-selects" data-blur={blur("selects")}>
           <div className="store-select">
             <span className="store-select-label">국가/지역</span>
             <span className="store-select-value">대한민국</span>
@@ -199,7 +207,11 @@ export function StoreListMock({
             )}
           </div>
         </div>
-        <p className="store-locate" data-hot={(dots && located) || undefined}>
+        <p
+          className="store-locate"
+          data-hot={(dots && located) || undefined}
+          data-blur={blur("locate")}
+        >
           <LocateIcon />
           현재 위치 사용
           {dot("locate", "left")}
@@ -208,7 +220,7 @@ export function StoreListMock({
       )}
 
       {has("tabs") && (
-      <div className="store-tabs">
+      <div className="store-tabs" data-blur={blur("tabs")}>
         <span className="store-tab" data-on={!mapped || undefined}>
           목록
         </span>
@@ -224,6 +236,7 @@ export function StoreListMock({
       {/* 목록과 지도가 서로 바뀔 때마다 이 자리를 새로 그려 한 번 떠오르게 합니다. */}
       <div
         className="store-results"
+        data-blur={blur("results")}
         key={mapped ? "map" : repicked ? "seoul" : located ? "near" : "browse"}
       >
       {mapped ? (

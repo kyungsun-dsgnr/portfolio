@@ -15,8 +15,7 @@ export function SceneExplore() {
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       {/* 판 전체가 지구본입니다. 끌어 돌리고 점을 눌러 봅니다. */}
       <div className="field rise col-start-1 col-span-8 row-start-1 row-span-6">
-        {/* 회색 판 위라 구를 밝게 깔아야 점이 읽힙니다. */}
-        <GlobeDots veil={0.85} card />
+        <GlobeDots card />
       </div>
 
       <h2 className="type-lead rise col-start-1 col-span-3 row-start-1 row-span-2">
@@ -34,7 +33,6 @@ export function SceneExplore() {
           지구본을 돌리고 도시를 가리키는 익숙한 행동을 글로벌 스토어 탐색 방식으로
           옮겼습니다.
         </p>
-        <p className="field-hint">드래그해 돌리고, 도시를 선택해 보세요.</p>
       </div>
     </div>
   );

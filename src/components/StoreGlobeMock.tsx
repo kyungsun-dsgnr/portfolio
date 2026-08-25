@@ -8,7 +8,10 @@ import { ChevronIcon, FilterIcon, LocateIcon } from "@/components/StoreIcons";
 import { STORES, type Store } from "@/data/gentle-monster-stores";
 
 /** 현재 국가 탭. 지역을 고르면 그 지역 매장만 남습니다. */
-const REGIONS: Record<string, { name: string; aside: string; line: string; where: string }[]> = {
+const REGIONS: Record<
+  string,
+  { name: string; aside: string; line: string; where: string }[]
+> = {
   서울: [
     {
       name: "젠틀몬스터 하우스 도산",
@@ -193,16 +196,22 @@ export function StoreGlobeMock({
   const [city, setCity] = useState<string | null>(null);
   const [open, setOpen] = useState<null | "region" | "country" | "city">(null);
 
+  /* 안내를 따라가는 중에 탭을 눌렀으면, 그 단계 동안은 누른 대로 둡니다.
+     안내가 다음 단계로 넘어가면 다시 안내를 따릅니다. */
+  const [taken, setTaken] = useState<{ at: string | null } | null>(null);
+  const byHand = taken !== null && taken.at === step;
+
   /* 안내를 따라갈 때는 화면이 스스로 움직입니다. 그때는 안쪽 상태를 보지 않습니다. */
-  const led = dots
-    ? {
-        world: step !== DOTS.tabs || phase >= 1,
-        store:
-          (step === DOTS.globe && phase >= 1) || step === DOTS.list
-            ? SPOTLIGHT
-            : null,
-      }
-    : null;
+  const led =
+    dots && !byHand
+      ? {
+          world: step !== DOTS.tabs || phase >= 1,
+          store:
+            (step === DOTS.globe && phase >= 1) || step === DOTS.list
+              ? SPOTLIGHT
+              : null,
+        }
+      : null;
 
   const showWorld = led ? led.world : world;
   const showCountry = led ? (led.store?.country ?? null) : country;
@@ -235,6 +244,7 @@ export function StoreGlobeMock({
         : STORES.filter((store) => store.flagship).map(card);
 
   function show(next: boolean) {
+    setTaken({ at: step });
     setWorld(next);
     setCountry(null);
     setCity(null);
@@ -355,12 +365,17 @@ export function StoreGlobeMock({
         )}
 
         {/* 현재 위치로 돌아오는 플로팅 버튼 */}
-        <button type="button" className="globe-locate" onClick={() => show(false)}>
+        <button
+          type="button"
+          className="globe-locate"
+          onClick={() => show(false)}
+        >
           <LocateIcon size={11} />
           현재 위치 사용
         </button>
 
-        {dot("globe")}
+        {/* 02 는 지구본을 가리키는 점이라 글로벌 탭에서만 둡니다. */}
+        {showWorld && dot("globe")}
       </div>
 
       <div className="globe-list" data-blur={blur("list")}>

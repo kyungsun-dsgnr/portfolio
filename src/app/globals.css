@@ -575,7 +575,6 @@
     opacity: 0.5;
   }
 
-
   .why-mock .store-panel {
     left: 0;
     width: 100%;
@@ -996,12 +995,29 @@
   }
 
   .section:has(.field) {
+    position: relative;
     background: #ffffff;
+  }
+
+  /* 지도가 화면 끝까지 깔리는 장이라, 아래를 흰빛으로 눌러
+     넘어가는 버튼이 점밭에 묻히지 않게 합니다. 화면 너비를 다 씁니다. */
+  .section:has(.field)::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    /* 장은 화면 높이를 다 쓰지만 판은 가운데 놓입니다. 판 바닥에 맞춥니다. */
+    bottom: calc(50% - var(--canvas-h) / 2);
+    left: 0;
+    height: calc(190 * var(--u));
+    background: linear-gradient(to bottom, rgb(255 255 255 / 0), #ffffff 62%);
+    pointer-events: none;
   }
 
   /* 지구본이 휠을 가져가는 장이라, 다음 장으로 넘어갈 길을 따로 둡니다.
      화살표는 첫 장 스크롤 유도에 쓴 것과 같은 조각입니다. */
   .page-next {
+    position: relative;
+    z-index: 1;
     --cue-stroke: calc(1.5 * var(--u));
     display: flex;
     flex-direction: column;
@@ -1052,7 +1068,7 @@
     width: 100%;
     overflow-y: auto;
     padding: calc(21.08 * var(--u)) 0 calc(28.11 * var(--u));
-    background: #f3f4f6;
+    background: #fafaf8;
     color: #111111;
     font-family: var(--font-store);
     font-weight: 400;
@@ -1070,7 +1086,7 @@
     margin: 0 calc(21.08 * var(--u));
     padding: calc(3.51 * var(--u));
     border-radius: calc(10.54 * var(--u));
-    background: #e4e6e8;
+    background: #ededed;
   }
 
   .globe-tab {
@@ -1212,7 +1228,11 @@
     left: 0;
     top: 0;
     display: flex;
-    width: calc(300 * var(--tip));
+    /* 카드 그림자가 굴림 상자에 잘리지 않도록 사방에 자리를 두고,
+       그만큼 왼쪽으로 당겨 카드가 이름표와 같은 선에서 시작하게 합니다. */
+    width: calc(324 * var(--tip));
+    padding: calc(12 * var(--tip));
+    margin-left: calc(-12 * var(--tip));
     flex-direction: column;
     gap: calc(8 * var(--u));
     overflow-y: auto;
@@ -1339,7 +1359,7 @@
     top: 0;
     width: calc(332 * var(--u));
     margin-left: calc(-166 * var(--u));
-    background: #f3f4f6;
+    background: #fafaf8;
     color: #111111;
     font-family: var(--font-store);
     font-weight: 400;
@@ -1359,17 +1379,35 @@
   /* 목업을 실제 기기처럼 감싸는 테두리.
      8장 화면은 아래가 열린 채 흐려지므로 위 모서리만 둥글립니다. */
   .store-slot .store-panel {
-    border: 1px solid rgb(25 25 25 / 0.1);
+    border: 1px solid #1919190a;
     border-bottom: 0;
     border-radius: calc(26 * var(--u)) calc(26 * var(--u)) 0 0;
-    box-shadow: 0 calc(2 * var(--u)) calc(26 * var(--u)) rgb(25 25 25 / 0.07);
+    box-shadow: 0 calc(2 * var(--u)) calc(26 * var(--u)) #1919190a;
   }
 
-  /* 11장 화면은 사방이 닫혀 있어 기기 하나로 떨어집니다. */
+  /* 11장 화면도 같은 테두리를 쓰되, 아래는 열어 두고 흐리게 지웁니다. */
   .after-frame .globe-mock {
-    border: 1px solid rgb(25 25 25 / 0.1);
-    border-radius: calc(26 * var(--u));
-    box-shadow: 0 calc(2 * var(--u)) calc(26 * var(--u)) rgb(25 25 25 / 0.07);
+    border: 1px solid #1919190a;
+    border-bottom: 0;
+    border-radius: calc(26 * var(--u)) calc(26 * var(--u)) 0 0;
+    box-shadow: 0 calc(2 * var(--u)) calc(26 * var(--u)) #1919190a;
+    /* 8장 화면은 판 밖으로 흘러 그림자 아랫단이 잘립니다. 여기서도 잘라 맞춥니다. */
+    clip-path: inset(
+      calc(-40 * var(--u)) calc(-40 * var(--u)) 0 calc(-40 * var(--u))
+    );
+  }
+
+  /* 화면 아래가 장 바닥에서 끊긴 것처럼 보이도록 흰빛을 덮습니다.
+     투명에서 시작해 바닥에서 온전히 흰색이 되도록 고르게 걸칩니다. */
+  .after-frame::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: calc(150 * var(--u));
+    background: linear-gradient(to bottom, rgb(255 255 255 / 0), #ffffff 100%);
+    pointer-events: none;
   }
 
   /* 매장 수와 필터 버튼 */
@@ -1860,6 +1898,21 @@
     stroke-dasharray: var(--len);
     stroke-dashoffset: var(--len);
     animation: link-draw 760ms cubic-bezier(0.33, 1, 0.68, 1) 460ms both;
+  }
+
+  /* 지금 가리키는 점만 또렷하게 뜁니다.
+     셋이 한꺼번에 뛰면 어느 순서로 보는 것인지 읽히지 않습니다. */
+  .store-dot[aria-pressed="false"] {
+    opacity: 0.3;
+  }
+
+  .store-dot[aria-pressed="false"]::after {
+    animation: none;
+    opacity: 0;
+  }
+
+  .store-dot {
+    transition: opacity 0.45s ease;
   }
 
   /* 천천히 번져 나가는 고리 */

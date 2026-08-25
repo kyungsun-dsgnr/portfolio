@@ -154,13 +154,9 @@
     background: #ffffff;
   }
 
-  /* 12장 — 장은 흰색으로 두고, 이미지 판만 한 톤 눌러 상자를 앉힙니다. */
+  /* 12장 — 장 전체가 흰색입니다. 상자가 놓인 자리에 따로 판을 두지 않습니다. */
   .section:has(.tam-box) {
     background: #ffffff;
-  }
-
-  .tam-box {
-    background: #fafafa;
   }
 
   /* ── 열리고 닫히는 선물 상자 ───────────────────

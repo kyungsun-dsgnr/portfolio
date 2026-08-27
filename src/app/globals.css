@@ -302,6 +302,98 @@
     scale: calc(var(--fit, 1) * 0.92);
   }
 
+  /* ── 16장 지금과 제안 ─────────────────────────
+     화면을 보여 주지 않고 걸음의 개수와 자리만으로 말합니다. */
+  .shift-side {
+    display: flex;
+    flex-direction: column;
+    gap: calc(24 * var(--u));
+  }
+
+  .shift-label {
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(11 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .shift-chain {
+    display: flex;
+    flex-direction: column;
+    gap: calc(20 * var(--u));
+  }
+
+  .shift-chain li {
+    position: relative;
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: calc(18 * var(--u));
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  /* 걸음과 걸음을 잇는 선. 목업 장의 잇는 선과 같은 굵기·색입니다. */
+  .shift-chain li + li::before {
+    content: "";
+    position: absolute;
+    left: calc(3 * var(--u));
+    top: calc(-16 * var(--u));
+    height: calc(12 * var(--u));
+    border-left: 1px solid rgb(25 25 25 / 0.22);
+  }
+
+  /* 제안은 한 마디뿐입니다. 개수 차이가 곧 이 장의 말입니다. */
+  .shift-one {
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: calc(34 * var(--u));
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── 17장 고르고 담고 완성하기 ────────────────
+     담긴 개수에 따라 지금 서 있는 걸음만 또렷해집니다. */
+  .compose-steps {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: calc(30 * var(--u));
+  }
+
+  .compose-step {
+    display: flex;
+    gap: calc(14 * var(--u));
+    opacity: 0.32;
+    transition: opacity 320ms ease;
+  }
+
+  .compose-step[data-on],
+  .compose-step[data-done] {
+    opacity: 1;
+  }
+
+  .compose-no {
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(11 * var(--u));
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding-top: calc(4 * var(--u));
+  }
+
+  /* 세로로 쌓는 고르는 판 */
+  .tam-goods[data-stack] {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  .tam-goods[data-stack] .tam-good:first-child,
+  .tam-goods[data-stack] .tam-good:last-child {
+    grid-area: auto;
+  }
+
   /* 로고 그림이 없는 케이스의 글자 로고. 자리와 무게를 로고와 같게 둡니다. */
   .case-wordmark {
     color: var(--fg);

@@ -38,20 +38,20 @@ const BOX: Layer = {
 };
 
 /* 상자가 지면에 놓인 자리. 두 겹입니다.
-   넓게 퍼지는 그림자는 빛이 왼쪽 위에서 드는 만큼 오른쪽으로 조금 눕고,
-   바닥에 닿는 선은 상자 밑단에 바짝 붙어 짙게 깔립니다. */
+   드리우는 그림자는 상자 밑단을 윗변으로 삼아 오른쪽으로 눕고(빛이 왼쪽 창에서 듭니다),
+   접지선은 밑단에 바짝 붙어 짙게 깔립니다. 이 둘이 있어야 떠 있지 않고 놓인 것으로 읽힙니다. */
 const CAST = {
-  left: 10,
-  top: 676,
-  width: 740,
-  height: 150,
+  left: 62,
+  top: 726,
+  width: 560,
+  height: 92,
 };
 
 const CONTACT = {
-  left: 96,
-  top: 706,
-  width: 552,
-  height: 52,
+  left: 74,
+  top: 716,
+  width: 536,
+  height: 44,
 };
 
 const FRONT: Layer = {
@@ -92,13 +92,17 @@ const GOODS: (Layer & { tilt: string; delay: string; fall: number })[] = [
 /** 그림이 차지하는 원래 칸. 배율을 줄이면 이 칸을 기준으로 가운데에 다시 앉힙니다. */
 const ART = { left: 32, width: 618.91, height: 740 };
 
+/* 남는 세로 여백을 위아래로 어떻게 나눌지. 0.5 면 한가운데라 상자가 떠 보여서,
+   대부분을 위로 보내 상자를 바닥 가까이 내려 앉힙니다. */
+const GROUND_BIAS = 0.78;
+
 /** 도면 좌표를 배율에 맞춰 화면 크기로 옮깁니다. */
 const at = (
   box: { left: number; top: number; width: number; height: number },
   scale: number,
 ) => {
   const shiftX = (682 - ART.width * scale) / 2;
-  const shiftY = (740 - ART.height * scale) / 2;
+  const shiftY = (740 - ART.height * scale) * GROUND_BIAS;
   return {
     left: `calc(${(shiftX + (box.left - ART.left) * scale).toFixed(2)} * var(--u))`,
     top: `calc(${(shiftY + box.top * scale).toFixed(2)} * var(--u))`,
@@ -113,10 +117,18 @@ const at = (
  */
 /** scale 은 그림 전체를 줄이는 배율입니다. 1 이면 칸을 가득 채웁니다. */
 export function TamburinsBox({ scale = 1 }: { scale?: number }) {
+  /* 상자가 바닥에 닿는 높이. 벽과 바닥이 갈리는 선이기도 합니다. */
+  const ground = (740 - ART.height * scale) * GROUND_BIAS + ART.height * scale;
+
   return (
-    <div className="tam-box relative h-full w-full overflow-hidden">
-      {/* 창빛과 바닥 그림자. 상자보다 뒤에 깔립니다. */}
-      <div className="tam-window" aria-hidden />
+    <div
+      className="tam-box relative h-full w-full overflow-hidden"
+      style={{ "--ground": ground.toFixed(1) } as CSSProperties}
+    >
+      {/* 벽과 바닥, 창에서 든 볕, 그리고 바닥 그림자. 모두 상자보다 뒤에 깔립니다. */}
+      <div className="tam-floor" aria-hidden />
+      <div className="tam-sun" aria-hidden />
+      <div className="tam-sun-floor" aria-hidden />
       <div className="tam-cast absolute" style={at(CAST, scale)} aria-hidden />
       <div
         className="tam-contact absolute"
@@ -184,6 +196,10 @@ export function TamburinsBox({ scale = 1 }: { scale?: number }) {
           className="object-contain"
         />
       </div>
+
+      {/* 볕은 벽만이 아니라 상자와 제품 위로도 지나갑니다.
+          같은 자리에 아주 옅게 한 겹 더 얹어 빛이 지나간 자국을 남깁니다. */}
+      <div className="tam-sun tam-sun-over" aria-hidden />
     </div>
   );
 }

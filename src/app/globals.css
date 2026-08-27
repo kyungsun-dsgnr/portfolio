@@ -165,34 +165,97 @@
     background: #ffffff;
   }
 
-  /* 창에서 든 빛. 빛을 칠하는 대신 빛이 닿지 않는 자리에 옅은 그늘을 둡니다.
-     판이 이미 밝아서, 흰빛을 얹으면 아무것도 보이지 않습니다. */
-  .tam-window {
+  /* ── 창에서 든 볕 ─────────────────────────
+     왼쪽 위 창에서 들어와 벽을 비스듬히 가로지르고 바닥으로 이어집니다.
+     볕이 읽히려면 그늘진 벽이 반 톤 눌려 있어야 해서, 판 색은 벽을 기준으로 잡고
+     볕이 닿는 자리만 희게 띄웁니다. 창살 자국은 볕 안에서만 옅게 갈립니다. */
+  .tam-sun {
     position: absolute;
-    inset: calc(-40 * var(--u));
-    background: linear-gradient(
-      108deg,
-      rgb(34 30 24 / 0.075) 0 14%,
-      rgb(34 30 24 / 0) 27% 49%,
-      rgb(34 30 24 / 0.05) 54% 58%,
-      rgb(34 30 24 / 0) 63% 84%,
-      rgb(34 30 24 / 0.075) 93% 100%
-    );
+    left: -16%;
+    top: -14%;
+    width: 68%;
+    height: 84%;
+    transform: skewY(21deg);
+    background:
+      repeating-linear-gradient(
+        90deg,
+        rgb(0 0 0 / 0) 0 45%,
+        rgb(0 0 0 / 0.032) 45% 48%,
+        rgb(0 0 0 / 0) 48% 100%
+      ),
+      repeating-linear-gradient(
+        0deg,
+        rgb(0 0 0 / 0) 0 31%,
+        rgb(0 0 0 / 0.026) 31% 33.5%,
+        rgb(0 0 0 / 0) 33.5% 100%
+      ),
+      linear-gradient(
+        95deg,
+        rgb(255 255 255 / 0.45) 0%,
+        rgb(255 255 255 / 0.62) 14%,
+        rgb(255 255 255 / 0.62) 70%,
+        rgb(255 255 255 / 0) 100%
+      );
     /* --u 를 넣은 blur 는 빌드에서 사라집니다. 고정 px 로 둡니다. */
-    filter: blur(9px);
+    /* 창이 멀어 그림자 가장자리가 부드럽습니다. */
+    filter: blur(6px);
     pointer-events: none;
   }
 
-  /* 상자가 판에 닿으며 지는 그림자. 빛이 왼쪽 위에서 들어와 오른쪽으로 눕습니다. */
+  /* 상자와 제품 위를 지나는 볕. 벽에 든 것과 같은 자리·같은 각도이되,
+     사진 위에 얹히므로 흔적만 남을 만큼 옅게 둡니다. */
+  .tam-sun-over {
+    opacity: 0.34;
+    filter: blur(9px);
+  }
+
+  /* 벽을 지나 바닥에 깔린 볕. 바닥은 눕혀 보이므로 더 납작하고 옅습니다. */
+  .tam-sun-floor {
+    position: absolute;
+    left: 4%;
+    right: -10%;
+    top: calc(var(--ground, 740) * var(--u));
+    bottom: 0;
+    transform: skewX(-38deg);
+    background: linear-gradient(
+      92deg,
+      rgb(255 255 255 / 0) 0%,
+      rgb(255 255 255 / 0.6) 20%,
+      rgb(255 255 255 / 0.6) 72%,
+      rgb(255 255 255 / 0) 100%
+    );
+    filter: blur(5px);
+    pointer-events: none;
+  }
+
+  /* 바닥. 벽보다 반 톤 밝고, 갈리는 자리에 실선 대신 아주 옅은 경계만 둡니다. */
+  .tam-floor {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    top: calc(var(--ground, 740) * var(--u));
+    background: linear-gradient(
+      180deg,
+      rgb(25 25 25 / 0.05) 0,
+      rgb(255 255 255 / 0.45) calc(6 * var(--u)),
+      rgb(255 255 255 / 0.7) 100%
+    );
+    pointer-events: none;
+  }
+
+  /* 상자가 드리우는 그림자. 상자 밑단을 윗변으로 삼아 오른쪽으로 눕습니다.
+     밑단에서는 짙고 또렷하다가 멀어지며 풀립니다. */
   .tam-cast {
-    border-radius: 50%;
-    background: radial-gradient(
-      closest-side,
-      rgb(30 27 22 / 0.2),
-      rgb(30 27 22 / 0.08) 55%,
+    transform-origin: 50% 0%;
+    transform: skewX(52deg) scaleY(1);
+    background: linear-gradient(
+      180deg,
+      rgb(30 27 22 / 0.26) 0%,
+      rgb(30 27 22 / 0.1) 45%,
       rgb(30 27 22 / 0) 100%
     );
-    filter: blur(16px);
+    filter: blur(9px);
     pointer-events: none;
   }
 
@@ -205,12 +268,13 @@
       rgb(26 23 19 / 0.18) 52%,
       rgb(26 23 19 / 0) 100%
     );
-    filter: blur(6px);
+    filter: blur(5px);
     pointer-events: none;
   }
 
   .tam-box {
-    background: #fafafa;
+    /* 볕이 닿지 않는 벽 색. 볕이 든 자리는 흰빛으로 올라가 판 전체 평균은 그대로입니다. */
+    background: #f4f4f1;
     /* 뚜껑이 눕는 각도가 보이도록 원근을 둡니다. 사진이 상자를 살짝 위에서 본
        것이라, 눈높이도 상자 위쪽(14%)에 맞춰야 닫힌 뚜껑이 아가리를 덮습니다. */
     perspective: calc(2600 * var(--u));

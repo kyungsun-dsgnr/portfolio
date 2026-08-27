@@ -26,10 +26,12 @@ export function SceneExplore() {
       </h2>
 
       {/* 지구본이 판을 다 덮고 휠을 가져가므로, 오른쪽 한 단은 지구본 위에 덮어
-          비워 둡니다. 이 자리에서 굴리면 휠이 지구본에 닿지 않고 장이 넘어갑니다. */}
-      <div className="scroll-lane col-start-8 col-span-1 row-start-1 row-span-6">
-        <span aria-hidden>Scroll</span>
-      </div>
+          비워 둡니다. 이 자리에서 굴리면 휠이 지구본에 닿지 않고 장이 넘어갑니다.
+          표시는 두지 않습니다 — 눈에 띄지 않게 자리만 잡아 둡니다. */}
+      <div
+        className="scroll-lane col-start-8 col-span-1 row-start-1 row-span-6"
+        aria-hidden
+      />
 
       {/* 굴리는 대신 눌러서 넘어갈 수도 있습니다. */}
       <button

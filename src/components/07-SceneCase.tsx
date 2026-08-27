@@ -12,6 +12,8 @@ type Props = {
   title: string;
   /** 브랜드 로고. 원본이 333×110(2칼럼 × 1행)에 맞춰 그려져 있습니다. */
   logo?: { src: string; alt: string };
+  /** 로고 그림이 없을 때 같은 자리에 세우는 글자 로고 */
+  wordmark?: string;
   body: ReactNode;
   /** 우측을 채울 것. 없으면 회색 자리로 둡니다. */
   visual?: ReactNode;
@@ -22,7 +24,15 @@ type Props = {
 };
 
 /** 케이스 한 장 — 좌측에 제목·로고·설명, 우측에 큰 비주얼 */
-export function SceneCase({ title, logo, body, visual, aside, note }: Props) {
+export function SceneCase({
+  title,
+  logo,
+  wordmark,
+  body,
+  visual,
+  aside,
+  note,
+}: Props) {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
 
   return (
@@ -37,6 +47,15 @@ export function SceneCase({ title, logo, body, visual, aside, note }: Props) {
           style={{ "--delay": "0.08s" } as CSSProperties}
         >
           {aside}
+        </div>
+      )}
+
+      {!logo && wordmark && (
+        <div
+          className="rise flex items-center col-span-2 row-start-5"
+          style={{ "--delay": "0.1s" } as CSSProperties}
+        >
+          <span className="case-wordmark">{wordmark}</span>
         </div>
       )}
 

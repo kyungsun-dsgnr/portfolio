@@ -302,6 +302,25 @@
     scale: calc(var(--fit, 1) * 0.92);
   }
 
+  /* 로고 그림이 없는 케이스의 글자 로고. 자리와 무게를 로고와 같게 둡니다. */
+  .case-wordmark {
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: calc(34 * var(--u));
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+
+  /* 16장 — 장은 흰색으로 두고, 상자가 놓인 판만 한 톤 눌러 앉힙니다. */
+  .section:has(.nud-box) {
+    background: #ffffff;
+  }
+
+  .nud-box {
+    background: #fafafa;
+    padding: calc(60 * var(--u));
+  }
+
   .tam-box {
     /* 볕이 닿지 않는 벽 색. 볕이 든 자리는 흰빛으로 올라가 판 전체 평균은 그대로입니다. */
     background: #f4f4f1;

@@ -9,6 +9,7 @@ import { SceneTamburinsCover } from "@/components/12-SceneTamburinsCover";
 import { SceneAfter } from "@/components/11-SceneAfter";
 import { SceneExplore } from "@/components/10-SceneExplore";
 import { SceneIntro } from "@/components/01-SceneIntro";
+import { SceneNudakeCover } from "@/components/16-SceneNudakeCover";
 import { SceneProblem } from "@/components/08-SceneProblem";
 import { ScenePerspective } from "@/components/03-ScenePerspective";
 import { ScenePrinciples } from "@/components/04-ScenePrinciples";
@@ -159,6 +160,8 @@ export default function Home() {
           label: "Current Experience",
           node: <SceneScreens />,
         },
+
+        { id: "nudake", label: "Nudake", node: <SceneNudakeCover /> },
         /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.
         {
           id: "gentle-monster-2",

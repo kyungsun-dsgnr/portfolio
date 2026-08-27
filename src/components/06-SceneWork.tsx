@@ -38,7 +38,7 @@ const WORKS = [
     body: "고르고 건네는 행동 기억을 바탕으로 선물의 감정을 구성하는 경험",
     place: "col-start-7 col-span-2",
     image: "/images/work-nudake.png",
-    target: undefined,
+    target: "nudake",
   },
 ];
 
@@ -72,8 +72,13 @@ export function SceneWork() {
     // 기본 앵커 이동은 순간이동이라 막고, 노브가 넘어갈 때와 같은 방식으로 스크롤합니다.
     event.preventDefault();
     setShowCursor(false);
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    section.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    section.scrollIntoView({
+      behavior: reduced ? "auto" : "smooth",
+      block: "center",
+    });
   }
 
   return (
@@ -88,7 +93,8 @@ export function SceneWork() {
       >
         하나의 UX 관점에서 출발한 세 가지 실험입니다.
         <br />
-        익숙한 감각과 행동의 기억을 각각 탐색, 선택, 구성의 디지털 경험으로 확장했습니다.
+        익숙한 감각과 행동의 기억을 각각 탐색, 선택, 구성의 디지털 경험으로
+        확장했습니다.
       </p>
 
       {WORKS.map((work, i) => {
@@ -141,7 +147,12 @@ export function SceneWork() {
         );
       })}
 
-      <div ref={cursorRef} className="view-cursor" data-on={showCursor || undefined} aria-hidden>
+      <div
+        ref={cursorRef}
+        className="view-cursor"
+        data-on={showCursor || undefined}
+        aria-hidden
+      >
         VIEW
       </div>
     </div>

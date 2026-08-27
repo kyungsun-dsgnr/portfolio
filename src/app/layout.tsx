@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Sacramento } from "next/font/google";
+import { Inter, Playwrite_NZ_Basic } from "next/font/google";
 import { GridOverlay } from "@/components/GridOverlay";
 import "./globals.css";
 
@@ -9,11 +9,11 @@ const inter = Inter({
 });
 
 /* 누데이크 카드에 손으로 쓴 것처럼 들어가는 글씨.
-   획 굵기가 고르고 흘려 쓴 결이라 펜으로 적은 것에 가깝습니다. */
-const script = Sacramento({
+   손글씨 교본 서체라 획이 사람이 쓴 결에 가깝습니다.
+   이 집안은 subsets 가 비어 있어 지정하지 않습니다. */
+const script = Playwrite_NZ_Basic({
   variable: "--font-script",
   weight: "400",
-  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {

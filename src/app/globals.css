@@ -644,11 +644,12 @@
     flex-direction: column;
     align-items: center;
     gap: calc(2 * var(--u));
-    color: rgb(34 30 24 / 0.66);
+    color: rgb(30 26 20 / 0.82);
     font-family: var(--font-hand);
-    font-size: calc(42 * var(--u));
-    font-weight: 400;
-    line-height: 1.08;
+    font-size: calc(30 * var(--u));
+    /* 가변 폰트라 100~400 사이를 쓸 수 있습니다. 얇게 그어 놓습니다. */
+    font-weight: 230;
+    line-height: 1.1;
     letter-spacing: 0;
     white-space: pre;
     mix-blend-mode: multiply;

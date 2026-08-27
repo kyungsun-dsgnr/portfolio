@@ -13,7 +13,6 @@ const inter = Inter({
    이 집안은 subsets 가 비어 있어 지정하지 않습니다. */
 const script = Playwrite_NZ_Basic({
   variable: "--font-script",
-  weight: "400",
 });
 
 export const metadata: Metadata = {

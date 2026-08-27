@@ -68,12 +68,16 @@ const PICKED = 0;
 const CHECK_AT = 900;
 const PRESS_AT = 2100;
 const TURN_AT = 2600;
+/* 두 번째 창에서도 하나를 고르고 "선택" 을 누릅니다. */
+const CHECK2_AT = 4000;
+const PRESS2_AT = 5300;
 
 /** 향 한 줄 */
 function Row({
   scent,
   dim,
   checked,
+  shut,
 }: {
   scent: {
     name: string;
@@ -88,6 +92,8 @@ function Row({
   };
   dim?: boolean;
   checked?: boolean;
+  /** 펼쳐 둔 설명을 접습니다. 고르고 나면 목록으로 돌아갑니다. */
+  shut?: boolean;
 }) {
   return (
     <li data-dim={dim || undefined}>
@@ -120,7 +126,7 @@ function Row({
       </div>
 
       {/* 펼친 줄에만 딸려 나오는 설명과 향노트 */}
-      {scent.open && (
+      {scent.open && !shut && (
         <div className="scent-story">
           <p>{scent.story}</p>
           <p className="scent-story-head">향노트</p>
@@ -137,11 +143,18 @@ function Row({
  * 세트에 든 제품 수만큼 넘겨야 하는 창.
  * 하나를 고르면 "다음" 이 살아나고, 누르면 두 번째 창으로 넘어갑니다.
  */
-export function TamburinsScentScreen() {
+export function TamburinsScentScreen({
+  onStep,
+}: {
+  /** 창이 넘어갈 때 알려 줍니다. 칸 아래 마디를 같이 바꾸는 데 씁니다. */
+  onStep?: (step: 1 | 2) => void;
+}) {
   const [page, inView] = useInView<HTMLDivElement>(0.3);
   const [checked, setChecked] = useState(false);
   const [press, setPress] = useState(false);
   const [second, setSecond] = useState(false);
+  const [chosen, setChosen] = useState(false);
+  const [press2, setPress2] = useState(false);
 
   useEffect(() => {
     if (!inView) {
@@ -149,6 +162,9 @@ export function TamburinsScentScreen() {
         setChecked(false);
         setPress(false);
         setSecond(false);
+        setChosen(false);
+        setPress2(false);
+        onStep?.(1);
       }, 0);
       return () => clearTimeout(back);
     }
@@ -156,10 +172,15 @@ export function TamburinsScentScreen() {
     const timers = [
       window.setTimeout(() => setChecked(true), CHECK_AT),
       window.setTimeout(() => setPress(true), PRESS_AT),
-      window.setTimeout(() => setSecond(true), TURN_AT),
+      window.setTimeout(() => {
+        setSecond(true);
+        onStep?.(2);
+      }, TURN_AT),
+      window.setTimeout(() => setChosen(true), CHECK2_AT),
+      window.setTimeout(() => setPress2(true), PRESS2_AT),
     ];
     return () => timers.forEach(clearTimeout);
-  }, [inView]);
+  }, [inView, onStep]);
 
   return (
     <div className="scent-screen" ref={page}>
@@ -200,14 +221,26 @@ export function TamburinsScentScreen() {
         </header>
 
         <ul className="scent-list">
-          {SECOND.map((scent) => (
-            <Row key={scent.name} scent={scent} />
+          {SECOND.map((scent, i) => (
+            <Row
+              key={scent.name}
+              scent={scent}
+              dim={chosen && i !== 0}
+              checked={chosen && i === 0}
+              shut={chosen}
+            />
           ))}
         </ul>
 
         <div className="scent-pair">
           <span className="scent-back-btn">이전</span>
-          <span className="scent-pick">선택</span>
+          <span
+            className="scent-pick"
+            data-on={chosen || undefined}
+            data-press={press2 || undefined}
+          >
+            선택
+          </span>
         </div>
       </div>
     </div>

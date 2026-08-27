@@ -2023,9 +2023,22 @@
     color: #1d1d1d;
   }
 
+  /* 하나라도 고르면 살아납니다. */
   .scent-pick {
     background: #efefef;
     color: #767676;
+    transition:
+      background 260ms ease,
+      color 260ms ease;
+  }
+
+  .scent-pick[data-on] {
+    background: #1d1d1d;
+    color: #ffffff;
+  }
+
+  .scent-pick[data-press] {
+    animation: next-press 420ms cubic-bezier(0.3, 0.8, 0.3, 1);
   }
 
   .steps-cap {

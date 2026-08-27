@@ -2,7 +2,7 @@
 
 /** 15장 — 지금의 경험. 실제 화면을 지나는 순서대로 늘어놓습니다. */
 
-import type { CSSProperties } from "react";
+import { useCallback, useState, type CSSProperties } from "react";
 
 import { TamburinsGiftScreen } from "@/components/TamburinsGiftScreen";
 import { TamburinsProductScreen } from "@/components/TamburinsProductScreen";
@@ -58,6 +58,9 @@ const px = (value: number) => `calc(${value} * var(--u))`;
  */
 export function SceneScreens() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
+  /* 향 선택 창이 1/2 에서 2/2 로 넘어가면 그 칸의 마디도 같이 바뀝니다. */
+  const [scentStep, setScentStep] = useState<1 | 2>(1);
+  const onStep = useCallback((step: 1 | 2) => setScentStep(step), []);
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
@@ -97,13 +100,19 @@ export function SceneScreens() {
             >
               {shot.real === "gift" && <TamburinsGiftScreen />}
               {shot.real === "product" && <TamburinsProductScreen />}
-              {shot.real === "scent1" && <TamburinsScentScreen />}
+              {shot.real === "scent1" && (
+                <TamburinsScentScreen onStep={onStep} />
+              )}
               {!shot.real && <span>{shot.screen}</span>}
             </div>
             {/* 화면 이름은 Current User Flow 의 마디와 같은 말을 씁니다.
                 아래 한 줄은 그 화면에서 하는 일입니다. */}
             <div className="steps-cap">
-              <h3 className="steps-step">{shot.screen}</h3>
+              <h3 className="steps-step">
+                {shot.real === "scent1"
+                  ? `Scent ${scentStep} / 2`
+                  : shot.screen}
+              </h3>
               <p className="steps-kind">{shot.step}</p>
             </div>
           </div>

@@ -19,24 +19,22 @@ export function SceneExplore() {
         <GlobeDots card openAt="Seoul" />
       </div>
 
-      <h2 className="type-lead rise col-start-1 col-span-3 row-start-1 row-span-2">
+      {/* 글이 놓이는 왼쪽만 흰빛으로 가라앉힙니다. 높이는 판 전체입니다. */}
+      <div
+        className="field-veil col-start-1 col-span-4 row-start-1 row-span-6"
+        aria-hidden
+      />
+
+      <h2 className="type-lead rise relative z-10 col-start-1 col-span-3 row-start-1 row-span-2">
         Turn the World,
         <br />
         Find a City
       </h2>
 
-      {/* 지구본이 판을 다 덮고 휠을 가져가므로, 오른쪽 한 단은 지구본 위에 덮어
-          비워 둡니다. 이 자리에서 굴리면 휠이 지구본에 닿지 않고 장이 넘어갑니다.
-          표시는 두지 않습니다 — 눈에 띄지 않게 자리만 잡아 둡니다. */}
-      <div
-        className="scroll-lane col-start-8 col-span-1 row-start-1 row-span-6"
-        aria-hidden
-      />
-
       {/* 굴리는 대신 눌러서 넘어갈 수도 있습니다. */}
       <button
         type="button"
-        className="page-next rise self-end col-start-4 col-span-2 row-start-6"
+        className="page-next rise relative z-10 self-end col-start-4 col-span-2 row-start-6"
         style={{ "--delay": "0.2s" } as CSSProperties}
         onClick={() =>
           document
@@ -49,7 +47,7 @@ export function SceneExplore() {
       </button>
 
       <div
-        className="field-note rise self-start col-start-1 col-span-3 row-start-3 row-span-2"
+        className="field-note rise relative z-10 self-start col-start-1 col-span-3 row-start-3 row-span-2"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
         <h3 className="type-title">Familiar Interaction</h3>

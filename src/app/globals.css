@@ -253,6 +253,22 @@
     pointer-events: none;
   }
 
+  /* 상자에 담기는 두 가지. 로고 윗행에 한 단씩 서고, 사이는 그리드 간격입니다. */
+  .tam-goods {
+    display: grid;
+    height: 100%;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--grid-gap);
+  }
+
+  /* 제품은 칸 안에서 비율을 지키며 가운데에 섭니다. */
+  .tam-good {
+    position: relative;
+    border-radius: calc(4 * var(--u));
+    background: #fafafa;
+    padding: calc(24 * var(--u));
+  }
+
   .tam-box {
     /* 볕이 닿지 않는 벽 색. 볕이 든 자리는 흰빛으로 올라가 판 전체 평균은 그대로입니다. */
     background: #f4f4f1;
@@ -1373,7 +1389,12 @@
   }
 
   /* 안내 문구는 천천히 반짝이고, 조명이 켜질수록 물러납니다. */
+  /* 조작 안내는 어느 장에서나 같은 결로 둡니다(.field-hint 와 같은 값). */
   .hint {
+    color: rgb(25 25 25 / 0.5);
+    font-size: calc(14 * var(--u));
+    line-height: 1.4;
+    letter-spacing: 0.01em;
     animation: hint-pulse 2.6s ease-in-out infinite;
   }
 }
@@ -1549,6 +1570,43 @@
     justify-content: center;
   }
 
+  /* 지구본 한가운데 놓이는 조작 안내. 잠깐 떠 있다 스스로 물러납니다.
+     확대하기 전에는 어떻게 확대하는지를, 확대한 뒤에는 돌아가는 길을 말합니다. */
+  .globe-note {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 3;
+    translate: -50% -50%;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.72);
+    padding: calc(10 * var(--u)) calc(20 * var(--u));
+    color: #191919;
+    font-family: var(--font-body);
+    font-size: calc(17 * var(--u));
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    animation: note-fade 5s ease both;
+  }
+
+  @keyframes note-fade {
+    0% {
+      opacity: 0;
+    }
+    14% {
+      opacity: 0.55;
+    }
+    68% {
+      opacity: 0.55;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
   .globe-canvas {
     height: 100%;
     width: 100%;
@@ -1587,6 +1645,23 @@
     transition:
       clip-path 620ms cubic-bezier(0.22, 1, 0.36, 1),
       opacity 300ms ease;
+  }
+
+  /* 눌러서 펼칠 수 있다는 표시. 열리면 위를 봅니다. */
+  .globe-badge-cue {
+    width: calc(5 * var(--tip));
+    height: calc(5 * var(--tip));
+    margin-left: calc(1 * var(--tip));
+    border-right: calc(1.2 * var(--tip)) solid currentColor;
+    border-bottom: calc(1.2 * var(--tip)) solid currentColor;
+    rotate: 45deg;
+    translate: 0 calc(-1.4 * var(--tip));
+    transition: rotate 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .globe-badge[data-open] .globe-badge-cue {
+    rotate: -135deg;
+    translate: 0 calc(1.4 * var(--tip));
   }
 
   .globe-badge-divider {
@@ -1646,11 +1721,21 @@
      목업을 1.53 배로 키워 놓고, 장을 넘어가는 아래쪽은 캔버스가 자릅니다. */
   /* ── 지구본만 놓고 만져 보는 장 ─────────────────
      판 전체가 지구본이고, 글은 그 위에 얹힙니다. */
-  /* 지구본 위에 덮어 두는 세로 띠. 여기서 굴리면 휠이 지구본에 닿지 않고
-     장 넘김으로 갑니다. 보이지는 않고 자리만 차지합니다. */
-  .scroll-lane {
-    position: relative;
-    z-index: 2;
+  /* 지구본이 판을 다 덮고 있어 왼쪽 글이 점밭 위에 얹힙니다.
+     흰빛을 왼쪽에서 오른쪽으로 풀어 글 뒤만 가라앉힙니다.
+     판 여백 밖까지 물려 두어 경계가 사각형으로 드러나지 않게 합니다. */
+  .field-veil {
+    z-index: 1;
+    margin-top: calc(-1 * var(--viewport-margin));
+    margin-bottom: calc(-1 * var(--viewport-margin));
+    margin-left: calc(-1 * var(--viewport-margin));
+    background: linear-gradient(
+      90deg,
+      #ffffff 0 46%,
+      rgb(255 255 255 / 0.86) 68%,
+      rgb(255 255 255 / 0) 100%
+    );
+    pointer-events: none;
   }
 
   .field {

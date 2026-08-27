@@ -309,6 +309,12 @@ export function GlobeDots({
   const [label, setLabel] = useState<(typeof STORES)[number] | null>(
     opening < 0 ? null : STORES[opening],
   );
+  /** 확대해 들어간 참. 지구본으로 돌아가는 길을 이때만 내놓습니다. */
+  const [zoomed, setZoomed] = useState(false);
+  /** 화면에 닿아 있는 손가락들. 둘이면 벌린 만큼 배율이 바뀝니다. */
+  const touches = useRef(new Map<number, [number, number]>());
+  /** 직전 두 손가락 사이 거리 */
+  const pinch = useRef(0);
   /** 이름표를 눌러 카드를 펼친 참 */
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
@@ -949,7 +955,33 @@ export function GlobeDots({
     activeRef.current = found;
   }
 
+  /** 확대를 풀고 지구본으로 돌아옵니다. 고른 매장은 그대로 둡니다. */
+  function backToGlobe() {
+    magTo.current = 1;
+    fitMag.current = 1;
+    facing.current = null;
+    fitSpan.current = null;
+    pins.current = STORES;
+    setZoomed(false);
+  }
+
+  /** 두 손가락 사이 거리 */
+  function spanOfTouches() {
+    const [a, b] = [...touches.current.values()];
+    return a && b ? Math.hypot(a[0] - b[0], a[1] - b[1]) : 0;
+  }
+
   function pointerDown(event: React.PointerEvent<HTMLCanvasElement>) {
+    touches.current.set(event.pointerId, [event.clientX, event.clientY]);
+    /* 두 번째 손가락이 닿으면 돌리기를 멈추고 벌린 만큼 배율을 바꿉니다.
+       뗄 때 점을 집은 것으로 오해하지 않게 끌린 거리도 크게 잡아 둡니다. */
+    if (touches.current.size === 2) {
+      pinch.current = spanOfTouches();
+      dragging.current = false;
+      dragged.current = 999;
+      return;
+    }
+
     // 톡 누르기만 하면 move 가 오지 않으므로 여기서도 점을 찾아 둡니다.
     findStore(event);
     // 포인터 캡처가 실패해도 드래그 상태는 어긋나지 않게 먼저 세웁니다.
@@ -970,6 +1002,28 @@ export function GlobeDots({
     // enter 에 기대지 않습니다. 움직임이 잡히면 이미 지구본 위입니다.
     hovering.current = true;
     const box = event.currentTarget.getBoundingClientRect();
+
+    if (touches.current.has(event.pointerId)) {
+      touches.current.set(event.pointerId, [event.clientX, event.clientY]);
+    }
+
+    /* 두 손가락. 벌리면 커지고 오므리면 작아집니다. 휠과 같은 한계를 씁니다. */
+    if (touches.current.size === 2) {
+      const span = spanOfTouches();
+      if (pinch.current && span) {
+        const next = Math.min(
+          MAX_MAG,
+          Math.max(1, magTo.current * (span / pinch.current)),
+        );
+        magTo.current = next;
+        setZoomed(next > 1.02);
+        if (!facing.current && chosenRef.current !== null) {
+          facing.current = pins.current[chosenRef.current].at;
+        }
+      }
+      pinch.current = span;
+      return;
+    }
 
     if (dragging.current) {
       const dx = event.clientX - last.current[0];
@@ -1027,8 +1081,13 @@ export function GlobeDots({
     if (!canvas || !interactive) return;
 
     function onWheel(event: WheelEvent) {
-      // 트랙패드 핀치는 ctrl 을 얹은 휠로 옵니다. 한 번에 크게 움직입니다.
-      const step = event.ctrlKey ? 0.008 : 0.0011;
+      /* 평소 휠은 손대지 않고 흘려보냅니다. 지구본이 판을 다 덮고 있어서,
+         그러지 않으면 페이지를 넘기려던 손짓이 죄다 확대로 먹힙니다.
+         트랙패드 핀치도 ctrl 을 얹은 휠로 들어와 여기로 걸립니다. */
+      if (!event.ctrlKey && !event.metaKey) return;
+      /* 마우스 휠은 한 칸이 크고(≈100) 핀치는 잘게 옵니다. 크기로 갈라
+         한 칸에 화면이 뛰어 버리지 않게 합니다. */
+      const step = Math.abs(event.deltaY) > 40 ? 0.0035 : 0.008;
       const next = Math.min(
         MAX_MAG,
         Math.max(1, magTo.current * Math.exp(-event.deltaY * step)),
@@ -1036,6 +1095,7 @@ export function GlobeDots({
       if (next === magTo.current) return;
       event.preventDefault();
       magTo.current = next;
+      setZoomed(next > 1.02);
 
       /* 펼치기 시작하면 집어 둔 매장을 가운데로 데려옵니다.
          구일 때는 살짝 비켜 두는 편이 보기 좋지만, 평면에서는 초점이 가장자리로 밀립니다. */
@@ -1068,8 +1128,9 @@ export function GlobeDots({
                   byHand.current = true;
                   chosenRef.current = hit;
                   setLabel(hit === null ? null : pins.current[hit]);
-                  openRef.current = false;
-                  setOpen(false);
+                  /* 점 한 번에 카드까지 엽니다. 이름표를 다시 눌러 접습니다. */
+                  openRef.current = card && hit !== null;
+                  setOpen(openRef.current);
 
                   /* 매장이 여럿인 나라를 고르면 지도가 평면으로 펴지면서
                      그 나라 쪽으로 커집니다. 나머지 매장까지 함께 보입니다. */
@@ -1097,16 +1158,15 @@ export function GlobeDots({
                       ...STORES,
                       ...SPOTS.filter((one) => one.country === store!.country),
                     ];
+                    setZoomed(true);
                   } else {
-                    magTo.current = 1;
-                    fitMag.current = 1;
-                    facing.current = null;
-                    fitSpan.current = null;
-                    pins.current = STORES;
+                    backToGlobe();
                   }
 
                   onPickStore?.(store);
                 }
+                touches.current.delete(event.pointerId);
+                pinch.current = 0;
                 try {
                   event.currentTarget.releasePointerCapture(event.pointerId);
                 } catch {
@@ -1115,16 +1175,39 @@ export function GlobeDots({
               }
             : undefined
         }
+        onPointerCancel={
+          interactive
+            ? (event) => {
+                touches.current.delete(event.pointerId);
+                pinch.current = 0;
+                dragging.current = false;
+              }
+            : undefined
+        }
+        /* 두 번 누르면 지구본으로 돌아옵니다. */
+        onDoubleClick={interactive ? backToGlobe : undefined}
         onPointerLeave={
           interactive
             ? () => {
                 dragging.current = false;
                 hovering.current = false;
                 activeRef.current = null;
+                touches.current.clear();
+                pinch.current = 0;
               }
             : undefined
         }
       />
+
+      {/* 지구본 한가운데 놓이는 안내. 확대 전과 후에 할 말이 다릅니다. */}
+      {interactive && (
+        /* 말이 바뀌면 다시 떠오르도록 key 를 갈아 끼웁니다. */
+        <p className="globe-note" key={zoomed ? "back" : "zoom"}>
+          {zoomed
+            ? "두 번 누르면 지구본으로 돌아옵니다"
+            : "⌘ / Ctrl + 스크롤로 확대"}
+        </p>
+      )}
 
       {/* 이름표를 누르면 그 아래로 열리는 매장 카드 */}
       {card && (
@@ -1176,6 +1259,7 @@ export function GlobeDots({
           ref={badgeRef}
           className="globe-badge"
           data-tap={card || undefined}
+          data-open={open || undefined}
           onClick={
             card
               ? () => {
@@ -1201,6 +1285,8 @@ export function GlobeDots({
               ) : (
                 <span>({list.length})</span>
               )}
+              {/* 눌러서 펼칠 수 있다는 표시. 열리면 반대로 돕니다. */}
+              {card && <span className="globe-badge-cue" aria-hidden />}
             </>
           )}
         </div>

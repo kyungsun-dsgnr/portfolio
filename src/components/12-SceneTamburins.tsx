@@ -48,8 +48,14 @@ const FRONT: Layer = {
 /* 상자에 담기는 것들. 밑동이 상자 앞면에 가려지도록 앞면보다 뒤에 놓입니다.
    기울기와 시차를 서로 다르게 두어 둘이 한 몸처럼 떨어지지 않게 합니다.
    fall 은 판 위쪽 밖에서 시작하도록 제 자리보다 조금 더 잡은 값입니다. */
-const GOODS: (Layer & { tilt: string; delay: string; fall: number })[] = [
+export const GOODS: (Layer & {
+  id: string;
+  tilt: string;
+  delay: string;
+  fall: number;
+})[] = [
   {
+    id: "perfume",
     src: "/images/tamburins-perfume.png",
     left: 126.38,
     top: 386.74,
@@ -60,6 +66,7 @@ const GOODS: (Layer & { tilt: string; delay: string; fall: number })[] = [
     fall: 620,
   },
   {
+    id: "wash",
     src: "/images/tamburins-handwash.png",
     left: 362.33,
     top: 98.16,
@@ -99,8 +106,20 @@ const at = (
  * 선물 상자에 제품이 담긴 모습. 케이스 표지의 비주얼 자리에 그대로 들어갑니다.
  * 자리 값은 682×740 칸을 기준으로 잡혀 있어, 그 크기의 칸이면 어디에 놓아도 맞습니다.
  */
-/** scale 은 그림 전체를 줄이는 배율입니다. 1 이면 칸을 가득 채웁니다. */
-export function TamburinsBox({ scale = 1 }: { scale?: number }) {
+/**
+ * scale 은 그림 전체를 줄이는 배율입니다. 1 이면 칸을 가득 채웁니다.
+ * placed 를 주면 그 안에 든 것만 상자에 담깁니다. 주지 않으면 처음부터 다 담깁니다.
+ */
+export function TamburinsBox({
+  scale = 1,
+  placed,
+}: {
+  scale?: number;
+  placed?: string[];
+}) {
+  /* 손으로 담는 장에서는 누른 그 순간에 떨어져야 합니다.
+     처음부터 담아 두는 장에서만 상자가 열리기를 기다립니다. */
+  const goods = placed ? GOODS.filter((one) => placed.includes(one.id)) : GOODS;
   /* 벽과 바닥이 갈리는 선. 상자를 살짝 위에서 본 사진이라 이 선은 상자 뒤에 있고,
      따라서 밑단(740)이 아니라 그보다 위(505)에 놓여야 상자가 바닥에 놓인 것으로 읽힙니다.
      선의 대부분은 상자에 가려지고, 좌우로만 드러납니다. */
@@ -141,7 +160,7 @@ export function TamburinsBox({ scale = 1 }: { scale?: number }) {
       </div>
 
       {/* 위에서 떨어져 상자에 담기고, 닿은 자리에서 반듯하게 섭니다. */}
-      {GOODS.map((one) => (
+      {goods.map((one) => (
         <div
           key={one.src}
           className="tam-drop absolute"
@@ -149,7 +168,7 @@ export function TamburinsBox({ scale = 1 }: { scale?: number }) {
             {
               ...at(one, scale),
               "--tilt": one.tilt,
-              "--delay": one.delay,
+              "--delay": placed ? "0.05s" : one.delay,
               "--fall": (one.fall * scale).toFixed(1),
             } as CSSProperties
           }

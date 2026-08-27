@@ -253,12 +253,22 @@
     pointer-events: none;
   }
 
-  /* 상자에 담기는 두 가지. 로고 윗행에 한 단씩 서고, 사이는 그리드 간격입니다. */
+  /* 상자에 담기는 두 가지. 한 단씩 나눠 서고, 사이는 그리드 간격입니다.
+     향수는 로고 바로 윗칸 한 행, 핸드워시는 키가 커서 두 행을 씁니다. */
   .tam-goods {
     display: grid;
     height: 100%;
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
     gap: var(--grid-gap);
+  }
+
+  .tam-good:first-child {
+    grid-area: 2 / 1;
+  }
+
+  .tam-good:last-child {
+    grid-area: 1 / 2 / span 2;
   }
 
   /* 제품은 칸 안에서 비율을 지키며 가운데에 섭니다. */
@@ -267,6 +277,29 @@
     border-radius: calc(4 * var(--u));
     background: #fafafa;
     padding: calc(24 * var(--u));
+  }
+
+  /* 제품마다 칸을 채우는 정도가 다릅니다. */
+  .tam-good img {
+    scale: var(--fit, 1);
+    transition:
+      opacity 300ms ease,
+      scale 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .tam-good {
+    cursor: pointer;
+    transition: background 240ms ease;
+  }
+
+  .tam-good:hover {
+    background: #f4f4f2;
+  }
+
+  /* 상자에 담긴 제품. 카드에는 자리만 옅게 남습니다. */
+  .tam-good[aria-pressed="true"] img {
+    opacity: 0.22;
+    scale: calc(var(--fit, 1) * 0.92);
   }
 
   .tam-box {
@@ -861,6 +894,7 @@
   /* 캔버스를 채우는 8×6 그리드.
      자식은 Tailwind의 col-span-* / row-span-* / col-start-* 로 배치합니다. */
   .page-grid {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(var(--grid-cols), 1fr);
     grid-template-rows: repeat(var(--grid-rows), 1fr);
@@ -1570,9 +1604,9 @@
     justify-content: center;
   }
 
-  /* 지구본 한가운데 놓이는 조작 안내. 잠깐 떠 있다 스스로 물러납니다.
-     확대하기 전에는 어떻게 확대하는지를, 확대한 뒤에는 돌아가는 길을 말합니다. */
-  .globe-note {
+  /* 화면 한가운데 놓이는 조작 안내. 잠깐 떠 있다 스스로 물러납니다.
+     지구본은 확대 전과 후에 할 말이 다르고, 탬버린즈는 무엇을 눌러야 하는지 말합니다. */
+  .center-note {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -1580,11 +1614,11 @@
     translate: -50% -50%;
     border-radius: 999px;
     background: rgb(255 255 255 / 0.72);
-    padding: calc(10 * var(--u)) calc(20 * var(--u));
+    padding: calc(12 * var(--u)) calc(24 * var(--u));
     color: #191919;
     font-family: var(--font-body);
-    font-size: calc(17 * var(--u));
-    font-weight: 500;
+    font-size: calc(32 * var(--u));
+    font-weight: 600;
     letter-spacing: 0.01em;
     white-space: nowrap;
     opacity: 0;

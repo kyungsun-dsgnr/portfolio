@@ -311,6 +311,8 @@ export function GlobeDots({
   );
   /** 확대해 들어간 참. 지구본으로 돌아가는 길을 이때만 내놓습니다. */
   const [zoomed, setZoomed] = useState(false);
+  /** 장에 들어설 때마다 하나씩 오릅니다. 안내 한 줄이 그때 다시 떠오릅니다. */
+  const [entered, setEntered] = useState(0);
   /** 화면에 닿아 있는 손가락들. 둘이면 벌린 만큼 배율이 바뀝니다. */
   const touches = useRef(new Map<number, [number, number]>());
   /** 직전 두 손가락 사이 거리 */
@@ -484,6 +486,9 @@ export function GlobeDots({
        지금 보고 있는 지구본이 그만큼 느려집니다. */
     const eye = new IntersectionObserver(
       ([entry]) => {
+        /* 장에 들어섰습니다. 안내 한 줄을 다시 띄웁니다 — 지구본은 페이지가
+           열릴 때 이미 서 있어서, 처음 한 번만 띄우면 아무도 못 봅니다. */
+        if (entry.isIntersecting && !seen.current) setEntered((n) => n + 1);
         seen.current = entry.isIntersecting;
       },
       { rootMargin: "20%" },
@@ -1202,7 +1207,10 @@ export function GlobeDots({
       {/* 지구본 한가운데 놓이는 안내. 확대 전과 후에 할 말이 다릅니다. */}
       {interactive && (
         /* 말이 바뀌면 다시 떠오르도록 key 를 갈아 끼웁니다. */
-        <p className="globe-note" key={zoomed ? "back" : "zoom"}>
+        <p
+          className="center-note"
+          key={`${entered}-${zoomed ? "back" : "zoom"}`}
+        >
           {zoomed
             ? "두 번 누르면 지구본으로 돌아옵니다"
             : "⌘ / Ctrl + 스크롤로 확대"}

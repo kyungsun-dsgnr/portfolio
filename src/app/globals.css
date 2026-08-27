@@ -1759,32 +1759,49 @@
   }
 
   /* ── 실제 화면(향 선택 창) ─────────────────────
-     제품 화면 위로 덮여 열리는 창입니다. 뒤는 어둡게 깔립니다. */
+     제품 화면에서 열리는 창입니다. 하나를 고르면 "다음" 이 살아나고,
+     누르면 두 번째 창이 옆에서 밀려 들어옵니다. */
   .scent-screen {
     position: absolute;
     inset: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    overscroll-behavior-y: contain;
-    scrollbar-width: none;
+    overflow: hidden;
     background: #ffffff;
     color: #1d1d1d;
     font-family: var(--font-body);
     text-align: left;
   }
 
-  .scent-screen::-webkit-scrollbar {
-    display: none;
-  }
-
   .scent-sheet {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
     background: #ffffff;
     padding: 0 calc(15 * var(--u));
+    transition:
+      translate 620ms cubic-bezier(0.3, 0.8, 0.3, 1),
+      opacity 420ms ease;
+  }
+
+  /* 첫 창은 왼쪽으로 물러나고 */
+  .scent-sheet[data-gone] {
+    translate: -18% 0;
+    opacity: 0;
+  }
+
+  /* 두 번째 창은 오른쪽에서 들어옵니다. */
+  .scent-sheet-2 {
+    translate: 100% 0;
+  }
+
+  .scent-sheet-2[data-in] {
+    translate: 0 0;
   }
 
   .scent-head {
     display: flex;
     height: calc(60 * var(--u));
+    flex: none;
     align-items: center;
     gap: calc(4 * var(--u));
   }
@@ -1831,17 +1848,30 @@
     rotate: -45deg;
   }
 
+  /* 향 목록. 창보다 길면 그 안에서 굴러갑니다. */
   .scent-list {
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
     padding-bottom: calc(15 * var(--u));
   }
 
-  .scent-list li {
+  .scent-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scent-row {
     display: flex;
     height: calc(109 * var(--u));
     padding: calc(5 * var(--u)) 0;
   }
 
-  /* 고를 수 없는 향. 창을 열고 나서야 알게 됩니다. */
+  /* 고르지 않은 향. 고른 뒤에는 물러나 보입니다. */
+  .scent-list li {
+    transition: opacity 400ms ease;
+  }
+
   .scent-list li[data-dim] {
     opacity: 0.3;
   }
@@ -1890,17 +1920,49 @@
     translate: 0 calc(-2 * var(--u));
   }
 
+  /* 고르는 네모. 고르면 까맣게 차고 체크가 들어옵니다. */
   .scent-check {
+    position: relative;
     height: calc(14 * var(--u));
     width: calc(14 * var(--u));
     margin: calc(3 * var(--u)) calc(3 * var(--u)) 0 calc(18 * var(--u));
     border: 1px solid #1d1d1d;
     border-radius: calc(3 * var(--u));
+    transition: background 220ms ease;
   }
 
+  .scent-check[data-on] {
+    background: #1d1d1d;
+  }
+
+  .scent-check[data-on]::after {
+    content: "";
+    position: absolute;
+    left: calc(4 * var(--u));
+    top: calc(1.5 * var(--u));
+    height: calc(6.5 * var(--u));
+    width: calc(3.5 * var(--u));
+    border-right: calc(1.4 * var(--u)) solid #ffffff;
+    border-bottom: calc(1.4 * var(--u)) solid #ffffff;
+    rotate: 45deg;
+  }
+
+  /* 펼친 줄에 딸려 나오는 설명과 향노트 */
+  .scent-story {
+    padding: calc(15 * var(--u)) 0;
+    font-size: calc(12 * var(--u));
+    line-height: 1.5;
+  }
+
+  .scent-story-head {
+    padding-top: calc(20 * var(--u));
+  }
+
+  /* 아래 단추. 고르기 전에는 눌러도 소용없는 회색입니다. */
   .scent-next {
     display: flex;
     height: calc(45 * var(--u));
+    flex: none;
     align-items: center;
     justify-content: center;
     margin-bottom: calc(15 * var(--u));
@@ -1910,6 +1972,60 @@
     font-size: calc(12 * var(--u));
     font-weight: 500;
     line-height: 1.5;
+    transition:
+      background 260ms ease,
+      color 260ms ease;
+  }
+
+  /* 하나라도 고르면 살아납니다. */
+  .scent-next[data-on] {
+    background: #1d1d1d;
+    color: #ffffff;
+  }
+
+  .scent-next[data-press] {
+    animation: next-press 420ms cubic-bezier(0.3, 0.8, 0.3, 1);
+  }
+
+  @keyframes next-press {
+    0%,
+    100% {
+      scale: 1;
+    }
+    40% {
+      scale: 0.97;
+    }
+  }
+
+  /* 두 번째 창의 이전·선택 */
+  .scent-pair {
+    display: flex;
+    flex: none;
+    gap: calc(10 * var(--u));
+    margin-bottom: calc(15 * var(--u));
+  }
+
+  .scent-pair span {
+    display: flex;
+    height: calc(45 * var(--u));
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    border-radius: calc(5 * var(--u));
+    font-size: calc(12 * var(--u));
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .scent-back-btn {
+    border: 1px solid #1d1d1d;
+    background: #ffffff;
+    color: #1d1d1d;
+  }
+
+  .scent-pick {
+    background: #efefef;
+    color: #767676;
   }
 
   .steps-cap {

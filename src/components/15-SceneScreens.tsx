@@ -97,7 +97,7 @@ export function SceneScreens() {
             >
               {shot.real === "gift" && <TamburinsGiftScreen />}
               {shot.real === "product" && <TamburinsProductScreen />}
-              {shot.real === "scent1" && <TamburinsScentScreen step={1} />}
+              {shot.real === "scent1" && <TamburinsScentScreen />}
               {!shot.real && <span>{shot.screen}</span>}
             </div>
             {/* 화면 이름은 Current User Flow 의 마디와 같은 말을 씁니다.

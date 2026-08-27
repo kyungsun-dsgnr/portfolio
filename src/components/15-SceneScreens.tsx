@@ -6,16 +6,20 @@ import type { CSSProperties } from "react";
 
 import { useInView } from "@/components/useInView";
 
-/* 화면이 놓이는 판. 여덟 단 × 네 행을 씁니다. */
-const BAND_W = 8 * 158.5 + 7 * 16;
-/** 화면 하나. 휴대폰 비율(9:19.5)입니다. */
-const SHOT_W = 162;
-const SHOT_H = 351;
-/** 한 걸음 옮길 때마다 오른쪽으로 이만큼, 아래로 이만큼 */
-const STEP_X = 340;
-const STEP_DOWN = 28;
-/** 화면 넷을 판 가운데에 놓는 왼쪽 여백 */
-const START_X = (BAND_W - (3 * STEP_X + SHOT_W)) / 2;
+/* 자리는 전부 그리드에서 끌어옵니다.
+   화면 하나가 두 단이라 젠틀몬스터 장의 목업과 같은 폭(333)이고,
+   화면 사이가 그리드 간격, 내려앉는 높이도 간격 하나입니다.
+   그래서 넷이 1·3·5·7단에서 시작해 마지막 오른쪽이 판 끝과 맞습니다. */
+const COL = 158.5;
+const GAP = 16;
+/** 화면 하나. 두 단 폭이고, 높이는 판에 맞춰 위쪽만 보이도록 자릅니다. */
+const SHOT_W = 2 * COL + GAP;
+const SHOT_H = 400;
+/** 한 걸음 옮길 때마다 오른쪽으로 두 단, 아래로 간격 하나 */
+const STEP_X = 2 * (COL + GAP);
+const STEP_DOWN = GAP;
+/** 첫 단에서 시작합니다. */
+const START_X = 0;
 
 /* 사용자가 지나는 순서. 분석은 다음 장에서 하고 여기서는 있는 그대로 둡니다. */
 const SHOTS = [
@@ -42,20 +46,18 @@ export function SceneScreens() {
         across multiple screens.
       </h2>
 
-      <div
-        className="steps rise col-start-1 col-span-8 row-start-3 row-span-4"
-        style={{ "--delay": "0.12s" } as CSSProperties}
-      >
+      <div className="steps col-start-1 col-span-8 row-start-3 row-span-4">
         {SHOTS.map((shot, i) => (
           <div
             key={shot.screen}
-            className="steps-shot"
+            className="steps-shot rise"
             style={
               {
                 left: px(START_X + i * STEP_X),
                 top: px(i * STEP_DOWN),
                 width: px(SHOT_W),
-                "--delay": `${0.2 + i * 0.1}s`,
+                /* 한 화면씩 차례로 들어와, 지나가는 순서가 눈에 먼저 남습니다. */
+                "--delay": `${0.16 + i * 0.14}s`,
               } as CSSProperties
             }
           >

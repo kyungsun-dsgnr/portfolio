@@ -50,7 +50,10 @@ export function Knob({ value, onChange, ariaLabel = "조명 밝기" }: Props) {
     // Chrome 은 tabindex 가 있는 요소를 마우스로 눌러도 :focus-visible 로 봅니다.
     // 포인터로 들어왔다고 표시해 두고 CSS 에서 링을 지웁니다. 키보드로 오면 다시 보입니다.
     el.dataset.pointer = "";
-    drag.current = { angle: pointerPolar(el, event.clientX, event.clientY).angle, value };
+    drag.current = {
+      angle: pointerPolar(el, event.clientX, event.clientY).angle,
+      value,
+    };
   }
 
   function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
@@ -108,6 +111,8 @@ export function Knob({ value, onChange, ariaLabel = "조명 밝기" }: Props) {
       <div
         ref={ref}
         className="knob"
+        /* 아직 돌리지 않았을 때만 불빛이 숨 쉬듯 깜빡여 손이 가게 합니다. */
+        data-idle={value === 0 ? "" : undefined}
         role="slider"
         tabIndex={0}
         aria-label={ariaLabel}
@@ -129,7 +134,7 @@ export function Knob({ value, onChange, ariaLabel = "조명 밝기" }: Props) {
             cx="50"
             cy="50"
             r="46"
-            strokeDasharray={`${(value * SWEEP) / 360 * CIRCUMFERENCE} ${CIRCUMFERENCE}`}
+            strokeDasharray={`${((value * SWEEP) / 360) * CIRCUMFERENCE} ${CIRCUMFERENCE}`}
           />
         </svg>
 
@@ -137,7 +142,10 @@ export function Knob({ value, onChange, ariaLabel = "조명 밝기" }: Props) {
         <div className="knob-cap" />
 
         {/* 눈금은 캡 위에 얹혀 값에 따라 돕니다. 캡 자체는 원형이라 회전이 보이지 않습니다. */}
-        <div className="knob-marker" style={{ transform: `rotate(${value * SWEEP}deg)` }}>
+        <div
+          className="knob-marker"
+          style={{ transform: `rotate(${value * SWEEP}deg)` }}
+        >
           <span />
         </div>
       </div>

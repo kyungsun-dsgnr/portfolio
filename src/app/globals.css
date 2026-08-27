@@ -150,8 +150,14 @@
     background: #ffffff;
   }
 
+  /* 제안 장은 어둡게 둡니다. 밝기 기준을 뒤집어 두면 글과 선이 함께 따라옵니다.
+     화면 목업은 실제 화면 그대로라 흰색을 지킵니다. */
   .section:has(.after-frame) {
-    background: #ffffff;
+    --bg: #191919;
+    --fg: #fafafa;
+    --fg-soft: rgb(250 250 250 / 0.72);
+    background: #191919;
+    color: #fafafa;
   }
 
   /* 12장 — 장은 흰색으로 두고, 상자가 놓인 판만 한 톤 눌러 앉힙니다. */
@@ -159,8 +165,76 @@
     background: #ffffff;
   }
 
+  /* 창에서 든 빛. 빛을 칠하는 대신 빛이 닿지 않는 자리에 옅은 그늘을 둡니다.
+     판이 이미 밝아서, 흰빛을 얹으면 아무것도 보이지 않습니다. */
+  .tam-window {
+    position: absolute;
+    inset: calc(-40 * var(--u));
+    background: linear-gradient(
+      108deg,
+      rgb(34 30 24 / 0.075) 0 14%,
+      rgb(34 30 24 / 0) 27% 49%,
+      rgb(34 30 24 / 0.05) 54% 58%,
+      rgb(34 30 24 / 0) 63% 84%,
+      rgb(34 30 24 / 0.075) 93% 100%
+    );
+    /* --u 를 넣은 blur 는 빌드에서 사라집니다. 고정 px 로 둡니다. */
+    filter: blur(9px);
+    pointer-events: none;
+  }
+
+  /* 상자가 판에 닿으며 지는 그림자. 빛이 왼쪽 위에서 들어와 오른쪽으로 눕습니다. */
+  .tam-cast {
+    border-radius: 50%;
+    background: radial-gradient(
+      closest-side,
+      rgb(30 27 22 / 0.2),
+      rgb(30 27 22 / 0.08) 55%,
+      rgb(30 27 22 / 0) 100%
+    );
+    filter: blur(16px);
+    pointer-events: none;
+  }
+
+  /* 상자 밑단이 바닥에 닿는 선. 좁고 짙어야 놓여 있는 것으로 읽힙니다. */
+  .tam-contact {
+    border-radius: 50%;
+    background: radial-gradient(
+      closest-side,
+      rgb(26 23 19 / 0.5),
+      rgb(26 23 19 / 0.18) 52%,
+      rgb(26 23 19 / 0) 100%
+    );
+    filter: blur(6px);
+    pointer-events: none;
+  }
+
   .tam-box {
     background: #fafafa;
+    /* 뚜껑이 눕는 각도가 보이도록 원근을 둡니다. 사진이 상자를 살짝 위에서 본
+       것이라, 눈높이도 상자 위쪽(14%)에 맞춰야 닫힌 뚜껑이 아가리를 덮습니다. */
+    perspective: calc(2600 * var(--u));
+    perspective-origin: 50% -18%;
+  }
+
+  /* 뚜껑은 닫힌 채로 누워 있다가 뒤쪽 모서리를 축으로 일어섭니다.
+     닫힌 각도(-88도)에서 뚜껑이 거의 눕고, 위에서 내려다본 만큼만 띠로 보입니다. */
+  .tam-lid {
+    transform-origin: 50% 100%;
+    transform: rotateX(-88deg);
+  }
+
+  [data-visible] .tam-lid {
+    animation: tam-open 1.15s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+  }
+
+  @keyframes tam-open {
+    0% {
+      transform: rotateX(-88deg);
+    }
+    100% {
+      transform: rotateX(0deg);
+    }
   }
 
   /* ── 열리고 닫히는 선물 상자 ───────────────────
@@ -258,7 +332,9 @@
 
   /* 바닥에 닿은 자리에 아주 옅은 그림자. 노브의 그림자와 같은 세기입니다. */
   .gift-shade {
-    filter: drop-shadow(0 calc(3 * var(--u)) calc(8 * var(--u)) rgb(0 0 0 / 0.06));
+    filter: drop-shadow(
+      0 calc(3 * var(--u)) calc(8 * var(--u)) rgb(0 0 0 / 0.06)
+    );
   }
 
   /* 담기는 것들. 앞뒤는 도면 겹의 차례대로입니다 —
@@ -395,7 +471,7 @@
   }
 
   [data-visible] .tam-drop {
-    animation: drop-in 1.9s both;
+    animation: drop-in 1.75s both;
     animation-delay: var(--delay, 0s);
   }
 
@@ -422,30 +498,25 @@
     }
   }
 
+  /* 떨어뜨리기보다 내려놓는 결. 마지막에 속도를 죽여 상자에 살며시 닿고,
+     튕기는 대신 기울기만 천천히 풀립니다. */
   @keyframes drop-in {
     0% {
       /* 판 위쪽 밖에서 시작합니다. 판이 넘치는 부분을 잘라 내므로 보이지 않습니다. */
       translate: 0 calc(-1 * var(--fall, 620) * var(--u));
       rotate: var(--tilt, -10deg);
-      /* 떨어지는 동안 점점 빨라집니다. */
-      animation-timing-function: cubic-bezier(0.5, 0, 0.85, 0.4);
+      opacity: 0;
+      animation-timing-function: linear;
     }
-    52% {
-      /* 닿는 순간. 아직 비스듬합니다. */
-      translate: 0 0;
-      rotate: var(--tilt, -10deg);
-      animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1);
+    12% {
+      opacity: 1;
+      animation-timing-function: cubic-bezier(0.34, 0, 0.24, 1);
     }
-    68% {
-      /* 살짝 튀어 오르며 반듯해지기 시작합니다. */
-      translate: 0 calc(-0.045 * var(--fall, 620) * var(--u));
-      rotate: calc(var(--tilt, -10deg) * 0.42);
+    62% {
+      /* 닿기 직전에 이미 거의 멈춰 있습니다. */
+      translate: 0 calc(-0.035 * var(--fall, 620) * var(--u));
+      rotate: calc(var(--tilt, -10deg) * 0.55);
       animation-timing-function: cubic-bezier(0.4, 0, 0.3, 1);
-    }
-    86% {
-      /* 반듯한 자리를 조금 지나쳤다가 */
-      translate: 0 0;
-      rotate: calc(var(--tilt, -10deg) * -0.12);
     }
     100% {
       translate: 0 0;
@@ -937,7 +1008,45 @@
     stroke: #fff7e0;
     stroke-width: 2.2;
     stroke-linecap: round;
-    filter: drop-shadow(0 0 calc(4 * var(--u)) rgb(255 233 176 / 0.85));
+    /* 켜진 불은 가만히 있지 않고 아주 느리게 숨을 쉽니다. */
+    animation: knob-breathe 4.6s ease-in-out infinite;
+  }
+
+  @keyframes knob-breathe {
+    0%,
+    100% {
+      filter: drop-shadow(0 0 calc(3 * var(--u)) rgb(255 233 176 / 0.55));
+    }
+    50% {
+      filter: drop-shadow(0 0 calc(7 * var(--u)) rgb(255 233 176 / 0.95));
+    }
+  }
+
+  /* 아직 돌리지 않은 노브. 캡 둘레에 옅은 불빛이 숨 쉬듯 오갑니다.
+     돌리기 시작하면 값 아크가 그 역할을 넘겨받으므로 곧바로 멈춥니다. */
+  .knob-cap::after {
+    content: "";
+    position: absolute;
+    inset: calc(-3 * var(--u));
+    border-radius: 50%;
+    box-shadow: 0 0 calc(10 * var(--u)) calc(2 * var(--u))
+      rgb(255 233 176 / 0.55);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .knob[data-idle] .knob-cap::after {
+    animation: knob-wink 4.6s ease-in-out infinite;
+  }
+
+  @keyframes knob-wink {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.8;
+    }
   }
 
   /* 값에 따라 도는 눈금 삼각형 */
@@ -1946,10 +2055,10 @@
 
   /* 11장 화면도 같은 테두리를 쓰되, 아래는 열어 두고 흐리게 지웁니다. */
   .after-frame .globe-mock {
-    border: 1px solid #1919190a;
+    border: 1px solid rgb(250 250 250 / 0.14);
     border-bottom: 0;
     border-radius: calc(26 * var(--u)) calc(26 * var(--u)) 0 0;
-    box-shadow: 0 calc(2 * var(--u)) calc(26 * var(--u)) #1919190a;
+    box-shadow: 0 calc(2 * var(--u)) calc(26 * var(--u)) rgb(0 0 0 / 0.4);
     /* 8장 화면은 판 밖으로 흘러 그림자 아랫단이 잘립니다. 여기서도 잘라 맞춥니다. */
     clip-path: inset(
       calc(-40 * var(--u)) calc(-40 * var(--u)) 0 calc(-40 * var(--u))
@@ -1965,7 +2074,7 @@
     bottom: 0;
     left: 0;
     height: calc(150 * var(--u));
-    background: linear-gradient(to bottom, rgb(255 255 255 / 0), #ffffff 100%);
+    background: linear-gradient(to bottom, rgb(25 25 25 / 0), #191919 100%);
     pointer-events: none;
   }
 
@@ -2442,6 +2551,10 @@
     overflow: visible;
     fill: none;
     pointer-events: none;
+  }
+
+  .section:has(.after-frame) .link-dash {
+    stroke: rgb(250 250 250 / 0.3);
   }
 
   .link-dash {

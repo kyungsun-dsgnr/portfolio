@@ -43,6 +43,21 @@ const CARDS: {
     index: "02",
     title: "Sensory Cues",
     body: "감각 단서는 인터페이스의 상태와 변화를 직관적으로 이해하게 합니다.",
+    // 서로 맞물린 원들 — 따로 배우지 않아도 이어지는 동작
+    art: (
+      <>
+        <circle cx="7" cy="15" r="4.9" />
+        <circle cx="12" cy="15" r="4.9" />
+        <circle cx="17" cy="15" r="4.9" />
+        <circle cx="9.5" cy="9.6" r="4.9" />
+        <circle cx="14.5" cy="9.6" r="4.9" />
+      </>
+    ),
+  },
+  {
+    index: "03",
+    title: "Natural Control",
+    body: "손에 익은 조작은 기능을 설명보다 먼저 몸으로 이해하게 합니다.",
     // 고른 격자 속에서 두 칸만 채워집니다 — 눈에 걸리는 신호
     art: (
       <>
@@ -57,21 +72,6 @@ const CARDS: {
             />
           )),
         )}
-      </>
-    ),
-  },
-  {
-    index: "03",
-    title: "Natural Control",
-    body: "손에 익은 조작은 기능을 설명보다 먼저 몸으로 이해하게 합니다.",
-    // 서로 맞물린 원들 — 따로 배우지 않아도 이어지는 동작
-    art: (
-      <>
-        <circle cx="7" cy="15" r="4.9" />
-        <circle cx="12" cy="15" r="4.9" />
-        <circle cx="17" cy="15" r="4.9" />
-        <circle cx="9.5" cy="9.6" r="4.9" />
-        <circle cx="14.5" cy="9.6" r="4.9" />
       </>
     ),
   },

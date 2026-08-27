@@ -17,6 +17,8 @@ const PILL_H = 38;
 /** 첫 줄이 시작하는 높이와, 줄과 줄 사이 */
 const TOP = 28;
 const DOWN = 72;
+/** 선이 알약 테두리 아래로 살짝 들어가도록 해 미세한 틈을 없앱니다. */
+const LINE_OVERLAP = 2;
 
 type Tone = "plain" | "start" | "ghost";
 type Node = {
@@ -105,10 +107,10 @@ function trace(from: Node, to: Node) {
   const a = place(from);
   const b = place(to);
   if (from.line === to.line) {
-    return `M ${a.x + COL} ${a.y + PILL_H / 2} H ${b.x}`;
+    return `M ${a.x + COL - LINE_OVERLAP} ${a.y + PILL_H / 2} H ${b.x + LINE_OVERLAP}`;
   }
   const x = a.x + COL / 2;
-  return `M ${x} ${a.y + PILL_H} V ${b.y}`;
+  return `M ${x} ${a.y + PILL_H - LINE_OVERLAP} V ${b.y + LINE_OVERLAP}`;
 }
 
 /** 소제목 + 본문 한 덩어리 */
@@ -137,7 +139,13 @@ export function SceneFlow() {
 
       <div
         className="flow rise col-start-2 col-span-6 row-start-3 row-span-2"
-        style={{ "--delay": "0.1s" } as CSSProperties}
+        style={
+          {
+            "--delay": "0.1s",
+            width: px(PANEL_W),
+            height: px(PANEL_H),
+          } as CSSProperties
+        }
       >
         <svg
           className="flow-lines"

@@ -18,13 +18,40 @@ type Layer = {
 };
 
 /* 상자와 상자 앞면은 같은 사진에서 잘라 낸 것이라 자리가 어긋나면 바로 티가 납니다.
-   앞면은 상자 원본의 1022번째 줄부터 잘려 나왔고, 619 폭으로 놓으면 511 아래입니다. */
-const BOX: Layer = {
-  src: "/images/tamburins-box.png",
+   앞면은 상자 원본의 1022번째 줄부터 잘려 나왔고, 619 폭으로 놓으면 511 아래입니다.
+   뚜껑은 그 사진의 826번째 줄에서 잘라 따로 두었습니다. 그 줄이 뚜껑이 접히는
+   뒤쪽 모서리라, 두 겹을 제자리에 놓으면 원래 사진과 똑같이 맞물립니다. */
+const LID: Layer = {
+  src: "/images/tamburins-box-lid.png",
   left: 32,
   top: 0,
   width: 618.91,
-  height: 740,
+  height: 412.94,
+};
+
+const BOX: Layer = {
+  src: "/images/tamburins-box-base.png",
+  left: 32,
+  top: 412.94,
+  width: 618.91,
+  height: 327.06,
+};
+
+/* 상자가 지면에 놓인 자리. 두 겹입니다.
+   넓게 퍼지는 그림자는 빛이 왼쪽 위에서 드는 만큼 오른쪽으로 조금 눕고,
+   바닥에 닿는 선은 상자 밑단에 바짝 붙어 짙게 깔립니다. */
+const CAST = {
+  left: 10,
+  top: 676,
+  width: 740,
+  height: 150,
+};
+
+const CONTACT = {
+  left: 96,
+  top: 706,
+  width: 552,
+  height: 52,
 };
 
 const FRONT: Layer = {
@@ -46,7 +73,7 @@ const GOODS: (Layer & { tilt: string; delay: string; fall: number })[] = [
     width: 213.06,
     height: 214.43,
     tilt: "-11deg",
-    delay: "0.5s",
+    delay: "1.5s",
     fall: 620,
   },
   {
@@ -56,7 +83,7 @@ const GOODS: (Layer & { tilt: string; delay: string; fall: number })[] = [
     width: 164.61,
     height: 480.06,
     tilt: "5.5deg",
-    delay: "0.74s",
+    delay: "1.74s",
     fall: 600,
   },
 ];
@@ -88,10 +115,32 @@ const at = (
 export function TamburinsBox({ scale = 1 }: { scale?: number }) {
   return (
     <div className="tam-box relative h-full w-full overflow-hidden">
+      {/* 창빛과 바닥 그림자. 상자보다 뒤에 깔립니다. */}
+      <div className="tam-window" aria-hidden />
+      <div className="tam-cast absolute" style={at(CAST, scale)} aria-hidden />
+      <div
+        className="tam-contact absolute"
+        style={at(CONTACT, scale)}
+        aria-hidden
+      />
+
       <div className="absolute" style={at(BOX, scale)}>
         <Image
           alt=""
           src={BOX.src}
+          fill
+          sizes="50vw"
+          priority
+          className="object-contain"
+        />
+      </div>
+
+      {/* 뚜껑. 닫힌 채로 있다가 뒤쪽 모서리를 축으로 열립니다.
+          제품보다 앞에 두면 열린 뒤에도 제품을 가려서, 여기 한 겹으로 둡니다. */}
+      <div className="tam-lid absolute" style={at(LID, scale)}>
+        <Image
+          alt=""
+          src={LID.src}
           fill
           sizes="50vw"
           priority

@@ -207,6 +207,7 @@ type Grid = {
 function landDots(
   land: FeatureCollection,
   homelands: FeatureCollection,
+  step = LAT_STEP,
 ): Dot[] {
   const landPixels = rasterize(land);
   const homePixels = rasterize(homelands);
@@ -214,9 +215,9 @@ function landDots(
 
   const dots: Dot[] = [];
 
-  for (let lat = -84; lat <= 84; lat += LAT_STEP) {
+  for (let lat = -84; lat <= 84; lat += step) {
     // 위도가 높을수록 경도 간격을 넓혀 점 밀도를 고르게 만듭니다.
-    const lonStep = LAT_STEP / Math.max(0.2, Math.cos((lat * Math.PI) / 180));
+    const lonStep = step / Math.max(0.2, Math.cos((lat * Math.PI) / 180));
     for (let lon = -180; lon < 180; lon += lonStep) {
       const x = Math.floor(((lon + 180) / 360) * RASTER_W);
       const y = Math.floor(((90 - lat) / 180) * RASTER_H);
@@ -248,6 +249,8 @@ type Props = {
   veil?: number;
   /** 어두운 판 위에 놓입니다. 점과 핀의 밝기를 뒤집습니다. */
   dark?: boolean;
+  /** 작은 목업 안에 들어가는 지구본. 점을 성기게 찍고 대신 굵고 짙게 둡니다. */
+  bold?: boolean;
 };
 
 export function GlobeDots({
@@ -257,6 +260,7 @@ export function GlobeDots({
   still = false,
   veil = 0.29,
   dark = false,
+  bold = false,
   onPickStore,
   card = false,
   openAt,
@@ -338,10 +342,7 @@ export function GlobeDots({
         : -10,
     TILT,
   ]);
-  const velocity = useRef<[number, number]>([
-    still ? 0 : IDLE_SPIN,
-    0,
-  ]);
+  const velocity = useRef<[number, number]>([still ? 0 : IDLE_SPIN, 0]);
   /** 프레임/이벤트 간격을 재서 회전을 시간 기준으로 굴립니다. */
   const lastFrame = useRef(0);
   const lastMove = useRef(0);
@@ -361,15 +362,25 @@ export function GlobeDots({
             edge: "rgba(250, 250, 250, 0.55)",
             shade: "250, 250, 250",
           }
-        : {
-            plain: "125, 125, 125",
-            home: "60, 60, 60",
-            pin: "#191919",
-            ring: "#fafafa",
-            edge: "rgba(25, 25, 25, 0.5)",
-            shade: "25, 25, 25",
-          },
-    [dark],
+        : bold
+          ? {
+              // 작게 줄어든 판에서도 땅이 읽히도록 한 단계 짙게 씁니다.
+              plain: "95, 95, 95",
+              home: "25, 25, 25",
+              pin: "#191919",
+              ring: "#fafafa",
+              edge: "rgba(25, 25, 25, 0.5)",
+              shade: "25, 25, 25",
+            }
+          : {
+              plain: "125, 125, 125",
+              home: "60, 60, 60",
+              pin: "#191919",
+              ring: "#fafafa",
+              edge: "rgba(25, 25, 25, 0.5)",
+              shade: "25, 25, 25",
+            },
+    [dark, bold],
   );
 
   /** 판이 화면 안에 있는지. 밖에 있으면 그리지 않고 쉽니다. */
@@ -417,12 +428,12 @@ export function GlobeDots({
       homelandsRef.current = picked;
       landRef.current = land;
       homelandRef.current = homelands;
-      setDots(landDots(land, homelands));
+      setDots(landDots(land, homelands, bold ? LAT_STEP * 1.5 : LAT_STEP));
     });
     return () => {
       alive = false;
     };
-  }, []);
+  }, [bold]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -638,7 +649,7 @@ export function GlobeDots({
       /* 매장이 없는 나라는 바탕처럼 옅게, 있는 나라는 또렷하게.
          크기는 같고 색과 진하기로만 갈립니다.
          펼쳐 크게 볼 때는 1.5도 격자가 너무 성겨서 함께 물러납니다. */
-      const dot = 2 * unit;
+      const dot = (bold ? 3 : 2) * unit;
 
       /* 키울수록 1.5도 격자로는 성겨집니다. 보이는 자리만 그만큼 촘촘히 다시 찍고,
          단계가 바뀌는 사이에는 둘을 겹쳐 넘겨 점이 튀지 않게 합니다. */
@@ -917,7 +928,7 @@ export function GlobeDots({
       eye.disconnect();
       observer.disconnect();
     };
-  }, [dots, ink, interactive, labels, still, tagged, veil]);
+  }, [bold, dots, ink, interactive, labels, still, tagged, veil]);
 
   /** 화면 좌표에서 가장 가까운 매장 점을 찾아 둡니다.
       그리기와 같은 좌표계로 되돌립니다 — 확대가 걸려 있으면 그만큼 나눕니다. */

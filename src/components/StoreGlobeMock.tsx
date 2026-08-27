@@ -350,6 +350,8 @@ export function StoreGlobeMock({
         {showWorld ? (
           <GlobeDots
             labels={false}
+            /* 목업은 실제 화면보다 작게 놓여서 점을 성기고 굵게 찍습니다. */
+            bold
             /* 나라를 고르면 그 자리에서 멈춥니다. */
             still={Boolean(showCountry)}
             veil={0.49}

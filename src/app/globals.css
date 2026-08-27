@@ -1758,6 +1758,10 @@
     color: #ffffff;
   }
 
+  .prod-screen[data-add] .prod-screen-add {
+    animation: next-press 420ms cubic-bezier(0.3, 0.8, 0.3, 1);
+  }
+
   .prod-screen-folds {
     padding: calc(50 * var(--u)) calc(13.32 * var(--u)) 0;
   }
@@ -2078,6 +2082,221 @@
 
   .scent-pick[data-press] {
     animation: next-press 420ms cubic-bezier(0.3, 0.8, 0.3, 1);
+  }
+
+  /* ── 실제 화면(장바구니) ───────────────────────
+     담기를 누르면 아래에서 올라옵니다. */
+  .bag-screen {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .bag-under {
+    position: absolute;
+    inset: 0;
+    transition: opacity 420ms ease;
+  }
+
+  .bag-under[data-hide] {
+    opacity: 0;
+  }
+
+  .bag-over {
+    position: absolute;
+    inset: 0;
+    translate: 0 100%;
+    transition: translate 560ms cubic-bezier(0.3, 0.8, 0.3, 1);
+  }
+
+  .bag-over[data-in] {
+    translate: 0 0;
+  }
+
+  .cart-screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    padding: 0 calc(15 * var(--u));
+    color: #1d1d1d;
+    font-family: var(--font-body);
+    text-align: left;
+  }
+
+  .cart-head {
+    display: flex;
+    height: calc(60 * var(--u));
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cart-head h4 {
+    font-size: calc(16 * var(--u));
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .cart-body {
+    position: relative;
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+  }
+
+  .cart-body::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cart-list li {
+    display: flex;
+    height: calc(109 * var(--u));
+    padding: calc(5 * var(--u)) 0;
+  }
+
+  .cart-shot {
+    position: relative;
+    flex: none;
+    height: calc(99 * var(--u));
+    width: calc(80 * var(--u));
+    background: #efefef;
+  }
+
+  .cart-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding-left: calc(10 * var(--u));
+    font-size: calc(12 * var(--u));
+    line-height: 1.5;
+  }
+
+  .cart-price {
+    padding-top: calc(2 * var(--u));
+  }
+
+  /* 고른 구성. 담고 나서야 한자리에 모입니다. */
+  .cart-picks {
+    display: flex;
+    flex-direction: column;
+    padding-top: calc(4 * var(--u));
+    color: #767676;
+    font-size: calc(10 * var(--u));
+    line-height: 1.5;
+  }
+
+  .cart-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+  }
+
+  .cart-count {
+    display: flex;
+    align-items: center;
+    gap: calc(11 * var(--u));
+    color: #767676;
+    font-size: calc(11 * var(--u));
+  }
+
+  .cart-count i {
+    height: calc(5 * var(--u));
+    width: calc(5 * var(--u));
+    border-right: 1px solid #767676;
+    border-bottom: 1px solid #767676;
+    rotate: 45deg;
+    translate: 0 calc(-2 * var(--u));
+  }
+
+  .cart-foot em {
+    font-size: calc(12 * var(--u));
+    font-style: normal;
+    text-decoration: underline;
+  }
+
+  /* 목록 위로 떠 있는 권유 카드 */
+  .cart-nudge {
+    display: flex;
+    height: calc(75 * var(--u));
+    align-items: center;
+    margin-top: calc(15 * var(--u));
+    border: 1px solid #efefef;
+    border-radius: calc(5 * var(--u));
+    overflow: hidden;
+  }
+
+  .cart-nudge-shot {
+    flex: none;
+    height: 100%;
+    width: calc(80 * var(--u));
+    background: #efefef;
+  }
+
+  .cart-nudge > div {
+    display: flex;
+    flex-direction: column;
+    gap: calc(3 * var(--u));
+    padding-left: calc(10 * var(--u));
+    font-size: calc(12 * var(--u));
+    line-height: 1.5;
+  }
+
+  .cart-nudge em {
+    font-size: calc(11 * var(--u));
+    font-style: normal;
+    text-decoration: underline;
+  }
+
+  /* 값 셈 */
+  .cart-sum {
+    padding: calc(40 * var(--u)) 0 calc(20 * var(--u));
+    font-size: calc(12 * var(--u));
+    line-height: 1.5;
+  }
+
+  .cart-sum p {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: calc(10 * var(--u));
+  }
+
+  .cart-sum p:first-child {
+    padding-top: 0;
+  }
+
+  .cart-sum i {
+    margin-left: calc(7 * var(--u));
+    border-radius: calc(5 * var(--u));
+    background: #efefef;
+    padding: 0 calc(10 * var(--u));
+    color: #767676;
+    font-size: calc(10 * var(--u));
+    font-style: normal;
+  }
+
+  .cart-total {
+    padding-top: calc(20 * var(--u));
+    font-size: calc(15 * var(--u));
+    font-weight: 600;
+  }
+
+  /* 아래에 붙는 결제 단추. 판 끝까지 폭을 씁니다. */
+  .cart-pay {
+    display: flex;
+    height: calc(60 * var(--u));
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    margin: 0 calc(-15 * var(--u));
+    background: #1d1d1d;
+    color: #ffffff;
+    font-size: calc(14 * var(--u));
+    line-height: 1.5;
   }
 
   .steps-cap {

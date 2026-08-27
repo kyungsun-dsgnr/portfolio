@@ -21,11 +21,14 @@ const PRESS_AT = 2200;
 export function TamburinsProductScreen({
   chosen = false,
   still = false,
+  addPress = false,
 }: {
   /** 향을 다 고른 뒤. 옵션 카드에 고른 것이 적히고 담기 단추가 살아납니다. */
   chosen?: boolean;
   /** 스스로 훑지 않고 옵션 자리에 멈춰 있습니다. */
   still?: boolean;
+  /** "쇼핑백에 추가" 를 누르는 참 */
+  addPress?: boolean;
 } = {}) {
   const [page, inView] = useInView<HTMLDivElement>(0.3);
   /** 선택하기를 누르는 참 */
@@ -67,6 +70,7 @@ export function TamburinsProductScreen({
       ref={page}
       data-press={press || undefined}
       data-chosen={chosen || undefined}
+      data-add={addPress || undefined}
     >
       <div className="prod-screen-hero">
         <Image

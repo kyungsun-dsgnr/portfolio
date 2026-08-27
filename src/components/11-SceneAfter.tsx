@@ -144,9 +144,9 @@ export function SceneAfter() {
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-lead rise col-start-1 col-span-3 row-start-1 row-span-2">
-        Local Search,
+        Local search,
         <br />
-        Global Discovery
+        global discovery
       </h2>
 
       {/* 화면 하나. 앞 장 목업과 같은 두 단에 섭니다. */}

@@ -150,9 +150,9 @@ export function SceneProblem() {
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-lead rise col-start-1 col-span-4 row-start-1 row-span-2">
-        Beyond Finding
+        Beyond finding,
         <br />
-        Toward Global Awareness
+        toward global awareness
       </h2>
 
       {/* 지금 화면. 자리는 네 단이지만 목업은 그 가운데 두 단만 씁니다.

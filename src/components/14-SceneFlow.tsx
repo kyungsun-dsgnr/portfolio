@@ -143,12 +143,12 @@ export function SceneFlow() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-lead capitalize rise col-start-1 col-span-3 row-start-1">
-        Current User Flow
+      <h2 className="type-lead rise col-start-1 col-span-3 row-start-1">
+        Current user flow
       </h2>
 
       <div
-        className="flow rise col-start-2 col-span-6 row-start-3 row-span-2"
+        className="flow rise col-start-2 col-span-6 row-start-2 row-span-2"
         style={
           {
             "--delay": "0.1s",
@@ -208,7 +208,7 @@ export function SceneFlow() {
       </div>
 
       <div
-        className="flow-brief rise col-start-3 col-span-4 row-start-6"
+        className="flow-brief rise col-start-5 col-span-4 row-start-6"
         style={{ "--delay": "0.18s" } as CSSProperties}
       >
         <Brief title="Flow">

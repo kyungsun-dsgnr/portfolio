@@ -187,7 +187,7 @@ export function SceneNudakeCover() {
       </h2>
 
       <p
-        className="type-body rise col-start-6 col-span-3 row-start-3 text-right"
+        className="type-body rise col-start-6 col-span-3 row-start-5 text-right"
         style={{ "--delay": "0.12s" } as CSSProperties}
       >
         선물은 무엇을 고르는 것에서 끝나지 않습니다.
@@ -206,7 +206,7 @@ export function SceneNudakeCover() {
         style={{ "--delay": "0.2s" } as CSSProperties}
       >
         <Image
-          src="/images/nudake-logo.png"
+          src="/images/nudake-logo-2.png"
           alt="Nudake"
           fill
           sizes="24vw"

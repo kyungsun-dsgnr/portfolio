@@ -16,7 +16,8 @@ const GOODS = [
     id: "perfume",
     src: "/images/tamburins-perfume.png",
     name: "Perfume",
-    fit: 0.5,
+    /* 담긴 폭이 핸드워시와 같아지도록 맞춘 값입니다(54.75 × 0.577 = 31.6). */
+    fit: 0.535,
   },
   {
     id: "wash",

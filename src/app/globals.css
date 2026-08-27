@@ -1847,6 +1847,7 @@
   }
 
   .scent-shot {
+    position: relative;
     flex: none;
     width: calc(80 * var(--u));
     background: #efefef;

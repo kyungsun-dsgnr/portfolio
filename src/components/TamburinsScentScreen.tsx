@@ -2,11 +2,25 @@
 
 /** 탬버린즈 향 선택 창. 15장 셋째·넷째 칸에 들어갑니다. */
 
+import Image from "next/image";
+
 /* 고를 수 있는 향. 설명은 이 창을 열어야만 드러납니다. */
 const SCENTS = [
-  { name: "룸 스프레이 파인네스트", notes: "유칼립투스ㅣ파인니들ㅣ히노키우드" },
-  { name: "룸 스프레이 먹", notes: "그을린 소나무ㅣ먹물ㅣ패출리" },
-  { name: "룸 스프레이 멈버드", notes: "유자ㅣ국화ㅣ머스크" },
+  {
+    name: "룸 스프레이 파인네스트",
+    notes: "유칼립투스ㅣ파인니들ㅣ히노키우드",
+    shot: "/images/tam-scent-1.png",
+  },
+  {
+    name: "룸 스프레이 먹",
+    notes: "그을린 소나무ㅣ먹물ㅣ패출리",
+    shot: "/images/tam-scent-2.png",
+  },
+  {
+    name: "룸 스프레이 멈버드",
+    notes: "유자ㅣ국화ㅣ머스크",
+    shot: "/images/tam-scent-3.png",
+  },
   { name: "룸 스프레이 파피루스", notes: "파피루스ㅣ그린티ㅣ샌달우드" },
 ];
 
@@ -36,7 +50,17 @@ export function TamburinsScentScreen({
         <ul className="scent-list">
           {SCENTS.map((scent, i) => (
             <li key={scent.name} data-dim={dim.includes(i) || undefined}>
-              <div className="scent-shot" />
+              <div className="scent-shot">
+                {scent.shot && (
+                  <Image
+                    src={scent.shot}
+                    alt=""
+                    fill
+                    sizes="8vw"
+                    className="object-cover"
+                  />
+                )}
+              </div>
               <div className="scent-text">
                 <span className="scent-name">{scent.name}</span>
                 <span className="scent-price">{PRICE}</span>

@@ -172,7 +172,7 @@
   .tam-sun {
     position: absolute;
     left: -16%;
-    top: -14%;
+    top: -26%;
     width: 68%;
     height: 84%;
     transform: skewY(21deg);
@@ -251,8 +251,8 @@
     transform: skewX(52deg) scaleY(1);
     background: linear-gradient(
       180deg,
-      rgb(30 27 22 / 0.26) 0%,
-      rgb(30 27 22 / 0.1) 45%,
+      rgb(30 27 22 / 0.16) 0%,
+      rgb(30 27 22 / 0.06) 45%,
       rgb(30 27 22 / 0) 100%
     );
     filter: blur(9px);
@@ -264,8 +264,8 @@
     border-radius: 50%;
     background: radial-gradient(
       closest-side,
-      rgb(26 23 19 / 0.5),
-      rgb(26 23 19 / 0.18) 52%,
+      rgb(26 23 19 / 0.3),
+      rgb(26 23 19 / 0.11) 52%,
       rgb(26 23 19 / 0) 100%
     );
     filter: blur(5px);

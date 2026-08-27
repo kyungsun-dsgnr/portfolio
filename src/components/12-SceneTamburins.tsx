@@ -117,8 +117,10 @@ const at = (
  */
 /** scale 은 그림 전체를 줄이는 배율입니다. 1 이면 칸을 가득 채웁니다. */
 export function TamburinsBox({ scale = 1 }: { scale?: number }) {
-  /* 상자가 바닥에 닿는 높이. 벽과 바닥이 갈리는 선이기도 합니다. */
-  const ground = (740 - ART.height * scale) * GROUND_BIAS + ART.height * scale;
+  /* 벽과 바닥이 갈리는 선. 상자를 살짝 위에서 본 사진이라 이 선은 상자 뒤에 있고,
+     따라서 밑단(740)이 아니라 그보다 위(505)에 놓여야 상자가 바닥에 놓인 것으로 읽힙니다.
+     선의 대부분은 상자에 가려지고, 좌우로만 드러납니다. */
+  const ground = (740 - ART.height * scale) * GROUND_BIAS + 505 * scale;
 
   return (
     <div

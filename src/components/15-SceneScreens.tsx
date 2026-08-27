@@ -29,10 +29,10 @@ const BAND_H = 4 * ROW + 3 * GAP;
    row 는 그 화면이 시작하는 행이고, 한 행씩 엇갈려 지나온 걸음이 보입니다.
    내려앉은 화면은 판 밖으로 흘러 아래에 마디를 놓을 자리가 없어 위에 답니다. */
 const SHOTS = [
-  { screen: "Custom Gifts", step: "Browse", row: 3 },
-  { screen: "Gift Set", step: "Select", row: 4, above: true },
+  { screen: "Gift", step: "Browse", row: 3 },
+  { screen: "Product", step: "Enter", row: 4, above: true },
   { screen: "Scent 1 / 2", step: "Select", row: 3 },
-  { screen: "Scent 2 / 2", step: "Complete", row: 4, above: true },
+  { screen: "Scent 2 / 2", step: "Select", row: 4, above: true },
 ];
 
 const px = (value: number) => `calc(${value} * var(--u))`;

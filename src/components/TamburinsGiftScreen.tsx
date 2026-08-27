@@ -17,8 +17,8 @@ const NOTES = [
 const RELATED = [
   { name: "에그 퍼퓸 & 립밤 세트", shot: "/images/tam-set-1.png" },
   { name: "룸 스프레이 & 핸드워시 세트", shot: "/images/tam-set-2.png" },
-  { name: "쉘 퍼퓸 핸드 & 립밤 세트" },
-  { name: "에그 퍼퓸 & 퍼퓸 밤 세트" },
+  { name: "쉘 퍼퓸 핸드 & 립밤 세트", shot: "/images/tam-set-3.png" },
+  { name: "에그 퍼퓸 & 퍼퓸 밤 세트", shot: "/images/tam-set-4.png" },
   { name: "캔들 & 룸 스프레이 세트" },
   { name: "캔들 & 핸드워시 세트" },
 ];

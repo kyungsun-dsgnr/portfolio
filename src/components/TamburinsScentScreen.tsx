@@ -4,23 +4,14 @@
 
 /* 고를 수 있는 향. 설명은 이 창을 열어야만 드러납니다. */
 const SCENTS = [
-  {
-    name: "에그 퍼퓸 레이트어텀",
-    notes: "비터오렌지ㅣ사탕수수 풀내음ㅣ머스크",
-  },
-  {
-    name: "에그 퍼퓸 카모",
-    notes: "진득한 카모마일 | 부드러운 나무결 | 머스크",
-  },
-  {
-    name: "에그 퍼퓸 블루히노키",
-    notes: "상쾌한 파인오일 | 푸른 히노키 | 드리프트우드",
-  },
-  {
-    name: "에그 퍼퓸 이브닝글로우",
-    notes: "노을에 물든 장미 | 라즈베리 | 머스크",
-  },
+  { name: "룸 스프레이 파인네스트", notes: "유칼립투스ㅣ파인니들ㅣ히노키우드" },
+  { name: "룸 스프레이 먹", notes: "그을린 소나무ㅣ먹물ㅣ패출리" },
+  { name: "룸 스프레이 멈버드", notes: "유자ㅣ국화ㅣ머스크" },
+  { name: "룸 스프레이 파피루스", notes: "파피루스ㅣ그린티ㅣ샌달우드" },
 ];
+
+/** 이 창의 향은 값이 모두 같습니다. */
+const PRICE = "₩ 53,500";
 
 /**
  * 세트에 든 제품 수만큼 넘겨야 하는 창.
@@ -48,7 +39,7 @@ export function TamburinsScentScreen({
               <div className="scent-shot" />
               <div className="scent-text">
                 <span className="scent-name">{scent.name}</span>
-                <span className="scent-price">₩ 48,000</span>
+                <span className="scent-price">{PRICE}</span>
                 <span className="scent-notes">{scent.notes}</span>
                 <span className="scent-more">
                   더보기

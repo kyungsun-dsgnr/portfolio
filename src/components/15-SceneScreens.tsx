@@ -6,8 +6,7 @@ import type { CSSProperties } from "react";
 
 import { TamburinsGiftScreen } from "@/components/TamburinsGiftScreen";
 import { TamburinsProductScreen } from "@/components/TamburinsProductScreen";
-
-/* 향 선택 창 목업은 아직 내려 둔 채입니다. TamburinsScentScreen */
+import { TamburinsScentScreen } from "@/components/TamburinsScentScreen";
 import { useInView } from "@/components/useInView";
 
 /* 자리는 전부 그리드에서 끌어옵니다.
@@ -37,11 +36,11 @@ const SHOTS: {
   step: string;
   row: number;
   above?: boolean;
-  real?: "gift" | "product";
+  real?: "gift" | "product" | "scent1";
 }[] = [
   { screen: "Gift", step: "Browse", row: 3, real: "gift" },
   { screen: "Product", step: "Enter", row: 4, above: true, real: "product" },
-  { screen: "Scent 1 / 2", step: "Select", row: 3 },
+  { screen: "Scent 1 / 2", step: "Select", row: 3, real: "scent1" },
   /* 넷째 칸도 같은 1/2 단계입니다. 고르고 난 뒤, 못 고르는 향이 흐려진 상태입니다. */
   {
     screen: "Scent 1 / 2",
@@ -98,6 +97,7 @@ export function SceneScreens() {
             >
               {shot.real === "gift" && <TamburinsGiftScreen />}
               {shot.real === "product" && <TamburinsProductScreen />}
+              {shot.real === "scent1" && <TamburinsScentScreen step={1} />}
               {!shot.real && <span>{shot.screen}</span>}
             </div>
             {/* 화면 이름은 Current User Flow 의 마디와 같은 말을 씁니다.

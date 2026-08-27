@@ -611,6 +611,12 @@
 
   /* 흐름이 시작되는 마디 */
   /* 이 프로젝트에서 다루지 않는 갈래 */
+  .flow-pill[data-tone="start"] {
+    border-color: var(--fg);
+    background: var(--fg);
+    color: #ffffff;
+  }
+
   .flow-pill[data-tone="ghost"] {
     border-color: rgb(25 25 25 / 0.14);
     color: rgb(25 25 25 / 0.3);
@@ -621,6 +627,13 @@
      흐름 판은 밝고 이쪽은 어두워, 무엇이 문제인지가 먼저 눈에 들어옵니다. */
   .flow-note {
     position: absolute;
+    z-index: 2;
+    opacity: 0;
+    translate: 0 calc(-4 * var(--u));
+    pointer-events: none;
+    transition:
+      opacity 200ms ease,
+      translate 200ms cubic-bezier(0.22, 1, 0.36, 1);
     border-radius: calc(6 * var(--u));
     background: #191919;
     padding: calc(12 * var(--u)) calc(12 * var(--u)) calc(14 * var(--u));
@@ -630,6 +643,11 @@
     font-weight: 500;
     letter-spacing: 0.01em;
     line-height: 1.5;
+  }
+
+  .flow-note[data-open] {
+    opacity: 1;
+    translate: 0 0;
   }
 
   /* 마디에 붙은 번호와 같은 번호. 둘을 눈으로 잇습니다. */
@@ -646,6 +664,7 @@
 
   .flow-pain {
     position: absolute;
+    cursor: pointer;
     left: calc(13 * var(--u));
     top: calc(-9 * var(--u));
     display: flex;

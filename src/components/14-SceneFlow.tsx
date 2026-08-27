@@ -2,7 +2,7 @@
 
 /** 13장 — 탬버린즈 지금의 유저 플로우 */
 
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 
 import { useInView } from "@/components/useInView";
 
@@ -22,7 +22,7 @@ const LINE_OVERLAP = 2;
 /** 걸리는 지점 카드가 그 단의 맨 아래 마디에서 떨어지는 거리 */
 const NOTE_GAP = 16;
 
-type Tone = "plain" | "ghost";
+type Tone = "plain" | "start" | "ghost";
 type Node = {
   id: string;
   label: string;
@@ -33,14 +33,15 @@ type Node = {
   tone?: Tone;
   /** 앞 걸음. 같은 줄이면 곧게, 아래 줄이면 단 가운데를 타고 내려옵니다. */
   from?: string;
-  /** 이 걸음에서 걸리는 지점. 번호는 마디에 붙고, 내용은 그 걸음 아래 칸에 섭니다. */
+  /** 이 걸음에서 걸리는 지점. 번호는 마디에 붙고, 번호에 손을 올리면
+   *  그 걸음 아래 칸에서 내용이 열립니다. */
   pain?: { no: string; text: string };
 };
 
 /* 지금 tamburins.com 에서 선물 하나를 사는 길입니다.
    향을 묻는 자리에서 한 줄 내려가고, 담은 뒤 주문으로 또 한 줄 내려갑니다. */
 const NODES: Node[] = [
-  { id: "home", label: "Home", step: 0, line: 0 },
+  { id: "home", label: "Home", step: 0, line: 0, tone: "start" },
   {
     id: "custom",
     label: "Custom Gifts",
@@ -140,6 +141,8 @@ function Brief({ title, children }: { title: string; children: string }) {
 export function SceneFlow() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
   const byId = new Map(NODES.map((node) => [node.id, node]));
+  /** 지금 열려 있는 걸리는 지점. 번호에 손을 올린 동안만 열립니다. */
+  const [open, setOpen] = useState<string | null>(null);
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
@@ -182,19 +185,31 @@ export function SceneFlow() {
             }
           >
             {node.label}
-            {node.pain && <em className="flow-pain">{node.pain.no}</em>}
+            {node.pain && (
+              /* 번호가 곧 손잡이입니다. 여기 손을 올리면 아래 카드가 열립니다. */
+              <em
+                className="flow-pain"
+                tabIndex={0}
+                onMouseEnter={() => setOpen(node.id)}
+                onMouseLeave={() => setOpen(null)}
+                onFocus={() => setOpen(node.id)}
+                onBlur={() => setOpen(null)}
+              >
+                {node.pain.no}
+              </em>
+            )}
           </span>
         ))}
 
         {/* 걸리는 지점. 좌우는 그 걸음이 선 단에 그대로 맞추고,
             위아래는 그 단에서 가장 아래에 선 마디에서 한 칸(16) 띄고 섭니다. */}
-        {NODES.filter((node) => node.pain).map((node, i) => (
+        {NODES.filter((node) => node.pain).map((node) => (
           <div
             key={`${node.id}-note`}
-            className="flow-note rise"
+            className="flow-note"
+            data-open={open === node.id || undefined}
             style={
               {
-                "--delay": `${0.24 + i * 0.06}s`,
                 left: px(place(node).x),
                 top: px(floorOf(node.step) + NOTE_GAP),
                 width: px(COL),

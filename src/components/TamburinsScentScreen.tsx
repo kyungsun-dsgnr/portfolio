@@ -21,7 +21,11 @@ const SCENTS = [
     notes: "유자ㅣ국화ㅣ머스크",
     shot: "/images/tam-scent-3.png",
   },
-  { name: "룸 스프레이 파피루스", notes: "파피루스ㅣ그린티ㅣ샌달우드" },
+  {
+    name: "룸 스프레이 파피루스",
+    notes: "파피루스ㅣ그린티ㅣ샌달우드",
+    shot: "/images/tam-scent-4.png",
+  },
 ];
 
 /** 이 창의 향은 값이 모두 같습니다. */

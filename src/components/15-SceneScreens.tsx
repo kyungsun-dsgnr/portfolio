@@ -21,8 +21,9 @@ const STEP_X = 2 * (COL + GAP);
 const START_X = 0;
 /** 한 행 높이. 내려앉는 높이를 행으로 셉니다. */
 const ROW = 110;
-/** 화면들이 놓이는 판이 시작하는 행 */
+/** 화면들이 놓이는 판이 시작하는 행과, 그 판의 높이(3~6행) */
 const BAND_ROW = 3;
+const BAND_H = 4 * ROW + 3 * GAP;
 
 /* 사용자가 지나는 순서. 분석은 다음 장에서 하고 여기서는 있는 그대로 둡니다.
    row 는 그 화면이 시작하는 행이고, 한 행씩 엇갈려 지나온 걸음이 보입니다.
@@ -67,8 +68,18 @@ export function SceneScreens() {
               } as CSSProperties
             }
           >
-            {/* 실제 화면이 들어갈 자리 */}
-            <div className="steps-frame" style={{ height: px(SHOT_H) }}>
+            {/* 실제 화면이 들어갈 자리. 내려앉은 만큼 짧아져 판 밖으로 넘지 않습니다. */}
+            <div
+              className="steps-frame"
+              style={{
+                height: px(
+                  Math.min(
+                    SHOT_H,
+                    BAND_H - (shot.row - BAND_ROW) * (ROW + GAP),
+                  ),
+                ),
+              }}
+            >
               <span>{shot.screen}</span>
             </div>
             <p className="steps-step">{shot.step}</p>

@@ -21,7 +21,14 @@ const SETS = [
 const px = (value: number) => `calc(${value} * var(--u))`;
 
 /** 실제 화면 하나. 칸 안에서 위쪽부터 보이고 아래는 잘립니다. */
-export function TamburinsGiftScreen({ width }: { width: number }) {
+export function TamburinsGiftScreen({
+  width,
+  shift = 270,
+}: {
+  width: number;
+  /** 본문을 이만큼 끌어올려, 이미 아래로 굴린 상태를 보여 줍니다. */
+  shift?: number;
+}) {
   return (
     <div
       className="gift-screen"
@@ -40,24 +47,29 @@ export function TamburinsGiftScreen({ width }: { width: number }) {
         </div>
       </header>
 
-      {/* 화면 폭을 꽉 채우는 큰 그림 */}
-      <div className="gift-screen-hero" />
+      <div
+        className="gift-screen-body"
+        style={{ marginTop: px(-shift) } as CSSProperties}
+      >
+        {/* 화면 폭을 꽉 채우는 큰 그림 */}
+        <div className="gift-screen-hero" />
 
-      <div className="gift-screen-lead">
-        <strong>NEW 커스텀 기프트</strong>
-        <span>
-          감사의 마음을 담아, 소중한 사람에게 특별한 선물을 전해보세요.
-        </span>
-      </div>
+        <div className="gift-screen-lead">
+          <strong>NEW 커스텀 기프트</strong>
+          <span>
+            감사의 마음을 담아, 소중한 사람에게 특별한 선물을 전해보세요.
+          </span>
+        </div>
 
-      {/* 옆으로 이어지는 세트 줄. 화면 폭에서 잘려 두 장 남짓 보입니다. */}
-      <div className="gift-screen-row">
-        {SETS.map((name) => (
-          <article key={name}>
-            <div className="gift-screen-shot" />
-            <h5>{name}</h5>
-          </article>
-        ))}
+        {/* 옆으로 이어지는 세트 줄. 손으로 옆으로 굴릴 수 있습니다. */}
+        <div className="gift-screen-row">
+          {SETS.map((name) => (
+            <article key={name}>
+              <div className="gift-screen-shot" />
+              <h5>{name}</h5>
+            </article>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -129,6 +129,17 @@ export function Knob({ value, onChange, ariaLabel = "조명 밝기" }: Props) {
       >
         <svg className="knob-arc" viewBox="0 0 100 100" aria-hidden>
           <circle className="knob-arc-track" cx="50" cy="50" r="46" />
+          {/* 아직 돌리지 않았을 때, 불이 켜질 자리를 짧게 밝혔다 껐다 합니다.
+              한 번 돌리면 값 아크가 그 자리를 이어받으므로 지웁니다. */}
+          {value === 0 && (
+            <circle
+              className="knob-arc-hint"
+              cx="50"
+              cy="50"
+              r="46"
+              strokeDasharray={`${0.075 * CIRCUMFERENCE} ${CIRCUMFERENCE}`}
+            />
+          )}
           <circle
             className="knob-arc-value"
             cx="50"

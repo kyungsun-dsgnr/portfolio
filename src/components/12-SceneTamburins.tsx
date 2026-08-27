@@ -37,23 +37,6 @@ const BOX: Layer = {
   height: 327.06,
 };
 
-/* 상자가 지면에 놓인 자리. 두 겹입니다.
-   드리우는 그림자는 상자 밑단을 윗변으로 삼아 오른쪽으로 눕고(빛이 왼쪽 창에서 듭니다),
-   접지선은 밑단에 바짝 붙어 짙게 깔립니다. 이 둘이 있어야 떠 있지 않고 놓인 것으로 읽힙니다. */
-const CAST = {
-  left: 62,
-  top: 726,
-  width: 560,
-  height: 92,
-};
-
-const CONTACT = {
-  left: 74,
-  top: 716,
-  width: 536,
-  height: 44,
-};
-
 const FRONT: Layer = {
   src: "/images/tamburins-box-front.png",
   left: 32,
@@ -92,9 +75,10 @@ const GOODS: (Layer & { tilt: string; delay: string; fall: number })[] = [
 /** 그림이 차지하는 원래 칸. 배율을 줄이면 이 칸을 기준으로 가운데에 다시 앉힙니다. */
 const ART = { left: 32, width: 618.91, height: 740 };
 
-/* 남는 세로 여백을 위아래로 어떻게 나눌지. 0.5 면 한가운데라 상자가 떠 보여서,
-   대부분을 위로 보내 상자를 바닥 가까이 내려 앉힙니다. */
-const GROUND_BIAS = 0.78;
+/* 남는 세로 여백을 위아래로 어떻게 나눌지. 위로 조금 더 보내 상자를 내려 앉히되,
+   앞쪽에 바닥과 그림자가 놓일 자리는 남겨 둡니다. 다 내려 버리면 그림자가 설 곳이 없어
+   도리어 떠 보입니다. */
+const GROUND_BIAS = 0.55;
 
 /** 도면 좌표를 배율에 맞춰 화면 크기로 옮깁니다. */
 const at = (
@@ -127,16 +111,10 @@ export function TamburinsBox({ scale = 1 }: { scale?: number }) {
       className="tam-box relative h-full w-full overflow-hidden"
       style={{ "--ground": ground.toFixed(1) } as CSSProperties}
     >
-      {/* 벽과 바닥, 창에서 든 볕, 그리고 바닥 그림자. 모두 상자보다 뒤에 깔립니다. */}
+      {/* 벽과 바닥, 그리고 창에서 든 볕. 모두 상자보다 뒤에 깔립니다. */}
       <div className="tam-floor" aria-hidden />
       <div className="tam-sun" aria-hidden />
       <div className="tam-sun-floor" aria-hidden />
-      <div className="tam-cast absolute" style={at(CAST, scale)} aria-hidden />
-      <div
-        className="tam-contact absolute"
-        style={at(CONTACT, scale)}
-        aria-hidden
-      />
 
       <div className="absolute" style={at(BOX, scale)}>
         <Image

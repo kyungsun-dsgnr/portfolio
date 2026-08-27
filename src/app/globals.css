@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* 손글씨용 Brittany Signature.
+   맥에 설치되어 있으면 local() 로 바로 잡히고, 없으면 public/fonts 의 파일을 씁니다.
+   둘 다 없으면 --font-hand 의 다음 후보(Parisienne)로 넘어갑니다. */
+@font-face {
+  font-family: "Brittany Signature";
+  src:
+    local("Brittany Signature"),
+    local("BrittanySignature"),
+    url("/fonts/BrittanySignature.woff2") format("woff2"),
+    url("/fonts/BrittanySignature.otf") format("opentype");
+  font-weight: 400;
+  font-display: swap;
+}
+
 @theme {
   --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-body:
@@ -522,7 +536,7 @@
     align-items: center;
     justify-content: space-between;
     border-radius: calc(2 * var(--u));
-    padding: calc(26 * var(--u)) calc(20 * var(--u)) calc(24 * var(--u));
+    padding: calc(14 * var(--u)) calc(20 * var(--u)) calc(36 * var(--u));
     /* 사진 속 카드를 그대로 덮으므로 그림자는 사진의 것을 씁니다.
        종이 결도 사진에 이미 있어, 여기서는 색만 맞춥니다. */
     background:
@@ -532,6 +546,26 @@
         rgb(255 255 255 / 0) 70%
       ),
       #f7f6f2;
+  }
+
+  /* 처음에 덮여 있는 제품 카드. 천천히 물러나며 감사 카드가 드러납니다. */
+  .nud-card-front {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  [data-visible] .nud-card-front {
+    animation: card-turn 1.6s ease 0.9s both;
+  }
+
+  @keyframes card-turn {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
   }
 
   /* 위쪽 로고 */
@@ -551,9 +585,9 @@
     gap: calc(2 * var(--u));
     color: rgb(34 30 24 / 0.66);
     font-family: var(--font-hand);
-    font-size: calc(38 * var(--u));
+    font-size: calc(50 * var(--u));
     font-weight: 400;
-    line-height: 1.05;
+    line-height: 1.02;
     letter-spacing: 0;
     white-space: pre;
     mix-blend-mode: multiply;
@@ -574,7 +608,7 @@
   /* 장에 들어설 때 다시 그어집니다. */
   [data-visible] .nud-card-line span {
     animation: hand-write 0.34s cubic-bezier(0.4, 0, 0.2, 1) both;
-    animation-delay: calc(0.7s + var(--i) * 0.085s);
+    animation-delay: calc(2.3s + var(--i) * 0.085s);
   }
 
   @keyframes hand-write {
@@ -602,22 +636,11 @@
      한 번 내려온 뒤 아주 느리게 흔들립니다. */
   .nud-tea {
     opacity: 0;
-    transform-origin: 10% 6%;
-  }
-
-  .nud-tea-string {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    fill: none;
-    stroke: rgb(70 62 52 / 0.5);
-    stroke-width: 1.1;
-    vector-effect: non-scaling-stroke;
+    transform-origin: 76% 12%;
   }
 
   /* 물에 잠긴 아랫단은 흐려집니다. 잔 앞유리 너머로 보이는 결입니다. */
-  .nud-tea-pouch img {
+  .nud-tea img {
     -webkit-mask-image: linear-gradient(
       to bottom,
       #000 46%,
@@ -634,8 +657,8 @@
 
   [data-visible] .nud-tea {
     animation:
-      teabag-drop 1.2s cubic-bezier(0.3, 0.8, 0.3, 1) 0.5s both,
-      teabag-sway 6s ease-in-out 1.7s infinite;
+      teabag-drop 1.9s cubic-bezier(0.28, 0.72, 0.28, 1) 3.7s both,
+      teabag-sway 6s ease-in-out 5.6s infinite;
   }
 
   @keyframes teabag-drop {
@@ -661,37 +684,45 @@
     }
   }
 
-  /* 우러나는 차. 티백 자리에서 번져 물 전체로 퍼집니다.
-     물 색을 덮지 않고 곱해서, 있는 물이 물들듯 보이게 합니다. */
+  /* 우러나는 차. 잔 안쪽 물 영역 밖으로는 번지지 않습니다.
+     아래로 갈수록 좁아지는 잔 모양 그대로 잘라 둡니다. */
   .nud-brew {
+    clip-path: polygon(0% 0%, 100% 0%, 79.7% 100%, 20.8% 100%);
+    mix-blend-mode: multiply;
+    filter: blur(7px);
+  }
+
+  /* 덩이 하나. 제각각 다른 때에 다른 크기로 번져 모양이 일정하지 않습니다. */
+  .nud-brew-blob {
+    position: absolute;
     border-radius: 50%;
     background: radial-gradient(
       closest-side,
-      rgb(150 104 46 / 0.5),
-      rgb(158 116 58 / 0.26) 46%,
-      rgb(168 130 72 / 0) 100%
+      rgb(168 106 30 / 0.42),
+      rgb(180 126 54 / 0.24) 55%,
+      rgb(198 158 96 / 0) 100%
     );
-    mix-blend-mode: multiply;
-    filter: blur(6px);
     opacity: 0;
-    scale: 0.35;
+    scale: 0.3;
+    rotate: var(--spin, 0deg);
   }
 
-  [data-visible] .nud-brew {
-    animation: brew-spread 3.6s cubic-bezier(0.3, 0.7, 0.3, 1) 1.35s both;
+  [data-visible] .nud-brew-blob {
+    animation: brew-spread 4.4s cubic-bezier(0.32, 0.6, 0.28, 1) both;
+    animation-delay: calc(4.6s + var(--delay, 0s));
   }
 
   @keyframes brew-spread {
     from {
       opacity: 0;
-      scale: 0.3;
+      scale: 0.28;
     }
     45% {
-      opacity: 0.9;
+      opacity: 0.8;
     }
     to {
-      opacity: 0.78;
-      scale: 1;
+      opacity: 1;
+      scale: 1.18;
     }
   }
 

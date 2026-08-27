@@ -34,14 +34,20 @@ const CARD = { left: 272, top: 212, width: 268, height: 381 };
 /* 카드에 손으로 쓰이는 말. 두 줄로 나누어 한 글자씩 그어집니다. */
 const HAND = ["Thank", "you !"];
 
-/* 잔에 담기는 티백. 라벨은 잔 밖에 걸리고, 끈으로 이어진 주머니만 물에 잠깁니다.
-   사진 속 잔(가로 120~376, 위쪽 테두리 375)에 맞춘 도면 좌표입니다. */
-const TEA = { left: 116, top: 356, width: 212, height: 214 };
-/* 라벨은 잔 왼쪽 테두리에 걸칩니다. */
-const TAG = { left: 0, top: 0, width: 44, height: 55 };
-/* 주머니는 그 안쪽 물에 깊이 잠깁니다. */
-const POUCH = { left: 56, top: 74, width: 130, height: 160 };
-const BREW = { left: 138, top: 452, width: 220, height: 168 };
+/* 잔에 담기는 티백 한 장(끈과 라벨이 함께 그려져 있습니다).
+   원본 1239×1270 판에서 주머니가 가로 26.6~74.3%, 세로 36.1~88.7% 자리라,
+   주머니가 잔 안쪽 물(가로 120~376, 물 위 440)에 들어가도록 판을 잡았습니다. */
+const TEA = { left: 133, top: 370, width: 220, height: 226 };
+
+const BREW = { left: 126, top: 440, width: 212, height: 182 };
+
+/* 번지는 덩이들. 자리·크기·시작 시각이 모두 달라 가장자리가 일정하지 않습니다. */
+const BLOBS = [
+  { x: 12, y: 6, w: 74, h: 66, delay: 0, spin: -12 },
+  { x: 30, y: 22, w: 66, h: 74, delay: 0.5, spin: 18 },
+  { x: -6, y: 30, w: 70, h: 62, delay: 0.9, spin: 6 },
+  { x: 18, y: 44, w: 78, h: 56, delay: 1.3, spin: -22 },
+];
 
 /** 세 번째 케이스의 첫 장 */
 export function SceneNudakeCover() {
@@ -64,6 +70,17 @@ export function SceneNudakeCover() {
         {/* 사진 속 카드 자리를 그대로 덮는 우리 카드.
             위에 로고, 가운데 손글씨, 아래 날짜입니다. */}
         <div className="nud-card absolute" style={put(CARD)}>
+          {/* 처음에는 제품 카드가 서 있다가, 서서히 감사 카드로 바뀝니다. */}
+          <span className="nud-card-front" aria-hidden>
+            <Image
+              src="/images/nudake-card-front.png"
+              alt=""
+              fill
+              sizes="20vw"
+              className="object-cover"
+            />
+          </span>
+
           <span className="nud-card-logo">
             <Image
               src="/images/nudake-card-logo.png"
@@ -109,33 +126,35 @@ export function SceneNudakeCover() {
         </div>
 
         {/* 티백이 잔에 내려앉고, 그 자리에서 차가 우러나 번집니다. */}
-        <div className="nud-brew absolute" style={put(BREW)} aria-hidden />
+        <div className="nud-brew absolute" style={put(BREW)} aria-hidden>
+          {/* 한 덩이로 고르게 퍼지면 잔 모양 그대로 커지는 것처럼 보입니다.
+              크기와 자리가 다른 덩이 넷이 제각각 번져 모양이 일정하지 않게 합니다. */}
+          {BLOBS.map((blob, i) => (
+            <span
+              key={i}
+              className="nud-brew-blob"
+              style={
+                {
+                  left: `${blob.x}%`,
+                  top: `${blob.y}%`,
+                  width: `${blob.w}%`,
+                  height: `${blob.h}%`,
+                  "--delay": `${blob.delay}s`,
+                  "--spin": `${blob.spin}deg`,
+                } as CSSProperties
+              }
+            />
+          ))}
+        </div>
 
         <div className="nud-tea absolute" style={put(TEA)} aria-hidden>
-          {/* 라벨에서 주머니로 이어지는 끈. 잔 테두리에 걸쳐 있습니다. */}
-          <svg className="nud-tea-string" viewBox="0 0 212 214">
-            <path d="M24 52 C 28 82, 82 66, 116 82" />
-          </svg>
-
-          <div className="nud-tea-tag absolute" style={put(TAG)}>
-            <Image
-              src="/images/nudake-teatag.png"
-              alt=""
-              fill
-              sizes="10vw"
-              className="object-contain"
-            />
-          </div>
-
-          <div className="nud-tea-pouch absolute" style={put(POUCH)}>
-            <Image
-              src="/images/nudake-teabag-pouch.png"
-              alt=""
-              fill
-              sizes="14vw"
-              className="object-contain"
-            />
-          </div>
+          <Image
+            src="/images/nudake-teabag.png"
+            alt=""
+            fill
+            sizes="30vw"
+            className="object-contain"
+          />
         </div>
       </div>
 

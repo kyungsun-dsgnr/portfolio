@@ -31,7 +31,7 @@ type Node = {
   tone?: Tone;
   /** 앞 걸음. 같은 줄이면 곧게, 아래 줄이면 단 가운데를 타고 내려옵니다. */
   from?: string;
-  /** 이 걸음에서 걸리는 지점. 번호는 마디에 붙고, 손을 올리면 내용이 뜹니다. */
+  /** 이 걸음에서 걸리는 지점. 번호는 마디에 붙고, 내용은 그 걸음 아래 칸에 섭니다. */
   pain?: { no: string; text: string };
 };
 
@@ -172,16 +172,29 @@ export function SceneFlow() {
             }
           >
             {node.label}
-            {node.pain && (
-              <>
-                <em className="flow-pain">{node.pain.no}</em>
-                {/* 손을 올리면 무엇이 걸리는지 그 자리에서 읽힙니다. */}
-                <span className="flow-tip">{node.pain.text}</span>
-              </>
-            )}
+            {node.pain && <em className="flow-pain">{node.pain.no}</em>}
           </span>
         ))}
       </div>
+
+      {/* 걸리는 지점은 손을 올려야 보이면 지나치기 쉬워, 아래 칸에 펼쳐 둡니다.
+          판이 2단에서 시작하므로, 카드가 서는 단은 그 걸음의 단 번호에 하나를 더한 자리입니다. */}
+      {NODES.filter((node) => node.pain).map((node, i) => (
+        <div
+          key={node.id}
+          className="flow-note rise"
+          style={
+            {
+              "--delay": `${0.24 + i * 0.06}s`,
+              gridColumn: `${2 + node.step} / span 1`,
+              gridRow: "5",
+            } as CSSProperties
+          }
+        >
+          <em>{node.pain!.no}</em>
+          <p>{node.pain!.text}</p>
+        </div>
+      ))}
 
       <div
         className="flow-brief rise col-start-5 col-span-4 row-start-6"

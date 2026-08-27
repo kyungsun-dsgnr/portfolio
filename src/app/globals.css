@@ -623,38 +623,33 @@
   }
 
   /* 걸리는 지점에 손을 올리면 뜨는 쪽지. 마디 바로 위에 섭니다. */
-  .flow-tip {
-    position: absolute;
-    left: 50%;
-    bottom: calc(100% + 12 * var(--u));
-    z-index: 2;
-    width: calc(236 * var(--u));
-    translate: -50% calc(4 * var(--u));
-    padding: calc(12 * var(--u)) calc(14 * var(--u));
+  /* 걸리는 지점. 해당 걸음이 선 단 그대로 아래 칸에 내려와 섭니다.
+     흐름 판은 밝고 이쪽은 어두워, 무엇이 문제인지가 먼저 눈에 들어옵니다. */
+  .flow-note {
+    align-self: start;
     border-radius: calc(6 * var(--u));
-    background: var(--fg);
-    box-shadow: 0 calc(3 * var(--u)) calc(16 * var(--u)) rgb(25 25 25 / 0.16);
-    color: rgb(250 250 250 / 0.92);
+    background: #191919;
+    padding: calc(12 * var(--u)) calc(12 * var(--u)) calc(14 * var(--u));
+    color: rgb(250 250 250 / 0.86);
     font-family: var(--font-body);
-    font-size: calc(12 * var(--u));
+    font-size: calc(11 * var(--u));
     font-weight: 500;
     letter-spacing: 0.01em;
-    line-height: 1.45;
-    text-align: left;
-    white-space: normal;
-    opacity: 0;
-    pointer-events: none;
-    transition:
-      opacity 200ms ease,
-      translate 200ms cubic-bezier(0.22, 1, 0.36, 1);
+    line-height: 1.5;
   }
 
-  .flow-pill:hover .flow-tip {
-    opacity: 1;
-    translate: -50% 0;
+  /* 마디에 붙은 번호와 같은 번호. 둘을 눈으로 잇습니다. */
+  .flow-note em {
+    display: block;
+    margin-bottom: calc(7 * var(--u));
+    color: #fafafa;
+    font-family: var(--font-display);
+    font-size: calc(9 * var(--u));
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.06em;
   }
 
-  /* 걸리는 지점 번호. 알약 왼쪽 위 모서리에 걸칩니다. */
   .flow-pain {
     position: absolute;
     left: calc(13 * var(--u));
@@ -1067,7 +1062,7 @@
     }
   }
 
-  /* 아직 돌리지 않은 노브. 불이 켜질 자리를 짧은 아크로 밝혔다 껐다 하며
+  /* 아직 돌리지 않은 노브. 불이 켜질 링 한 바퀴가 옅게 밝아졌다 잦아들며
      어디를 돌리면 되는지 가리킵니다. 돌리기 시작하면 값 아크가 이어받습니다. */
   .knob-arc-hint {
     fill: none;
@@ -1085,11 +1080,11 @@
     0%,
     100% {
       opacity: 0;
-      filter: drop-shadow(0 0 calc(2 * var(--u)) rgb(255 233 176 / 0.3));
+      filter: drop-shadow(0 0 calc(1 * var(--u)) rgb(255 233 176 / 0.16));
     }
     50% {
-      opacity: 0.9;
-      filter: drop-shadow(0 0 calc(6 * var(--u)) rgb(255 233 176 / 0.9));
+      opacity: 0.42;
+      filter: drop-shadow(0 0 calc(4 * var(--u)) rgb(255 233 176 / 0.42));
     }
   }
 

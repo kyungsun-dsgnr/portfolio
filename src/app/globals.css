@@ -1696,6 +1696,159 @@
     background: #1d1d1d;
   }
 
+  /* ── 실제 화면(향 선택 창) ─────────────────────
+     제품 화면 위로 덮여 열리는 창입니다. 뒤는 어둡게 깔립니다. */
+  .scent-screen {
+    position: absolute;
+    inset: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+    background: #9d9d9d;
+    color: #1d1d1d;
+    font-family: var(--font-body);
+    text-align: left;
+  }
+
+  .scent-screen::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scent-sheet {
+    background: #ffffff;
+    padding: 0 calc(15 * var(--u));
+  }
+
+  .scent-head {
+    display: flex;
+    height: calc(60 * var(--u));
+    align-items: center;
+    gap: calc(4 * var(--u));
+  }
+
+  .scent-head h4 {
+    flex: 1;
+    font-size: calc(16 * var(--u));
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* 뒤로 가는 꺾쇠와 닫는 표시 */
+  .scent-back {
+    height: calc(9 * var(--u));
+    width: calc(9 * var(--u));
+    border-left: calc(1.6 * var(--u)) solid #000000;
+    border-bottom: calc(1.6 * var(--u)) solid #000000;
+    rotate: 45deg;
+    translate: calc(3 * var(--u)) 0;
+  }
+
+  .scent-close {
+    position: relative;
+    height: calc(14 * var(--u));
+    width: calc(14 * var(--u));
+  }
+
+  .scent-close::before,
+  .scent-close::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 1px;
+    width: 100%;
+    background: #1d1d1d;
+  }
+
+  .scent-close::before {
+    rotate: 45deg;
+  }
+
+  .scent-close::after {
+    rotate: -45deg;
+  }
+
+  .scent-list {
+    padding-bottom: calc(15 * var(--u));
+  }
+
+  .scent-list li {
+    display: flex;
+    height: calc(109 * var(--u));
+    padding: calc(5 * var(--u)) 0;
+  }
+
+  /* 고를 수 없는 향. 창을 열고 나서야 알게 됩니다. */
+  .scent-list li[data-dim] {
+    opacity: 0.3;
+  }
+
+  .scent-shot {
+    flex: none;
+    width: calc(80 * var(--u));
+    background: #efefef;
+  }
+
+  .scent-text {
+    display: flex;
+    width: calc(187 * var(--u));
+    flex-direction: column;
+    padding-left: calc(10 * var(--u));
+    font-size: calc(12 * var(--u));
+    line-height: 1.5;
+  }
+
+  .scent-price,
+  .scent-notes {
+    padding-top: calc(3 * var(--u));
+  }
+
+  .scent-notes {
+    color: #767676;
+  }
+
+  /* 설명을 더 보려면 또 한 번 눌러야 합니다. */
+  .scent-more {
+    display: flex;
+    align-items: center;
+    gap: calc(3 * var(--u));
+    margin-top: auto;
+    color: #767676;
+    font-size: calc(11 * var(--u));
+  }
+
+  .scent-more i {
+    height: calc(5 * var(--u));
+    width: calc(5 * var(--u));
+    border-right: 1px solid #767676;
+    border-bottom: 1px solid #767676;
+    rotate: 45deg;
+    translate: 0 calc(-2 * var(--u));
+  }
+
+  .scent-check {
+    height: calc(14 * var(--u));
+    width: calc(14 * var(--u));
+    margin: calc(3 * var(--u)) calc(3 * var(--u)) 0 calc(18 * var(--u));
+    border: 1px solid #1d1d1d;
+    border-radius: calc(3 * var(--u));
+  }
+
+  .scent-next {
+    display: flex;
+    height: calc(45 * var(--u));
+    align-items: center;
+    justify-content: center;
+    margin-bottom: calc(15 * var(--u));
+    border-radius: calc(5 * var(--u));
+    background: #efefef;
+    color: #767676;
+    font-size: calc(12 * var(--u));
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
   .steps-cap {
     display: flex;
     flex-direction: column;

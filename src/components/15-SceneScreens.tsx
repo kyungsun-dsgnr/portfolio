@@ -6,6 +6,7 @@ import type { CSSProperties } from "react";
 
 import { TamburinsGiftScreen } from "@/components/TamburinsGiftScreen";
 import { TamburinsProductScreen } from "@/components/TamburinsProductScreen";
+import { TamburinsScentScreen } from "@/components/TamburinsScentScreen";
 import { useInView } from "@/components/useInView";
 
 /* 자리는 전부 그리드에서 끌어옵니다.
@@ -35,12 +36,19 @@ const SHOTS: {
   step: string;
   row: number;
   above?: boolean;
-  real?: "gift" | "product";
+  real?: "gift" | "product" | "scent1" | "scent2";
 }[] = [
   { screen: "Gift", step: "Browse", row: 3, real: "gift" },
   { screen: "Product", step: "Enter", row: 4, above: true, real: "product" },
-  { screen: "Scent 1 / 2", step: "Select", row: 3 },
-  { screen: "Scent 2 / 2", step: "Select", row: 4, above: true },
+  { screen: "Scent 1 / 2", step: "Select", row: 3, real: "scent1" },
+  /* 넷째 칸도 같은 1/2 단계입니다. 고르고 난 뒤, 못 고르는 향이 흐려진 상태입니다. */
+  {
+    screen: "Scent 1 / 2",
+    step: "Select",
+    row: 4,
+    above: true,
+    real: "scent2",
+  },
 ];
 
 const px = (value: number) => `calc(${value} * var(--u))`;
@@ -63,7 +71,7 @@ export function SceneScreens() {
       <div className="steps col-start-1 col-span-8 row-start-3 row-span-4">
         {SHOTS.map((shot, i) => (
           <div
-            key={shot.screen}
+            key={`${shot.screen}-${i}`}
             className="steps-shot rise"
             data-above={shot.above || undefined}
             style={
@@ -90,6 +98,10 @@ export function SceneScreens() {
             >
               {shot.real === "gift" && <TamburinsGiftScreen />}
               {shot.real === "product" && <TamburinsProductScreen />}
+              {shot.real === "scent1" && <TamburinsScentScreen step={1} />}
+              {shot.real === "scent2" && (
+                <TamburinsScentScreen step={1} dim={[0, 2, 3]} />
+              )}
               {!shot.real && <span>{shot.screen}</span>}
             </div>
             {/* 화면 이름은 Current User Flow 의 마디와 같은 말을 씁니다.

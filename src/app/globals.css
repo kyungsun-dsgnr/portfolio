@@ -1409,7 +1409,7 @@
 
   /* 화면 폭을 꽉 채우는 큰 그림 */
   .gift-screen-hero {
-    height: calc(260.74 * var(--u));
+    height: calc(256.89 * var(--u));
     background: #efefef;
   }
 

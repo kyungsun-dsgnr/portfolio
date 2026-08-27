@@ -19,6 +19,8 @@ const TOP = 28;
 const DOWN = 72;
 /** 선이 알약 테두리 아래로 살짝 들어가도록 해 미세한 틈을 없앱니다. */
 const LINE_OVERLAP = 2;
+/** 걸리는 지점 카드가 그 단의 맨 아래 마디에서 떨어지는 거리 */
+const NOTE_GAP = 16;
 
 type Tone = "plain" | "start" | "ghost";
 type Node = {
@@ -100,6 +102,14 @@ const place = (node: Node) => ({
   y: TOP + node.line * DOWN,
 });
 
+/** 그 단에서 가장 아래에 선 마디의 밑선. 카드는 여기서 한 칸 띄고 섭니다. */
+const floorOf = (step: number) =>
+  Math.max(
+    ...NODES.filter((node) => node.step === step).map(
+      (node) => place(node).y + PILL_H,
+    ),
+  );
+
 const px = (value: number) => `calc(${value} * var(--u))`;
 
 /** 같은 줄이면 곧은 가로선, 아래 줄이면 단 가운데를 타고 내려가는 세로선 */
@@ -175,26 +185,27 @@ export function SceneFlow() {
             {node.pain && <em className="flow-pain">{node.pain.no}</em>}
           </span>
         ))}
-      </div>
 
-      {/* 걸리는 지점은 손을 올려야 보이면 지나치기 쉬워, 아래 칸에 펼쳐 둡니다.
-          판이 2단에서 시작하므로, 카드가 서는 단은 그 걸음의 단 번호에 하나를 더한 자리입니다. */}
-      {NODES.filter((node) => node.pain).map((node, i) => (
-        <div
-          key={node.id}
-          className="flow-note rise"
-          style={
-            {
-              "--delay": `${0.24 + i * 0.06}s`,
-              gridColumn: `${2 + node.step} / span 1`,
-              gridRow: "5",
-            } as CSSProperties
-          }
-        >
-          <em>{node.pain!.no}</em>
-          <p>{node.pain!.text}</p>
-        </div>
-      ))}
+        {/* 걸리는 지점. 좌우는 그 걸음이 선 단에 그대로 맞추고,
+            위아래는 그 단에서 가장 아래에 선 마디에서 한 칸(16) 띄고 섭니다. */}
+        {NODES.filter((node) => node.pain).map((node, i) => (
+          <div
+            key={`${node.id}-note`}
+            className="flow-note rise"
+            style={
+              {
+                "--delay": `${0.24 + i * 0.06}s`,
+                left: px(place(node).x),
+                top: px(floorOf(node.step) + NOTE_GAP),
+                width: px(COL),
+              } as CSSProperties
+            }
+          >
+            <em>{node.pain!.no}</em>
+            <p>{node.pain!.text}</p>
+          </div>
+        ))}
+      </div>
 
       <div
         className="flow-brief rise col-start-5 col-span-4 row-start-6"

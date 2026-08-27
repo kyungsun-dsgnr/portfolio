@@ -626,7 +626,7 @@
   /* 걸리는 지점. 해당 걸음이 선 단 그대로 아래 칸에 내려와 섭니다.
      흐름 판은 밝고 이쪽은 어두워, 무엇이 문제인지가 먼저 눈에 들어옵니다. */
   .flow-note {
-    align-self: start;
+    position: absolute;
     border-radius: calc(6 * var(--u));
     background: #191919;
     padding: calc(12 * var(--u)) calc(12 * var(--u)) calc(14 * var(--u));

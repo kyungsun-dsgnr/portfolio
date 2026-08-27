@@ -87,11 +87,7 @@ export function SceneScreens() {
                 ),
               }}
             >
-              {shot.real ? (
-                <TamburinsGiftScreen width={SHOT_W} />
-              ) : (
-                <span>{shot.screen}</span>
-              )}
+              {shot.real ? <TamburinsGiftScreen /> : <span>{shot.screen}</span>}
             </div>
             {/* 화면 이름은 Current User Flow 의 마디와 같은 말을 씁니다.
                 아래 한 줄은 그 화면에서 하는 일입니다. */}

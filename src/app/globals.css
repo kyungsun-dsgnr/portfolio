@@ -1365,97 +1365,125 @@
     left: 0;
   }
 
-  /* ── 실제 화면(기프트 목록) ────────────────────
-     칸보다 조금 넓은 원본을 줄여 왼쪽 위에 붙입니다. 아래는 칸 밖으로 잘립니다. */
+  /* ── 실제 화면(커스텀 기프트 상세) ──────────────
+     칸 안에서 위아래로 굴려 볼 수 있습니다. 막대는 감춰 화면처럼 보이게 합니다. */
   .gift-screen {
     position: absolute;
-    left: 0;
-    top: 0;
-    transform-origin: top left;
+    inset: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
     background: #ffffff;
+    padding-bottom: calc(24 * var(--u));
     color: #1d1d1d;
     font-family: var(--font-body);
     text-align: left;
   }
 
-  .gift-screen-top h4 {
-    padding: calc(10 * var(--u)) calc(15 * var(--u));
-    font-size: calc(16 * var(--u));
-    font-weight: 400;
-    line-height: 1;
+  .gift-screen::-webkit-scrollbar {
+    display: none;
   }
 
-  .gift-screen-tabs {
+  .gift-screen-title {
     display: flex;
-    gap: calc(10 * var(--u));
-    border-top: 1px solid #efefef;
-    padding: calc(15 * var(--u));
-  }
-
-  .gift-screen-tabs span {
-    border-radius: 50px;
-    background: #efefef;
-    padding: calc(5 * var(--u)) calc(20 * var(--u));
-    color: #767676;
-    font-size: calc(13 * var(--u));
-    font-weight: 400;
+    height: calc(40 * var(--u));
+    align-items: center;
+    border-bottom: 1px solid #efefef;
+    padding: 0 calc(9 * var(--u));
+    font-size: calc(15 * var(--u));
+    font-weight: 600;
     line-height: 1.5;
   }
 
-  .gift-screen-tabs span[data-on] {
-    background: #1d1d1d;
-    color: #ffffff;
+  .gift-screen-main {
+    border-bottom: 1px solid #efefef;
   }
 
   /* 화면 폭을 꽉 채우는 큰 그림 */
   .gift-screen-hero {
-    height: calc(256.89 * var(--u));
-    background: #efefef;
+    height: calc(256.88 * var(--u));
+    background: #dcdcdc;
   }
 
-  .gift-screen-lead {
-    display: flex;
-    flex-direction: column;
-    gap: calc(4 * var(--u));
-    padding: calc(14 * var(--u)) calc(10 * var(--u)) calc(30 * var(--u));
-  }
-
-  .gift-screen-lead strong {
+  .gift-screen-body {
+    padding: calc(40 * var(--u)) calc(15 * var(--u)) calc(60 * var(--u));
     font-size: calc(14 * var(--u));
+    line-height: 1.6;
+  }
+
+  .gift-screen-body p {
     font-weight: 500;
-    line-height: 1.5;
   }
 
-  .gift-screen-lead span {
-    color: #a4a4a4;
-    font-size: calc(11 * var(--u));
+  /* 안내 줄. 앞의 점까지 도면 그대로 글자로 둡니다. */
+  .gift-screen-body ul {
+    padding-top: calc(20 * var(--u));
+    color: #b4b4b4;
     font-weight: 400;
+  }
+
+  .gift-screen-body li {
+    padding-left: calc(11 * var(--u));
+    text-indent: calc(-11 * var(--u));
+  }
+
+  .gift-screen-body li::before {
+    content: "• ";
+  }
+
+  .gift-screen-sub {
+    display: flex;
+    height: calc(40 * var(--u));
+    align-items: center;
+    padding: 0 calc(9 * var(--u));
+    font-size: calc(13 * var(--u));
+    font-weight: 600;
     line-height: 1.5;
   }
 
-  /* 옆으로 이어지는 세트 줄. 화면 폭에서 잘립니다. */
+  /* 옆으로 이어지는 관련 제품 줄. 손으로 옆으로 굴립니다. */
   .gift-screen-row {
     display: flex;
-    height: calc(225 * var(--u));
-    overflow: hidden;
+    height: calc(238.52 * var(--u));
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .gift-screen-row::-webkit-scrollbar {
+    display: none;
   }
 
   .gift-screen-row article {
     flex: none;
-    width: calc(156 * var(--u));
+    width: calc(150 * var(--u));
   }
 
   .gift-screen-shot {
-    height: calc(190 * var(--u));
-    width: calc(155 * var(--u));
+    height: calc(183 * var(--u));
+    width: calc(149 * var(--u));
     background: #efefef;
   }
 
-  .gift-screen-row h5 {
+  .gift-screen-row h6 {
+    width: calc(140 * var(--u));
     padding: calc(14 * var(--u)) 0 0 calc(10 * var(--u));
     font-size: calc(13 * var(--u));
     font-weight: 500;
     line-height: 1.6;
+  }
+
+  /* 굴려도 자리에 남는 동그란 단추 */
+  .gift-screen-fab {
+    position: absolute;
+    right: calc(15 * var(--u));
+    bottom: calc(22 * var(--u));
+    height: calc(56 * var(--u));
+    width: calc(56 * var(--u));
+    border-radius: 50%;
+    background: #2e2e2e;
   }
 
   .steps-cap {

@@ -4,6 +4,7 @@
 
 import type { CSSProperties } from "react";
 
+import { TamburinsGiftScreen } from "@/components/TamburinsGiftScreen";
 import { useInView } from "@/components/useInView";
 
 /* 자리는 전부 그리드에서 끌어옵니다.
@@ -28,8 +29,14 @@ const BAND_H = 4 * ROW + 3 * GAP;
 /* 사용자가 지나는 순서. 분석은 다음 장에서 하고 여기서는 있는 그대로 둡니다.
    row 는 그 화면이 시작하는 행이고, 한 행씩 엇갈려 지나온 걸음이 보입니다.
    내려앉은 화면은 판 밖으로 흘러 아래에 마디를 놓을 자리가 없어 위에 답니다. */
-const SHOTS = [
-  { screen: "Gift", step: "Browse", row: 3 },
+const SHOTS: {
+  screen: string;
+  step: string;
+  row: number;
+  above?: boolean;
+  real?: boolean;
+}[] = [
+  { screen: "Gift", step: "Browse", row: 3, real: true },
   { screen: "Product", step: "Enter", row: 4, above: true },
   { screen: "Scent 1 / 2", step: "Select", row: 3 },
   { screen: "Scent 2 / 2", step: "Select", row: 4, above: true },
@@ -80,7 +87,11 @@ export function SceneScreens() {
                 ),
               }}
             >
-              <span>{shot.screen}</span>
+              {shot.real ? (
+                <TamburinsGiftScreen width={SHOT_W} />
+              ) : (
+                <span>{shot.screen}</span>
+              )}
             </div>
             {/* 화면 이름은 Current User Flow 의 마디와 같은 말을 씁니다.
                 아래 한 줄은 그 화면에서 하는 일입니다. */}

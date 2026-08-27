@@ -1333,6 +1333,9 @@
   }
 
   .steps-frame {
+    /* 실제 화면이 이 칸을 기준으로 앉고, 넘치는 아래는 잘립니다. */
+    position: relative;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1360,6 +1363,110 @@
     position: absolute;
     bottom: calc(100% + 14 * var(--u));
     left: 0;
+  }
+
+  /* ── 실제 화면(기프트 목록) ────────────────────
+     칸보다 조금 넓은 원본을 줄여 왼쪽 위에 붙입니다. 아래는 칸 밖으로 잘립니다. */
+  .gift-screen {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-origin: top left;
+    background: #ffffff;
+    color: #1d1d1d;
+    font-family: var(--font-body);
+    text-align: left;
+  }
+
+  .gift-screen-top h4 {
+    padding: calc(10 * var(--u)) calc(15 * var(--u));
+    font-size: calc(16 * var(--u));
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .gift-screen-tabs {
+    display: flex;
+    gap: calc(10 * var(--u));
+    border-top: 1px solid #efefef;
+    padding: calc(15 * var(--u)) calc(15 * var(--u)) calc(15 * var(--u))
+      calc(15 * var(--u));
+  }
+
+  .gift-screen-tabs span {
+    border-radius: 50px;
+    background: #efefef;
+    padding: calc(5 * var(--u)) calc(20 * var(--u));
+    color: #767676;
+    font-size: calc(13 * var(--u));
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .gift-screen-tabs span[data-on] {
+    background: #1d1d1d;
+    color: #ffffff;
+  }
+
+  .gift-screen-lead {
+    display: flex;
+    flex-direction: column;
+    gap: calc(4 * var(--u));
+    padding: calc(14 * var(--u)) calc(10 * var(--u)) calc(24 * var(--u));
+  }
+
+  .gift-screen-lead strong {
+    font-size: calc(14 * var(--u));
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .gift-screen-lead span {
+    color: #a4a4a4;
+    font-size: calc(11 * var(--u));
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* 두 단으로 서는 세트 카드 */
+  .gift-screen-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: calc(14 * var(--u));
+    padding: 0 calc(14 * var(--u));
+  }
+
+  .gift-screen-grid article {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .gift-screen-shot {
+    height: calc(190 * var(--u));
+    background: #efefef;
+  }
+
+  .gift-screen-grid h5 {
+    padding-top: calc(14 * var(--u));
+    font-size: calc(14 * var(--u));
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .gift-screen-grid span {
+    padding-top: calc(4 * var(--u));
+    color: #a4a4a4;
+    font-size: calc(11 * var(--u));
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .gift-screen-grid em {
+    padding-top: calc(10 * var(--u));
+    font-size: calc(12 * var(--u));
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.5;
   }
 
   .steps-cap {

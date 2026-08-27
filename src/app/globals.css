@@ -1473,19 +1473,49 @@
     background: #efefef;
   }
 
-  /* 고르는 참인 세트. 이 사이트가 고른 것을 표시하는 방식(검은 테두리)을 그대로 씁니다. */
-  .gift-screen-row article[data-pick] .gift-screen-shot {
-    outline: 1px solid #1d1d1d;
-    outline-offset: -1px;
+  /* 고르는 참인 세트. 누르는 순간 살짝 눌렸다가 앞으로 다가옵니다.
+     이 사이트가 고른 것을 표시하는 방식(검은 테두리)을 그대로 씁니다. */
+  .gift-screen-row article {
+    transition: opacity 400ms ease;
   }
 
-  .gift-screen-row article[data-pick] h6 {
+  .gift-screen-row article[data-pick] .gift-screen-shot {
+    outline: 0 solid #1d1d1d;
+    outline-offset: -1px;
+    transform-origin: 50% 60%;
+    transition:
+      outline-width 240ms ease,
+      scale 520ms cubic-bezier(0.3, 0.8, 0.3, 1);
+  }
+
+  .gift-screen[data-opening]
+    .gift-screen-row
+    article[data-pick]
+    .gift-screen-shot {
+    outline-width: 1px;
+    animation: set-open 900ms cubic-bezier(0.3, 0.8, 0.3, 1) both;
+  }
+
+  /* 눌렀다 놓는 결. 마지막에 조금 다가와 열리는 참으로 보입니다. */
+  @keyframes set-open {
+    0% {
+      scale: 1;
+    }
+    22% {
+      scale: 0.96;
+    }
+    100% {
+      scale: 1.06;
+    }
+  }
+
+  .gift-screen[data-opening] .gift-screen-row article[data-pick] h6 {
     font-weight: 600;
   }
 
-  /* 고르지 않은 것들은 한 톤 물러납니다. */
-  .gift-screen-row article:not([data-pick]) {
-    opacity: 0.45;
+  /* 고르지 않은 것들은 그때 한 톤 물러납니다. */
+  .gift-screen[data-opening] .gift-screen-row article:not([data-pick]) {
+    opacity: 0.4;
   }
 
   .gift-screen-row h6 {
@@ -1506,7 +1536,7 @@
     overscroll-behavior-y: contain;
     scrollbar-width: none;
     background: #ffffff;
-    padding-bottom: calc(40 * var(--u));
+    padding-bottom: calc(70 * var(--u));
     color: #1d1d1d;
     font-family: var(--font-body);
     text-align: left;
@@ -1518,28 +1548,8 @@
 
   .prod-screen-hero {
     position: relative;
-    height: calc(333 * var(--u));
+    height: calc(342 * var(--u));
     background: #dcdcdc;
-  }
-
-  /* 그림 아래에 걸리는 장 표시 막대 */
-  .prod-screen-bar {
-    position: absolute;
-    left: calc(3 * var(--u));
-    bottom: calc(8 * var(--u));
-    display: block;
-    height: calc(4 * var(--u));
-    width: calc(326.34 * var(--u));
-    border-radius: 92px;
-    background: rgb(255 255 255 / 0.28);
-  }
-
-  .prod-screen-bar span {
-    display: block;
-    height: 100%;
-    width: calc(163 * var(--u));
-    border-radius: 24.86px;
-    background: rgb(255 255 255 / 0.58);
   }
 
   .prod-screen-head {
@@ -1667,11 +1677,50 @@
     line-height: 1.5;
   }
 
+  /* 눌리는 자리. 누르는 순간 잠깐 눌렸다가 짙어집니다. */
   .prod-screen-card em {
+    display: inline-block;
+    border-radius: calc(3 * var(--u));
+    padding: calc(2 * var(--u)) calc(4 * var(--u));
+    margin-left: calc(-4 * var(--u));
     font-size: calc(11 * var(--u));
     font-style: normal;
     line-height: 1.5;
     text-decoration: underline;
+    transition:
+      background 260ms ease,
+      scale 260ms ease;
+  }
+
+  .prod-screen[data-press] .prod-screen-card em {
+    animation: pick-press 700ms cubic-bezier(0.3, 0.8, 0.3, 1) both;
+  }
+
+  @keyframes pick-press {
+    0% {
+      background: rgb(29 29 29 / 0);
+      scale: 1;
+    }
+    26% {
+      background: rgb(29 29 29 / 0.1);
+      scale: 0.94;
+    }
+    100% {
+      background: rgb(29 29 29 / 0.06);
+      scale: 1;
+    }
+  }
+
+  /* 누르고 나면 그 카드가 앞으로 나섭니다. */
+  .prod-screen-card {
+    transition:
+      border-color 300ms ease,
+      box-shadow 300ms ease;
+  }
+
+  .prod-screen[data-press] .prod-screen-card {
+    border-color: #1d1d1d;
+    box-shadow: 0 calc(2 * var(--u)) calc(10 * var(--u)) rgb(29 29 29 / 0.1);
   }
 
   .prod-screen-add {

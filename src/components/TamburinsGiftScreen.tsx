@@ -3,7 +3,9 @@
 /** 탬버린즈 커스텀 기프트 상세 화면. 15장 첫 칸에 들어갑니다. */
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
+import { useInView } from "@/components/useInView";
 
 /* 안내 문구. 향은 여기서 "제품별로 고를 수 있다" 고만 적혀 있고,
    정작 어떤 향이 있는지는 이 화면에서 알 수 없습니다. */
@@ -26,26 +28,54 @@ const RELATED = [
 /** 고르는 참인 세트의 차례 */
 const PICKED = 1;
 
+/* 장에 들어서면 스스로 훑습니다.
+   아래로 내려가 관련 제품을 보고, 옆으로 밀어 세트를 찾고, 그것을 엽니다. */
+const SCROLL_AT = 700;
+const SLIDE_AT = 2000;
+const OPEN_AT = 3100;
+
 /**
  * 실제 화면 하나. 칸 안에서 위아래로 굴려 볼 수 있고,
  * 관련 제품 줄은 옆으로 굴러갑니다.
  */
 export function TamburinsGiftScreen() {
-  const page = useRef<HTMLDivElement>(null);
+  const [page, inView] = useInView<HTMLDivElement>(0.3);
   const row = useRef<HTMLDivElement>(null);
+  /** 세트를 여는 참 */
+  const [opening, setOpening] = useState(false);
 
-  /* 처음부터 관련 제품 줄이 보이고, 고르는 세트가 앞에 오게 굴려 둡니다.
-     화면 크기에 따라 픽셀 값이 달라지므로 요소의 실제 자리에서 끌어옵니다. */
+  /* 장에 들어설 때마다 처음부터 다시 훑습니다.
+     굴리는 양은 요소의 실제 자리에서 끌어와 화면 크기와 무관합니다. */
   useEffect(() => {
-    const sub = page.current?.querySelector<HTMLElement>(".gift-screen-sub");
-    if (page.current && sub) page.current.scrollTop = sub.offsetTop;
+    const view = page.current;
+    const line = row.current;
+    if (!view || !line) return;
 
-    const card = row.current?.children[PICKED] as HTMLElement | undefined;
-    if (row.current && card) row.current.scrollLeft = card.offsetLeft;
-  }, []);
+    if (!inView) {
+      /* 장을 벗어나면 처음으로 돌려 둡니다. 그리는 중에 바로 바꾸지 않고 한 박자 뒤에 둡니다. */
+      view.scrollTo({ top: 0 });
+      line.scrollTo({ left: 0 });
+      const back = window.setTimeout(() => setOpening(false), 0);
+      return () => clearTimeout(back);
+    }
+
+    const timers = [
+      window.setTimeout(() => {
+        const sub = view.querySelector<HTMLElement>(".gift-screen-sub");
+        if (sub) view.scrollTo({ top: sub.offsetTop, behavior: "smooth" });
+      }, SCROLL_AT),
+      window.setTimeout(() => {
+        const card = line.children[PICKED] as HTMLElement | undefined;
+        if (card) line.scrollTo({ left: card.offsetLeft, behavior: "smooth" });
+      }, SLIDE_AT),
+      window.setTimeout(() => setOpening(true), OPEN_AT),
+    ];
+
+    return () => timers.forEach(clearTimeout);
+  }, [inView, page]);
 
   return (
-    <div className="gift-screen" ref={page}>
+    <div className="gift-screen" ref={page} data-opening={opening || undefined}>
       {/* 뒤는 어둡게 깔리고, 그 위에 흰 화면이 놓입니다. */}
       <div className="gift-sheet">
         <h4 className="gift-screen-title">NEW 커스텀 기프트</h4>

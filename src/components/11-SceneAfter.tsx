@@ -151,7 +151,7 @@ export function SceneAfter() {
 
       {/* 화면 하나. 앞 장 목업과 같은 두 단에 섭니다. */}
       <div
-        className="after-frame rise col-start-4 col-span-2 row-start-1 row-span-6"
+        className="after-frame rise col-start-4 col-span-2 row-start-2 row-span-5"
         style={{ "--delay": "0.18s" } as CSSProperties}
       >
         {/* 점은 자리를 가리키기만 합니다. 순회하지 않으니 셋 다 켜 둡니다. */}

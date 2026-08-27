@@ -2,7 +2,7 @@
 
 /* 손글씨용 Brittany Signature.
    맥에 설치되어 있으면 local() 로 바로 잡히고, 없으면 public/fonts 의 파일을 씁니다.
-   둘 다 없으면 --font-hand 의 다음 후보(Parisienne)로 넘어갑니다. */
+   둘 다 없으면 --font-hand 의 다음 후보(Sacramento)로 넘어갑니다. */
 @font-face {
   font-family: "Brittany Signature";
   src:
@@ -18,7 +18,7 @@
   --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-body:
     "SUIT Variable", var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  /* next/font 가 --font-script 에 Parisienne 을 실어 줍니다. */
+  /* next/font 가 --font-script 에 Sacramento 를 실어 줍니다. */
   --font-hand:
     "Brittany Signature", var(--font-script), "Snell Roundhand", cursive;
 }
@@ -537,6 +537,8 @@
     justify-content: space-between;
     border-radius: calc(2 * var(--u));
     padding: calc(14 * var(--u)) calc(20 * var(--u)) calc(36 * var(--u));
+    /* 앞면 겹의 z-index 가 잔까지 넘어가지 않도록 쌓임을 카드 안에 가둡니다. */
+    isolation: isolate;
     /* 사진 속 카드를 그대로 덮으므로 그림자는 사진의 것을 씁니다.
        종이 결도 사진에 이미 있어, 여기서는 색만 맞춥니다. */
     background:
@@ -548,11 +550,69 @@
       #f7f6f2;
   }
 
-  /* 처음에 덮여 있는 제품 카드. 천천히 물러나며 감사 카드가 드러납니다. */
+  /* 처음에 덮여 있는 제품 카드. 천천히 물러나며 감사 카드가 드러납니다.
+     뒷면과 같은 종이 위에 로고·그림·품명을 얹어 만듭니다. */
   .nud-card-front {
     position: absolute;
     inset: 0;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: inherit;
+    padding: calc(14 * var(--u)) calc(18 * var(--u)) calc(12 * var(--u));
+  }
+
+  .nud-front-logo {
+    position: relative;
+    display: block;
+    width: calc(46 * var(--u));
+    height: calc(38 * var(--u));
+  }
+
+  /* 가운데 그림. 카드 폭을 꽉 채웁니다. */
+  .nud-front-art {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: calc(252 * var(--u));
+    margin-top: calc(10 * var(--u));
+  }
+
+  /* 품명과 종류. 그림 아래 양 끝으로 벌립니다. */
+  .nud-front-foot {
+    display: flex;
+    width: 100%;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: calc(14 * var(--u));
+    color: rgb(25 25 25 / 0.85);
+    font-family: var(--font-display);
+    font-size: calc(11 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .nud-front-foot em:last-child {
+    color: rgb(25 25 25 / 0.5);
+    font-size: calc(8 * var(--u));
+    letter-spacing: 0.16em;
+  }
+
+  .nud-front-foot em {
+    font-style: normal;
+  }
+
+  .nud-front-mark {
+    margin-top: auto;
+    color: rgb(25 25 25 / 0.38);
+    font-family: var(--font-display);
+    font-size: calc(6 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-indent: 0.24em;
+    text-transform: uppercase;
   }
 
   [data-visible] .nud-card-front {

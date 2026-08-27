@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Parisienne } from "next/font/google";
+import { Inter, Sacramento } from "next/font/google";
 import { GridOverlay } from "@/components/GridOverlay";
 import "./globals.css";
 
@@ -8,8 +8,9 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-/* 누데이크 카드에 손으로 쓴 것처럼 들어가는 글씨 */
-const parisienne = Parisienne({
+/* 누데이크 카드에 손으로 쓴 것처럼 들어가는 글씨.
+   획 굵기가 고르고 흘려 쓴 결이라 펜으로 적은 것에 가깝습니다. */
+const script = Sacramento({
   variable: "--font-script",
   weight: "400",
   subsets: ["latin"],
@@ -25,7 +26,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ko"
-      className={`${inter.variable} ${parisienne.variable} antialiased`}
+      className={`${inter.variable} ${script.variable} antialiased`}
     >
       <head>
         {/* SUIT Variable 은 Google Fonts에 없어 CDN에서 불러옵니다.

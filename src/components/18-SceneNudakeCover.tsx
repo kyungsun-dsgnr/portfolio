@@ -35,9 +35,10 @@ const CARD = { left: 272, top: 212, width: 268, height: 381 };
 const HAND = ["Thank", "you !"];
 
 /* 잔에 담기는 티백 한 장(끈과 라벨이 함께 그려져 있습니다).
-   원본 1239×1270 판에서 주머니가 가로 26.6~74.3%, 세로 36.1~88.7% 자리라,
-   주머니가 잔 안쪽 물(가로 120~376, 물 위 440)에 들어가도록 판을 잡았습니다. */
-const TEA = { left: 133, top: 370, width: 220, height: 226 };
+   원본 1222×1287 판에서 주머니가 가로 21.2~74.2%, 세로 37.0~93.9% 자리라,
+   주머니가 잔 안쪽 물(가로 120~376, 물 위 440)에 들어가도록 판을 잡았습니다.
+   주머니 폭 105 → 115.5 로 1.1배 키운 값입니다. */
+const TEA = { left: 134, top: 365, width: 218, height: 230 };
 
 const BREW = { left: 126, top: 440, width: 212, height: 182 };
 
@@ -70,15 +71,35 @@ export function SceneNudakeCover() {
         {/* 사진 속 카드 자리를 그대로 덮는 우리 카드.
             위에 로고, 가운데 손글씨, 아래 날짜입니다. */}
         <div className="nud-card absolute" style={put(CARD)}>
-          {/* 처음에는 제품 카드가 서 있다가, 서서히 감사 카드로 바뀝니다. */}
+          {/* 처음에는 제품 카드가 서 있다가, 서서히 감사 카드로 바뀝니다.
+              앞면도 같은 종이 위에 로고·그림·품명을 얹어 만듭니다. */}
           <span className="nud-card-front" aria-hidden>
-            <Image
-              src="/images/nudake-card-front.png"
-              alt=""
-              fill
-              sizes="20vw"
-              className="object-cover"
-            />
+            <span className="nud-front-logo">
+              <Image
+                src="/images/nudake-card-logo.png"
+                alt=""
+                fill
+                sizes="10vw"
+                className="object-contain"
+              />
+            </span>
+
+            <span className="nud-front-art">
+              <Image
+                src="/images/nudake-bluemonk.png"
+                alt=""
+                fill
+                sizes="20vw"
+                className="object-cover"
+              />
+            </span>
+
+            <span className="nud-front-foot">
+              <em>Blue Monk</em>
+              <em>Tea</em>
+            </span>
+
+            <span className="nud-front-mark">nudake.com</span>
           </span>
 
           <span className="nud-card-logo">

@@ -4,9 +4,8 @@
 
 import type { CSSProperties } from "react";
 
-import { TamburinsGiftScreen } from "@/components/TamburinsGiftScreen";
-import { TamburinsProductScreen } from "@/components/TamburinsProductScreen";
-import { TamburinsScentScreen } from "@/components/TamburinsScentScreen";
+/* 실제 화면 목업은 잠시 내려 두었습니다. 다시 붙이려면 아래 넷을 되살리면 됩니다.
+   TamburinsGiftScreen / TamburinsProductScreen / TamburinsScentScreen */
 import { useInView } from "@/components/useInView";
 
 /* 자리는 전부 그리드에서 끌어옵니다.
@@ -36,18 +35,16 @@ const SHOTS: {
   step: string;
   row: number;
   above?: boolean;
-  real?: "gift" | "product" | "scent1" | "scent2";
 }[] = [
-  { screen: "Gift", step: "Browse", row: 3, real: "gift" },
-  { screen: "Product", step: "Enter", row: 4, above: true, real: "product" },
-  { screen: "Scent 1 / 2", step: "Select", row: 3, real: "scent1" },
+  { screen: "Gift", step: "Browse", row: 3 },
+  { screen: "Product", step: "Enter", row: 4, above: true },
+  { screen: "Scent 1 / 2", step: "Select", row: 3 },
   /* 넷째 칸도 같은 1/2 단계입니다. 고르고 난 뒤, 못 고르는 향이 흐려진 상태입니다. */
   {
     screen: "Scent 1 / 2",
     step: "Select",
     row: 4,
     above: true,
-    real: "scent2",
   },
 ];
 
@@ -96,13 +93,7 @@ export function SceneScreens() {
                 ),
               }}
             >
-              {shot.real === "gift" && <TamburinsGiftScreen />}
-              {shot.real === "product" && <TamburinsProductScreen />}
-              {shot.real === "scent1" && <TamburinsScentScreen step={1} />}
-              {shot.real === "scent2" && (
-                <TamburinsScentScreen step={1} dim={[0, 2, 3]} />
-              )}
-              {!shot.real && <span>{shot.screen}</span>}
+              <span>{shot.screen}</span>
             </div>
             {/* 화면 이름은 Current User Flow 의 마디와 같은 말을 씁니다.
                 아래 한 줄은 그 화면에서 하는 일입니다. */}

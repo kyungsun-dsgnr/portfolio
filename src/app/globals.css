@@ -1486,6 +1486,216 @@
     background: #2e2e2e;
   }
 
+  /* ── 실제 화면(제품 상세) ──────────────────────
+     기프트에서 한 번 더 들어와야 닿는 화면입니다. 칸 안에서 위아래로 굴립니다. */
+  .prod-screen {
+    position: absolute;
+    inset: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+    background: #ffffff;
+    padding-bottom: calc(40 * var(--u));
+    color: #1d1d1d;
+    font-family: var(--font-body);
+    text-align: left;
+  }
+
+  .prod-screen::-webkit-scrollbar {
+    display: none;
+  }
+
+  .prod-screen-hero {
+    position: relative;
+    height: calc(333 * var(--u));
+    background: #dcdcdc;
+  }
+
+  /* 그림 아래에 걸리는 장 표시 막대 */
+  .prod-screen-bar {
+    position: absolute;
+    left: calc(3 * var(--u));
+    bottom: calc(8 * var(--u));
+    display: block;
+    height: calc(4 * var(--u));
+    width: calc(326.34 * var(--u));
+    border-radius: 92px;
+    background: rgb(255 255 255 / 0.28);
+  }
+
+  .prod-screen-bar span {
+    display: block;
+    height: 100%;
+    width: calc(163 * var(--u));
+    border-radius: 24.86px;
+    background: rgb(255 255 255 / 0.58);
+  }
+
+  .prod-screen-head {
+    padding: calc(21.31 * var(--u)) calc(13.32 * var(--u)) 0;
+  }
+
+  .prod-screen-head h4 {
+    font-size: calc(16 * var(--u));
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .prod-screen-price {
+    padding-top: calc(3 * var(--u));
+    font-size: calc(16 * var(--u));
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* 포장 안내. 오른쪽 끝의 화살표는 눌러 펼치는 표시입니다. */
+  .prod-screen-pack {
+    display: flex;
+    align-items: center;
+    gap: calc(4 * var(--u));
+    padding-top: calc(20 * var(--u));
+    font-size: calc(14 * var(--u));
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .prod-screen-pack i {
+    height: calc(6 * var(--u));
+    width: calc(6 * var(--u));
+    border-right: 1px solid #767676;
+    border-bottom: 1px solid #767676;
+    rotate: 45deg;
+    translate: 0 calc(-2 * var(--u));
+  }
+
+  .prod-screen-thumbs {
+    display: flex;
+    padding: calc(30 * var(--u)) calc(13.32 * var(--u)) 0;
+  }
+
+  .prod-screen-thumb {
+    height: calc(112 * var(--u));
+    width: calc(89 * var(--u));
+    border: 1px solid #000000;
+    border-radius: calc(7.1 * var(--u));
+    background: #efefef;
+  }
+
+  .prod-screen-thumbs figcaption {
+    width: calc(89 * var(--u));
+    overflow: hidden;
+    padding-top: calc(1.39 * var(--u));
+    font-size: calc(10 * var(--u));
+    font-weight: 400;
+    line-height: 2.2;
+    white-space: nowrap;
+  }
+
+  .prod-screen-rule {
+    margin: calc(17.76 * var(--u)) calc(13.32 * var(--u)) 0;
+    border: 0;
+    border-top: 1px solid #efefef;
+  }
+
+  .prod-screen-size {
+    padding: calc(21.31 * var(--u)) calc(13.32 * var(--u)) 0;
+    font-size: calc(12 * var(--u));
+    line-height: 1.8;
+  }
+
+  .prod-screen-size button {
+    display: block;
+    height: calc(40 * var(--u));
+    min-width: calc(120 * var(--u));
+    margin-top: calc(10.66 * var(--u));
+    border: 1px solid #000000;
+    border-radius: 50px;
+    background: #ffffff;
+    padding: 0 calc(32 * var(--u));
+    font-family: inherit;
+    font-size: calc(13 * var(--u));
+    line-height: 1;
+  }
+
+  .prod-screen-option {
+    padding: calc(30 * var(--u)) calc(13.32 * var(--u)) 0;
+  }
+
+  .prod-screen-option p {
+    font-size: calc(12 * var(--u));
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* 향은 이 카드의 "선택하기" 를 눌러 창을 열어야 고를 수 있습니다. */
+  .prod-screen-card {
+    display: flex;
+    height: calc(101 * var(--u));
+    margin-top: calc(20 * var(--u));
+    border: 1px solid #e2e2e2;
+    border-radius: calc(4 * var(--u));
+    overflow: hidden;
+  }
+
+  .prod-screen-card-shot {
+    flex: none;
+    width: calc(80 * var(--u));
+    background: #efefef;
+  }
+
+  .prod-screen-card > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: calc(6 * var(--u));
+    padding: 0 calc(15 * var(--u));
+  }
+
+  .prod-screen-card span {
+    font-size: calc(12 * var(--u));
+    line-height: 1.5;
+  }
+
+  .prod-screen-card em {
+    font-size: calc(11 * var(--u));
+    font-style: normal;
+    line-height: 1.5;
+    text-decoration: underline;
+  }
+
+  .prod-screen-add {
+    display: flex;
+    height: calc(40 * var(--u));
+    align-items: center;
+    justify-content: center;
+    margin: calc(30 * var(--u)) calc(13.32 * var(--u)) 0;
+    border-radius: calc(5 * var(--u));
+    background: #efefef;
+    color: #767676;
+    font-size: calc(13 * var(--u));
+    line-height: 1.5;
+  }
+
+  .prod-screen-folds {
+    padding: calc(50 * var(--u)) calc(13.32 * var(--u)) 0;
+  }
+
+  .prod-screen-folds li {
+    display: flex;
+    height: calc(50 * var(--u));
+    align-items: center;
+    justify-content: space-between;
+    font-size: calc(14 * var(--u));
+    line-height: 1.4;
+  }
+
+  .prod-screen-folds i {
+    height: calc(8 * var(--u));
+    width: calc(8 * var(--u));
+    background: #1d1d1d;
+  }
+
   .steps-cap {
     display: flex;
     flex-direction: column;

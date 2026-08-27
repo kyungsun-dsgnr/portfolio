@@ -5,6 +5,7 @@
 import type { CSSProperties } from "react";
 
 import { TamburinsGiftScreen } from "@/components/TamburinsGiftScreen";
+import { TamburinsProductScreen } from "@/components/TamburinsProductScreen";
 import { useInView } from "@/components/useInView";
 
 /* 자리는 전부 그리드에서 끌어옵니다.
@@ -34,10 +35,10 @@ const SHOTS: {
   step: string;
   row: number;
   above?: boolean;
-  real?: boolean;
+  real?: "gift" | "product";
 }[] = [
-  { screen: "Gift", step: "Browse", row: 3, real: true },
-  { screen: "Product", step: "Enter", row: 4, above: true },
+  { screen: "Gift", step: "Browse", row: 3, real: "gift" },
+  { screen: "Product", step: "Enter", row: 4, above: true, real: "product" },
   { screen: "Scent 1 / 2", step: "Select", row: 3 },
   { screen: "Scent 2 / 2", step: "Select", row: 4, above: true },
 ];
@@ -87,7 +88,9 @@ export function SceneScreens() {
                 ),
               }}
             >
-              {shot.real ? <TamburinsGiftScreen /> : <span>{shot.screen}</span>}
+              {shot.real === "gift" && <TamburinsGiftScreen />}
+              {shot.real === "product" && <TamburinsProductScreen />}
+              {!shot.real && <span>{shot.screen}</span>}
             </div>
             {/* 화면 이름은 Current User Flow 의 마디와 같은 말을 씁니다.
                 아래 한 줄은 그 화면에서 하는 일입니다. */}

@@ -610,12 +610,6 @@
   }
 
   /* 흐름이 시작되는 마디 */
-  .flow-pill[data-tone="start"] {
-    border-color: var(--fg);
-    background: var(--fg);
-    color: #ffffff;
-  }
-
   /* 이 프로젝트에서 다루지 않는 갈래 */
   .flow-pill[data-tone="ghost"] {
     border-color: rgb(25 25 25 / 0.14);

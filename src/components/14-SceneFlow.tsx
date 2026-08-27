@@ -22,7 +22,7 @@ const LINE_OVERLAP = 2;
 /** 걸리는 지점 카드가 그 단의 맨 아래 마디에서 떨어지는 거리 */
 const NOTE_GAP = 16;
 
-type Tone = "plain" | "start" | "ghost";
+type Tone = "plain" | "ghost";
 type Node = {
   id: string;
   label: string;
@@ -40,7 +40,7 @@ type Node = {
 /* 지금 tamburins.com 에서 선물 하나를 사는 길입니다.
    향을 묻는 자리에서 한 줄 내려가고, 담은 뒤 주문으로 또 한 줄 내려갑니다. */
 const NODES: Node[] = [
-  { id: "home", label: "Home", step: 0, line: 0, tone: "start" },
+  { id: "home", label: "Home", step: 0, line: 0 },
   {
     id: "custom",
     label: "Custom Gifts",
@@ -208,7 +208,7 @@ export function SceneFlow() {
       </div>
 
       <div
-        className="flow-brief rise col-start-5 col-span-4 row-start-6"
+        className="flow-brief rise col-start-3 col-span-4 row-start-6"
         style={{ "--delay": "0.18s" } as CSSProperties}
       >
         <Brief title="Flow">

@@ -35,7 +35,7 @@ export function ScenePerspective() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-lead rise col-span-7 row-span-3">
+      <h2 className="type-lead capitalize rise col-span-7 row-span-3">
         UX begins before the screen appears, <br />
         where familiar senses and behaviors become expectations.
       </h2>

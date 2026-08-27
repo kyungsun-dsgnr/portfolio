@@ -36,8 +36,14 @@ const WHEEL_FORGET = 260;
  * 밝기를 --light (0~1) 로 내려보내 CSS 쪽에서도 반응할 수 있게 하고,
  * 노브가 끝까지 돌아가면 잠깐 뒤 다음 섹션으로 넘깁니다.
  */
-/** 각 장. id 는 카드에서 해당 장으로 건너뛸 때 쓰이고, label 은 하단 목차에 적힙니다. */
-export type Section = { id: string; node: ReactNode; label?: string };
+/** 각 장. id 는 카드에서 해당 장으로 건너뛸 때 쓰이고, label 은 하단 목차에 적힙니다.
+ *  index 는 판 위쪽 여백에 적히는 쪽번호입니다(예: "04 — Tamburins"). */
+export type Section = {
+  id: string;
+  node: ReactNode;
+  label?: string;
+  index?: string;
+};
 
 export function LightStage({ sections }: { sections: Section[] }) {
   const [level, setLevel] = useState(0);
@@ -207,7 +213,15 @@ export function LightStage({ sections }: { sections: Section[] }) {
             className="section"
             ref={index === 1 ? nextRef : undefined}
           >
-            <div className="canvas">{section.node}</div>
+            <div className="canvas">
+              {/* 쪽번호는 판 바깥 여백에 앉아 그리드 어느 칸도 건드리지 않습니다. */}
+              {section.index && (
+                <p className="page-index" aria-hidden>
+                  {section.index}
+                </p>
+              )}
+              {section.node}
+            </div>
           </section>
         ))}
       </main>

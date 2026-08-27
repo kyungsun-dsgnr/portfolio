@@ -22,7 +22,7 @@ const WORKS = [
     body: "거리감과 시선의 흐름을 바탕으로 브랜드 공간을 탐색하는 경험",
     place: "col-start-3 col-span-2",
     image: "/images/work-gentle-monster.png",
-    target: "gentle-monster",
+    target: "gentle-monster-paper",
   },
   {
     index: "02",
@@ -30,7 +30,7 @@ const WORKS = [
     body: "감각을 이용해 선물꾸러미를 조합하는 방식으로 선물의 무드와 구성을 만드는 경험",
     place: "col-start-5 col-span-2",
     image: "/images/work-tamburins.png",
-    target: undefined,
+    target: "tamburins",
   },
   {
     index: "03",

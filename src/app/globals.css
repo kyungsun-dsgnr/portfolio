@@ -246,8 +246,9 @@
     top: calc(var(--ground, 740) * var(--u));
     background: linear-gradient(
       180deg,
-      rgb(25 25 25 / 0) 0,
-      rgb(255 255 255 / 0.45) calc(6 * var(--u)),
+      rgb(25 25 25 / 0.05) 0,
+      rgb(25 25 25 / 0.02) calc(10 * var(--u)),
+      rgb(255 255 255 / 0.4) calc(34 * var(--u)),
       rgb(255 255 255 / 0.7) 100%
     );
     pointer-events: none;
@@ -296,10 +297,105 @@
     background: #f4f4f2;
   }
 
-  /* 상자에 담긴 제품. 카드에는 자리만 옅게 남습니다. */
+  /* 집었다는 느낌만 줍니다. 그림자가 짧게 진해졌다 사라집니다. */
+  .tam-good[aria-pressed="true"] {
+    animation: good-press 0.55s ease both;
+  }
+
+  @keyframes good-press {
+    0%,
+    100% {
+      box-shadow: 0 0 0 rgb(30 27 22 / 0);
+    }
+    24% {
+      box-shadow: 0 calc(5 * var(--u)) calc(14 * var(--u)) rgb(30 27 22 / 0.16);
+    }
+  }
+
+  /* 고른 순간. 잠깐 밝아지며 들렸다가, 상자로 넘어가고 카드에는 자리만 남습니다.
+     그냥 흐려지기만 하면 눌린 것이 아니라 꺼진 것처럼 보입니다. */
   .tam-good[aria-pressed="true"] img {
-    opacity: 0.22;
-    scale: calc(var(--fit, 1) * 0.92);
+    animation: good-taken 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  @keyframes good-taken {
+    0% {
+      opacity: 1;
+      scale: var(--fit, 1);
+      filter: brightness(1);
+    }
+    17% {
+      opacity: 1;
+      scale: calc(var(--fit, 1) * 1.03);
+      filter: brightness(1.35);
+    }
+    100% {
+      opacity: 0.22;
+      scale: calc(var(--fit, 1) * 0.92);
+      filter: brightness(1);
+    }
+  }
+
+  /* 판 위쪽 여백(30)에 앉는 쪽번호. 그리드 첫 행 바로 위입니다. */
+  .page-index {
+    position: absolute;
+    left: var(--page-margin);
+    top: calc(9 * var(--u));
+    z-index: 4;
+    color: rgb(25 25 25 / 0.32);
+    font-family: var(--font-display);
+    font-size: calc(10 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    pointer-events: none;
+    display: none;
+  }
+
+  /* 어두운 장에서는 밝기를 뒤집습니다. */
+  .section:has(.statement-dark) .page-index,
+  .section:has(.after-frame) .page-index {
+    color: rgb(250 250 250 / 0.34);
+  }
+
+  /* ── 자리만 잡아 둔 장 ────────────────────────
+     화면은 나중에 함께 짭니다. 지금은 순서와 내용만 확인합니다. */
+  .draft-index {
+    align-self: start;
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(11 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .draft-list {
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: calc(10 * var(--u));
+    color: rgb(25 25 25 / 0.55);
+    font-family: var(--font-body);
+    font-size: calc(13 * var(--u));
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+  }
+
+  /* 앞에 짧은 선을 두어 목록으로 읽히게 합니다. */
+  .draft-list li {
+    position: relative;
+    padding-left: calc(18 * var(--u));
+  }
+
+  .draft-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: calc(9 * var(--u));
+    width: calc(10 * var(--u));
+    border-top: 1px solid rgb(25 25 25 / 0.28);
   }
 
   /* ── 16장 지금과 제안 ─────────────────────────
@@ -403,14 +499,76 @@
     letter-spacing: 0.14em;
   }
 
-  /* 16장 — 장은 흰색으로 두고, 상자가 놓인 판만 한 톤 눌러 앉힙니다. */
-  .section:has(.nud-box) {
+  /* 18장 — 장은 흰색으로 두고, 사진이 놓인 판만 한 톤 눌러 앉힙니다. */
+  .section:has(.nud-scene) {
     background: #ffffff;
   }
 
-  .nud-box {
+  /* 로고 자리. 글자 로고일 때도 판 오른쪽 끝, 아래에 맞춰 섭니다. */
+  .nud-logo {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+  }
+
+  .nud-scene {
+    position: relative;
     background: #fafafa;
-    padding: calc(60 * var(--u));
+    overflow: hidden;
+  }
+
+  /* 상자가 판에 놓이며 지는 그림자. 밑단을 윗변으로 삼아 오른쪽으로 눕습니다.
+     드러나는 첫 줄이 곧 접지선이라 거기서 가장 짙습니다. */
+  .tam-cast {
+    transform-origin: 50% 0%;
+    transform: skewX(28deg);
+    background: linear-gradient(
+      180deg,
+      rgb(30 27 22 / 0.16) 0 22%,
+      rgb(30 27 22 / 0.07) 52%,
+      rgb(30 27 22 / 0) 88%
+    );
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      #000 12%,
+      #000 88%,
+      transparent 100%
+    );
+    filter: blur(9px);
+    pointer-events: none;
+  }
+
+  /* 상자 안, 제품이 바닥에 닿는 자리. 담긴 것에 맞춰 하나씩 늘어납니다.
+     창이 왼쪽 위에 있으므로 오른쪽으로 조금 밀려 깔립니다. */
+  .tam-shade {
+    border-radius: 50%;
+    background: radial-gradient(
+      closest-side,
+      rgb(24 20 16 / 0.34),
+      rgb(24 20 16 / 0.12) 56%,
+      rgb(24 20 16 / 0) 100%
+    );
+    filter: blur(5px);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* 제품이 내려앉은 뒤에 짙어집니다. 먼저 깔리면 그림자만 떠 있게 됩니다. */
+  [data-visible] .tam-shade {
+    animation: shade-in 0.6s ease both;
+    animation-delay: calc(var(--delay, 0s) + 0.95s);
+  }
+
+  @keyframes shade-in {
+    from {
+      opacity: 0;
+      scale: 0.86;
+    }
+    to {
+      opacity: 1;
+      scale: 1;
+    }
   }
 
   .tam-box {
@@ -676,7 +834,7 @@
   }
 
   [data-visible] .tam-drop {
-    animation: drop-in 1.75s both;
+    animation: drop-in 2.1s both;
     animation-delay: var(--delay, 0s);
   }
 
@@ -705,27 +863,41 @@
 
   /* 떨어뜨리기보다 내려놓는 결. 마지막에 속도를 죽여 상자에 살며시 닿고,
      튕기는 대신 기울기만 천천히 풀립니다. */
+  /* 집어서 넣는 결. 옆에서 들려 와 상자 입구에서 속도를 죽이고,
+     안쪽으로 내려앉으며 아주 미세하게 눌렸다 돌아옵니다. */
   @keyframes drop-in {
     0% {
-      /* 판 위쪽 밖에서 시작합니다. 판이 넘치는 부분을 잘라 내므로 보이지 않습니다. */
-      translate: 0 calc(-1 * var(--fall, 620) * var(--u));
+      /* 카드가 있는 쪽에서 들어옵니다. 판 밖이라 보이지 않습니다. */
+      translate: calc(var(--from-x, -150) * var(--u))
+        calc(-1 * var(--fall, 620) * var(--u));
       rotate: var(--tilt, -10deg);
+      scale: 1.02;
       opacity: 0;
-      animation-timing-function: linear;
+      animation-timing-function: cubic-bezier(0.32, 0, 0.24, 1);
     }
-    12% {
+    8% {
       opacity: 1;
-      animation-timing-function: cubic-bezier(0.34, 0, 0.24, 1);
     }
-    62% {
-      /* 닿기 직전에 이미 거의 멈춰 있습니다. */
-      translate: 0 calc(-0.035 * var(--fall, 620) * var(--u));
-      rotate: calc(var(--tilt, -10deg) * 0.55);
-      animation-timing-function: cubic-bezier(0.4, 0, 0.3, 1);
+    /* 상자 입구. 가로는 여기서 다 좁혀지고 기울기도 거의 풀립니다. */
+    58% {
+      translate: 0 calc(-0.19 * var(--fall, 620) * var(--u));
+      rotate: calc(var(--tilt, -10deg) * 0.3);
+      scale: 1;
+      animation-timing-function: cubic-bezier(0.33, 0, 0.12, 1);
     }
-    100% {
+    /* 안쪽으로 내려앉습니다. 조금 작아지고 밑동은 앞벽 뒤로 가립니다. */
+    88% {
       translate: 0 0;
       rotate: 0deg;
+      scale: 0.95;
+      animation-timing-function: ease-out;
+    }
+    /* 닿은 순간의 압축감. 1~2px 수준으로만 둡니다. */
+    94% {
+      scale: 0.97;
+    }
+    100% {
+      scale: 0.95;
     }
   }
 
@@ -895,21 +1067,36 @@
     text-transform: uppercase;
   }
 
-  /* 한 행 내려앉은 화면은 아래가 판 밖으로 흘러 마디를 놓을 자리가 없습니다.
-     그 마디만 화면 위로 올려 답니다. */
-  .steps-shot[data-above] .steps-step {
-    position: absolute;
-    bottom: calc(100% + 14 * var(--u));
-    left: 0;
-  }
-
-  /* 화면 아래 한 마디. 무엇을 하는 자리인지만 적습니다. */
-  .steps-step {
+  /* 그 화면에서 하는 일. 이름보다 한 톤 눌러 둡니다. */
+  .steps-kind {
     color: var(--fg-soft);
     font-family: var(--font-display);
     font-size: calc(13 * var(--u));
     font-weight: 500;
     letter-spacing: 0.02em;
+  }
+
+  /* 한 행 내려앉은 화면은 아래가 판 밖으로 흘러 마디를 놓을 자리가 없습니다.
+     그 마디만 화면 위로 올려 답니다. */
+  .steps-shot[data-above] .steps-cap {
+    position: absolute;
+    bottom: calc(100% + 14 * var(--u));
+    left: 0;
+  }
+
+  .steps-cap {
+    display: flex;
+    flex-direction: column;
+    gap: calc(4 * var(--u));
+  }
+
+  /* 화면 이름. 다른 장의 소제목(type-title)과 같은 값으로 둡니다. */
+  .steps-step {
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: var(--type-title);
+    font-weight: 700;
+    letter-spacing: -0.01em;
   }
 
   /* ── 하단 목차 ─────────────────────────────────

@@ -8,8 +8,8 @@ import type { CSSProperties, ReactNode } from "react";
 import { useInView } from "@/components/useInView";
 
 type Props = {
-  /** 64px 헤드라인. 대문자 변환은 CSS 가 합니다. */
-  title: string;
+  /** 64px 헤드라인. 대문자 변환은 CSS 가 합니다. 줄바꿈은 부르는 쪽에서 넣습니다. */
+  title: ReactNode;
   /** 브랜드 로고. 원본이 333×110(2칼럼 × 1행)에 맞춰 그려져 있습니다. */
   logo?: { src: string; alt: string };
   /** 로고 그림이 없을 때 같은 자리에 세우는 글자 로고 */
@@ -87,9 +87,9 @@ export function SceneCase({
       >
         {visual ?? <div className="h-full w-full bg-[var(--placeholder)]" />}
 
-        {/* 장에 들어설 때마다 다시 떠오르도록 key 를 갈아 끼웁니다. */}
+        {/* 장에 들어설 때 붙었다가 벗어나면 떨어져, 다시 들어설 때 새로 떠오릅니다. */}
         {note && inView && (
-          <p className="center-note" data-last-row key={String(inView)}>
+          <p className="center-note" data-last-row>
             {note}
           </p>
         )}

@@ -82,7 +82,12 @@ export function SceneScreens() {
             >
               <span>{shot.screen}</span>
             </div>
-            <p className="steps-step">{shot.step}</p>
+            {/* 화면 이름은 Current User Flow 의 마디와 같은 말을 씁니다.
+                아래 한 줄은 그 화면에서 하는 일입니다. */}
+            <div className="steps-cap">
+              <h3 className="steps-step">{shot.screen}</h3>
+              <p className="steps-kind">{shot.step}</p>
+            </div>
           </div>
         ))}
       </div>

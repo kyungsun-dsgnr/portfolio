@@ -78,6 +78,19 @@ export const GOODS: (Layer & {
   },
 ];
 
+/* 상자가 판에 놓이며 지는 그림자. 빛이 왼쪽 위 창에서 드니 오른쪽으로 눕습니다.
+   윗동은 상자에 가려지고, 밑단(740) 아래로 드러나는 부분만 보입니다. */
+const CAST = { left: 46, top: 562.5, width: 607.3, height: 90.3 };
+
+/** 제품이 상자 안 바닥에 닿으며 지는 그림자. 밑동 자리에 깔립니다. */
+const shadeOf = (one: (typeof GOODS)[number]) => ({
+  /* 빛이 왼쪽 위에서 드니 그림자는 오른쪽으로 조금 밀립니다. */
+  left: one.left - one.width * 0.06 + 16,
+  top: one.top + one.height - 17,
+  width: one.width * 1.12,
+  height: 34,
+});
+
 /** 디자인 px 을 화면 크기로 옮깁니다. */
 /** 그림이 차지하는 원래 칸. 배율을 줄이면 이 칸을 기준으로 가운데에 다시 앉힙니다. */
 const ART = { left: 32, width: 618.91, height: 740 };
@@ -85,7 +98,7 @@ const ART = { left: 32, width: 618.91, height: 740 };
 /* 남는 세로 여백을 위아래로 어떻게 나눌지. 위로 조금 더 보내 상자를 내려 앉히되,
    앞쪽에 바닥과 그림자가 놓일 자리는 남겨 둡니다. 다 내려 버리면 그림자가 설 곳이 없어
    도리어 떠 보입니다. */
-const GROUND_BIAS = 0.72;
+const GROUND_BIAS = 0.84;
 
 /** 도면 좌표를 배율에 맞춰 화면 크기로 옮깁니다. */
 const at = (
@@ -113,9 +126,12 @@ const at = (
 export function TamburinsBox({
   scale = 1,
   placed,
+  from = "left",
 }: {
   scale?: number;
   placed?: string[];
+  /** 제품이 어느 쪽에서 들려 오는지. 고르는 카드가 놓인 쪽입니다. */
+  from?: "left" | "right";
 }) {
   /* 손으로 담는 장에서는 누른 그 순간에 떨어져야 합니다.
      처음부터 담아 두는 장에서만 상자가 열리기를 기다립니다. */
@@ -134,6 +150,7 @@ export function TamburinsBox({
       <div className="tam-floor" aria-hidden />
       <div className="tam-sun" aria-hidden />
       <div className="tam-sun-floor" aria-hidden />
+      <div className="tam-cast absolute" style={at(CAST, scale)} aria-hidden />
 
       <div className="absolute" style={at(BOX, scale)}>
         <Image
@@ -160,6 +177,22 @@ export function TamburinsBox({
       </div>
 
       {/* 위에서 떨어져 상자에 담기고, 닿은 자리에서 반듯하게 섭니다. */}
+      {/* 담긴 것마다 안쪽 바닥 그림자가 하나씩 늘어납니다.
+          제품이 내려앉는 데 맞춰 조금 늦게 짙어집니다. */}
+      {goods.map((one) => (
+        <div
+          key={`${one.id}-shade`}
+          className="tam-shade absolute"
+          style={
+            {
+              ...at(shadeOf(one), scale),
+              "--delay": placed ? "0.05s" : one.delay,
+            } as CSSProperties
+          }
+          aria-hidden
+        />
+      ))}
+
       {goods.map((one) => (
         <div
           key={one.src}
@@ -170,6 +203,7 @@ export function TamburinsBox({
               "--tilt": one.tilt,
               "--delay": placed ? "0.05s" : one.delay,
               "--fall": (one.fall * scale).toFixed(1),
+              "--from-x": ((from === "left" ? -170 : 170) * scale).toFixed(1),
             } as CSSProperties
           }
         >

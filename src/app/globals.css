@@ -1374,8 +1374,7 @@
     overflow-y: auto;
     overscroll-behavior-y: contain;
     scrollbar-width: none;
-    background: #ffffff;
-    padding-bottom: calc(24 * var(--u));
+    background: #9d9d9d;
     color: #1d1d1d;
     font-family: var(--font-body);
     text-align: left;
@@ -1383,6 +1382,11 @@
 
   .gift-screen::-webkit-scrollbar {
     display: none;
+  }
+
+  .gift-sheet {
+    background: #ffffff;
+    padding-bottom: calc(24 * var(--u));
   }
 
   .gift-screen-title {
@@ -1473,17 +1477,6 @@
     font-size: calc(13 * var(--u));
     font-weight: 500;
     line-height: 1.6;
-  }
-
-  /* 굴려도 자리에 남는 동그란 단추 */
-  .gift-screen-fab {
-    position: absolute;
-    right: calc(15 * var(--u));
-    bottom: calc(22 * var(--u));
-    height: calc(56 * var(--u));
-    width: calc(56 * var(--u));
-    border-radius: 50%;
-    background: #2e2e2e;
   }
 
   /* ── 실제 화면(제품 상세) ──────────────────────

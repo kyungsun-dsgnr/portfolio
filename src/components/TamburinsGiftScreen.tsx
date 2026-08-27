@@ -28,8 +28,9 @@ const RELATED = [
  */
 export function TamburinsGiftScreen() {
   return (
-    <>
-      <div className="gift-screen">
+    <div className="gift-screen">
+      {/* 뒤는 어둡게 깔리고, 그 위에 흰 화면이 놓입니다. */}
+      <div className="gift-sheet">
         <h4 className="gift-screen-title">NEW 커스텀 기프트</h4>
 
         <section className="gift-screen-main">
@@ -57,9 +58,6 @@ export function TamburinsGiftScreen() {
           ))}
         </div>
       </div>
-
-      {/* 굴려도 자리에 남는 동그란 단추 */}
-      <span className="gift-screen-fab" aria-hidden />
-    </>
+    </div>
   );
 }

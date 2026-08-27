@@ -4,8 +4,10 @@
 
 import type { CSSProperties } from "react";
 
-/* 실제 화면 목업은 잠시 내려 두었습니다. 다시 붙이려면 아래 넷을 되살리면 됩니다.
-   TamburinsGiftScreen / TamburinsProductScreen / TamburinsScentScreen */
+import { TamburinsGiftScreen } from "@/components/TamburinsGiftScreen";
+
+/* 나머지 칸의 목업은 아직 내려 둔 채입니다.
+   TamburinsProductScreen / TamburinsScentScreen */
 import { useInView } from "@/components/useInView";
 
 /* 자리는 전부 그리드에서 끌어옵니다.
@@ -35,8 +37,9 @@ const SHOTS: {
   step: string;
   row: number;
   above?: boolean;
+  real?: "gift";
 }[] = [
-  { screen: "Gift", step: "Browse", row: 3 },
+  { screen: "Gift", step: "Browse", row: 3, real: "gift" },
   { screen: "Product", step: "Enter", row: 4, above: true },
   { screen: "Scent 1 / 2", step: "Select", row: 3 },
   /* 넷째 칸도 같은 1/2 단계입니다. 고르고 난 뒤, 못 고르는 향이 흐려진 상태입니다. */
@@ -93,7 +96,11 @@ export function SceneScreens() {
                 ),
               }}
             >
-              <span>{shot.screen}</span>
+              {shot.real === "gift" ? (
+                <TamburinsGiftScreen />
+              ) : (
+                <span>{shot.screen}</span>
+              )}
             </div>
             {/* 화면 이름은 Current User Flow 의 마디와 같은 말을 씁니다.
                 아래 한 줄은 그 화면에서 하는 일입니다. */}

@@ -148,7 +148,7 @@ export function SceneFlow() {
       </h2>
 
       <div
-        className="flow rise col-start-2 col-span-6 row-start-2 row-span-2"
+        className="flow rise col-start-2 col-span-6 row-start-3 row-span-2"
         style={
           {
             "--delay": "0.1s",

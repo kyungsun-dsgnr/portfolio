@@ -1595,6 +1595,8 @@
   }
 
   .prod-screen-thumb {
+    position: relative;
+    overflow: hidden;
     height: calc(112 * var(--u));
     width: calc(89 * var(--u));
     border: 1px solid #000000;
@@ -1659,6 +1661,7 @@
   }
 
   .prod-screen-card-shot {
+    position: relative;
     flex: none;
     width: calc(80 * var(--u));
     background: #efefef;

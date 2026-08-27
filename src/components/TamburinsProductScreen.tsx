@@ -2,6 +2,7 @@
 
 /** 탬버린즈 제품 상세 화면. 15장 둘째 칸에 들어갑니다. */
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { useInView } from "@/components/useInView";
@@ -46,7 +47,15 @@ export function TamburinsProductScreen() {
 
   return (
     <div className="prod-screen" ref={page} data-press={press || undefined}>
-      <div className="prod-screen-hero" />
+      <div className="prod-screen-hero">
+        <Image
+          src="/images/tam-prod-hero.png"
+          alt=""
+          fill
+          sizes="25vw"
+          className="object-cover"
+        />
+      </div>
 
       <div className="prod-screen-head">
         <h4>룸 스프레이 & 핸드워시 세트</h4>
@@ -59,7 +68,15 @@ export function TamburinsProductScreen() {
 
       <div className="prod-screen-thumbs">
         <figure>
-          <div className="prod-screen-thumb" />
+          <div className="prod-screen-thumb">
+            <Image
+              src="/images/tam-prod-thumb.png"
+              alt=""
+              fill
+              sizes="8vw"
+              className="object-cover"
+            />
+          </div>
           <figcaption>룸 스프레이 & 핸드워시 세트</figcaption>
         </figure>
       </div>
@@ -75,7 +92,15 @@ export function TamburinsProductScreen() {
       <div className="prod-screen-option">
         <p>(필수) 제품의 옵션을 선택해 주세요.</p>
         <div className="prod-screen-card">
-          <div className="prod-screen-card-shot" />
+          <div className="prod-screen-card-shot">
+            <Image
+              src="/images/tam-prod-option.png"
+              alt=""
+              fill
+              sizes="8vw"
+              className="object-cover"
+            />
+          </div>
           <div>
             <span>룸 스프레이 & 핸드워시 세트</span>
             <em>선택하기</em>

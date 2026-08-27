@@ -17,7 +17,7 @@ type Props = {
   visual?: ReactNode;
   /** 로고 위 두 행(1~2단)에 들어가는 것. 지금은 탬버린즈 표지의 제품 카드가 씁니다. */
   aside?: ReactNode;
-  /** 화면 한가운데 잠깐 떴다 물러나는 안내 한 줄 */
+  /** 비주얼 판 마지막 행에 잠깐 떴다 물러나는 안내 한 줄 */
   note?: string;
 };
 
@@ -30,13 +30,6 @@ export function SceneCase({ title, logo, body, visual, aside, note }: Props) {
       <h2 className="type-display rise col-span-4 row-start-1 row-span-2">
         {title}
       </h2>
-
-      {/* 장에 들어설 때마다 다시 떠오르도록 key 를 갈아 끼웁니다. */}
-      {note && inView && (
-        <p className="center-note" key={String(inView)}>
-          {note}
-        </p>
-      )}
 
       {aside && (
         <div
@@ -70,10 +63,17 @@ export function SceneCase({ title, logo, body, visual, aside, note }: Props) {
       </p>
 
       <div
-        className="rise col-span-4 col-start-5 row-start-1 row-span-6"
+        className="rise relative col-span-4 col-start-5 row-start-1 row-span-6"
         style={{ "--delay": "0.22s" } as CSSProperties}
       >
         {visual ?? <div className="h-full w-full bg-[var(--placeholder)]" />}
+
+        {/* 장에 들어설 때마다 다시 떠오르도록 key 를 갈아 끼웁니다. */}
+        {note && inView && (
+          <p className="center-note" data-last-row key={String(inView)}>
+            {note}
+          </p>
+        )}
       </div>
     </div>
   );

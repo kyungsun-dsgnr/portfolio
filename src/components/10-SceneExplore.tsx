@@ -16,7 +16,7 @@ export function SceneExplore() {
       {/* 판 전체가 지구본입니다. 끌어 돌리고 점을 눌러 봅니다. */}
       <div className="field rise col-start-1 col-span-8 row-start-1 row-span-6">
         {/* 서울을 고른 채로 시작합니다. */}
-        <GlobeDots card openAt="Seoul" />
+        <GlobeDots card guide openAt="Seoul" />
       </div>
 
       {/* 글이 놓이는 왼쪽만 흰빛으로 가라앉힙니다. 높이는 판 전체입니다. */}

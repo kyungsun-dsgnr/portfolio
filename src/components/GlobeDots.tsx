@@ -251,6 +251,8 @@ type Props = {
   dark?: boolean;
   /** 작은 목업 안에 들어가는 지구본. 점을 성기게 찍고 대신 굵고 짙게 둡니다. */
   bold?: boolean;
+  /** 한가운데 조작 안내를 띄웁니다. 직접 만지는 장에서만 켭니다. */
+  guide?: boolean;
 };
 
 export function GlobeDots({
@@ -261,6 +263,7 @@ export function GlobeDots({
   veil = 0.29,
   dark = false,
   bold = false,
+  guide = false,
   onPickStore,
   card = false,
   openAt,
@@ -1205,7 +1208,7 @@ export function GlobeDots({
       />
 
       {/* 지구본 한가운데 놓이는 안내. 확대 전과 후에 할 말이 다릅니다. */}
-      {interactive && (
+      {interactive && guide && (
         /* 말이 바뀌면 다시 떠오르도록 key 를 갈아 끼웁니다. */
         <p
           className="center-note"

@@ -34,8 +34,6 @@ export function SceneIntro() {
           <br />
           이미 알고 있는 감각과 행동의 기억을 바탕으로 디지털 경험을 설계합니다.
         </p>
-        {/* 눈에 띄게 천천히 반짝이다가, 조명이 켜질수록 잦아들며 물러납니다. */}
-        <p className="hint mt-[1.1em]">조명을 켜보세요.</p>
       </div>
 
       <LampScene />

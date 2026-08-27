@@ -15,18 +15,23 @@ const GAP = 16;
 /** 화면 하나. 두 단 폭이고, 높이는 판에 맞춰 위쪽만 보이도록 자릅니다. */
 const SHOT_W = 2 * COL + GAP;
 const SHOT_H = 400;
-/** 한 걸음 옮길 때마다 오른쪽으로 두 단, 아래로 간격 하나 */
+/** 한 걸음 옮길 때마다 오른쪽으로 두 단 */
 const STEP_X = 2 * (COL + GAP);
-const STEP_DOWN = GAP;
 /** 첫 단에서 시작합니다. */
 const START_X = 0;
+/** 한 행 높이. 내려앉는 높이를 행으로 셉니다. */
+const ROW = 110;
+/** 화면들이 놓이는 판이 시작하는 행 */
+const BAND_ROW = 3;
 
-/* 사용자가 지나는 순서. 분석은 다음 장에서 하고 여기서는 있는 그대로 둡니다. */
+/* 사용자가 지나는 순서. 분석은 다음 장에서 하고 여기서는 있는 그대로 둡니다.
+   row 는 그 화면이 시작하는 행이고, 한 행씩 엇갈려 지나온 걸음이 보입니다.
+   내려앉은 화면은 판 밖으로 흘러 아래에 마디를 놓을 자리가 없어 위에 답니다. */
 const SHOTS = [
-  { screen: "Custom Gifts", step: "Browse" },
-  { screen: "Gift Set", step: "Select" },
-  { screen: "Scent 1 / 2", step: "Select" },
-  { screen: "Scent 2 / 2", step: "Complete" },
+  { screen: "Custom Gifts", step: "Browse", row: 3 },
+  { screen: "Gift Set", step: "Select", row: 4, above: true },
+  { screen: "Scent 1 / 2", step: "Select", row: 3 },
+  { screen: "Scent 2 / 2", step: "Complete", row: 4, above: true },
 ];
 
 const px = (value: number) => `calc(${value} * var(--u))`;
@@ -51,10 +56,11 @@ export function SceneScreens() {
           <div
             key={shot.screen}
             className="steps-shot rise"
+            data-above={shot.above || undefined}
             style={
               {
                 left: px(START_X + i * STEP_X),
-                top: px(i * STEP_DOWN),
+                top: px((shot.row - BAND_ROW) * (ROW + GAP)),
                 width: px(SHOT_W),
                 /* 한 화면씩 차례로 들어와, 지나가는 순서가 눈에 먼저 남습니다. */
                 "--delay": `${0.16 + i * 0.14}s`,

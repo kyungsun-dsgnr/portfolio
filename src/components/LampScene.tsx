@@ -21,6 +21,14 @@ export function LampScene() {
         className="reveal relative isolate col-span-5 row-span-4 overflow-hidden bg-[#d5d2cd]"
         style={{ "--delay": "0.3s" } as CSSProperties}
       >
+        {/* 아직 돌리지 않았을 때만. 켜기 시작하면 할 말을 다한 셈이라 물러납니다.
+            사진 겹이 z-30 까지 쌓여 있어 그 위로 올립니다. */}
+        {level === 0 && (
+          <p className="center-note" data-last-row style={{ zIndex: 40 }}>
+            조명을 켜보세요
+          </p>
+        )}
+
         {/* 1. 꺼진 조명 */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -85,7 +93,7 @@ export function LampScene() {
       </div>
 
       <div
-        className="reveal col-span-3 row-span-4 overflow-hidden"
+        className="reveal relative col-span-3 row-span-4 overflow-hidden"
         style={{ "--delay": "0.4s" } as CSSProperties}
       >
         <Knob value={level} onChange={setLevel} />

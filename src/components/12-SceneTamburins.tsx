@@ -126,12 +126,9 @@ const at = (
 export function TamburinsBox({
   scale = 1,
   placed,
-  from = "left",
 }: {
   scale?: number;
   placed?: string[];
-  /** 제품이 어느 쪽에서 들려 오는지. 고르는 카드가 놓인 쪽입니다. */
-  from?: "left" | "right";
 }) {
   /* 손으로 담는 장에서는 누른 그 순간에 떨어져야 합니다.
      처음부터 담아 두는 장에서만 상자가 열리기를 기다립니다. */
@@ -203,7 +200,6 @@ export function TamburinsBox({
               "--tilt": one.tilt,
               "--delay": placed ? "0.05s" : one.delay,
               "--fall": (one.fall * scale).toFixed(1),
-              "--from-x": ((from === "left" ? -170 : 170) * scale).toFixed(1),
             } as CSSProperties
           }
         >

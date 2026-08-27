@@ -4,6 +4,9 @@
   --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-body:
     "SUIT Variable", var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  /* next/font 가 --font-script 에 Parisienne 을 실어 줍니다. */
+  --font-hand:
+    "Brittany Signature", var(--font-script), "Snell Roundhand", cursive;
 }
 
 :root {
@@ -511,6 +514,187 @@
     justify-content: flex-end;
   }
 
+  /* 배경 위에 놓이는 종이 카드. 위에 로고, 가운데 손글씨, 아래 날짜입니다.
+     종이 결은 아주 옅은 줄무늬 두 겹과 가장자리 그늘로 냅니다. */
+  .nud-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: calc(2 * var(--u));
+    padding: calc(26 * var(--u)) calc(20 * var(--u)) calc(24 * var(--u));
+    /* 사진 속 카드를 그대로 덮으므로 그림자는 사진의 것을 씁니다.
+       종이 결도 사진에 이미 있어, 여기서는 색만 맞춥니다. */
+    background:
+      radial-gradient(
+        130% 100% at 50% 0%,
+        rgb(255 255 255 / 0.55),
+        rgb(255 255 255 / 0) 70%
+      ),
+      #f7f6f2;
+  }
+
+  /* 위쪽 로고 */
+  .nud-card-logo {
+    position: relative;
+    display: block;
+    width: calc(52 * var(--u));
+    height: calc(44 * var(--u));
+  }
+
+  /* 가운데 손글씨. 두 줄로, 한 글자씩 왼쪽부터 그어집니다.
+     종이에 스민 잉크처럼 보이도록 색을 눌러 두고 종이와 곱해 얹습니다. */
+  .nud-card-hand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(2 * var(--u));
+    color: rgb(34 30 24 / 0.66);
+    font-family: var(--font-hand);
+    font-size: calc(38 * var(--u));
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: 0;
+    white-space: pre;
+    mix-blend-mode: multiply;
+    /* 인쇄된 글자처럼 딱 떨어지지 않게, 가장자리를 아주 조금 풉니다. */
+    filter: blur(0.2px);
+  }
+
+  .nud-card-line {
+    display: flex;
+  }
+
+  .nud-card-line span {
+    display: inline-block;
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+
+  /* 장에 들어설 때 다시 그어집니다. */
+  [data-visible] .nud-card-line span {
+    animation: hand-write 0.34s cubic-bezier(0.4, 0, 0.2, 1) both;
+    animation-delay: calc(0.7s + var(--i) * 0.085s);
+  }
+
+  @keyframes hand-write {
+    from {
+      opacity: 1;
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      opacity: 1;
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  .nud-card-date {
+    color: rgb(25 25 25 / 0.5);
+    font-family: var(--font-display);
+    font-size: calc(9 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-indent: 0.18em;
+    text-transform: uppercase;
+  }
+
+  /* 잔에 내려앉는 티백. 라벨에서 끈이 내려와 주머니로 이어집니다.
+     한 번 내려온 뒤 아주 느리게 흔들립니다. */
+  .nud-tea {
+    opacity: 0;
+    transform-origin: 10% 6%;
+  }
+
+  .nud-tea-string {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: rgb(70 62 52 / 0.5);
+    stroke-width: 1.1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* 물에 잠긴 아랫단은 흐려집니다. 잔 앞유리 너머로 보이는 결입니다. */
+  .nud-tea-pouch img {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 46%,
+      rgb(0 0 0 / 0.4) 78%,
+      rgb(0 0 0 / 0.12) 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 46%,
+      rgb(0 0 0 / 0.4) 78%,
+      rgb(0 0 0 / 0.12) 100%
+    );
+  }
+
+  [data-visible] .nud-tea {
+    animation:
+      teabag-drop 1.2s cubic-bezier(0.3, 0.8, 0.3, 1) 0.5s both,
+      teabag-sway 6s ease-in-out 1.7s infinite;
+  }
+
+  @keyframes teabag-drop {
+    from {
+      opacity: 0;
+      translate: 0 calc(-120 * var(--u));
+      rotate: -7deg;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+      rotate: 0deg;
+    }
+  }
+
+  @keyframes teabag-sway {
+    0%,
+    100% {
+      rotate: -1.2deg;
+    }
+    50% {
+      rotate: 1.2deg;
+    }
+  }
+
+  /* 우러나는 차. 티백 자리에서 번져 물 전체로 퍼집니다.
+     물 색을 덮지 않고 곱해서, 있는 물이 물들듯 보이게 합니다. */
+  .nud-brew {
+    border-radius: 50%;
+    background: radial-gradient(
+      closest-side,
+      rgb(150 104 46 / 0.5),
+      rgb(158 116 58 / 0.26) 46%,
+      rgb(168 130 72 / 0) 100%
+    );
+    mix-blend-mode: multiply;
+    filter: blur(6px);
+    opacity: 0;
+    scale: 0.35;
+  }
+
+  [data-visible] .nud-brew {
+    animation: brew-spread 3.6s cubic-bezier(0.3, 0.7, 0.3, 1) 1.35s both;
+  }
+
+  @keyframes brew-spread {
+    from {
+      opacity: 0;
+      scale: 0.3;
+    }
+    45% {
+      opacity: 0.9;
+    }
+    to {
+      opacity: 0.78;
+      scale: 1;
+    }
+  }
+
   .nud-scene {
     position: relative;
     background: #fafafa;
@@ -867,9 +1051,8 @@
      안쪽으로 내려앉으며 아주 미세하게 눌렸다 돌아옵니다. */
   @keyframes drop-in {
     0% {
-      /* 카드가 있는 쪽에서 들어옵니다. 판 밖이라 보이지 않습니다. */
-      translate: calc(var(--from-x, -150) * var(--u))
-        calc(-1 * var(--fall, 620) * var(--u));
+      /* 판 위쪽 밖에서 곧게 내려옵니다. */
+      translate: 0 calc(-1 * var(--fall, 620) * var(--u));
       rotate: var(--tilt, -10deg);
       scale: 1.02;
       opacity: 0;
@@ -878,7 +1061,7 @@
     8% {
       opacity: 1;
     }
-    /* 상자 입구. 가로는 여기서 다 좁혀지고 기울기도 거의 풀립니다. */
+    /* 상자 입구. 여기서 속도가 죽고 기울기도 거의 풀립니다. */
     58% {
       translate: 0 calc(-0.19 * var(--fall, 620) * var(--u));
       rotate: calc(var(--tilt, -10deg) * 0.3);

@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Parisienne } from "next/font/google";
 import { GridOverlay } from "@/components/GridOverlay";
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+/* 누데이크 카드에 손으로 쓴 것처럼 들어가는 글씨 */
+const parisienne = Parisienne({
+  variable: "--font-script",
+  weight: "400",
   subsets: ["latin"],
 });
 
@@ -16,7 +23,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className={`${inter.variable} antialiased`}>
+    <html
+      lang="ko"
+      className={`${inter.variable} ${parisienne.variable} antialiased`}
+    >
       <head>
         {/* SUIT Variable 은 Google Fonts에 없어 CDN에서 불러옵니다.
             자체 호스팅하려면 woff2를 public/fonts 에 두고 next/font/local 로 바꾸세요. */}

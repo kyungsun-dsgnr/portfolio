@@ -7,21 +7,15 @@ import type { CSSProperties } from "react";
 /* 화면 원본 폭. 칸(333)보다 조금 넓어 그만큼 줄여 앉힙니다. */
 const SCREEN_W = 338;
 
-/* 목록에 서는 세트들. 목록에서는 이름과 값만 보이고
+/* 가로로 이어지는 세트들. 목록에서는 이름만 보이고
    어떤 향이 들어가는지는 알 수 없습니다 — 이 장이 짚는 지점입니다. */
 const SETS = [
-  { name: "에그 퍼퓸 & 립밤 세트", gift: "Special Gift S", price: "81,900" },
-  { name: "쉘 퍼퓸 핸드 & 립밤 세트", gift: "Special Gift S", price: "52,400" },
-  {
-    name: "룸 스프레이 & 핸드워시 세트",
-    gift: "Special Gift L",
-    price: "93,500",
-  },
-  {
-    name: "에그 퍼퓸 & 퍼퓸 밤 세트",
-    gift: "Special Gift M",
-    price: "100,000",
-  },
+  "에그 퍼퓸 & 립밤 세트",
+  "룸 스프레이 & 핸드워시 세트",
+  "쉘 퍼퓸 핸드 & 립밤 세트",
+  "에그 퍼퓸 & 퍼퓸 밤 세트",
+  "캔들 & 룸 스프레이 세트",
+  "캔들 & 핸드워시 세트",
 ];
 
 const px = (value: number) => `calc(${value} * var(--u))`;
@@ -46,6 +40,9 @@ export function TamburinsGiftScreen({ width }: { width: number }) {
         </div>
       </header>
 
+      {/* 화면 폭을 꽉 채우는 큰 그림 */}
+      <div className="gift-screen-hero" />
+
       <div className="gift-screen-lead">
         <strong>NEW 커스텀 기프트</strong>
         <span>
@@ -53,13 +50,12 @@ export function TamburinsGiftScreen({ width }: { width: number }) {
         </span>
       </div>
 
-      <div className="gift-screen-grid">
-        {SETS.map((set) => (
-          <article key={set.name}>
+      {/* 옆으로 이어지는 세트 줄. 화면 폭에서 잘려 두 장 남짓 보입니다. */}
+      <div className="gift-screen-row">
+        {SETS.map((name) => (
+          <article key={name}>
             <div className="gift-screen-shot" />
-            <h5>{set.name}</h5>
-            <span>{set.gift} 선물 포장 & 쇼핑백 증정</span>
-            <em>₩ {set.price}</em>
+            <h5>{name}</h5>
           </article>
         ))}
       </div>

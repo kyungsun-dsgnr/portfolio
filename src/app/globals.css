@@ -1617,7 +1617,7 @@
     padding: calc(12 * var(--u)) calc(24 * var(--u));
     color: #191919;
     font-family: var(--font-body);
-    font-size: calc(32 * var(--u));
+    font-size: calc(24 * var(--u));
     font-weight: 600;
     letter-spacing: 0.01em;
     white-space: nowrap;

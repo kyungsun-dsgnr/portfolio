@@ -143,8 +143,8 @@ export function SceneFlow() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-lead rise col-start-1 col-span-3 row-start-1">
-        Current user flow
+      <h2 className="type-lead capitalize rise col-start-1 col-span-3 row-start-1">
+        Current User Flow
       </h2>
 
       <div

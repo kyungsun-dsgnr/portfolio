@@ -20,9 +20,9 @@ export function SceneExplore() {
       </div>
 
       <h2 className="type-lead rise col-start-1 col-span-3 row-start-1 row-span-2">
-        Turn the world,
+        Turn the World,
         <br />
-        find a city
+        Find a City
       </h2>
 
       {/* 지구본이 휠을 가져가므로 다음 장으로 넘어갈 버튼을 따로 둡니다. */}

@@ -5,6 +5,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
+import { TamburinsProductScreen } from "@/components/TamburinsProductScreen";
 import { useInView } from "@/components/useInView";
 
 /* 첫 창에서 고를 수 있는 향(룸 스프레이). 설명은 이 창을 열어야만 드러납니다. */
@@ -71,6 +72,8 @@ const TURN_AT = 2600;
 /* 두 번째 창에서도 하나를 고르고 "선택" 을 누릅니다. */
 const CHECK2_AT = 4000;
 const PRESS2_AT = 5300;
+/* 다 고르면 창이 닫히고, 고른 것이 적힌 제품 화면으로 돌아옵니다. */
+const DONE_AT = 6000;
 
 /** 향 한 줄 */
 function Row({
@@ -155,6 +158,7 @@ export function TamburinsScentScreen({
   const [second, setSecond] = useState(false);
   const [chosen, setChosen] = useState(false);
   const [press2, setPress2] = useState(false);
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
     if (!inView) {
@@ -164,6 +168,7 @@ export function TamburinsScentScreen({
         setSecond(false);
         setChosen(false);
         setPress2(false);
+        setDone(false);
         onStep?.(1);
       }, 0);
       return () => clearTimeout(back);
@@ -178,6 +183,7 @@ export function TamburinsScentScreen({
       }, TURN_AT),
       window.setTimeout(() => setChosen(true), CHECK2_AT),
       window.setTimeout(() => setPress2(true), PRESS2_AT),
+      window.setTimeout(() => setDone(true), DONE_AT),
     ];
     return () => timers.forEach(clearTimeout);
   }, [inView, onStep]);
@@ -185,7 +191,11 @@ export function TamburinsScentScreen({
   return (
     <div className="scent-screen" ref={page}>
       {/* 첫 창 */}
-      <div className="scent-sheet" data-gone={second || undefined}>
+      <div
+        className="scent-sheet"
+        data-gone={(second || done) && "y"}
+        data-hide={done || undefined}
+      >
         <header className="scent-head">
           <span className="scent-back" aria-hidden />
           <h4>향을 선택하세요 ( 1/2 )</h4>
@@ -213,7 +223,11 @@ export function TamburinsScentScreen({
       </div>
 
       {/* 두 번째 창. "다음" 을 누르면 옆에서 밀려 들어옵니다. */}
-      <div className="scent-sheet scent-sheet-2" data-in={second || undefined}>
+      <div
+        className="scent-sheet scent-sheet-2"
+        data-in={second || undefined}
+        data-hide={done || undefined}
+      >
         <header className="scent-head">
           <span className="scent-back" aria-hidden />
           <h4>향을 선택하세요 ( 2/2 )</h4>
@@ -242,6 +256,11 @@ export function TamburinsScentScreen({
             선택
           </span>
         </div>
+      </div>
+
+      {/* 창이 닫히고 돌아온 제품 화면. 고른 향이 옵션 자리에 적혀 있습니다. */}
+      <div className="scent-done" data-in={done || undefined}>
+        <TamburinsProductScreen chosen still />
       </div>
     </div>
   );

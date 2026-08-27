@@ -1726,6 +1726,16 @@
     box-shadow: 0 calc(2 * var(--u)) calc(10 * var(--u)) rgb(29 29 29 / 0.1);
   }
 
+  /* 고른 향 두 줄 */
+  .prod-screen-picks {
+    display: flex;
+    flex-direction: column;
+    padding-top: calc(2 * var(--u));
+    color: #767676;
+    font-size: calc(10 * var(--u));
+    line-height: 1.5;
+  }
+
   .prod-screen-add {
     display: flex;
     height: calc(40 * var(--u));
@@ -1737,6 +1747,15 @@
     color: #767676;
     font-size: calc(13 * var(--u));
     line-height: 1.5;
+    transition:
+      background 300ms ease,
+      color 300ms ease;
+  }
+
+  /* 다 고르면 담기 단추가 살아납니다. */
+  .prod-screen[data-chosen] .prod-screen-add {
+    background: #1d1d1d;
+    color: #ffffff;
   }
 
   .prod-screen-folds {
@@ -1787,6 +1806,26 @@
   .scent-sheet[data-gone] {
     translate: -18% 0;
     opacity: 0;
+  }
+
+  /* 창이 닫히면 둘 다 물러납니다. */
+  .scent-sheet[data-hide] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* 창이 닫힌 뒤 돌아오는 제품 화면 */
+  .scent-done {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 520ms ease;
+  }
+
+  .scent-done[data-in] {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   /* 두 번째 창은 오른쪽에서 들어옵니다. */

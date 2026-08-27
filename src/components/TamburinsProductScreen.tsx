@@ -18,7 +18,15 @@ const PRESS_AT = 2200;
  * 기프트에서 한 번 더 들어와야 닿는 화면.
  * 향은 여기서도 바로 고를 수 없고 "선택하기" 를 눌러 창을 열어야 합니다.
  */
-export function TamburinsProductScreen() {
+export function TamburinsProductScreen({
+  chosen = false,
+  still = false,
+}: {
+  /** 향을 다 고른 뒤. 옵션 카드에 고른 것이 적히고 담기 단추가 살아납니다. */
+  chosen?: boolean;
+  /** 스스로 훑지 않고 옵션 자리에 멈춰 있습니다. */
+  still?: boolean;
+} = {}) {
   const [page, inView] = useInView<HTMLDivElement>(0.3);
   /** 선택하기를 누르는 참 */
   const [press, setPress] = useState(false);
@@ -26,6 +34,14 @@ export function TamburinsProductScreen() {
   useEffect(() => {
     const view = page.current;
     if (!view) return;
+
+    /* 다 고른 뒤 보여 주는 화면은 훑지 않고 옵션 자리에 바로 섭니다. */
+    if (still) {
+      /* 고른 향이 적힌 자리가 보이도록 옵션 칸에 맞춰 섭니다. */
+      const option = view.querySelector<HTMLElement>(".prod-screen-option");
+      if (option) view.scrollTo({ top: option.offsetTop });
+      return;
+    }
 
     if (!inView) {
       view.scrollTo({ top: 0 });
@@ -43,10 +59,15 @@ export function TamburinsProductScreen() {
     ];
 
     return () => timers.forEach(clearTimeout);
-  }, [inView, page]);
+  }, [inView, page, still]);
 
   return (
-    <div className="prod-screen" ref={page} data-press={press || undefined}>
+    <div
+      className="prod-screen"
+      ref={page}
+      data-press={press || undefined}
+      data-chosen={chosen || undefined}
+    >
       <div className="prod-screen-hero">
         <Image
           src="/images/tam-prod-hero.png"
@@ -103,7 +124,14 @@ export function TamburinsProductScreen() {
           </div>
           <div>
             <span>룸 스프레이 & 핸드워시 세트</span>
-            <em>선택하기</em>
+            {/* 다 고른 뒤에는 고른 향이 여기 적히고, 글자도 "변경하기" 가 됩니다. */}
+            {chosen && (
+              <span className="prod-screen-picks">
+                <span>선택1: 룸 스프레이 파인네스트</span>
+                <span>선택2: 퍼퓸드 핸드워시 카모</span>
+              </span>
+            )}
+            <em>{chosen ? "변경하기" : "선택하기"}</em>
           </div>
         </div>
       </div>

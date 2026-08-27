@@ -25,7 +25,13 @@ export function SceneExplore() {
         Find a City
       </h2>
 
-      {/* 지구본이 휠을 가져가므로 다음 장으로 넘어갈 버튼을 따로 둡니다. */}
+      {/* 지구본이 판을 다 덮고 휠을 가져가므로, 오른쪽 한 단은 지구본 위에 덮어
+          비워 둡니다. 이 자리에서 굴리면 휠이 지구본에 닿지 않고 장이 넘어갑니다. */}
+      <div className="scroll-lane col-start-8 col-span-1 row-start-1 row-span-6">
+        <span aria-hidden>Scroll</span>
+      </div>
+
+      {/* 굴리는 대신 눌러서 넘어갈 수도 있습니다. */}
       <button
         type="button"
         className="page-next rise self-end col-start-4 col-span-2 row-start-6"

@@ -4,7 +4,7 @@
 
 import Image from "next/image";
 
-/* 담긴 것들. 세트 하나에 증정품 둘이 따라옵니다. */
+/* 담긴 것들. 세트 하나에 쇼핑백이 따라옵니다. */
 const LINES = [
   {
     name: "룸 스프레이 & 핸드워시 세트",
@@ -13,8 +13,7 @@ const LINES = [
     picks: ["선택1: 룸 스프레이 파인네스트", "선택2: 퍼퓸드 핸드워시 카모"],
     removable: true,
   },
-  { name: "쇼핑백 (L)", price: "무료 증정" },
-  { name: "썸머테일스 헤어 퍼퓸  2mL", price: "무료 증정" },
+  { name: "쇼핑백 (L)", price: "무료 증정", shot: "/images/tam-bag.png" },
 ];
 
 /** 담은 뒤 열리는 장바구니 */
@@ -66,7 +65,15 @@ export function TamburinsCartScreen() {
 
         {/* 목록 위로 떠 있는 권유 카드 */}
         <div className="cart-nudge">
-          <div className="cart-nudge-shot" />
+          <div className="cart-nudge-shot">
+            <Image
+              src="/images/tam-bag.png"
+              alt=""
+              fill
+              sizes="6vw"
+              className="object-cover"
+            />
+          </div>
           <div>
             <span>쇼핑백을 추가하시겠습니까?</span>
             <em>추가하기</em>
@@ -76,7 +83,7 @@ export function TamburinsCartScreen() {
         <div className="cart-sum">
           <p>
             <span>주문금액</span>
-            <span>₩ 187,000</span>
+            <span>₩ 93,500</span>
           </p>
           <p>
             <span>
@@ -86,7 +93,7 @@ export function TamburinsCartScreen() {
           </p>
           <p className="cart-total">
             <span>총 주문금액</span>
-            <span>₩ 187,000</span>
+            <span>₩ 93,500</span>
           </p>
         </div>
       </div>

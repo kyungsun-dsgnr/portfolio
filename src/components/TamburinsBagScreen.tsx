@@ -12,26 +12,26 @@ import { useInView } from "@/components/useInView";
 const PRESS_AT = 1500;
 const CART_AT = 2300;
 
-export function TamburinsBagScreen() {
-  const [page, inView] = useInView<HTMLDivElement>(0.3);
+export function TamburinsBagScreen({
+  run = true,
+}: {
+  /** 차례가 되면 스스로 누릅니다. */
+  run?: boolean;
+} = {}) {
+  const [page] = useInView<HTMLDivElement>(0.3);
   const [press, setPress] = useState(false);
   const [cart, setCart] = useState(false);
 
   useEffect(() => {
-    if (!inView) {
-      const back = window.setTimeout(() => {
-        setPress(false);
-        setCart(false);
-      }, 0);
-      return () => clearTimeout(back);
-    }
+    /* 차례가 아니면 그대로 둡니다. */
+    if (!run) return;
 
     const timers = [
       window.setTimeout(() => setPress(true), PRESS_AT),
       window.setTimeout(() => setCart(true), CART_AT),
     ];
     return () => timers.forEach(clearTimeout);
-  }, [inView]);
+  }, [run]);
 
   return (
     <div className="bag-screen" ref={page}>

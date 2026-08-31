@@ -3,7 +3,9 @@
 /** 12장 — 탬버린즈 케이스 표지 */
 
 import Image from "next/image";
-import { useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
+
+import { useInView } from "@/components/useInView";
 
 import { SceneCase } from "@/components/07-SceneCase";
 import { TamburinsBox } from "@/components/12-SceneTamburins";
@@ -31,12 +33,15 @@ const GOODS = [
 function TamburinsGoods({
   placed,
   onPick,
+  hold,
 }: {
   placed: string[];
   onPick: (id: string) => void;
+  /** 장에 들어왔는지 지켜보는 자리 */
+  hold: React.Ref<HTMLDivElement>;
 }) {
   return (
-    <div className="tam-goods">
+    <div className="tam-goods" ref={hold}>
       {GOODS.map((one) => (
         <button
           type="button"
@@ -62,8 +67,26 @@ function TamburinsGoods({
 
 /** 상자 그림의 배율만 다르게 여러 벌을 세워 놓고 고를 수 있게 합니다. */
 export function SceneTamburinsCover({ scale = 1 }: { scale?: number }) {
-  /* 상자는 비어 있고, 카드를 누른 것만 담깁니다. 선물을 꾸리는 이 장의 주제 그대로입니다. */
+  /* 상자는 비어 있다가 차례로 담깁니다. 손으로 눌러 다시 담거나 꺼낼 수도 있습니다. */
   const [placed, setPlaced] = useState<string[]>([]);
+  const [hold, inView] = useInView<HTMLDivElement>(0.4);
+
+  useEffect(() => {
+    if (!inView) {
+      const empty = window.setTimeout(() => setPlaced([]), 0);
+      return () => clearTimeout(empty);
+    }
+
+    /* 장에 들어서면 향수가 먼저, 핸드워시가 뒤따라 담깁니다. */
+    const steps = GOODS.map((one, i) =>
+      window.setTimeout(
+        () =>
+          setPlaced((was) => (was.includes(one.id) ? was : [...was, one.id])),
+        900 + i * 900,
+      ),
+    );
+    return () => steps.forEach(clearTimeout);
+  }, [inView]);
 
   const pick = (id: string) =>
     setPlaced((was) =>
@@ -83,8 +106,7 @@ export function SceneTamburinsCover({ scale = 1 }: { scale?: number }) {
           재구성합니다.
         </>
       }
-      note="좌측 카드를 눌러 제품을 기프트 패키지에 담아보세요"
-      aside={<TamburinsGoods placed={placed} onPick={pick} />}
+      aside={<TamburinsGoods placed={placed} onPick={pick} hold={hold} />}
       visual={<TamburinsBox scale={scale} placed={placed} />}
     />
   );

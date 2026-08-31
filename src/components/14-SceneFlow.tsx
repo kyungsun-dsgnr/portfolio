@@ -72,7 +72,7 @@ const NODES: Node[] = [
     from: "set",
     pain: {
       no: "03",
-      text: "세트에 든 제품 수만큼 창을 넘겨 하나씩 고릅니다. 품절과 향 설명은 창을 열어야 드러납니다.",
+      text: "세트에 든 제품 수만큼 창을 넘겨 하나씩 고릅니다. 향 설명은 창을 열어야 드러납니다.",
     },
   },
   { id: "scent2", label: "Scent 2 / 2", step: 3, line: 1, from: "scent1" },

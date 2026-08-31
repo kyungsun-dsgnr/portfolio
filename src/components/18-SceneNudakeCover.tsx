@@ -39,7 +39,7 @@ const HAND = ["Thank you !"];
    주머니가 잔 안쪽 물(가로 120~376, 물 위 440)에 들어가도록 판을 잡았습니다.
    주머니 폭 105 → 115.5 로 1.1배 키운 값입니다. */
 /* 주머니 폭 115.5 → 127 로 한 번 더 1.1배 키운 값입니다. */
-const TEA = { left: 128, top: 356, width: 240, height: 253 };
+const TEA = { left: 112, top: 356, width: 240, height: 253 };
 
 const BREW = { left: 126, top: 440, width: 212, height: 182 };
 

@@ -37,6 +37,24 @@ const REGIONS: Record<
       line: "영업 중 - 오후 8:00에 종료",
       where: "서울특별시 영등포구 여의대로 108, 더현대 서울 3F",
     },
+    {
+      name: "젠틀몬스터 갤러리아 명품관",
+      aside: "4.4km",
+      line: "영업 중 - 오후 8:00에 종료",
+      where: "서울특별시 강남구 압구정로 343, 갤러리아 명품관 EAST 1F",
+    },
+    {
+      name: "젠틀몬스터 롯데월드몰",
+      aside: "12.8km",
+      line: "영업 중 - 오후 10:00에 종료",
+      where: "서울특별시 송파구 올림픽로 300, 롯데월드몰 1F",
+    },
+    {
+      name: "젠틀몬스터 신세계 본점",
+      aside: "10.2km",
+      line: "영업 종료 - 내일 오전 10:30에 다시 오픈",
+      where: "서울특별시 중구 소공로 63, 신세계백화점 본점 1F",
+    },
   ],
   경기: [
     {
@@ -83,9 +101,28 @@ const REGIONS: Record<
 };
 
 const REGION_NAMES = Object.keys(REGIONS);
+/** 지역을 좁히지 않은 상태. 나라 안 매장을 다 봅니다. */
+const ALL_REGIONS = "전체";
+const KOREA_STORES = REGION_NAMES.flatMap((name) => REGIONS[name]);
+
+/* 우리 나라는 지역별 목록을 이미 갖고 있습니다. 글로벌 탭에서 한국을 골라도
+   같은 목록을 보여 줘야 두 탭이 어긋나지 않습니다. */
+const KOREA = "South Korea";
+const REGION_OF: Record<string, string> = {
+  Seoul: "서울",
+  Suwon: "경기",
+  Seongnam: "경기",
+  Goyang: "경기",
+  Busan: "부산",
+  Jeju: "제주",
+};
 
 /** 글로벌 탭에서 고를 수 있는 나라와, 그 나라의 도시 */
 const COUNTRIES = [...new Set(STORES.map((store) => store.country))];
+
+/** 나라를 고르면 그 나라에서 먼저 보여 줄 도시. 목록의 첫 도시입니다. */
+const firstCityOf = (country: string) =>
+  STORES.find((store) => store.country === country)?.city ?? null;
 const ALL_COUNTRIES = "전 세계";
 const ALL_CITIES = "전체 도시";
 
@@ -175,6 +212,8 @@ type Props = {
   focus?: "head" | "tabs" | "scope" | "stage" | "list";
   /** 처음부터 글로벌 쪽을 보여 줍니다. */
   initialWorld?: boolean;
+  /** 짝이 되는 설명이 없는 점은 감춥니다. */
+  skipDots?: string[];
 };
 
 export function StoreGlobeMock({
@@ -185,6 +224,7 @@ export function StoreGlobeMock({
   dotRef,
   focus,
   initialWorld = false,
+  skipDots,
 }: Props) {
   const blur = (part: NonNullable<Props["focus"]>) =>
     focus && focus !== part ? true : undefined;
@@ -221,6 +261,7 @@ export function StoreGlobeMock({
   const dot = (of: keyof typeof DOTS) => {
     if (!dots) return null;
     const key = DOTS[of];
+    if (skipDots?.includes(key)) return null;
     return (
       <button
         type="button"
@@ -237,12 +278,17 @@ export function StoreGlobeMock({
   };
 
   const stores = !showWorld
-    ? REGIONS[region]
-    : showCity
-      ? STORES.filter((store) => store.city === showCity).map(card)
-      : showCountry
-        ? STORES.filter((store) => store.country === showCountry).map(card)
-        : STORES.filter((store) => store.flagship).map(card);
+    ? region === ALL_REGIONS
+      ? KOREA_STORES
+      : REGIONS[region]
+    : showCountry === KOREA
+      ? /* 한국은 현재 국가 탭과 같은 목록을 씁니다. */
+        (showCity && REGIONS[REGION_OF[showCity] ?? ""]) || KOREA_STORES
+      : showCity
+        ? STORES.filter((store) => store.city === showCity).map(card)
+        : showCountry
+          ? STORES.filter((store) => store.country === showCountry).map(card)
+          : STORES.filter((store) => store.flagship).map(card);
 
   function show(next: boolean) {
     setTaken({ at: step });
@@ -254,8 +300,10 @@ export function StoreGlobeMock({
 
   /** 지구본에서 집은 매장을 두 선택기에 옮겨 담습니다. */
   function fromGlobe(store: Store | null) {
-    setCountry(store?.country ?? null);
-    setCity(store?.city ?? null);
+    const country = store?.country ?? null;
+    setCountry(country);
+    /* 나라만 집혔으면 그 나라의 첫 도시를 함께 잡습니다. */
+    setCity(store?.city ?? (country ? firstCityOf(country) : null));
     setOpen(null);
   }
 
@@ -305,8 +353,9 @@ export function StoreGlobeMock({
               open={open === "country"}
               onToggle={() => toggle("country")}
               onPick={(item) => {
-                setCountry(item === ALL_COUNTRIES ? null : item);
-                setCity(null);
+                const next = item === ALL_COUNTRIES ? null : item;
+                setCountry(next);
+                setCity(next ? firstCityOf(next) : null);
                 setOpen(null);
               }}
             />
@@ -330,11 +379,21 @@ export function StoreGlobeMock({
           </>
         ) : (
           <>
-            <span className="globe-scope-fixed">대한민국</span>
+            <button
+              type="button"
+              className="globe-scope-fixed"
+              data-on={region === ALL_REGIONS || undefined}
+              onClick={() => {
+                setRegion(ALL_REGIONS);
+                setOpen(null);
+              }}
+            >
+              대한민국
+            </button>
             <span className="globe-scope-sep">·</span>
             <Pick
               text={region}
-              items={REGION_NAMES}
+              items={[ALL_REGIONS, ...REGION_NAMES]}
               open={open === "region"}
               onToggle={() => toggle("region")}
               onPick={(item) => {

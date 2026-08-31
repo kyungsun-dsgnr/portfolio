@@ -24,12 +24,10 @@ export function useLight() {
 /** 조명이 다 켜진 뒤 다음 섹션으로 넘어가기까지 두는 사이 */
 const ADVANCE_DELAY = 900;
 
-/** 다음 장으로 넘기는 데 필요한 휠 이동량. 클수록 뻑뻑합니다. */
-const WHEEL_STEP = 320;
+/** 휠 잡음만 걸러 내는 최소값. 저항이 아니라 오작동을 막는 바닥값입니다. */
+const WHEEL_MIN = 4;
 /** 한 장 넘긴 뒤 다시 받지 않는 시간(ms). 관성으로 두 장씩 넘어가지 않게 합니다. */
 const WHEEL_REST = 700;
-/** 이 시간 이상 쉬었다 다시 굴리면 모아 둔 양을 버립니다. */
-const WHEEL_FORGET = 260;
 
 /**
  * 조명 상태 저장소이자 섹션 스크롤 영역.
@@ -98,15 +96,23 @@ export function LightStage({ sections }: { sections: Section[] }) {
     });
   }
 
-  /* 장 넘김에 저항을 둡니다. 살짝 굴렸다고 넘어가면 읽던 자리를 잃습니다.
-     기본 스크롤 대신 모아 둔 양이 한 걸음을 넘을 때만 다음 장으로 옮깁니다. */
+  /* 넘김 자체에는 저항을 두지 않습니다. 한 번 굴리면 곧바로 옮겨 갑니다.
+     다만 한 번의 손짓이 여러 장을 건너뛰지는 못하게 잠금만 겁니다. */
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
 
-    let charge = 0;
-    let last = 0;
     let resting = false;
+    /* 손을 뗀 뒤에도 관성으로 휠이 한동안 더 들어옵니다.
+       그 흐름이 멎을 때까지 잠금을 계속 미뤄, 한 번의 손짓이 한 장만 넘기게 합니다. */
+    let unlock = 0;
+
+    function holdRest() {
+      window.clearTimeout(unlock);
+      unlock = window.setTimeout(() => {
+        resting = false;
+      }, WHEEL_REST);
+    }
 
     /** 손끝 아래에 아직 굴러갈 데가 있으면 그 쪽에 맡깁니다(목업 목록, 매장 카드). */
     function inner(from: EventTarget | null) {
@@ -139,21 +145,20 @@ export function LightStage({ sections }: { sections: Section[] }) {
 
       event.preventDefault();
 
-      const now = performance.now();
-      if (now - last > WHEEL_FORGET) charge = 0;
-      last = now;
-      if (resting) return;
+      /* 아직 관성이 흐르는 중이면 그만큼 잠금을 늘립니다. */
+      if (resting) {
+        holdRest();
+        return;
+      }
 
-      charge += event.deltaY;
-      if (Math.abs(charge) < WHEEL_STEP) return;
+      if (Math.abs(event.deltaY) < WHEEL_MIN) return;
 
       const step = root!.clientHeight;
       const at = Math.round(root!.scrollTop / step);
       const to = Math.max(
         0,
-        Math.min(sections.length - 1, at + (charge > 0 ? 1 : -1)),
+        Math.min(sections.length - 1, at + (event.deltaY > 0 ? 1 : -1)),
       );
-      charge = 0;
       if (to === at) return;
 
       resting = true;
@@ -164,14 +169,14 @@ export function LightStage({ sections }: { sections: Section[] }) {
         top: to * step,
         behavior: reduced ? "auto" : "smooth",
       });
-      window.setTimeout(() => {
-        resting = false;
-        charge = 0;
-      }, WHEEL_REST);
+      holdRest();
     }
 
     root.addEventListener("wheel", onWheel, { passive: false });
-    return () => root.removeEventListener("wheel", onWheel);
+    return () => {
+      root.removeEventListener("wheel", onWheel);
+      window.clearTimeout(unlock);
+    };
   }, [sections.length]);
 
   function handleLevel(next: number) {

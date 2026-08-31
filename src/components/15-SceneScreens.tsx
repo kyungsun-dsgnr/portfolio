@@ -2,7 +2,13 @@
 
 /** 15장 — 지금의 경험. 실제 화면을 지나는 순서대로 늘어놓습니다. */
 
-import { useCallback, useState, type CSSProperties } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 
 import { TamburinsGiftScreen } from "@/components/TamburinsGiftScreen";
 import { TamburinsProductScreen } from "@/components/TamburinsProductScreen";
@@ -64,6 +70,43 @@ export function SceneScreens() {
   const [scentStep, setScentStep] = useState<1 | 2>(1);
   const onStep = useCallback((step: 1 | 2) => setScentStep(step), []);
 
+  /* 한 번에 한 칸만 움직입니다. 그 칸이 제 과정을 마치면 다음 칸으로 넘어가고,
+     나머지는 물러나 있습니다. 손으로 칸을 누르면 그 칸부터 다시 봅니다. */
+  const [active, setActive] = useState(0);
+  const at = useRef(0);
+
+  /* 칸마다 몇 번째로 보는지 세어 둡니다. 이 수가 바뀔 때만 화면이 새로 서고,
+     물러난 칸은 그대로 두어 마지막 장면에서 멈춰 있습니다. */
+  const [plays, setPlays] = useState<number[]>(() => SHOTS.map(() => 0));
+
+  const start = useCallback((to: number) => {
+    at.current = to;
+    setActive(to);
+    /* 향 선택 창은 다시 볼 때마다 1/2 부터입니다. */
+    if (to === 2) setScentStep(1);
+    setPlays((seen) => seen.map((n, i) => (i === to ? n + 1 : n)));
+  }, []);
+
+  useEffect(() => {
+    if (inView) return;
+    /* 장을 벗어나면 네 칸 모두 처음으로 돌려 둡니다. */
+    const back = window.setTimeout(() => {
+      at.current = 0;
+      setActive(0);
+      setScentStep(1);
+      setPlays((seen) => seen.map((n) => n + 1));
+    }, 0);
+    return () => clearTimeout(back);
+  }, [inView]);
+
+  /* 제 과정을 마친 칸은 그 자리에 멈춘 채 다음 칸에 차례를 넘깁니다. */
+  const advance = useCallback(
+    (from: number) => {
+      if (at.current === from) start(from + 1);
+    },
+    [start],
+  );
+
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1 row-span-2">
@@ -78,6 +121,17 @@ export function SceneScreens() {
             key={`${shot.screen}-${i}`}
             className="steps-shot rise"
             data-above={shot.above || undefined}
+            /* 물러나 있는 칸은 눌러서 다시 볼 수 있습니다. */
+            data-idle={active !== i || undefined}
+            role="button"
+            tabIndex={0}
+            onClick={() => start(i)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                start(i);
+              }
+            }}
             style={
               {
                 left: px(START_X + i * STEP_X),
@@ -100,17 +154,41 @@ export function SceneScreens() {
                 ),
               }}
             >
-              {shot.real === "gift" && <TamburinsGiftScreen />}
-              {shot.real === "product" && <TamburinsProductScreen />}
-              {shot.real === "scent1" && (
-                <TamburinsScentScreen onStep={onStep} />
+              {shot.real === "gift" && (
+                <TamburinsGiftScreen
+                  key={plays[i]}
+                  run={inView && active === i}
+                  onDone={() => advance(i)}
+                />
               )}
-              {shot.real === "bag" && <TamburinsBagScreen />}
+              {shot.real === "product" && (
+                <TamburinsProductScreen
+                  key={plays[i]}
+                  run={inView && active === i}
+                  onDone={() => advance(i)}
+                />
+              )}
+              {shot.real === "scent1" && (
+                <TamburinsScentScreen
+                  key={plays[i]}
+                  onStep={onStep}
+                  run={inView && active === i}
+                  onDone={() => advance(i)}
+                />
+              )}
+              {shot.real === "bag" && (
+                <TamburinsBagScreen
+                  key={plays[i]}
+                  run={inView && active === i}
+                />
+              )}
               {!shot.real && <span>{shot.screen}</span>}
             </div>
             {/* 화면 이름은 Current User Flow 의 마디와 같은 말을 씁니다.
                 아래 한 줄은 그 화면에서 하는 일입니다. */}
             <div className="steps-cap">
+              {/* 몇 번째 걸음인지 */}
+              <p className="steps-no">{`STEP ${String(i + 1).padStart(2, "0")}`}</p>
               <h3 className="steps-step">
                 {shot.real === "scent1"
                   ? `Scent ${scentStep} / 2`

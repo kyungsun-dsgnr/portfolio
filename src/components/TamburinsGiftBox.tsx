@@ -185,6 +185,11 @@ export function TamburinsGiftBox() {
           </g>
         </svg>
 
+        {/* 앞면에 매인 리본. 도면 좌표로 앞면(y 501~631) 가운데에 놓습니다. */}
+        <span className="gift-ribbon" aria-hidden>
+          <Image alt="" src="/images/tam-ribbon.png" fill sizes="30vw" />
+        </span>
+
         {/* 닫힌 상자의 윗면. 뚜껑은 다 눕는 순간 옆에서 본 꼴이라 보이지 않으므로,
             그 자리에 이 면이 대신 들어섭니다. */}
         <svg

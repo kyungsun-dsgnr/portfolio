@@ -3,8 +3,9 @@
 /** 탬버린즈 제품 상세 화면. 15장 둘째 칸에 들어갑니다. */
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { glide } from "@/components/glide";
 import { useInView } from "@/components/useInView";
 
 /* 아래쪽에 접혀 있는 항목들 */
@@ -13,6 +14,7 @@ const FOLDS = ["제품 상세정보", "전성분", "배송 및 반품"];
 /* 장에 들어서면 스스로 훑습니다. 옵션 자리까지 내려가 "선택하기" 를 누릅니다. */
 const SCROLL_AT = 800;
 const PRESS_AT = 2200;
+const DONE_AT = 3200;
 
 /**
  * 기프트에서 한 번 더 들어와야 닿는 화면.
@@ -22,6 +24,8 @@ export function TamburinsProductScreen({
   chosen = false,
   still = false,
   addPress = false,
+  run = true,
+  onDone,
 }: {
   /** 향을 다 고른 뒤. 옵션 카드에 고른 것이 적히고 담기 단추가 살아납니다. */
   chosen?: boolean;
@@ -29,10 +33,20 @@ export function TamburinsProductScreen({
   still?: boolean;
   /** "쇼핑백에 추가" 를 누르는 참 */
   addPress?: boolean;
+  /** 차례가 되면 스스로 훑기 시작합니다. */
+  run?: boolean;
+  /** 다 훑으면 다음 화면에 차례를 넘깁니다. */
+  onDone?: () => void;
 } = {}) {
-  const [page, inView] = useInView<HTMLDivElement>(0.3);
+  const [page] = useInView<HTMLDivElement>(0.3);
   /** 선택하기를 누르는 참 */
   const [press, setPress] = useState(false);
+  /* 부모가 다시 그릴 때마다 콜백이 새로 만들어집니다. 그것 때문에 진행 중인
+     순서가 처음부터 다시 돌지 않도록, 콜백은 ref 로 들고 있습니다. */
+  const done = useRef(onDone);
+  useEffect(() => {
+    done.current = onDone;
+  }, [onDone]);
 
   useEffect(() => {
     const view = page.current;
@@ -46,23 +60,25 @@ export function TamburinsProductScreen({
       return;
     }
 
-    if (!inView) {
-      view.scrollTo({ top: 0 });
-      const back = window.setTimeout(() => setPress(false), 0);
-      return () => clearTimeout(back);
-    }
+    /* 차례가 아니면 그대로 둡니다. */
+    if (!run) return;
+
+    let stopDown = () => {};
 
     const timers = [
       window.setTimeout(() => {
         const option = view.querySelector<HTMLElement>(".prod-screen-option");
-        if (option)
-          view.scrollTo({ top: option.offsetTop, behavior: "smooth" });
+        if (option) stopDown = glide(view, option.offsetTop, 2000);
       }, SCROLL_AT),
       window.setTimeout(() => setPress(true), PRESS_AT),
+      window.setTimeout(() => done.current?.(), DONE_AT),
     ];
 
-    return () => timers.forEach(clearTimeout);
-  }, [inView, page, still]);
+    return () => {
+      timers.forEach(clearTimeout);
+      stopDown();
+    };
+  }, [run, page, still]);
 
   return (
     <div

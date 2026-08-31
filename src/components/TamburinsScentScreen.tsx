@@ -3,7 +3,7 @@
 /** 탬버린즈 향 선택 창. 15장 셋째 칸에서 1/2 → 2/2 로 넘어갑니다. */
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { TamburinsProductScreen } from "@/components/TamburinsProductScreen";
 import { useInView } from "@/components/useInView";
@@ -66,14 +66,17 @@ const SECOND = [
 const PICKED = 0;
 
 /* 장에 들어서면 스스로 고르고 넘어갑니다. */
-const CHECK_AT = 900;
-const PRESS_AT = 2100;
-const TURN_AT = 2600;
+/* 처음에는 제품 화면이 서 있고, 창이 오른쪽에서 밀려 들어옵니다. */
+const OPEN_AT = 600;
+const CHECK_AT = 1500;
+const PRESS_AT = 2700;
+const TURN_AT = 3200;
 /* 두 번째 창에서도 하나를 고르고 "선택" 을 누릅니다. */
-const CHECK2_AT = 4000;
-const PRESS2_AT = 5300;
+const CHECK2_AT = 4600;
+const PRESS2_AT = 5900;
 /* 다 고르면 창이 닫히고, 고른 것이 적힌 제품 화면으로 돌아옵니다. */
-const DONE_AT = 6000;
+const DONE_AT = 6600;
+const OVER_AT = 8000;
 
 /** 향 한 줄 */
 function Row({
@@ -148,11 +151,18 @@ function Row({
  */
 export function TamburinsScentScreen({
   onStep,
+  run = true,
+  onDone,
 }: {
   /** 창이 넘어갈 때 알려 줍니다. 칸 아래 마디를 같이 바꾸는 데 씁니다. */
   onStep?: (step: 1 | 2) => void;
+  /** 차례가 되면 스스로 고르기 시작합니다. */
+  run?: boolean;
+  /** 다 고르면 다음 화면에 차례를 넘깁니다. */
+  onDone?: () => void;
 }) {
-  const [page, inView] = useInView<HTMLDivElement>(0.3);
+  const [page] = useInView<HTMLDivElement>(0.3);
+  const [opened, setOpened] = useState(false);
   const [checked, setChecked] = useState(false);
   const [press, setPress] = useState(false);
   const [second, setSecond] = useState(false);
@@ -160,40 +170,48 @@ export function TamburinsScentScreen({
   const [press2, setPress2] = useState(false);
   const [done, setDone] = useState(false);
 
+  /* 부모가 다시 그릴 때마다 콜백이 새로 만들어집니다. 그것 때문에 진행 중인
+     순서가 처음부터 다시 돌지 않도록, 콜백은 ref 로 들고 있습니다. */
+  const step = useRef(onStep);
+  const over = useRef(onDone);
   useEffect(() => {
-    if (!inView) {
-      const back = window.setTimeout(() => {
-        setChecked(false);
-        setPress(false);
-        setSecond(false);
-        setChosen(false);
-        setPress2(false);
-        setDone(false);
-        onStep?.(1);
-      }, 0);
-      return () => clearTimeout(back);
-    }
+    step.current = onStep;
+    over.current = onDone;
+  }, [onStep, onDone]);
+
+  useEffect(() => {
+    /* 차례가 아니면 그대로 둡니다. */
+    if (!run) return;
 
     const timers = [
+      window.setTimeout(() => setOpened(true), OPEN_AT),
       window.setTimeout(() => setChecked(true), CHECK_AT),
       window.setTimeout(() => setPress(true), PRESS_AT),
       window.setTimeout(() => {
         setSecond(true);
-        onStep?.(2);
+        step.current?.(2);
       }, TURN_AT),
       window.setTimeout(() => setChosen(true), CHECK2_AT),
       window.setTimeout(() => setPress2(true), PRESS2_AT),
       window.setTimeout(() => setDone(true), DONE_AT),
+      window.setTimeout(() => over.current?.(), OVER_AT),
     ];
     return () => timers.forEach(clearTimeout);
-  }, [inView, onStep]);
+  }, [run]);
 
   return (
     <div className="scent-screen" ref={page}>
-      {/* 첫 창 */}
+      {/* 창이 열리기 전과 닫힌 뒤에 서 있는 제품 화면.
+          다 고르고 나면 그 자리에 고른 향이 적힙니다. */}
+      <div className="scent-base">
+        <TamburinsProductScreen chosen={done} still />
+      </div>
+
+      {/* 첫 창. 오른쪽에서 밀려 들어옵니다. */}
       <div
         className="scent-sheet"
-        data-gone={(second || done) && "y"}
+        data-in={opened && !second && !done ? "y" : undefined}
+        data-gone={second || done ? "y" : undefined}
         data-hide={done || undefined}
       >
         <header className="scent-head">
@@ -256,11 +274,6 @@ export function TamburinsScentScreen({
             선택
           </span>
         </div>
-      </div>
-
-      {/* 창이 닫히고 돌아온 제품 화면. 고른 향이 옵션 자리에 적혀 있습니다. */}
-      <div className="scent-done" data-in={done || undefined}>
-        <TamburinsProductScreen chosen still />
       </div>
     </div>
   );

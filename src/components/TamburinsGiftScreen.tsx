@@ -5,6 +5,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
+import { glide } from "@/components/glide";
 import { useInView } from "@/components/useInView";
 
 /* 안내 문구. 향은 여기서 "제품별로 고를 수 있다" 고만 적혀 있고,
@@ -33,16 +34,31 @@ const PICKED = 1;
 const SCROLL_AT = 700;
 const SLIDE_AT = 2000;
 const OPEN_AT = 3100;
+const DONE_AT = 4300;
 
 /**
  * 실제 화면 하나. 칸 안에서 위아래로 굴려 볼 수 있고,
  * 관련 제품 줄은 옆으로 굴러갑니다.
  */
-export function TamburinsGiftScreen() {
-  const [page, inView] = useInView<HTMLDivElement>(0.3);
+export function TamburinsGiftScreen({
+  run = true,
+  onDone,
+}: {
+  /** 차례가 되면 스스로 훑기 시작합니다. */
+  run?: boolean;
+  /** 다 훑으면 다음 화면에 차례를 넘깁니다. */
+  onDone?: () => void;
+} = {}) {
+  const [page] = useInView<HTMLDivElement>(0.3);
   const row = useRef<HTMLDivElement>(null);
   /** 세트를 여는 참 */
   const [opening, setOpening] = useState(false);
+  /* 부모가 다시 그릴 때마다 콜백이 새로 만들어집니다. 그것 때문에 진행 중인
+     순서가 처음부터 다시 돌지 않도록, 콜백은 ref 로 들고 있습니다. */
+  const done = useRef(onDone);
+  useEffect(() => {
+    done.current = onDone;
+  }, [onDone]);
 
   /* 장에 들어설 때마다 처음부터 다시 훑습니다.
      굴리는 양은 요소의 실제 자리에서 끌어와 화면 크기와 무관합니다. */
@@ -51,28 +67,32 @@ export function TamburinsGiftScreen() {
     const line = row.current;
     if (!view || !line) return;
 
-    if (!inView) {
-      /* 장을 벗어나면 처음으로 돌려 둡니다. 그리는 중에 바로 바꾸지 않고 한 박자 뒤에 둡니다. */
-      view.scrollTo({ top: 0 });
-      line.scrollTo({ left: 0 });
-      const back = window.setTimeout(() => setOpening(false), 0);
-      return () => clearTimeout(back);
-    }
+    /* 차례가 아니면 그대로 둡니다. 마친 화면은 마지막 장면에서 멈춰 있습니다. */
+    if (!run) return;
+
+    /* 굴러가던 것을 도중에 멈출 수 있게 들고 있습니다. */
+    let stopDown = () => {};
+    let stopSide = () => {};
 
     const timers = [
       window.setTimeout(() => {
         const sub = view.querySelector<HTMLElement>(".gift-screen-sub");
-        if (sub) view.scrollTo({ top: sub.offsetTop, behavior: "smooth" });
+        if (sub) stopDown = glide(view, sub.offsetTop, 2000);
       }, SCROLL_AT),
       window.setTimeout(() => {
         const card = line.children[PICKED] as HTMLElement | undefined;
-        if (card) line.scrollTo({ left: card.offsetLeft, behavior: "smooth" });
+        if (card) stopSide = glide(line, card.offsetLeft, 1600, "left");
       }, SLIDE_AT),
       window.setTimeout(() => setOpening(true), OPEN_AT),
+      window.setTimeout(() => done.current?.(), DONE_AT),
     ];
 
-    return () => timers.forEach(clearTimeout);
-  }, [inView, page]);
+    return () => {
+      timers.forEach(clearTimeout);
+      stopDown();
+      stopSide();
+    };
+  }, [run, page]);
 
   return (
     <div className="gift-screen" ref={page} data-opening={opening || undefined}>

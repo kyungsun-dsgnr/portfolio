@@ -82,7 +82,17 @@ const PICKED_STORE = {
 const SERVICES = ["피팅 서비스", "간편 수리", "수리 제품 픽업"];
 
 /** 시/군/구를 켜면 펼쳐지는 지역 목록 */
-const DISTRICTS = ["경기", "대전", "대구", "부산", "서울", "인천", "제주", "충남", "광주"];
+const DISTRICTS = [
+  "경기",
+  "대전",
+  "대구",
+  "부산",
+  "서울",
+  "인천",
+  "제주",
+  "충남",
+  "광주",
+];
 
 /** STORES 는 거리순입니다. 현재 위치를 켜기 전에는 이 차례로 보여줍니다. */
 const BROWSE_ORDER = [2, 0, 4, 1, 5, 3];
@@ -127,7 +137,8 @@ export function StoreListMock({
 }: Props) {
   const has = (part: Part) => show.includes(part);
   /** 초점이 정해져 있으면 그 자리만 남기고 흐립니다. */
-  const blur = (spot: Spot) => (focus && !focus.includes(spot) ? true : undefined);
+  const blur = (spot: Spot) =>
+    focus && !focus.includes(spot) ? true : undefined;
   const located = picked === DOTS.locate.key;
   const zoomed = picked === DOTS.district.key;
   /** 지도 탭을 켜면 목록 자리에 지도가 들어섭니다. */
@@ -146,7 +157,10 @@ export function StoreListMock({
       : BROWSE_ORDER.map((i) => STORES[i]);
 
   /** 점 하나. 좁은 자리에서는 글자를 피해 옆으로 비켜 놓습니다. */
-  const dot = (of: keyof typeof DOTS, at: "center" | "left" | "right" = "center") => {
+  const dot = (
+    of: keyof typeof DOTS,
+    at: "center" | "left" | "right" = "center",
+  ) => {
     if (!dots) return null;
     const { key, label } = DOTS[of];
     return (
@@ -167,134 +181,160 @@ export function StoreListMock({
     <div
       className="store-panel"
       data-parts={show === ALL ? undefined : ""}
+      /* 아직 아무것도 고르지 않았으면 안내 점 셋이 다 켜져 있습니다. */
+      data-idle={picked ? undefined : ""}
       aria-hidden={dots ? undefined : true}
     >
       {has("head") && (
-      <div className="store-head" data-blur={blur("head")}>
-        <p className="store-count">
-          스토어 <span>{stores.length}</span>
-        </p>
-        <FilterIcon />
-      </div>
+        <div className="store-head" data-blur={blur("head")}>
+          <p className="store-count">
+            스토어 <span>{stores.length}</span>
+          </p>
+          <FilterIcon />
+        </div>
       )}
 
       {has("filters") && (
-      <div className="store-filters">
-        <div className="store-selects" data-blur={blur("selects")}>
-          <div className="store-select">
-            <span className="store-select-label">국가/지역</span>
-            <span className="store-select-value">대한민국</span>
-            <ChevronIcon />
+        <div className="store-filters">
+          <div className="store-selects" data-blur={blur("selects")}>
+            <div className="store-select">
+              <span className="store-select-label">국가/지역</span>
+              <span className="store-select-value">대한민국</span>
+              <ChevronIcon />
+            </div>
+            <div
+              className="store-select"
+              data-hot={(dots && zoomed) || undefined}
+            >
+              <span className="store-select-label">시/군/구</span>
+              <span className="store-select-value">
+                {repicked ? "서울" : "경기"}
+              </span>
+              <ChevronIcon />
+              {dot("district", "right")}
+              {zoomed && !repicked && (
+                <div className="store-open-list">
+                  {DISTRICTS.map((name) => (
+                    <p
+                      className="store-open-item"
+                      key={name}
+                      data-on={name === "경기" || undefined}
+                      data-press={(pressing && name === "서울") || undefined}
+                    >
+                      {name}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-          <div className="store-select" data-hot={(dots && zoomed) || undefined}>
-            <span className="store-select-label">시/군/구</span>
-            <span className="store-select-value">{repicked ? "서울" : "경기"}</span>
-            <ChevronIcon />
-            {dot("district", "right")}
-            {zoomed && !repicked && (
-              <div className="store-open-list">
-                {DISTRICTS.map((name) => (
-                  <p
-                    className="store-open-item"
-                    key={name}
-                    data-on={name === "경기" || undefined}
-                    data-press={(pressing && name === "서울") || undefined}
-                  >
-                    {name}
-                  </p>
-                ))}
-              </div>
-            )}
-          </div>
+          <p
+            className="store-locate"
+            data-hot={(dots && located) || undefined}
+            data-blur={blur("locate")}
+          >
+            <LocateIcon />
+            현재 위치 사용
+            {dot("locate", "left")}
+          </p>
         </div>
-        <p
-          className="store-locate"
-          data-hot={(dots && located) || undefined}
-          data-blur={blur("locate")}
-        >
-          <LocateIcon />
-          현재 위치 사용
-          {dot("locate", "left")}
-        </p>
-      </div>
       )}
 
       {has("tabs") && (
-      <div className="store-tabs" data-blur={blur("tabs")}>
-        <span className="store-tab" data-on={!mapped || undefined}>
-          목록
-        </span>
-        <span className="store-tab" data-on={mapped || undefined} data-hot={(dots && mapped) || undefined}>
-          지도
-          {dot("map", "right")}
-        </span>
-      </div>
+        <div className="store-tabs" data-blur={blur("tabs")}>
+          <span className="store-tab" data-on={!mapped || undefined}>
+            목록
+          </span>
+          <span
+            className="store-tab"
+            data-on={mapped || undefined}
+            data-hot={(dots && mapped) || undefined}
+          >
+            지도
+            {dot("map", "right")}
+          </span>
+        </div>
       )}
 
       {has("results") && (
-      <>
-      {/* 목록과 지도가 서로 바뀔 때마다 이 자리를 새로 그려 한 번 떠오르게 합니다. */}
-      <div
-        className="store-results"
-        data-blur={blur("results")}
-        key={mapped ? "map" : repicked ? "seoul" : located ? "near" : "browse"}
-      >
-      {mapped ? (
-        <div className="store-map">
-          <Image src="/images/store-map.png" alt="" fill sizes="25vw" className="object-cover" />
-          {phase > 0 && (
-            <>
-              {/* 지도 위 핀 하나를 누른 참 */}
-              <span className="store-pin" />
-              <div className="store-tip">
-                <div className="store-tip-top">
-                  <h5 className="store-tip-name">{PICKED_STORE.name}</h5>
-                  <span className="store-tip-distance">{PICKED_STORE.distance}</span>
-                </div>
-                <p className="store-tip-hours">
-                  <span>영업 종료</span>
-                  <span>{PICKED_STORE.hours}</span>
-                </p>
-                <p className="store-tip-address">{PICKED_STORE.address}</p>
-                <div className="store-tip-tags">
-                  {SERVICES.map((service) => (
-                    <span className="store-tip-tag" key={service}>
-                      {service}
-                    </span>
+        <>
+          {/* 목록과 지도가 서로 바뀔 때마다 이 자리를 새로 그려 한 번 떠오르게 합니다. */}
+          <div
+            className="store-results"
+            data-blur={blur("results")}
+            key={
+              mapped ? "map" : repicked ? "seoul" : located ? "near" : "browse"
+            }
+          >
+            {mapped ? (
+              <div className="store-map">
+                <Image
+                  src="/images/store-map.png"
+                  alt=""
+                  fill
+                  sizes="25vw"
+                  className="object-cover"
+                />
+                {phase > 0 && (
+                  <>
+                    {/* 지도 위 핀 하나를 누른 참 */}
+                    <span className="store-pin" />
+                    <div className="store-tip">
+                      <div className="store-tip-top">
+                        <h5 className="store-tip-name">{PICKED_STORE.name}</h5>
+                        <span className="store-tip-distance">
+                          {PICKED_STORE.distance}
+                        </span>
+                      </div>
+                      <p className="store-tip-hours">
+                        <span>영업 종료</span>
+                        <span>{PICKED_STORE.hours}</span>
+                      </p>
+                      <p className="store-tip-address">
+                        {PICKED_STORE.address}
+                      </p>
+                      <div className="store-tip-tags">
+                        {SERVICES.map((service) => (
+                          <span className="store-tip-tag" key={service}>
+                            {service}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+              <div
+                className="store-list"
+                data-scrolled={(located && phase > 0) || undefined}
+              >
+                <div className="store-list-inner">
+                  {stores.map((store) => (
+                    <article className="store-card" key={store.name}>
+                      <div className="store-card-top">
+                        <h4 className="store-name">{store.name}</h4>
+                        <span className="store-distance">{store.distance}</span>
+                      </div>
+                      <p className="store-hours">
+                        <span>영업 종료</span>
+                        <span>- 내일 오전 10:30에 다시 오픈</span>
+                      </p>
+                      <p className="store-address">{store.address}</p>
+                      <div className="store-tags">
+                        {SERVICES.map((service) => (
+                          <span className="store-tag" key={service}>
+                            {service}
+                          </span>
+                        ))}
+                      </div>
+                    </article>
                   ))}
                 </div>
               </div>
-            </>
-          )}
-        </div>
-      ) : (
-      <div className="store-list" data-scrolled={(located && phase > 0) || undefined}>
-        <div className="store-list-inner">
-        {stores.map((store) => (
-          <article className="store-card" key={store.name}>
-            <div className="store-card-top">
-              <h4 className="store-name">{store.name}</h4>
-              <span className="store-distance">{store.distance}</span>
-            </div>
-            <p className="store-hours">
-              <span>영업 종료</span>
-              <span>- 내일 오전 10:30에 다시 오픈</span>
-            </p>
-            <p className="store-address">{store.address}</p>
-            <div className="store-tags">
-              {SERVICES.map((service) => (
-                <span className="store-tag" key={service}>
-                  {service}
-                </span>
-              ))}
-            </div>
-          </article>
-        ))}
-        </div>
-      </div>
-      )}
-      </div>
-      </>
+            )}
+          </div>
+        </>
       )}
     </div>
   );

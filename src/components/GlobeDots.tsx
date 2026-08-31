@@ -57,7 +57,7 @@ const FLAT = 1.7;
 /** 손으로 키울 수 있는 한계 배율 */
 const MAX_MAG = 40;
 /** 확대해도 점이 이만큼 떨어져 보이도록 다시 찍습니다(px). 클수록 성깁니다. */
-const DOT_GAP = 6;
+const DOT_GAP = 9;
 /** 가장 촘촘한 단계. 한 단계마다 간격이 절반이 됩니다. */
 const MAX_LEVEL = 6;
 
@@ -1216,7 +1216,7 @@ export function GlobeDots({
         >
           {zoomed
             ? "두 번 누르면 지구본으로 돌아옵니다"
-            : "⌘ / Ctrl + 스크롤로 확대"}
+            : "Ctrl(⌘) + 스크롤로 확대"}
         </p>
       )}
 

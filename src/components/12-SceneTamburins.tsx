@@ -82,6 +82,16 @@ export const GOODS: (Layer & {
    윗동은 상자에 가려지고, 밑단(740) 아래로 드러나는 부분만 보입니다. */
 const CAST = { left: 46, top: 562.5, width: 607.3, height: 90.3 };
 
+/* 앞면에 매인 리본. 앞면(x 32~651, y 511~740) 가운데에 놓고,
+   원본 비율(2018 × 779)을 그대로 지킵니다. */
+const RIBBON: Layer = {
+  src: "/images/tam-ribbon.png",
+  left: 106.5,
+  top: 510,
+  width: 470,
+  height: 181.4,
+};
+
 /** 제품이 상자 안 바닥에 닿으며 지는 그림자. 밑동 자리에 깔립니다. */
 const shadeOf = (one: (typeof GOODS)[number]) => ({
   /* 빛이 왼쪽 위에서 드니 그림자는 오른쪽으로 조금 밀립니다. */
@@ -222,6 +232,17 @@ export function TamburinsBox({
           src={FRONT.src}
           fill
           sizes="50vw"
+          className="object-contain"
+        />
+      </div>
+
+      {/* 앞면에 매인 리본. 상자가 열려도 그대로 남습니다. */}
+      <div className="absolute" style={at(RIBBON, scale)} aria-hidden>
+        <Image
+          alt=""
+          src={RIBBON.src}
+          fill
+          sizes="30vw"
           className="object-contain"
         />
       </div>

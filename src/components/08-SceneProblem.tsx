@@ -13,8 +13,8 @@ import {
 import { useInView } from "@/components/useInView";
 import { StoreListMock } from "@/components/StoreListMock";
 
-/** 한 칸이 머무는 시간 */
-const DWELL = 5500;
+/** 한 칸이 머무는 시간. 글이 다 읽힐 만큼은 서 있어야 합니다. */
+const DWELL = 8500;
 /** 칸에 들어선 뒤 이어지는 동작까지의 사이 */
 const BEAT = 1400;
 /** 눌리는 시늉을 보여 주고 결과가 나오기까지의 짧은 사이 */
@@ -50,32 +50,59 @@ const POINTS = [
 export function SceneProblem() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
   /** 목업 위의 점과 아래 항목은 번호로 짝지어져 있습니다.
+      picked 가 null 이면 아무것도 고르지 않은 채 셋이 다 켜져 있습니다.
       phase 0 은 칸에 막 들어선 참, 1 은 이어지는 동작이 벌어진 뒤입니다. */
-  const [stage, setStage] = useState({ picked: POINTS[0].index, phase: 0 });
+  const [stage, setStage] = useState<{ picked: string | null; phase: number }>({
+    picked: null,
+    phase: 0,
+  });
   const { picked, phase } = stage;
   const step = POINTS.findIndex((point) => point.index === picked);
 
-  /* 장이 보이는 동안 01 부터 03 까지 한 번 훑고 멈춥니다.
-     장을 벗어나면 01 로 되감고, 점을 누르면 그 칸부터 다시 셉니다. */
+  /* 들어서자마자 저 혼자 돌지 않습니다. 재생을 눌러야 01 부터 03 까지 훑습니다. */
+  const [playing, setPlaying] = useState(false);
+
+  const play = useCallback(() => {
+    setPlaying(true);
+    setStage({ picked: POINTS[0].index, phase: 0 });
+  }, []);
+
+  /* 사람이 직접 고르면 자동 재생은 자리를 내줍니다. */
+  const pick = useCallback((key: string) => {
+    setPlaying(false);
+    setStage({ picked: key, phase: 0 });
+  }, []);
+
   useEffect(() => {
     if (!inView) {
-      const id = setTimeout(() => setStage({ picked: POINTS[0].index, phase: 0 }), 0);
+      const id = setTimeout(() => {
+        setPlaying(false);
+        setStage({ picked: null, phase: 0 });
+      }, 0);
       return () => clearTimeout(id);
     }
+    if (!playing) return;
+
     const now = POINTS.findIndex((point) => point.index === picked);
-    if (now === POINTS.length - 1) return;
+    /* 마지막 칸까지 다 보여 주고 멈춥니다. 다시 보려면 또 누르면 됩니다. */
+    if (now === POINTS.length - 1) {
+      const done = setTimeout(() => setPlaying(false), DWELL);
+      return () => clearTimeout(done);
+    }
 
     const id = setTimeout(
       () => setStage({ picked: POINTS[now + 1].index, phase: 0 }),
       DWELL,
     );
     return () => clearTimeout(id);
-  }, [inView, picked]);
+  }, [inView, playing, picked]);
 
   /* 고른 항목과 그 점을 잇는 점선. 칸이 바뀌거나 창이 바뀌면 다시 잽니다. */
   const cards = useRef<Record<string, HTMLButtonElement | null>>({});
   const dots = useRef<Record<string, HTMLButtonElement | null>>({});
-  const [link, setLink] = useState<{ d: string; len: number } | null>(null);
+  const [links, setLinks] = useState<
+    Record<string, { d: string; len: number }>
+  >({});
 
   const dotRef = useCallback((key: string, el: HTMLButtonElement | null) => {
     dots.current[key] = el;
@@ -89,39 +116,58 @@ export function SceneProblem() {
   }, [inView]);
 
   useEffect(() => {
-    const card = cards.current[picked];
-    const dot = dots.current[picked];
-    const grid = card?.closest(".page-grid");
-    if (!ready || !card || !dot || !grid) return;
+    const grid = cards.current[POINTS[0].index]?.closest(".page-grid");
+    if (!ready || !grid) return;
 
     function measure() {
       const g = grid!.getBoundingClientRect();
-      const c = card!.getBoundingClientRect();
-      const d = dot!.getBoundingClientRect();
-      const toX = d.left + d.width / 2 - g.left;
-      const toY = d.top + d.height / 2 - g.top;
-      /* 항목의 목업 쪽 글 끝에서 나와 두 번 꺾어 점으로 들어갑니다.
-         자리가 늘 내용보다 커서, 상자가 아니라 글이 실제로 차지한 만큼을 잽니다. */
-      const range = document.createRange();
-      range.selectNodeContents(card!);
-      const lines = [...range.getClientRects()].filter((line) => line.width > 0);
-      const last = card!.lastElementChild!.getBoundingClientRect();
-      // 캔버스는 1440 을 기준으로 줄어들므로 간격도 같은 비율로 잽니다.
-      const gap = GAP * (g.width / 1440);
-      const toRight = c.left - g.left < toX;
-      const edge = toRight
-        ? Math.max(...lines.map((line) => line.right)) + gap
-        : Math.min(...lines.map((line) => line.left)) - gap;
-      const fromX = edge - g.left;
-      const fromY = (c.top + last.bottom) / 2 - g.top;
-      // 꺾이는 자리는 항목과 점 사이 한가운데 — 늘 목업 바깥 여백에 놓입니다.
-      const midX = (fromX + toX) / 2;
-      setLink({
-        // 점에서 출발해 항목 쪽으로 그어지도록 점을 시작점으로 둡니다.
-        d: `M ${toX} ${toY} L ${midX} ${toY} L ${midX} ${fromY} L ${fromX} ${fromY}`,
-        len:
-          Math.abs(midX - fromX) + Math.abs(toY - fromY) + Math.abs(toX - midX),
-      });
+      const drawn: Record<string, { d: string; len: number }> = {};
+
+      for (const point of POINTS) {
+        const card = cards.current[point.index];
+        const dot = dots.current[point.index];
+        if (!card || !dot) continue;
+
+        const c = card.getBoundingClientRect();
+        const d = dot.getBoundingClientRect();
+        const toX = d.left + d.width / 2 - g.left;
+        const toY = d.top + d.height / 2 - g.top;
+        /* 항목의 목업 쪽 글 끝에서 나와 두 번 꺾어 점으로 들어갑니다.
+           자리가 늘 내용보다 커서, 상자가 아니라 글이 실제로 차지한 만큼을 잽니다. */
+        /* 선은 제목 줄에서 떠납니다. 글 전체를 기준으로 하면 본문 줄 수에 따라
+           항목마다 다른 높이에서 나갑니다. */
+        const head = card.querySelector<HTMLElement>(".type-title");
+        if (!head) continue;
+        const h = head.getBoundingClientRect();
+
+        const range = document.createRange();
+        range.selectNodeContents(head);
+        const lines = [...range.getClientRects()].filter(
+          (line) => line.width > 0,
+        );
+        if (!lines.length) continue;
+        // 캔버스는 1440 을 기준으로 줄어드므로 간격도 같은 비율로 잽니다.
+        const gap = GAP * (g.width / 1440);
+        const toRight = c.left - g.left < toX;
+        const edge = toRight
+          ? Math.max(...lines.map((line) => line.right)) + gap
+          : Math.min(...lines.map((line) => line.left)) - gap;
+        const fromX = edge - g.left;
+        const fromY = h.top + h.height / 2 - g.top;
+        // 꺾이는 자리는 항목과 점 사이 한가운데 — 늘 목업 바깥 여백에 놓입니다.
+        const midX = (fromX + toX) / 2;
+
+        drawn[point.index] = {
+          // 점에서 출발해 항목 쪽으로 그어지도록 점을 시작점으로 둡니다.
+          d: `M ${toX} ${toY} L ${midX} ${toY} L ${midX} ${fromY} L ${fromX} ${fromY}`,
+          len:
+            Math.abs(midX - fromX) +
+            Math.abs(toY - fromY) +
+            Math.abs(toX - midX),
+        };
+      }
+
+      setLinks(drawn);
     }
 
     const frame = requestAnimationFrame(measure);
@@ -166,38 +212,68 @@ export function SceneProblem() {
           picked={picked}
           phase={phase}
           dotRef={dotRef}
-          onPick={(key) => setStage({ picked: key, phase: 0 })}
+          onPick={pick}
         />
 
         <div className="store-scrim" />
-        <div className="store-steps" style={{ "--dwell": `${DWELL}ms` } as CSSProperties}>
-          {POINTS.map((point, i) => (
-            <span
-              key={point.index}
-              className="step"
-              data-state={i < step ? "done" : i === step ? "now" : undefined}
-            >
-              <span className="step-fill" />
-            </span>
-          ))}
-        </div>
+
+        {picked && (
+          <div
+            className="store-steps"
+            style={{ "--dwell": `${DWELL}ms` } as CSSProperties}
+          >
+            {POINTS.map((point, i) => (
+              <span
+                key={point.index}
+                className="step"
+                data-state={i < step ? "done" : i === step ? "now" : undefined}
+              >
+                <span className="step-fill" />
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* 순서대로 훑어 보여 주는 장치. 도는 동안에는 물러납니다. */}
+        <button
+          type="button"
+          className="store-play"
+          data-gone={picked ? true : undefined}
+          onClick={play}
+        >
+          <span className="store-play-label">As-is Preview</span>
+          <span className="store-play-key">
+            <svg viewBox="0 0 24 24" aria-hidden>
+              <path d="M8 5 19 12 8 19 Z" />
+            </svg>
+          </span>
+        </button>
       </div>
 
-      {ready && link && (
-        <svg className="link" key={picked} aria-hidden>
-          {/* 점선은 그 자리에 있고, 점에서부터 자라는 마스크가 그것을 열어 줍니다. */}
-          <defs>
-            <mask id={`link-${picked}`} maskUnits="userSpaceOnUse">
+      {ready &&
+        (picked ? [picked] : POINTS.map((point) => point.index)).map((key) => {
+          const link = links[key];
+          if (!link) return null;
+          return (
+            <svg className="link" key={key} aria-hidden>
+              {/* 점선은 그 자리에 있고, 점에서부터 자라는 마스크가 그것을 열어 줍니다. */}
+              <defs>
+                <mask id={`link-${key}`} maskUnits="userSpaceOnUse">
+                  <path
+                    className="link-reveal"
+                    d={link.d}
+                    style={{ "--len": link.len } as CSSProperties}
+                  />
+                </mask>
+              </defs>
               <path
-                className="link-reveal"
+                className="link-dash"
                 d={link.d}
-                style={{ "--len": link.len } as CSSProperties}
+                mask={`url(#link-${key})`}
               />
-            </mask>
-          </defs>
-          <path className="link-dash" d={link.d} mask={`url(#link-${picked})`} />
-        </svg>
-      )}
+            </svg>
+          );
+        })}
 
       {POINTS.map((point, i) => (
         <button
@@ -208,7 +284,7 @@ export function SceneProblem() {
           }}
           className={`issue rise ${point.place}`}
           data-dim={picked && picked !== point.index ? true : undefined}
-          onClick={() => setStage({ picked: point.index, phase: 0 })}
+          onClick={() => pick(point.index)}
           style={{ "--delay": `${0.18 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">{point.index}</span>

@@ -10,7 +10,10 @@ import {
   type CSSProperties,
 } from "react";
 
+import QRCode from "qrcode";
+
 import { StoreGlobeMock } from "@/components/StoreGlobeMock";
+import { glide } from "@/components/glide";
 import { useInView } from "@/components/useInView";
 
 /** 잇는 선이 글자에서 떨어져 있는 거리(디자인 px) */
@@ -18,7 +21,10 @@ const GAP = 16;
 /** 장 전체가 떠오르고 자리를 잡기까지 걸리는 시간 */
 const ENTER = 1500;
 
-/** 새 화면이 하는 일 셋 */
+/** 휴대폰에서 열리는 자리. 저장소 하위에 배포되는 경우까지 함께 셈합니다. */
+const PHONE_PATH = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/m/globe/`;
+
+/** 새 화면이 하는 일 둘 */
 const POINTS = [
   {
     index: "01",
@@ -30,12 +36,6 @@ const POINTS = [
     index: "02",
     title: "Turn, Select, Discover",
     body: "지구본을 돌리고 도시를 선택해 해당 지역의 스토어를 발견합니다.",
-    place: "col-start-7 col-span-2 row-start-2 row-span-2",
-  },
-  {
-    index: "03",
-    title: "Continue to Details",
-    body: "도시를 선택한 뒤에는 기존 매장 목록과 상세 정보로 자연스럽게 이어집니다.",
     place: "col-start-7 col-span-2 row-start-5 row-span-2 issue-low",
   },
 ];
@@ -53,6 +53,42 @@ export function SceneAfter() {
 
   const dotRef = useCallback((key: string, el: HTMLButtonElement | null) => {
     dots.current[key] = el;
+  }, []);
+
+  /* 점을 누르면 그 자리가 켜집니다. 03 을 누르면 아래 매장 목록으로 굴러갑니다. */
+  const [picked, setPicked] = useState<string | null>(null);
+
+  const pick = useCallback((key: string) => {
+    setPicked((now) => (now === key ? null : key));
+  }, []);
+
+  useEffect(() => {
+    if (!picked) return;
+    const screen = dots.current[picked]?.closest<HTMLElement>(".globe-mock");
+    if (!screen) return;
+    /* 02 · 03 은 매장 목록을 보여 주는 자리라 목록이 보이도록 굴려 둡니다. */
+    const to =
+      picked === "01"
+        ? 0
+        : (screen.querySelector<HTMLElement>(".globe-list")?.offsetTop ?? 0);
+    const stop = glide(screen, to, 1200);
+    return stop;
+  }, [picked]);
+
+  /* 판 위 목업은 결국 그림입니다. QR 하나를 두어, 보는 사람이
+     제 손의 기기에서 같은 화면을 직접 굴려 보게 합니다. */
+  const [mark, setMark] = useState<string | null>(null);
+
+  useEffect(() => {
+    const to = `${window.location.origin}${PHONE_PATH}`;
+    QRCode.toString(to, {
+      type: "svg",
+      margin: 0,
+      errorCorrectionLevel: "M",
+      color: { dark: "#fafafa", light: "#00000000" },
+    })
+      .then(setMark)
+      .catch(() => setMark(null));
   }, []);
 
   const [ready, setReady] = useState(false);
@@ -88,20 +124,25 @@ export function SceneAfter() {
 
         /* 글줄의 실제 끝에서 떠납니다. 항목 상자가 아니라 글자를 기준으로 해야
            줄이 짧은 항목에서도 선이 글자에 바로 붙습니다. */
+        /* 선은 제목 줄에서 떠납니다. 글 전체를 기준으로 하면 본문 줄 수에 따라
+           항목마다 다른 높이에서 나갑니다. */
+        const head = card.querySelector<HTMLElement>(".type-title");
+        if (!head) continue;
+        const h = head.getBoundingClientRect();
+
         const range = document.createRange();
-        range.selectNodeContents(card);
+        range.selectNodeContents(head);
         const lines = [...range.getClientRects()].filter(
           (line) => line.width > 0,
         );
         if (!lines.length) continue;
-        const last = card.lastElementChild!.getBoundingClientRect();
         const gap = GAP * (g.width / 1440);
         const toRight = c.left - g.left < toX;
         const edge = toRight
           ? Math.max(...lines.map((line) => line.right)) + gap
           : Math.min(...lines.map((line) => line.left)) - gap;
         const fromX = edge - g.left;
-        const fromY = (c.top + last.bottom) / 2 - g.top;
+        const fromY = h.top + h.height / 2 - g.top;
         const midX = (fromX + toX) / 2;
 
         drawn[point.index] = {
@@ -149,13 +190,20 @@ export function SceneAfter() {
         Global Discovery
       </h2>
 
-      {/* 화면 하나. 앞 장 목업과 같은 두 단에 섭니다. */}
+      {/* 화면 하나. 08장 목업과 같은 자리·같은 높이에 섭니다. */}
       <div
         className="after-frame rise col-start-4 col-span-2 row-start-2 row-span-5"
         style={{ "--delay": "0.18s" } as CSSProperties}
       >
-        {/* 점은 자리를 가리키기만 합니다. 순회하지 않으니 셋 다 켜 둡니다. */}
-        <StoreGlobeMock dots step={null} phase={1} dotRef={dotRef} />
+        {/* 점을 누르면 그 자리가 켜지고, 매장 목록이 그에 맞춰 바뀝니다. */}
+        <StoreGlobeMock
+          dots
+          skipDots={["03"]}
+          step={picked === "03" ? null : picked}
+          phase={picked === "01" ? 0 : 1}
+          onPick={pick}
+          dotRef={dotRef}
+        />
       </div>
 
       {ready &&
@@ -181,6 +229,22 @@ export function SceneAfter() {
             </svg>
           );
         })}
+
+      {/* 손에 쥔 기기에서 열어 보는 자리 — 옛 02 항목이 서 있던 칸입니다. */}
+      <div
+        className="qr-card rise col-start-7 col-span-2 row-start-2 row-span-2"
+        style={{ "--delay": "0.3s" } as CSSProperties}
+      >
+        <p className="qr-eyebrow">Try it on your phone</p>
+
+        {mark && (
+          <div
+            className="qr-mark"
+            aria-hidden
+            dangerouslySetInnerHTML={{ __html: mark }}
+          />
+        )}
+      </div>
 
       {POINTS.map((point, i) => (
         <button

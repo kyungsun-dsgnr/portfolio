@@ -5811,6 +5811,9 @@
      넷을 한 줄에 욱여넣으면 이름이 잘립니다. 옆으로 밀어 보게 둡니다. */
   .cmpb-cards {
     display: flex;
+    /* 고른 카드의 테두리가 잘리지 않게 아래로 한 숨 띄웁니다.
+       이 줄은 넘치는 부분을 잘라 내는 칸 안에 있습니다. */
+    padding-bottom: calc(4 * var(--u));
     gap: calc(12 * var(--u));
     overflow-x: auto;
     overflow-y: hidden;

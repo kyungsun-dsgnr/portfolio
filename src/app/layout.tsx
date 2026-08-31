@@ -19,6 +19,13 @@ export const metadata: Metadata = {
   title: "What We Already Know",
   description:
     "사람들이 이미 이해하고 있는 행동과 감각을 디지털 브랜드 경험으로 번역합니다.",
+  /* 예전 iOS 는 매니페스트의 display 를 보지 않습니다.
+     홈 화면에서 전체 화면으로 뜨려면 이 표시가 함께 있어야 합니다. */
+  appleWebApp: {
+    capable: true,
+    title: "What We Already Know",
+    statusBarStyle: "default",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

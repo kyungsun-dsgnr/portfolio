@@ -6372,6 +6372,45 @@
     font-size: calc(12.4 * var(--u));
   }
 
+  /* ── 손에 쥔 화면의 글자 크기 ──────────────────
+     판 위 목업은 작게 놓이므로 그 안에서는 이 크기가 알맞지만,
+     화면을 꽉 채우면 단위가 커져 글자가 앱보다 한 단 크게 섭니다.
+     자리는 그대로 두고 글자만 0.85 배로 내려 앱에 가깝게 맞춥니다. */
+  /* 손에 쥔 화면에서는 앱의 머리띠가 필요 없습니다.
+     브라우저가 이미 뒤로 가기를 쥐고 있고, 화면 이름도 창 제목에 있습니다. */
+  .phone-page .cmpb-head {
+    display: none;
+  }
+
+  .phone-page .cmpb-sec h5,
+  .phone-page .cmpb-layer h5 {
+    font-size: calc(11.8 * var(--u));
+  }
+
+  .phone-page .cmpb-layer-no {
+    font-size: calc(7.6 * var(--u));
+  }
+
+  .phone-page .cmpb-card b,
+  .phone-page .cmpb-pick-text b,
+  .phone-page .cmpb-list-text b,
+  .phone-page .cmpb-add {
+    font-size: calc(11 * var(--u));
+  }
+
+  .phone-page .cmpb-pick-text em,
+  .phone-page .cmpb-list-text em {
+    font-size: calc(8.6 * var(--u));
+  }
+
+  .phone-page .cmpb-sum {
+    font-size: calc(10.4 * var(--u));
+  }
+
+  .phone-page .cmpb-story {
+    font-size: calc(9.4 * var(--u));
+  }
+
   /* 현재 위치 사용. 지도 위에 떠 있어 흰 버튼은 배경에 묻힙니다. */
   .phone-page .globe-locate {
     background: #1d1d1d;

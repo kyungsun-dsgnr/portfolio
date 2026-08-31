@@ -41,7 +41,11 @@ jobs:
         env:
           NEXT_PUBLIC_BASE_PATH: ${{ steps.base.outputs.path }}
 
+      # 저장소에 Pages 가 아직 켜져 있지 않으면 이 단계에서 켭니다.
+      # 켜 두지 않으면 빌드는 되고 배포할 곳이 없어 멈춥니다.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:

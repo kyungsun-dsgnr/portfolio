@@ -958,16 +958,13 @@ export function TamburinsComposeScreenB({
         </div>
       </div>
 
-      {/* 바닥에는 담기와 사기 둘만 둡니다.
-          향을 둘 다 고르기 전에는 담을 것이 정해지지 않아 자리도 두지 않습니다. */}
-      {two !== null && (
-        <div className="cmpb-bar">
-          <span className="cmpb-add" data-ghost>
-            장바구니
-          </span>
-          <span className="cmpb-add">구매하기</span>
-        </div>
-      )}
+      {/* 바닥에는 담기와 사기 둘만 둡니다. */}
+      <div className="cmpb-bar">
+        <span className="cmpb-add" data-ghost>
+          장바구니
+        </span>
+        <span className="cmpb-add">구매하기</span>
+      </div>
     </div>
   );
 }

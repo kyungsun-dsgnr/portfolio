@@ -13,7 +13,7 @@ import { SceneScreensTall } from "@/components/17-SceneScreensTall";
 import { SceneTamburinsCover } from "@/components/12-SceneTamburinsCover";
 import { SceneAfter } from "@/components/11-SceneAfter";
 import { SceneExplore } from "@/components/10-SceneExplore";
-import { SceneIntro } from "@/components/01-SceneIntro";
+// 접어 둔 장에서 씁니다: import { SceneIntro } from "@/components/01-SceneIntro";
 import { SceneSwitch } from "@/components/02-SceneSwitch";
 import { SceneNudakeCover } from "@/components/18-SceneNudakeCover";
 import { SceneDraft } from "@/components/SceneDraft";

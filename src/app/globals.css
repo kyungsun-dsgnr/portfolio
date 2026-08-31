@@ -5851,6 +5851,12 @@
     margin-top: 0;
   }
 
+  /* 무대가 이미 아래 테두리를 그었습니다. 첫 층이 위 테두리를 또 그으면
+     그 줄만 두 겹이 되어 굵어 보입니다. */
+  .cmpb-layer:first-of-type {
+    border-top: 0;
+  }
+
   .cmpb-layer-head {
     display: flex;
     width: 100%;
@@ -6389,6 +6395,16 @@
 
   .phone-page .cmpb-layer-no {
     font-size: calc(7.6 * var(--u));
+  }
+
+  /* 브라우저 막대가 오르내리며 화면 높이가 줄면 상자가 자리를 다 가져가
+     세트 카드 아래가 잘립니다. 손에 쥔 화면에서는 상자 몫을 줄여 둡니다. */
+  .phone-page .cmpb-stage {
+    height: 40%;
+  }
+
+  .phone-page .cmpb-stage[data-small] {
+    height: 30%;
   }
 
   .phone-page .cmpb-card b,

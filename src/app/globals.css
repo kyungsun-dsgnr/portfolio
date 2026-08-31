@@ -3498,6 +3498,12 @@
     overflow: hidden;
   }
 
+  /* 실제 지도가 들어오는 자리. 그리던 그림과 같은 칸을 그대로 채웁니다. */
+  .globe-map {
+    position: absolute;
+    inset: 0;
+  }
+
   .globe-stage .globe-badge {
     gap: calc(4 * var(--u));
     padding: calc(4 * var(--u)) calc(8 * var(--u));

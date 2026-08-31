@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 
 import { GlobeDots } from "@/components/GlobeDots";
+import { GoogleMap } from "@/components/GoogleMap";
 import { ChevronIcon, FilterIcon, LocateIcon } from "@/components/StoreIcons";
 import { STORES, type Store } from "@/data/gentle-monster-stores";
 
@@ -417,13 +417,7 @@ export function StoreGlobeMock({
             onPickStore={fromGlobe}
           />
         ) : (
-          <Image
-            src="/images/store-map.png"
-            alt=""
-            fill
-            sizes="25vw"
-            className="object-cover"
-          />
+          <GoogleMap />
         )}
 
         {/* 현재 위치로 돌아오는 플로팅 버튼 */}

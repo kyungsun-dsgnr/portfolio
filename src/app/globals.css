@@ -6400,14 +6400,14 @@
     font-size: calc(7.6 * var(--u));
   }
 
-  /* 브라우저 막대가 오르내리며 화면 높이가 줄면 상자가 자리를 다 가져가
-     세트 카드 아래가 잘립니다. 손에 쥔 화면에서는 상자 몫을 줄여 둡니다. */
+  /* 손에 쥔 화면은 판 위 목업보다 세로가 깁니다. 그 여유를 상자가 가져가고,
+     걸음들은 그만큼 아래로 내려와 브라우저 막대 가까이까지 섭니다. */
   .phone-page .cmpb-stage {
-    height: 40%;
+    height: 52%;
   }
 
   .phone-page .cmpb-stage[data-small] {
-    height: 30%;
+    height: 38%;
   }
 
   .phone-page .cmpb-card b,

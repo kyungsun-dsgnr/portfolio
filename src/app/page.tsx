@@ -1,4 +1,5 @@
 // 내려 둔 표지에서 씁니다: import { GlobeDots } from "@/components/GlobeDots";
+import { asset } from "@/asset";
 import { GlobePaper } from "@/components/GlobePaper";
 import { LightStage } from "@/components/LightStage";
 import { SceneCase } from "@/components/07-SceneCase";
@@ -122,7 +123,7 @@ export default function Home() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     className="globe-glasses"
-                    src="/images/glasses.png"
+                    src={asset("/images/glasses.png")}
                     alt=""
                   />
                 </div>

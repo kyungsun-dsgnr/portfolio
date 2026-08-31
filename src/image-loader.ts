@@ -1,3 +1,5 @@
+import { asset } from "@/asset";
+
 /**
  * 정적 내보내기에서 이미지 경로 앞에 basePath 를 붙입니다.
  *
@@ -8,7 +10,5 @@
  * 최적화 서버가 없으니 크기·품질은 쓰지 않고 경로만 돌려줍니다.
  */
 export default function imageLoader({ src }: { src: string }) {
-  const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-  /* 바깥 주소(http…)나 데이터 URI 는 손대지 않습니다. */
-  return src.startsWith("/") ? `${base}${src}` : src;
+  return asset(src);
 }

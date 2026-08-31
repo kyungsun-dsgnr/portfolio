@@ -5,6 +5,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
+import { asset } from "@/asset";
 import { useInView } from "@/components/useInView";
 
 /* 상자 도면의 좌표계. 모든 겹이 이 안에서 같은 자리를 씁니다. */
@@ -103,7 +104,7 @@ export function TamburinsGiftBox() {
 
             <image
               className="gift-mark"
-              href="/images/tamburins-mark.png"
+              href={asset("/images/tamburins-mark.png")}
               x="176"
               y="174"
               width="311"

@@ -3382,6 +3382,11 @@
   }
 
   .globe-tab {
+    /* 글자 높이에 기대지 않고 칸 한가운데에 앉힙니다. 글꼴이 바뀌어도
+       (휴대폰에서 대체 글꼴이 쓰일 때도) 위로 치우치지 않습니다. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: calc(5.27 * var(--u)) 0;
     border-radius: calc(7.03 * var(--u));
     color: #858585;

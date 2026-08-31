@@ -7,7 +7,10 @@ export function FilterIcon({ size = 21.08 }: { size?: number }) {
     <svg
       className="store-icon"
       viewBox="0 0 21.08 21.08"
-      style={{ width: `calc(${size} * var(--u))`, height: `calc(${size} * var(--u))` }}
+      style={{
+        width: `calc(${size} * var(--u))`,
+        height: `calc(${size} * var(--u))`,
+      }}
       fill="currentColor"
       aria-hidden
     >
@@ -26,7 +29,10 @@ export function ChevronIcon({ size = 17.57 }: { size?: number }) {
     <svg
       className="store-icon"
       viewBox="0 0 17.57 17.57"
-      style={{ width: `calc(${size} * var(--u))`, height: `calc(${size} * var(--u))` }}
+      style={{
+        width: `calc(${size} * var(--u))`,
+        height: `calc(${size} * var(--u))`,
+      }}
       fill="none"
       stroke="currentColor"
       strokeWidth="1.05"
@@ -43,28 +49,23 @@ export function LocateIcon({ size = 14.05 }: { size?: number }) {
     <svg
       className="store-icon"
       viewBox="0 0 14.05 14.05"
-      style={{ width: `calc(${size} * var(--u))`, height: `calc(${size} * var(--u))` }}
+      style={{
+        width: `calc(${size} * var(--u))`,
+        height: `calc(${size} * var(--u))`,
+      }}
       fill="currentColor"
       aria-hidden
     >
-      <rect
-        x="3.51"
-        y="3.51"
-        width="7.02"
-        height="7.02"
+      {/* 위치를 겨누는 표는 네모보다 원이 눈에 익습니다. */}
+      <circle
+        cx="7.02"
+        cy="7.02"
+        r="3.51"
         fill="none"
         stroke="currentColor"
         strokeWidth="0.88"
       />
-      <rect
-        x="6.15"
-        y="6.15"
-        width="1.75"
-        height="1.75"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="0.88"
-      />
+      <circle cx="7.02" cy="7.02" r="0.88" />
       <rect x="6.58" y="0.88" width="0.88" height="1.81" />
       <rect x="6.58" y="10.72" width="0.88" height="1.81" />
       <rect x="10.71" y="6.59" width="2.46" height="0.88" />

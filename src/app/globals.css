@@ -3394,7 +3394,9 @@
     text-transform: uppercase;
     cursor: pointer;
     flex: 1 1 0;
-    line-height: 1.294;
+    /* 선 높이에 남는 여백이 글자를 위로 밀어 보이게 합니다. 여백은 padding 이
+       맡고 선 높이는 글자에 딱 맞춥니다. */
+    line-height: 1;
     transition:
       background 0.26s,
       color 0.26s;
@@ -3609,7 +3611,8 @@
     cursor: pointer;
     background: #fff;
     border-radius: 999px;
-    line-height: 1.5;
+    /* 여백은 padding 이 맡고 선 높이는 글자에 딱 맞춥니다. */
+    line-height: 1;
     display: inline-flex;
     position: absolute;
   }
@@ -6303,7 +6306,7 @@
 
   .cmpb-add {
     display: flex;
-    height: calc(45 * var(--u));
+    height: calc(36 * var(--u));
     flex: 1;
     align-items: center;
     justify-content: center;

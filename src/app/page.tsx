@@ -27,7 +27,8 @@ export default function Home() {
   return (
     <LightStage
       sections={[
-        { id: "intro", label: "Intro", node: <SceneIntro /> },
+        /* 스위치 장과 제목이 같아 접어 둡니다. 되살릴 때 이 줄만 풀면 됩니다.
+        { id: "intro", label: "Intro", node: <SceneIntro /> }, */
         { id: "switch", label: "Switch", node: <SceneSwitch /> },
         {
           id: "statement",

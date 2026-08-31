@@ -18,6 +18,10 @@
   --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-body:
     "SUIT Variable", var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  /* 탬버린즈 목업 안 글자. 판의 본문과 구분해 따로 둡니다. */
+  --font-tam:
+    "Pretendard Variable", Pretendard, "SUIT Variable", var(--font-inter),
+    ui-sans-serif, system-ui, sans-serif;
   /* next/font 가 --font-script 에 Playwrite NZ Basic 을 실어 줍니다. */
   --font-hand:
     "Brittany Signature", var(--font-script), "Snell Roundhand", cursive;
@@ -158,7 +162,7 @@
   }
 
   .section:has(.statement-dark) {
-    background: #191919;
+    background: #202020;
     color: #fafafa;
   }
 
@@ -170,15 +174,23 @@
   /* 제안 장은 어둡게 둡니다. 밝기 기준을 뒤집어 두면 글과 선이 함께 따라옵니다.
      화면 목업은 실제 화면 그대로라 흰색을 지킵니다. */
   .section:has(.after-frame) {
-    --bg: #191919;
+    --bg: #202020;
     --fg: #fafafa;
     --fg-soft: rgb(250 250 250 / 0.72);
-    background: #191919;
+    background: #202020;
     color: #fafafa;
   }
 
   /* 목업 안은 실제 화면이라 밝기 기준을 도로 세웁니다.
      화면 위에 얹힌 번호 점도 이전처럼 짙은 원에 흰 숫자로 돌아옵니다. */
+  /* 08장 .store-slot 과 같은 셈법 — 목업이 자리 위에서 52u 내려앉고,
+     넘치는 아래쪽은 잘라 냅니다. */
+  .after-frame {
+    position: relative;
+    overflow: hidden;
+    padding-top: calc(52 * var(--u));
+  }
+
   .section:has(.after-frame) .after-frame {
     --fg: #191919;
     --bg: #ffffff;
@@ -371,6 +383,11 @@
 
   /* 어두운 장에서는 밝기를 뒤집습니다. */
   .section:has(.statement-dark) .page-index,
+  /* 어두운 장에서는 항목 번호도 밝은 쪽으로 뒤집습니다. */
+  .section:has(.after-frame) .card-index {
+    color: rgb(250 250 250 / 0.5);
+  }
+
   .section:has(.after-frame) .page-index {
     color: rgb(250 250 250 / 0.34);
   }
@@ -447,39 +464,35 @@
     letter-spacing: 0.01em;
   }
 
-  /* 걸음과 걸음을 잇는 선. 목업 장의 잇는 선과 같은 굵기·색입니다. */
-  .shift-chain li + li::before {
+  .shift-chain li + li:before {
     content: "";
-    position: absolute;
     left: calc(3 * var(--u));
     top: calc(-16 * var(--u));
     height: calc(12 * var(--u));
-    border-left: 1px solid rgb(25 25 25 / 0.22);
+    border-left: 1px solid #19191938;
+    position: absolute;
   }
 
-  /* 제안은 한 마디뿐입니다. 개수 차이가 곧 이 장의 말입니다. */
   .shift-one {
     color: var(--fg);
     font-family: var(--font-display);
     font-size: calc(34 * var(--u));
-    font-weight: 700;
     letter-spacing: 0.02em;
+    font-weight: 700;
   }
 
-  /* ── 17장 고르고 담고 완성하기 ────────────────
-     담긴 개수에 따라 지금 서 있는 걸음만 또렷해집니다. */
   .compose-steps {
-    display: flex;
-    flex-direction: column;
     justify-content: center;
     gap: calc(30 * var(--u));
+    flex-direction: column;
+    display: flex;
   }
 
   .compose-step {
-    display: flex;
     gap: calc(14 * var(--u));
     opacity: 0.32;
-    transition: opacity 320ms ease;
+    transition: opacity 0.32s;
+    display: flex;
   }
 
   .compose-step[data-on],
@@ -491,15 +504,14 @@
     color: var(--fg-soft);
     font-family: var(--font-display);
     font-size: calc(11 * var(--u));
-    font-weight: 700;
     letter-spacing: 0.06em;
     padding-top: calc(4 * var(--u));
+    font-weight: 700;
   }
 
-  /* 세로로 쌓는 고르는 판 */
   .tam-goods[data-stack] {
-    grid-template-columns: 1fr;
     grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 
   .tam-goods[data-stack] .tam-good:first-child,
@@ -507,96 +519,78 @@
     grid-area: auto;
   }
 
-  /* 로고 그림이 없는 케이스의 글자 로고. 자리와 무게를 로고와 같게 둡니다. */
   .case-wordmark {
     color: var(--fg);
     font-family: var(--font-display);
     font-size: calc(34 * var(--u));
-    font-weight: 700;
     letter-spacing: 0.14em;
+    font-weight: 700;
   }
 
-  /* 18장 — 장은 흰색으로 두고, 사진이 놓인 판만 한 톤 눌러 앉힙니다. */
   .section:has(.nud-scene) {
-    background: #ffffff;
+    background: #fff;
   }
 
-  /* 로고 자리. 글자 로고일 때도 판 오른쪽 끝, 아래에 맞춰 섭니다. */
   .nud-logo {
-    display: flex;
-    align-items: flex-end;
     justify-content: flex-end;
+    align-items: flex-end;
+    display: flex;
   }
 
-  /* 배경 위에 놓이는 종이 카드. 위에 로고, 가운데 손글씨, 아래 날짜입니다.
-     종이 결은 아주 옅은 줄무늬 두 겹과 가장자리 그늘로 냅니다. */
   .nud-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
     border-radius: calc(2 * var(--u));
     padding: calc(14 * var(--u)) calc(20 * var(--u)) calc(36 * var(--u));
-    /* 앞면 겹의 z-index 가 잔까지 넘어가지 않도록 쌓임을 카드 안에 가둡니다. */
     isolation: isolate;
-    /* 사진 속 카드를 그대로 덮으므로 그림자는 사진의 것을 씁니다.
-       종이 결도 사진에 이미 있어, 여기서는 색만 맞춥니다. */
     background:
-      radial-gradient(
-        130% 100% at 50% 0%,
-        rgb(255 255 255 / 0.55),
-        rgb(255 255 255 / 0) 70%
-      ),
-      #f7f6f2;
+      radial-gradient(130% 100% at 50% 0, #ffffff8c, #fff0 70%), #f7f6f2;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
   }
 
-  /* 처음에 덮여 있는 제품 카드. 천천히 물러나며 감사 카드가 드러납니다.
-     뒷면과 같은 종이 위에 로고·그림·품명을 얹어 만듭니다. */
   .nud-card-front {
-    position: absolute;
-    inset: 0;
     z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     background: inherit;
     padding: calc(14 * var(--u)) calc(20 * var(--u)) calc(12 * var(--u));
+    flex-direction: column;
+    align-items: center;
+    display: flex;
+    position: absolute;
+    inset: 0;
   }
 
-  /* 뒷면 로고와 같은 크기·같은 자리입니다(위 여백도 같습니다). */
   .nud-front-logo {
-    position: relative;
-    display: block;
     width: calc(52 * var(--u));
     height: calc(44 * var(--u));
+    display: block;
+    position: relative;
   }
 
-  /* 가운데 그림. 카드 폭을 꽉 채웁니다. */
   .nud-front-art {
-    position: relative;
-    display: block;
     width: 100%;
     height: calc(246 * var(--u));
     margin-top: calc(10 * var(--u));
+    display: block;
+    position: relative;
   }
 
-  /* 품명과 종류. 그림 아래 양 끝으로 벌립니다. */
   .nud-front-foot {
-    display: flex;
     width: 100%;
-    align-items: baseline;
-    justify-content: space-between;
     margin-top: calc(14 * var(--u));
-    color: rgb(25 25 25 / 0.85);
+    color: #191919d9;
     font-family: var(--font-display);
     font-size: calc(11 * var(--u));
-    font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+    justify-content: space-between;
+    align-items: baseline;
+    font-weight: 600;
+    display: flex;
   }
 
   .nud-front-foot em:last-child {
-    color: rgb(25 25 25 / 0.5);
+    color: #19191980;
     font-size: calc(8 * var(--u));
     letter-spacing: 0.16em;
   }
@@ -606,55 +600,51 @@
   }
 
   .nud-front-mark {
-    margin-top: auto;
-    color: rgb(25 25 25 / 0.38);
+    color: #19191961;
     font-family: var(--font-display);
     font-size: calc(6 * var(--u));
-    font-weight: 600;
     letter-spacing: 0.24em;
     text-indent: 0.24em;
     text-transform: uppercase;
+    margin-top: auto;
+    font-weight: 600;
   }
 
   [data-visible] .nud-card-front {
-    animation: card-turn 1.6s ease 0.9s both;
+    animation: 1.6s 0.9s both card-turn;
   }
 
   @keyframes card-turn {
     from {
       opacity: 1;
     }
+
     to {
       opacity: 0;
     }
   }
 
-  /* 위쪽 로고 */
   .nud-card-logo {
-    position: relative;
-    display: block;
     width: calc(52 * var(--u));
     height: calc(44 * var(--u));
+    display: block;
+    position: relative;
   }
 
-  /* 가운데 손글씨. 두 줄로, 한 글자씩 왼쪽부터 그어집니다.
-     종이에 스민 잉크처럼 보이도록 색을 눌러 두고 종이와 곱해 얹습니다. */
   .nud-card-hand {
-    display: flex;
-    flex-direction: column;
     align-items: center;
     gap: calc(2 * var(--u));
-    color: rgb(30 26 20 / 0.82);
+    color: #1e1a14d1;
     font-family: var(--font-hand);
     font-size: calc(30 * var(--u));
-    /* 가변 폰트라 100~400 사이를 쓸 수 있습니다. 얇게 그어 놓습니다. */
-    font-weight: 230;
-    line-height: 1.1;
     letter-spacing: 0;
     white-space: pre;
     mix-blend-mode: multiply;
-    /* 인쇄된 글자처럼 딱 떨어지지 않게, 가장자리를 아주 조금 풉니다. */
     filter: blur(0.2px);
+    flex-direction: column;
+    font-weight: 230;
+    line-height: 1.1;
+    display: flex;
   }
 
   .nud-card-line {
@@ -662,17 +652,14 @@
   }
 
   .nud-card-line span {
-    display: inline-block;
     opacity: 0;
-    /* 흘려 쓴 획은 글자 폭 밖으로 나갑니다. 자르는 상자를 사방으로 물려
-       획이 잘리지 않게 합니다(음수 값은 상자를 넓힙니다). */
     clip-path: inset(-45% -60% -45% 100%);
+    display: inline-block;
   }
 
-  /* 장에 들어설 때 다시 그어집니다. */
   [data-visible] .nud-card-line span {
-    animation: hand-write 0.34s cubic-bezier(0.4, 0, 0.2, 1) both;
-    animation-delay: calc(2.3s + var(--i) * 0.085s);
+    animation: 0.34s cubic-bezier(0.4, 0, 0.2, 1) both hand-write;
+    animation-delay: calc(2.3s + var(--i) * 85ms);
   }
 
   @keyframes hand-write {
@@ -680,49 +667,37 @@
       opacity: 1;
       clip-path: inset(-45% -60% -45% 100%);
     }
+
     to {
       opacity: 1;
-      clip-path: inset(-45% -60% -45% -60%);
+      clip-path: inset(-45% -60%);
     }
   }
 
   .nud-card-date {
-    color: rgb(25 25 25 / 0.5);
+    color: #19191980;
     font-family: var(--font-display);
     font-size: calc(9 * var(--u));
-    font-weight: 600;
     letter-spacing: 0.18em;
     text-indent: 0.18em;
     text-transform: uppercase;
+    font-weight: 600;
   }
 
-  /* 잔에 내려앉는 티백. 라벨에서 끈이 내려와 주머니로 이어집니다.
-     한 번 내려온 뒤 아주 느리게 흔들립니다. */
   .nud-tea {
     opacity: 0;
     transform-origin: 76% 12%;
   }
 
-  /* 물에 잠긴 아랫단은 흐려집니다. 잔 앞유리 너머로 보이는 결입니다. */
   .nud-tea img {
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      #000 46%,
-      rgb(0 0 0 / 0.4) 78%,
-      rgb(0 0 0 / 0.12) 100%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      #000 46%,
-      rgb(0 0 0 / 0.4) 78%,
-      rgb(0 0 0 / 0.12) 100%
-    );
+    -webkit-mask-image: linear-gradient(#000 46%, #0006 78%, #0000001f 100%);
+    mask-image: linear-gradient(#000 46%, #0006 78%, #0000001f 100%);
   }
 
   [data-visible] .nud-tea {
     animation:
-      teabag-drop 1.9s cubic-bezier(0.28, 0.72, 0.28, 1) 3.7s both,
-      teabag-sway 6s ease-in-out 5.6s infinite;
+      1.9s cubic-bezier(0.28, 0.72, 0.28, 1) 3.7s both teabag-drop,
+      6s ease-in-out 5.6s infinite teabag-sway;
   }
 
   @keyframes teabag-drop {
@@ -731,10 +706,11 @@
       translate: 0 calc(-120 * var(--u));
       rotate: -7deg;
     }
+
     to {
       opacity: 1;
-      translate: 0 0;
-      rotate: 0deg;
+      translate: 0;
+      rotate: none;
     }
   }
 
@@ -743,36 +719,34 @@
     100% {
       rotate: -1.2deg;
     }
+
     50% {
       rotate: 1.2deg;
     }
   }
 
-  /* 우러나는 차. 잔 안쪽 물 영역 밖으로는 번지지 않습니다.
-     아래로 갈수록 좁아지는 잔 모양 그대로 잘라 둡니다. */
   .nud-brew {
     clip-path: polygon(0% 0%, 100% 0%, 79.7% 100%, 20.8% 100%);
     mix-blend-mode: multiply;
     filter: blur(7px);
   }
 
-  /* 덩이 하나. 제각각 다른 때에 다른 크기로 번져 모양이 일정하지 않습니다. */
   .nud-brew-blob {
-    position: absolute;
-    border-radius: 50%;
-    background: radial-gradient(
-      closest-side,
-      rgb(168 106 30 / 0.42),
-      rgb(180 126 54 / 0.24) 55%,
-      rgb(198 158 96 / 0) 100%
-    );
     opacity: 0;
     scale: 0.3;
     rotate: var(--spin, 0deg);
+    background: radial-gradient(
+      closest-side,
+      #a86a1e6b,
+      #b47e363d 55%,
+      #c69e6000 100%
+    );
+    border-radius: 50%;
+    position: absolute;
   }
 
   [data-visible] .nud-brew-blob {
-    animation: brew-spread 4.4s cubic-bezier(0.32, 0.6, 0.28, 1) both;
+    animation: 4.4s cubic-bezier(0.32, 0.6, 0.28, 1) both brew-spread;
     animation-delay: calc(4.6s + var(--delay, 0s));
   }
 
@@ -781,9 +755,11 @@
       opacity: 0;
       scale: 0.28;
     }
+
     45% {
       opacity: 0.8;
     }
+
     to {
       opacity: 1;
       scale: 1.18;
@@ -791,51 +767,41 @@
   }
 
   .nud-scene {
-    position: relative;
     background: #fafafa;
+    position: relative;
     overflow: hidden;
   }
 
-  /* 상자가 판에 놓이며 지는 그림자. 밑단을 윗변으로 삼아 오른쪽으로 눕습니다.
-     드러나는 첫 줄이 곧 접지선이라 거기서 가장 짙습니다. */
   .tam-cast {
-    transform-origin: 50% 0%;
-    transform: skewX(28deg);
-    background: linear-gradient(
-      180deg,
-      rgb(30 27 22 / 0.16) 0 22%,
-      rgb(30 27 22 / 0.07) 52%,
-      rgb(30 27 22 / 0) 88%
-    );
-    mask-image: linear-gradient(
-      90deg,
-      transparent 0,
-      #000 12%,
-      #000 88%,
-      transparent 100%
-    );
+    transform-origin: 50% 0;
     filter: blur(9px);
     pointer-events: none;
+    background: linear-gradient(#1e1b1629 0 22%, #1e1b1612 52%, #1e1b1600 88%);
+    transform: skewX(28deg);
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      #0000 0,
+      #000 12% 88%,
+      #0000 100%
+    );
+    mask-image: linear-gradient(90deg, #0000 0, #000 12% 88%, #0000 100%);
   }
 
-  /* 상자 안, 제품이 바닥에 닿는 자리. 담긴 것에 맞춰 하나씩 늘어납니다.
-     창이 왼쪽 위에 있으므로 오른쪽으로 조금 밀려 깔립니다. */
   .tam-shade {
-    border-radius: 50%;
-    background: radial-gradient(
-      closest-side,
-      rgb(24 20 16 / 0.34),
-      rgb(24 20 16 / 0.12) 56%,
-      rgb(24 20 16 / 0) 100%
-    );
     filter: blur(5px);
     opacity: 0;
     pointer-events: none;
+    background: radial-gradient(
+      closest-side,
+      #18141057,
+      #1814101f 56%,
+      #18141000 100%
+    );
+    border-radius: 50%;
   }
 
-  /* 제품이 내려앉은 뒤에 짙어집니다. 먼저 깔리면 그림자만 떠 있게 됩니다. */
   [data-visible] .tam-shade {
-    animation: shade-in 0.6s ease both;
+    animation: 0.6s both shade-in;
     animation-delay: calc(var(--delay, 0s) + 0.95s);
   }
 
@@ -844,6 +810,7 @@
       opacity: 0;
       scale: 0.86;
     }
+
     to {
       opacity: 1;
       scale: 1;
@@ -851,71 +818,59 @@
   }
 
   .tam-box {
-    /* 볕이 닿지 않는 벽 색. 볕이 든 자리는 흰빛으로 올라가 판 전체 평균은 그대로입니다. */
-    background: #f4f4f1;
-    /* 뚜껑이 눕는 각도가 보이도록 원근을 둡니다. 사진이 상자를 살짝 위에서 본
-       것이라, 눈높이도 상자 위쪽(14%)에 맞춰야 닫힌 뚜껑이 아가리를 덮습니다. */
     perspective: calc(2600 * var(--u));
     perspective-origin: 50% -18%;
+    background: #f4f4f1;
   }
 
-  /* 뚜껑은 닫힌 채로 누워 있다가 뒤쪽 모서리를 축으로 일어섭니다.
-     닫힌 각도(-88도)에서 뚜껑이 거의 눕고, 위에서 내려다본 만큼만 띠로 보입니다. */
   .tam-lid {
     transform-origin: 50% 100%;
     transform: rotateX(-88deg);
   }
 
   [data-visible] .tam-lid {
-    animation: tam-open 1.15s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+    animation: 1.15s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both tam-open;
   }
 
   @keyframes tam-open {
     0% {
       transform: rotateX(-88deg);
     }
+
     100% {
-      transform: rotateX(0deg);
+      transform: rotateX(0);
     }
   }
 
-  /* ── 열리고 닫히는 선물 상자 ───────────────────
-     도면 한 벌(663×643)을 겹으로 나눠 쌓고, 뚜껑만 뒤쪽 모서리를 축으로 돌립니다.
-     선은 포트폴리오의 다른 장과 같은 결로 얇게 두고, 채움은 판 색과 같은 색입니다. */
   .gift {
-    display: flex;
-    height: 100%;
-    width: 100%;
     align-items: center;
+    width: 100%;
+    height: 100%;
+    display: flex;
   }
 
   .gift-stage {
-    position: relative;
-    display: block;
-    width: 100%;
     aspect-ratio: 663 / 643;
+    width: 100%;
     perspective: calc(1400 * var(--u));
     transform-style: preserve-3d;
+    display: block;
+    position: relative;
   }
 
-  /* 도면 겹은 손끝을 받지 않습니다. 투명한 자리가 제품을 덮고 있으면
-     제품에 손을 올려도 반응하지 않습니다. */
   .gift-layer {
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
     position: absolute;
     inset: 0;
-    height: 100%;
-    width: 100%;
     overflow: visible;
-    pointer-events: none;
   }
 
-  /* 선은 이 포트폴리오가 쓰는 굵기와 짙기를 따릅니다 —
-     목업 테두리가 1px 0.1, 잇는 선이 0.5px 0.22, 플로우 알약이 1px 0.35 입니다.
-     상자는 화면에서 가장 큰 도형이라 그 사이에서 가볍게 잡습니다. */
   .gift-ink {
     fill: none;
-    stroke: rgb(25 25 25 / 0.26);
-    stroke-width: 1;
+    stroke: #19191942;
+    stroke-width: 1px;
     stroke-linecap: round;
     stroke-linejoin: round;
     vector-effect: non-scaling-stroke;
@@ -925,70 +880,70 @@
     vector-effect: non-scaling-stroke;
   }
 
-  /* 겹끼리 비치지 않도록 채웁니다. 면마다 톤을 아주 조금씩 달리해
-     빛이 어디서 오는지 정도만 말합니다 — 노브와 같은 깊이입니다. */
   .gift-fill {
     fill: #fafafa;
   }
 
-  /* 세워 둔 뚜껑. 가장 밝은 면입니다. */
   .gift-face-lid {
     fill: #fcfbf9;
   }
 
-  /* 뚜껑에 달린 앞 날개. 안쪽으로 접히는 면이라 가장 어둡습니다. */
-  .gift-face-flap {
-    fill: #f5f4f1;
-  }
-
-  /* 상자 안쪽. 빛이 덜 들어 한 톤 눌립니다. */
+  .gift-face-flap,
   .gift-face-inner {
     fill: #f5f4f1;
   }
 
-  /* 앞면. 위로 갈수록 아주 옅게 밝아집니다. */
   .gift-face-front {
-    fill: url(#gift-front-tone);
+    fill: url("#gift-front-tone");
   }
 
   .gift-mark {
     opacity: 0;
-    transition: opacity 260ms ease;
+    transition: opacity 0.26s;
   }
 
   .gift-stage[data-open] .gift-mark {
     opacity: 0.72;
-    transition-delay: 420ms;
+    transition-delay: 0.42s;
   }
 
-  /* 이름 아래 한 줄. 뚜껑에 찍힌 활자와 같은 결로 두껍고 자간이 넓습니다. */
   .gift-sub {
-    fill: rgb(25 25 25 / 0.6);
+    fill: #19191999;
     stroke: none;
     font-family: var(--font-display);
-    font-size: 21px;
-    font-weight: 700;
     letter-spacing: 3.2px;
     text-anchor: middle;
+    font-size: 21px;
+    font-weight: 700;
   }
 
-  /* 바닥에 닿은 자리에 아주 옅은 그림자. 노브의 그림자와 같은 세기입니다. */
   .gift-shade {
-    filter: drop-shadow(
-      0 calc(3 * var(--u)) calc(8 * var(--u)) rgb(0 0 0 / 0.06)
-    );
+    filter: drop-shadow(0 calc(3 * var(--u)) calc(8 * var(--u)) #0000000f);
   }
 
-  /* 담기는 것들. 앞뒤는 도면 겹의 차례대로입니다 —
-     뒤쪽 벽 · 뚜껑 · 제품 · 앞면 순이라 밑동이 앞면에 가려집니다. */
-  .gift-goods {
+  /* 표지 상자 앞면에 매인 리본. 앞면(도면 y 501~631) 가운데에 놓입니다.
+     비율(2018 × 779)은 원본 그대로 지킵니다. */
+  .gift-ribbon {
     position: absolute;
-    inset: 0;
+    left: 50%;
+    top: 88%;
+    z-index: 3;
+    width: 84%;
+    aspect-ratio: 2018 / 779;
+    translate: -50% -50%;
     pointer-events: none;
   }
 
-  /* 손을 올린 것만 잠깐 들렸다 제자리로 내려옵니다.
-     떨어지는 겹과 따로 두어야 손을 뗄 때 처음부터 다시 떨어지지 않습니다. */
+  .gift-ribbon img {
+    object-fit: contain;
+  }
+
+  .gift-goods {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+  }
+
   .gift-lift {
     position: absolute;
     inset: 0;
@@ -999,85 +954,81 @@
   }
 
   .gift-item:hover .gift-lift {
-    animation: gift-bob 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: 0.85s cubic-bezier(0.22, 1, 0.36, 1) gift-bob;
   }
 
   @keyframes gift-bob {
     0% {
       transform: translateY(0);
     }
+
     38% {
       transform: translateY(-14%);
     }
+
     100% {
       transform: translateY(0);
     }
   }
 
-  /* 닫힌 상자의 윗면. 뚜껑이 거의 다 누운 뒤에 들어서서 바뀌는 순간이 보이지 않습니다. */
   .gift-top {
     opacity: 1;
-    transition: opacity 140ms linear 560ms;
+    transition: opacity 0.14s linear 0.56s;
   }
 
   .gift-stage[data-open] .gift-top {
     opacity: 0;
-    transition: opacity 120ms linear 0ms;
+    transition: opacity 0.12s linear;
   }
 
-  /* 뚜껑 전체. 뒤쪽 모서리(도면 y 396)가 축입니다. */
   .gift-lid {
-    position: absolute;
-    inset: 0;
     transform-origin: 50% 61.6%;
     transform-style: preserve-3d;
-    rotate: x -89deg;
-    /* 다 누우면 옆에서 본 꼴이라 가장자리에 실선 자국이 남습니다.
-       접히는 동작이 끝난 뒤 아예 걷어 냅니다. */
     visibility: hidden;
-    transition:
-      rotate 720ms cubic-bezier(0.4, 0, 0.2, 1),
-      visibility 0ms linear 900ms;
     will-change: rotate;
+    transition:
+      rotate 0.72s cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0s linear 0.9s;
+    position: absolute;
+    inset: 0;
+    rotate: x -89deg;
   }
 
   .gift-stage[data-open] .gift-lid {
-    rotate: x 0deg;
     visibility: visible;
     transition:
-      rotate 860ms cubic-bezier(0.22, 1, 0.36, 1) 120ms,
-      visibility 0ms linear 0ms;
+      rotate 0.86s cubic-bezier(0.22, 1, 0.36, 1) 0.12s,
+      visibility linear;
+    rotate: x 0deg;
   }
 
-  /* 앞 날개. 열 때는 먼저 펴지고, 닫을 때는 뚜껑이 내려앉은 뒤 접힙니다. */
   .gift-flap {
     transform-origin: 50% 6.38%;
-    rotate: x -90deg;
-    transition: rotate 260ms cubic-bezier(0.4, 0, 0.2, 1) 620ms;
     backface-visibility: hidden;
+    transition: rotate 0.26s cubic-bezier(0.4, 0, 0.2, 1) 0.62s;
+    rotate: x -90deg;
   }
 
   .gift-stage[data-open] .gift-flap {
+    transition: rotate 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     rotate: x 0deg;
-    transition: rotate 300ms cubic-bezier(0.22, 1, 0.36, 1) 0ms;
   }
 
-  /* 담기는 것. 위에서 비스듬히 떨어져 제자리에 반듯하게 섭니다. */
   .gift-item {
-    position: absolute;
-    transform-origin: bottom center;
+    transform-origin: bottom;
     opacity: 0;
     translate: 0 -260%;
     rotate: var(--tilt, -10deg);
     transition:
-      translate 260ms cubic-bezier(0.4, 0, 1, 1),
-      rotate 260ms ease,
-      opacity 180ms ease;
+      translate 0.26s cubic-bezier(0.4, 0, 1, 1),
+      rotate 0.26s,
+      opacity 0.18s;
+    position: absolute;
   }
 
   .gift-item[data-in] {
     opacity: 1;
-    animation: gift-drop 1.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: 1.9s cubic-bezier(0.22, 1, 0.36, 1) both gift-drop;
     animation-delay: var(--delay, 0s);
   }
 
@@ -1087,116 +1038,111 @@
       rotate: var(--tilt, -10deg);
       opacity: 0;
     }
+
     18% {
       opacity: 1;
     }
+
     52% {
-      translate: 0 0;
+      translate: 0;
       rotate: var(--tilt, -10deg);
       animation-timing-function: cubic-bezier(0.33, 0, 0.2, 1);
     }
+
     70% {
       translate: 0 -7%;
       rotate: calc(var(--tilt, -10deg) * 0.4);
     }
+
     100% {
-      translate: 0 0;
-      rotate: 0deg;
       opacity: 1;
+      translate: 0;
+      rotate: none;
     }
   }
 
-  /* 12장 — 제품이 위에서 떨어져 상자에 담깁니다.
-     밑동을 축으로 돌아서, 상자 앞면에 가려진 발은 제자리에 있는 것처럼 보입니다. */
   .tam-drop {
-    transform-origin: bottom center;
+    transform-origin: bottom;
   }
 
   [data-visible] .tam-drop {
-    animation: drop-in 2.1s both;
+    animation: 2.1s both drop-in;
     animation-delay: var(--delay, 0s);
   }
 
-  /* 손을 올리면 제품이 조금 들렸다가 도로 담깁니다.
-     떨어지는 겹과 따로 두어야 손을 뗄 때 처음부터 다시 떨어지지 않습니다. */
   .tam-bob {
     position: absolute;
     inset: 0;
   }
 
   .tam-drop:hover .tam-bob {
-    animation: bob 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: 0.85s cubic-bezier(0.22, 1, 0.36, 1) bob;
   }
 
   @keyframes bob {
     0% {
       transform: translateY(0);
     }
+
     38% {
       transform: translateY(calc(-48 * var(--u)));
     }
+
     100% {
       transform: translateY(0);
     }
   }
 
-  /* 떨어뜨리기보다 내려놓는 결. 마지막에 속도를 죽여 상자에 살며시 닿고,
-     튕기는 대신 기울기만 천천히 풀립니다. */
-  /* 집어서 넣는 결. 옆에서 들려 와 상자 입구에서 속도를 죽이고,
-     안쪽으로 내려앉으며 아주 미세하게 눌렸다 돌아옵니다. */
   @keyframes drop-in {
     0% {
-      /* 판 위쪽 밖에서 곧게 내려옵니다. */
       translate: 0 calc(-1 * var(--fall, 620) * var(--u));
       rotate: var(--tilt, -10deg);
-      scale: 1.02;
       opacity: 0;
       animation-timing-function: cubic-bezier(0.32, 0, 0.24, 1);
+      scale: 1.02;
     }
+
     8% {
       opacity: 1;
     }
-    /* 상자 입구. 여기서 속도가 죽고 기울기도 거의 풀립니다. */
+
     58% {
       translate: 0 calc(-0.19 * var(--fall, 620) * var(--u));
       rotate: calc(var(--tilt, -10deg) * 0.3);
-      scale: 1;
       animation-timing-function: cubic-bezier(0.33, 0, 0.12, 1);
+      scale: 1;
     }
-    /* 안쪽으로 내려앉습니다. 조금 작아지고 밑동은 앞벽 뒤로 가립니다. */
+
     88% {
-      translate: 0 0;
-      rotate: 0deg;
-      scale: 0.95;
       animation-timing-function: ease-out;
+      translate: 0;
+      rotate: none;
+      scale: 0.95;
     }
-    /* 닿은 순간의 압축감. 1~2px 수준으로만 둡니다. */
+
     94% {
       scale: 0.97;
     }
+
     100% {
       scale: 0.95;
     }
   }
 
-  /* ── 유저 플로우 ───────────────────────────────
-     알약 마디와 가는 선. 자리는 안쪽 좌표계(1031×740)를 --u 로 옮겨 씁니다. */
   .flow {
     position: relative;
   }
 
-  /* 선은 8장 목업의 잇는 선과 같은 색·굵기입니다. 그쪽은 점선, 여기는 실선입니다.
-     viewBox 로 늘어나도 굵기가 함께 늘지 않도록 배율에서 뺍니다. */
   .flow-lines {
+    fill: none;
+    stroke: #19191938;
+    stroke-width: 0.5px;
+    vector-effect: non-scaling-stroke;
+    width: 100%;
+    height: 100%;
     position: absolute;
     inset: 0;
-    height: 100%;
-    width: 100%;
     overflow: visible;
-    fill: none;
-    stroke: rgb(25 25 25 / 0.22);
-    stroke-width: 0.5;
-    vector-effect: non-scaling-stroke;
   }
 
   .flow-lines path {
@@ -1204,98 +1150,111 @@
   }
 
   .flow-pill {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgb(25 25 25 / 0.35);
-    border-radius: 999px;
-    background: #ffffff;
     color: var(--fg);
     font-family: var(--font-display);
     font-size: calc(12.22 * var(--u));
-    font-weight: 500;
     letter-spacing: 0.01em;
     white-space: nowrap;
+    background: #fff;
+    border: 1px solid #19191959;
+    border-radius: 999px;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    display: flex;
+    position: absolute;
   }
 
-  /* 흐름이 시작되는 마디 */
-  /* 이 프로젝트에서 다루지 않는 갈래 */
   .flow-pill[data-tone="start"] {
     border-color: var(--fg);
     background: var(--fg);
-    color: #ffffff;
+    color: #fff;
   }
 
   .flow-pill[data-tone="ghost"] {
-    border-color: rgb(25 25 25 / 0.14);
-    color: rgb(25 25 25 / 0.3);
+    color: #1919194d;
+    border-color: #19191924;
   }
 
-  /* 걸리는 지점에 손을 올리면 뜨는 쪽지. 마디 바로 위에 섭니다. */
-  /* 걸리는 지점. 해당 걸음이 선 단 그대로 아래 칸에 내려와 섭니다.
-     흐름 판은 밝고 이쪽은 어두워, 무엇이 문제인지가 먼저 눈에 들어옵니다. */
   .flow-note {
-    position: absolute;
     z-index: 2;
     opacity: 0;
     translate: 0 calc(-4 * var(--u));
     pointer-events: none;
-    transition:
-      opacity 200ms ease,
-      translate 200ms cubic-bezier(0.22, 1, 0.36, 1);
     border-radius: calc(6 * var(--u));
-    background: #191919;
     padding: calc(12 * var(--u)) calc(12 * var(--u)) calc(14 * var(--u));
-    color: rgb(250 250 250 / 0.86);
+    color: #fafafadb;
     font-family: var(--font-body);
     font-size: calc(11 * var(--u));
-    font-weight: 500;
     letter-spacing: 0.01em;
+    background: #191919;
+    font-weight: 500;
     line-height: 1.5;
+    transition:
+      opacity 0.2s,
+      translate 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    position: absolute;
   }
 
   .flow-note[data-open] {
     opacity: 1;
-    translate: 0 0;
+    translate: 0;
   }
 
-  /* 마디에 붙은 번호와 같은 번호. 둘을 눈으로 잇습니다. */
   .flow-note em {
-    display: block;
     margin-bottom: calc(7 * var(--u));
     color: #fafafa;
     font-family: var(--font-display);
     font-size: calc(9 * var(--u));
+    letter-spacing: 0.06em;
     font-style: normal;
     font-weight: 700;
-    letter-spacing: 0.06em;
+    display: block;
+  }
+
+  /* 08장 안내 점과 같은 고리. 마디 뒤에 깔리면 보이지 않으므로,
+     테두리 밖으로 퍼지는 그림자로 그려 마디 위에 얹습니다. */
+  @keyframes flow-pain-ring {
+    0% {
+      box-shadow: 0 0 0 0 rgb(25 25 25 / 0.4);
+    }
+
+    70%,
+    100% {
+      box-shadow: 0 0 0 calc(9 * var(--u)) rgb(25 25 25 / 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flow-pain {
+      animation: none;
+    }
   }
 
   .flow-pain {
-    position: absolute;
+    animation: 2.6s ease-out infinite flow-pain-ring;
     cursor: pointer;
     left: calc(13 * var(--u));
     top: calc(-9 * var(--u));
-    display: flex;
     height: calc(17 * var(--u));
     width: calc(17 * var(--u));
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
     background: var(--fg);
-    color: #ffffff;
+    color: #fff;
     font-size: calc(8.89 * var(--u));
+    letter-spacing: 0;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
     font-style: normal;
     font-weight: 700;
-    letter-spacing: 0;
+    display: flex;
+    position: absolute;
   }
 
-  /* 다이어그램 아래에 나란히 서는 두 덩어리 — 흐름과, 그 안에서 하는 판단. */
   .flow-brief {
-    display: flex;
     gap: var(--grid-gap);
-    color: rgb(25 25 25 / 0.9);
+    color: #191919e6;
+    display: flex;
   }
 
   .flow-brief > div {
@@ -1305,79 +1264,70 @@
   .flow-brief-title {
     font-family: var(--font-display);
     font-size: calc(24 * var(--u));
+    letter-spacing: 0.01em;
     font-weight: 700;
     line-height: 1.1;
-    letter-spacing: 0.01em;
   }
 
   .flow-brief p {
     margin-top: calc(22 * var(--u));
     font-family: var(--font-body);
     font-size: calc(16 * var(--u));
+    letter-spacing: 0.01em;
     font-weight: 500;
     line-height: 1.4;
-    letter-spacing: 0.01em;
   }
 
-  /* ── 15장 화면 넷 ──────────────────────────────
-     왼쪽에서 오른쪽으로 한 걸음씩 내려가며 놓입니다. */
   .steps {
     position: relative;
   }
 
   .steps-shot {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
     gap: calc(14 * var(--u));
+    flex-direction: column;
+    display: flex;
+    position: absolute;
   }
 
   .steps-frame {
-    /* 실제 화면이 이 칸을 기준으로 앉고, 넘치는 아래는 잘립니다. */
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     background: var(--placeholder);
-    color: rgb(25 25 25 / 0.4);
+    color: #19191966;
     font-family: var(--font-display);
     font-size: calc(11 * var(--u));
-    font-weight: 500;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    display: flex;
+    position: relative;
+    overflow: hidden;
   }
 
-  /* 그 화면에서 하는 일. 이름보다 한 톤 눌러 둡니다. */
   .steps-kind {
     color: var(--fg-soft);
     font-family: var(--font-display);
     font-size: calc(13 * var(--u));
-    font-weight: 500;
     letter-spacing: 0.02em;
+    font-weight: 500;
   }
 
-  /* 한 행 내려앉은 화면은 아래가 판 밖으로 흘러 마디를 놓을 자리가 없습니다.
-     그 마디만 화면 위로 올려 답니다. */
   .steps-shot[data-above] .steps-cap {
-    position: absolute;
     bottom: calc(100% + 14 * var(--u));
+    position: absolute;
     left: 0;
   }
 
-  /* ── 실제 화면(커스텀 기프트 상세) ──────────────
-     칸 안에서 위아래로 굴려 볼 수 있습니다. 막대는 감춰 화면처럼 보이게 합니다. */
   .gift-screen {
-    position: absolute;
-    inset: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
     overscroll-behavior-y: contain;
     scrollbar-width: none;
-    background: #9d9d9d;
     color: #1d1d1d;
-    font-family: var(--font-body);
+    font-family: var(--font-tam);
     text-align: left;
+    background: #9d9d9d;
+    position: absolute;
+    inset: 0;
+    overflow: hidden auto;
   }
 
   .gift-screen::-webkit-scrollbar {
@@ -1385,30 +1335,29 @@
   }
 
   .gift-sheet {
-    background: #ffffff;
     padding-bottom: calc(24 * var(--u));
+    background: #fff;
   }
 
   .gift-screen-title {
-    display: flex;
     height: calc(40 * var(--u));
-    align-items: center;
-    border-bottom: 1px solid #efefef;
     padding: 0 calc(9 * var(--u));
     font-size: calc(15 * var(--u));
+    border-bottom: 1px solid #efefef;
+    align-items: center;
     font-weight: 600;
     line-height: 1.5;
+    display: flex;
   }
 
   .gift-screen-main {
     border-bottom: 1px solid #efefef;
   }
 
-  /* 화면 폭을 꽉 채우는 큰 그림 */
   .gift-screen-hero {
-    position: relative;
     height: calc(256.88 * var(--u));
     background: #dcdcdc;
+    position: relative;
   }
 
   .gift-screen-body {
@@ -1421,7 +1370,6 @@
     font-weight: 500;
   }
 
-  /* 안내 줄. 앞의 점까지 도면 그대로 글자로 둡니다. */
   .gift-screen-body ul {
     padding-top: calc(20 * var(--u));
     color: #b4b4b4;
@@ -1433,28 +1381,26 @@
     text-indent: calc(-11 * var(--u));
   }
 
-  .gift-screen-body li::before {
+  .gift-screen-body li:before {
     content: "• ";
   }
 
   .gift-screen-sub {
-    display: flex;
     height: calc(40 * var(--u));
-    align-items: center;
     padding: 0 calc(9 * var(--u));
     font-size: calc(13 * var(--u));
+    align-items: center;
     font-weight: 600;
     line-height: 1.5;
+    display: flex;
   }
 
-  /* 옆으로 이어지는 관련 제품 줄. 손으로 옆으로 굴립니다. */
   .gift-screen-row {
-    display: flex;
     height: calc(238.52 * var(--u));
-    overflow-x: auto;
-    overflow-y: hidden;
     overscroll-behavior-x: contain;
     scrollbar-width: none;
+    display: flex;
+    overflow: auto hidden;
   }
 
   .gift-screen-row::-webkit-scrollbar {
@@ -1462,30 +1408,28 @@
   }
 
   .gift-screen-row article {
-    flex: none;
     width: calc(150 * var(--u));
+    flex: none;
   }
 
   .gift-screen-shot {
-    position: relative;
     height: calc(183 * var(--u));
     width: calc(149 * var(--u));
     background: #efefef;
+    position: relative;
   }
 
-  /* 고르는 참인 세트. 누르는 순간 살짝 눌렸다가 앞으로 다가옵니다.
-     이 사이트가 고른 것을 표시하는 방식(검은 테두리)을 그대로 씁니다. */
   .gift-screen-row article {
-    transition: opacity 400ms ease;
+    transition: opacity 0.4s;
   }
 
   .gift-screen-row article[data-pick] .gift-screen-shot {
-    outline: 0 solid #1d1d1d;
     outline-offset: -1px;
     transform-origin: 50% 60%;
+    outline: 0 solid #1d1d1d;
     transition:
-      outline-width 240ms ease,
-      scale 520ms cubic-bezier(0.3, 0.8, 0.3, 1);
+      outline-width 0.24s,
+      scale 0.52s cubic-bezier(0.3, 0.8, 0.3, 1);
   }
 
   .gift-screen[data-opening]
@@ -1493,17 +1437,18 @@
     article[data-pick]
     .gift-screen-shot {
     outline-width: 1px;
-    animation: set-open 900ms cubic-bezier(0.3, 0.8, 0.3, 1) both;
+    animation: 0.9s cubic-bezier(0.3, 0.8, 0.3, 1) both set-open;
   }
 
-  /* 눌렀다 놓는 결. 마지막에 조금 다가와 열리는 참으로 보입니다. */
   @keyframes set-open {
     0% {
       scale: 1;
     }
+
     22% {
       scale: 0.96;
     }
+
     100% {
       scale: 1.06;
     }
@@ -1513,7 +1458,6 @@
     font-weight: 600;
   }
 
-  /* 고르지 않은 것들은 그때 한 톤 물러납니다. */
   .gift-screen[data-opening] .gift-screen-row article:not([data-pick]) {
     opacity: 0.4;
   }
@@ -1526,20 +1470,17 @@
     line-height: 1.6;
   }
 
-  /* ── 실제 화면(제품 상세) ──────────────────────
-     기프트에서 한 번 더 들어와야 닿는 화면입니다. 칸 안에서 위아래로 굴립니다. */
   .prod-screen {
-    position: absolute;
-    inset: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
     overscroll-behavior-y: contain;
     scrollbar-width: none;
-    background: #ffffff;
     padding-bottom: calc(70 * var(--u));
     color: #1d1d1d;
-    font-family: var(--font-body);
+    font-family: var(--font-tam);
     text-align: left;
+    background: #fff;
+    position: absolute;
+    inset: 0;
+    overflow: hidden auto;
   }
 
   .prod-screen::-webkit-scrollbar {
@@ -1547,9 +1488,9 @@
   }
 
   .prod-screen-hero {
-    position: relative;
     height: calc(342 * var(--u));
     background: #dcdcdc;
+    position: relative;
   }
 
   .prod-screen-head {
@@ -1569,49 +1510,48 @@
     line-height: 1.5;
   }
 
-  /* 포장 안내. 오른쪽 끝의 화살표는 눌러 펼치는 표시입니다. */
   .prod-screen-pack {
-    display: flex;
     align-items: center;
     gap: calc(4 * var(--u));
     padding-top: calc(20 * var(--u));
     font-size: calc(14 * var(--u));
     font-weight: 400;
     line-height: 1.6;
+    display: flex;
   }
 
   .prod-screen-pack i {
     height: calc(6 * var(--u));
     width: calc(6 * var(--u));
-    border-right: 1px solid #767676;
-    border-bottom: 1px solid #767676;
     rotate: 45deg;
     translate: 0 calc(-2 * var(--u));
+    border-bottom: 1px solid #767676;
+    border-right: 1px solid #767676;
   }
 
   .prod-screen-thumbs {
-    display: flex;
     padding: calc(30 * var(--u)) calc(13.32 * var(--u)) 0;
+    display: flex;
   }
 
   .prod-screen-thumb {
-    position: relative;
-    overflow: hidden;
     height: calc(112 * var(--u));
     width: calc(89 * var(--u));
-    border: 1px solid #000000;
     border-radius: calc(7.1 * var(--u));
     background: #efefef;
+    border: 1px solid #000;
+    position: relative;
+    overflow: hidden;
   }
 
   .prod-screen-thumbs figcaption {
     width: calc(89 * var(--u));
-    overflow: hidden;
     padding-top: calc(1.39 * var(--u));
     font-size: calc(10 * var(--u));
+    white-space: nowrap;
     font-weight: 400;
     line-height: 2.2;
-    white-space: nowrap;
+    overflow: hidden;
   }
 
   .prod-screen-rule {
@@ -1621,23 +1561,23 @@
   }
 
   .prod-screen-size {
-    padding: calc(21.31 * var(--u)) calc(13.32 * var(--u)) 0;
+    padding: calc(18 * var(--u)) calc(13.32 * var(--u)) calc(12 * var(--u));
     font-size: calc(12 * var(--u));
     line-height: 1.8;
   }
 
   .prod-screen-size button {
-    display: block;
-    height: calc(40 * var(--u));
-    min-width: calc(120 * var(--u));
-    margin-top: calc(10.66 * var(--u));
-    border: 1px solid #000000;
-    border-radius: 50px;
-    background: #ffffff;
-    padding: 0 calc(32 * var(--u));
+    height: calc(34 * var(--u));
+    min-width: calc(104 * var(--u));
+    margin-top: calc(8 * var(--u));
+    padding: 0 calc(22 * var(--u));
     font-family: inherit;
     font-size: calc(13 * var(--u));
+    background: #fff;
+    border: 1px solid #000;
+    border-radius: 50px;
     line-height: 1;
+    display: block;
   }
 
   .prod-screen-option {
@@ -1650,29 +1590,28 @@
     line-height: 1.5;
   }
 
-  /* 향은 이 카드의 "선택하기" 를 눌러 창을 열어야 고를 수 있습니다. */
   .prod-screen-card {
-    display: flex;
-    height: calc(101 * var(--u));
+    height: calc(97 * var(--u));
     margin-top: calc(20 * var(--u));
-    border: 1px solid #e2e2e2;
     border-radius: calc(4 * var(--u));
+    border: 1px solid #e2e2e2;
+    display: flex;
     overflow: hidden;
   }
 
   .prod-screen-card-shot {
-    position: relative;
-    flex: none;
     width: calc(80 * var(--u));
     background: #efefef;
+    flex: none;
+    position: relative;
   }
 
   .prod-screen-card > div {
-    display: flex;
-    flex-direction: column;
     justify-content: center;
     gap: calc(6 * var(--u));
     padding: 0 calc(15 * var(--u));
+    flex-direction: column;
+    display: flex;
   }
 
   .prod-screen-card span {
@@ -1680,9 +1619,7 @@
     line-height: 1.5;
   }
 
-  /* 눌리는 자리. 누르는 순간 잠깐 눌렸다가 짙어집니다. */
   .prod-screen-card em {
-    display: inline-block;
     border-radius: calc(3 * var(--u));
     padding: calc(2 * var(--u)) calc(4 * var(--u));
     margin-left: calc(-4 * var(--u));
@@ -1691,75 +1628,79 @@
     line-height: 1.5;
     text-decoration: underline;
     transition:
-      background 260ms ease,
-      scale 260ms ease;
+      background 0.26s,
+      scale 0.26s;
+    display: inline-block;
   }
 
   .prod-screen[data-press] .prod-screen-card em {
-    animation: pick-press 700ms cubic-bezier(0.3, 0.8, 0.3, 1) both;
+    animation: 0.7s cubic-bezier(0.3, 0.8, 0.3, 1) both pick-press;
   }
 
   @keyframes pick-press {
     0% {
-      background: rgb(29 29 29 / 0);
+      background: #1d1d1d00;
       scale: 1;
     }
+
     26% {
-      background: rgb(29 29 29 / 0.1);
+      background: #1d1d1d1a;
       scale: 0.94;
     }
+
     100% {
-      background: rgb(29 29 29 / 0.06);
+      background: #1d1d1d0f;
       scale: 1;
     }
   }
 
-  /* 누르고 나면 그 카드가 앞으로 나섭니다. */
   .prod-screen-card {
     transition:
-      border-color 300ms ease,
-      box-shadow 300ms ease;
+      border-color 0.3s,
+      box-shadow 0.3s;
   }
 
   .prod-screen[data-press] .prod-screen-card {
+    box-shadow: 0 calc(2 * var(--u)) calc(10 * var(--u)) #1d1d1d1a;
     border-color: #1d1d1d;
-    box-shadow: 0 calc(2 * var(--u)) calc(10 * var(--u)) rgb(29 29 29 / 0.1);
   }
 
-  /* 고른 향 두 줄 */
   .prod-screen-picks {
-    display: flex;
-    flex-direction: column;
     padding-top: calc(2 * var(--u));
     color: #767676;
     font-size: calc(10 * var(--u));
+    flex-direction: column;
     line-height: 1.5;
+    display: flex;
   }
 
   .prod-screen-add {
-    display: flex;
-    height: calc(40 * var(--u));
-    align-items: center;
-    justify-content: center;
+    height: calc(42 * var(--u));
     margin: calc(30 * var(--u)) calc(13.32 * var(--u)) 0;
     border-radius: calc(5 * var(--u));
-    background: #efefef;
     color: #767676;
     font-size: calc(13 * var(--u));
+    background: #efefef;
+    justify-content: center;
+    align-items: center;
     line-height: 1.5;
     transition:
-      background 300ms ease,
-      color 300ms ease;
+      background 0.3s,
+      color 0.3s;
+    display: flex;
   }
 
-  /* 다 고르면 담기 단추가 살아납니다. */
   .prod-screen[data-chosen] .prod-screen-add {
+    color: #fff;
     background: #1d1d1d;
-    color: #ffffff;
+  }
+
+  .scent-base .prod-screen-add {
+    transition: none;
   }
 
   .prod-screen[data-add] .prod-screen-add {
-    animation: next-press 420ms cubic-bezier(0.3, 0.8, 0.3, 1);
+    animation: 0.42s cubic-bezier(0.3, 0.8, 0.3, 1) next-press;
   }
 
   .prod-screen-folds {
@@ -1767,137 +1708,146 @@
   }
 
   .prod-screen-folds li {
-    display: flex;
     height: calc(50 * var(--u));
-    align-items: center;
-    justify-content: space-between;
     font-size: calc(14 * var(--u));
+    justify-content: space-between;
+    align-items: center;
     line-height: 1.4;
+    display: flex;
   }
 
   .prod-screen-folds i {
-    height: calc(8 * var(--u));
-    width: calc(8 * var(--u));
-    background: #1d1d1d;
+    height: calc(9 * var(--u));
+    width: calc(9 * var(--u));
+    position: relative;
   }
 
-  /* ── 실제 화면(향 선택 창) ─────────────────────
-     제품 화면에서 열리는 창입니다. 하나를 고르면 "다음" 이 살아나고,
-     누르면 두 번째 창이 옆에서 밀려 들어옵니다. */
+  .prod-screen-folds i:before,
+  .prod-screen-folds i:after {
+    content: "";
+    background: #1d1d1d;
+    position: absolute;
+  }
+
+  .prod-screen-folds i:before {
+    width: 100%;
+    height: 1px;
+    top: 50%;
+    left: 0;
+    translate: 0 -50%;
+  }
+
+  .prod-screen-folds i:after {
+    width: 1px;
+    height: 100%;
+    top: 0;
+    left: 50%;
+    translate: -50%;
+  }
+
   .scent-screen {
+    color: #1d1d1d;
+    font-family: var(--font-tam);
+    text-align: left;
+    background: #fff;
     position: absolute;
     inset: 0;
     overflow: hidden;
-    background: #ffffff;
-    color: #1d1d1d;
-    font-family: var(--font-body);
-    text-align: left;
+  }
+
+  .scent-base {
+    z-index: 0;
+    position: absolute;
+    inset: 0;
   }
 
   .scent-sheet {
+    z-index: 1;
+    padding: 0 calc(15 * var(--u));
+    background: #fff;
+    flex-direction: column;
+    transition:
+      translate 0.62s cubic-bezier(0.3, 0.8, 0.3, 1),
+      opacity 0.42s;
+    display: flex;
     position: absolute;
     inset: 0;
-    display: flex;
-    flex-direction: column;
-    background: #ffffff;
-    padding: 0 calc(15 * var(--u));
-    transition:
-      translate 620ms cubic-bezier(0.3, 0.8, 0.3, 1),
-      opacity 420ms ease;
+    translate: 100%;
   }
 
-  /* 첫 창은 왼쪽으로 물러나고 */
+  .scent-sheet[data-in] {
+    translate: 0;
+  }
+
+  .scent-sheet-2 {
+    z-index: 2;
+  }
+
   .scent-sheet[data-gone] {
-    translate: -18% 0;
     opacity: 0;
+    translate: -18%;
   }
 
-  /* 창이 닫히면 둘 다 물러납니다. */
   .scent-sheet[data-hide] {
     opacity: 0;
     pointer-events: none;
   }
 
-  /* 창이 닫힌 뒤 돌아오는 제품 화면 */
-  .scent-done {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 520ms ease;
-  }
-
-  .scent-done[data-in] {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  /* 두 번째 창은 오른쪽에서 들어옵니다. */
-  .scent-sheet-2 {
-    translate: 100% 0;
-  }
-
-  .scent-sheet-2[data-in] {
-    translate: 0 0;
-  }
-
   .scent-head {
-    display: flex;
     height: calc(60 * var(--u));
-    flex: none;
     align-items: center;
     gap: calc(4 * var(--u));
+    flex: none;
+    display: flex;
   }
 
   .scent-head h4 {
-    flex: 1;
     font-size: calc(16 * var(--u));
+    flex: 1;
     font-weight: 500;
     line-height: 1.5;
   }
 
-  /* 뒤로 가는 꺾쇠와 닫는 표시 */
   .scent-back {
     height: calc(9 * var(--u));
     width: calc(9 * var(--u));
-    border-left: calc(1.6 * var(--u)) solid #000000;
-    border-bottom: calc(1.6 * var(--u)) solid #000000;
+    border-left: calc(1.6 * var(--u)) solid #000;
+    border-bottom: calc(1.6 * var(--u)) solid #000;
     rotate: 45deg;
     translate: calc(3 * var(--u)) 0;
   }
 
   .scent-close {
-    position: relative;
     height: calc(14 * var(--u));
     width: calc(14 * var(--u));
+    position: relative;
   }
 
-  .scent-close::before,
-  .scent-close::after {
+  .scent-close:before,
+  .scent-close:after {
     content: "";
-    position: absolute;
-    left: 0;
-    top: 50%;
-    height: 1px;
-    width: 100%;
     background: #1d1d1d;
+    width: 100%;
+    height: 1px;
+    position: absolute;
+    top: 50%;
+    left: 0;
   }
 
-  .scent-close::before {
+  .scent-close:before {
     rotate: 45deg;
   }
 
-  .scent-close::after {
+  .scent-close:after {
     rotate: -45deg;
   }
 
-  /* 향 목록. 창보다 길면 그 안에서 굴러갑니다. */
   .scent-list {
-    flex: 1;
-    overflow-y: auto;
     overscroll-behavior-y: contain;
     scrollbar-width: none;
     padding-bottom: calc(15 * var(--u));
+    flex: 1;
+    overflow-y: auto;
   }
 
   .scent-list::-webkit-scrollbar {
@@ -1905,14 +1855,13 @@
   }
 
   .scent-row {
-    display: flex;
     height: calc(109 * var(--u));
     padding: calc(5 * var(--u)) 0;
+    display: flex;
   }
 
-  /* 고르지 않은 향. 고른 뒤에는 물러나 보입니다. */
   .scent-list li {
-    transition: opacity 400ms ease;
+    transition: opacity 0.4s;
   }
 
   .scent-list li[data-dim] {
@@ -1920,19 +1869,19 @@
   }
 
   .scent-shot {
-    position: relative;
-    flex: none;
     width: calc(80 * var(--u));
     background: #efefef;
+    flex: none;
+    position: relative;
   }
 
   .scent-text {
-    display: flex;
     width: calc(187 * var(--u));
-    flex-direction: column;
     padding-left: calc(10 * var(--u));
     font-size: calc(12 * var(--u));
+    flex-direction: column;
     line-height: 1.5;
+    display: flex;
   }
 
   .scent-price,
@@ -1944,53 +1893,51 @@
     color: #767676;
   }
 
-  /* 설명을 더 보려면 또 한 번 눌러야 합니다. */
   .scent-more {
-    display: flex;
     align-items: center;
     gap: calc(3 * var(--u));
-    margin-top: auto;
     color: #767676;
     font-size: calc(11 * var(--u));
+    margin-top: auto;
+    display: flex;
   }
 
   .scent-more i {
     height: calc(5 * var(--u));
     width: calc(5 * var(--u));
-    border-right: 1px solid #767676;
-    border-bottom: 1px solid #767676;
     rotate: 45deg;
     translate: 0 calc(-2 * var(--u));
+    border-bottom: 1px solid #767676;
+    border-right: 1px solid #767676;
   }
 
-  /* 고르는 네모. 고르면 까맣게 차고 체크가 들어옵니다. */
   .scent-check {
-    position: relative;
     height: calc(14 * var(--u));
     width: calc(14 * var(--u));
     margin: calc(3 * var(--u)) calc(3 * var(--u)) 0 calc(18 * var(--u));
-    border: 1px solid #1d1d1d;
     border-radius: calc(3 * var(--u));
-    transition: background 220ms ease;
+    translate: calc(4 * var(--u)) 0;
+    border: 1px solid #1d1d1d;
+    transition: background 0.22s;
+    position: relative;
   }
 
   .scent-check[data-on] {
     background: #1d1d1d;
   }
 
-  .scent-check[data-on]::after {
+  .scent-check[data-on]:after {
     content: "";
-    position: absolute;
-    left: calc(4 * var(--u));
+    left: calc(5 * var(--u));
     top: calc(1.5 * var(--u));
     height: calc(6.5 * var(--u));
     width: calc(3.5 * var(--u));
-    border-right: calc(1.4 * var(--u)) solid #ffffff;
-    border-bottom: calc(1.4 * var(--u)) solid #ffffff;
+    border-right: calc(1.4 * var(--u)) solid #fff;
+    border-bottom: calc(1.4 * var(--u)) solid #fff;
+    position: absolute;
     rotate: 45deg;
   }
 
-  /* 펼친 줄에 딸려 나오는 설명과 향노트 */
   .scent-story {
     padding: calc(15 * var(--u)) 0;
     font-size: calc(12 * var(--u));
@@ -2001,33 +1948,31 @@
     padding-top: calc(20 * var(--u));
   }
 
-  /* 아래 단추. 고르기 전에는 눌러도 소용없는 회색입니다. */
   .scent-next {
-    display: flex;
-    height: calc(45 * var(--u));
-    flex: none;
-    align-items: center;
-    justify-content: center;
+    height: calc(47 * var(--u));
     margin-bottom: calc(15 * var(--u));
     border-radius: calc(5 * var(--u));
-    background: #efefef;
     color: #767676;
     font-size: calc(12 * var(--u));
+    background: #efefef;
+    flex: none;
+    justify-content: center;
+    align-items: center;
     font-weight: 500;
     line-height: 1.5;
     transition:
-      background 260ms ease,
-      color 260ms ease;
+      background 0.26s,
+      color 0.26s;
+    display: flex;
   }
 
-  /* 하나라도 고르면 살아납니다. */
   .scent-next[data-on] {
+    color: #fff;
     background: #1d1d1d;
-    color: #ffffff;
   }
 
   .scent-next[data-press] {
-    animation: next-press 420ms cubic-bezier(0.3, 0.8, 0.3, 1);
+    animation: 0.42s cubic-bezier(0.3, 0.8, 0.3, 1) next-press;
   }
 
   @keyframes next-press {
@@ -2035,57 +1980,54 @@
     100% {
       scale: 1;
     }
+
     40% {
       scale: 0.97;
     }
   }
 
-  /* 두 번째 창의 이전·선택 */
   .scent-pair {
-    display: flex;
-    flex: none;
     gap: calc(10 * var(--u));
     margin-bottom: calc(15 * var(--u));
+    flex: none;
+    display: flex;
   }
 
   .scent-pair span {
-    display: flex;
-    height: calc(45 * var(--u));
-    flex: 1;
-    align-items: center;
-    justify-content: center;
+    height: calc(47 * var(--u));
     border-radius: calc(5 * var(--u));
     font-size: calc(12 * var(--u));
+    flex: 1;
+    justify-content: center;
+    align-items: center;
     font-weight: 500;
     line-height: 1.5;
+    display: flex;
   }
 
   .scent-back-btn {
-    border: 1px solid #1d1d1d;
-    background: #ffffff;
     color: #1d1d1d;
+    background: #fff;
+    border: 1px solid #1d1d1d;
   }
 
-  /* 하나라도 고르면 살아납니다. */
   .scent-pick {
-    background: #efefef;
     color: #767676;
+    background: #efefef;
     transition:
-      background 260ms ease,
-      color 260ms ease;
+      background 0.26s,
+      color 0.26s;
   }
 
   .scent-pick[data-on] {
+    color: #fff;
     background: #1d1d1d;
-    color: #ffffff;
   }
 
   .scent-pick[data-press] {
-    animation: next-press 420ms cubic-bezier(0.3, 0.8, 0.3, 1);
+    animation: 0.42s cubic-bezier(0.3, 0.8, 0.3, 1) next-press;
   }
 
-  /* ── 실제 화면(장바구니) ───────────────────────
-     담기를 누르면 아래에서 올라옵니다. */
   .bag-screen {
     position: absolute;
     inset: 0;
@@ -2093,9 +2035,9 @@
   }
 
   .bag-under {
+    transition: opacity 0.42s;
     position: absolute;
     inset: 0;
-    transition: opacity 420ms ease;
   }
 
   .bag-under[data-hide] {
@@ -2103,34 +2045,34 @@
   }
 
   .bag-over {
+    transition: translate 0.56s cubic-bezier(0.3, 0.8, 0.3, 1);
     position: absolute;
     inset: 0;
     translate: 0 100%;
-    transition: translate 560ms cubic-bezier(0.3, 0.8, 0.3, 1);
   }
 
   .bag-over[data-in] {
-    translate: 0 0;
+    translate: 0;
   }
 
   .cart-screen {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    background: #ffffff;
     padding: 0 calc(15 * var(--u));
     color: #1d1d1d;
-    font-family: var(--font-body);
+    font-family: var(--font-tam);
     text-align: left;
+    background: #fff;
+    flex-direction: column;
+    display: flex;
+    position: absolute;
+    inset: 0;
   }
 
   .cart-head {
-    display: flex;
     height: calc(60 * var(--u));
     flex: none;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
+    display: flex;
   }
 
   .cart-head h4 {
@@ -2140,11 +2082,11 @@
   }
 
   .cart-body {
-    position: relative;
-    flex: 1;
-    overflow-y: auto;
     overscroll-behavior-y: contain;
     scrollbar-width: none;
+    flex: 1;
+    position: relative;
+    overflow-y: auto;
   }
 
   .cart-body::-webkit-scrollbar {
@@ -2152,64 +2094,63 @@
   }
 
   .cart-list li {
-    display: flex;
     height: calc(109 * var(--u));
     padding: calc(5 * var(--u)) 0;
+    display: flex;
   }
 
   .cart-shot {
-    position: relative;
-    flex: none;
     height: calc(99 * var(--u));
     width: calc(80 * var(--u));
     background: #efefef;
+    flex: none;
+    position: relative;
   }
 
   .cart-text {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
     padding-left: calc(10 * var(--u));
     font-size: calc(12 * var(--u));
+    flex-direction: column;
+    flex: 1;
     line-height: 1.5;
+    display: flex;
   }
 
   .cart-price {
     padding-top: calc(2 * var(--u));
   }
 
-  /* 고른 구성. 담고 나서야 한자리에 모입니다. */
   .cart-picks {
-    display: flex;
-    flex-direction: column;
     padding-top: calc(4 * var(--u));
     color: #767676;
     font-size: calc(10 * var(--u));
+    flex-direction: column;
     line-height: 1.5;
+    display: flex;
   }
 
   .cart-foot {
-    display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     margin-top: auto;
+    display: flex;
   }
 
   .cart-count {
-    display: flex;
     align-items: center;
     gap: calc(11 * var(--u));
     color: #767676;
     font-size: calc(11 * var(--u));
+    display: flex;
   }
 
   .cart-count i {
     height: calc(5 * var(--u));
     width: calc(5 * var(--u));
-    border-right: 1px solid #767676;
-    border-bottom: 1px solid #767676;
     rotate: 45deg;
     translate: 0 calc(-2 * var(--u));
+    border-bottom: 1px solid #767676;
+    border-right: 1px solid #767676;
   }
 
   .cart-foot em {
@@ -2218,31 +2159,31 @@
     text-decoration: underline;
   }
 
-  /* 목록 위로 떠 있는 권유 카드 */
   .cart-nudge {
-    display: flex;
-    height: calc(75 * var(--u));
-    align-items: center;
+    height: calc(77 * var(--u));
     margin-top: calc(15 * var(--u));
-    border: 1px solid #efefef;
     border-radius: calc(5 * var(--u));
+    border: 1px solid #efefef;
+    align-items: center;
+    display: flex;
     overflow: hidden;
   }
 
   .cart-nudge-shot {
-    flex: none;
     height: 100%;
     width: calc(80 * var(--u));
     background: #efefef;
+    flex: none;
+    position: relative;
   }
 
   .cart-nudge > div {
-    display: flex;
-    flex-direction: column;
     gap: calc(3 * var(--u));
     padding-left: calc(10 * var(--u));
     font-size: calc(12 * var(--u));
+    flex-direction: column;
     line-height: 1.5;
+    display: flex;
   }
 
   .cart-nudge em {
@@ -2251,7 +2192,6 @@
     text-decoration: underline;
   }
 
-  /* 값 셈 */
   .cart-sum {
     padding: calc(40 * var(--u)) 0 calc(20 * var(--u));
     font-size: calc(12 * var(--u));
@@ -2259,10 +2199,10 @@
   }
 
   .cart-sum p {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     padding-top: calc(10 * var(--u));
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
   }
 
   .cart-sum p:first-child {
@@ -2272,10 +2212,10 @@
   .cart-sum i {
     margin-left: calc(7 * var(--u));
     border-radius: calc(5 * var(--u));
-    background: #efefef;
     padding: 0 calc(10 * var(--u));
     color: #767676;
     font-size: calc(10 * var(--u));
+    background: #efefef;
     font-style: normal;
   }
 
@@ -2285,107 +2225,142 @@
     font-weight: 600;
   }
 
-  /* 아래에 붙는 결제 단추. 판 끝까지 폭을 씁니다. */
   .cart-pay {
-    display: flex;
     height: calc(60 * var(--u));
-    flex: none;
-    align-items: center;
-    justify-content: center;
     margin: 0 calc(-15 * var(--u));
-    background: #1d1d1d;
-    color: #ffffff;
+    color: #fff;
     font-size: calc(14 * var(--u));
+    background: #1d1d1d;
+    flex: none;
+    justify-content: center;
+    align-items: center;
     line-height: 1.5;
+    display: flex;
+  }
+
+  .steps-shot {
+    cursor: pointer;
+    transition:
+      opacity 0.46s,
+      filter 0.46s;
+  }
+
+  .steps-shot[data-idle] {
+    opacity: 0.5;
+    filter: saturate(0.35);
+  }
+
+  .steps-frame:after {
+    content: "";
+    z-index: 5;
+    opacity: 0;
+    pointer-events: none;
+    background: #fff;
+    transition: opacity 0.46s;
+    position: absolute;
+    inset: 0;
+  }
+
+  .steps-shot[data-idle] .steps-frame:after {
+    opacity: 0.55;
+  }
+
+  .steps-shot:focus-visible {
+    outline-offset: calc(6 * var(--u));
+    outline: 1px solid #19191966;
   }
 
   .steps-cap {
-    display: flex;
-    flex-direction: column;
     gap: calc(4 * var(--u));
+    flex-direction: column;
+    display: flex;
   }
 
-  /* 화면 이름. 다른 장의 소제목(type-title)과 같은 값으로 둡니다. */
+  .steps-no {
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(12 * var(--u));
+    letter-spacing: 0.06em;
+    font-weight: 500;
+  }
+
   .steps-step {
     color: var(--fg);
     font-family: var(--font-display);
     font-size: var(--type-title);
-    font-weight: 700;
     letter-spacing: -0.01em;
+    font-weight: 700;
   }
 
-  /* ── 하단 목차 ─────────────────────────────────
-     평소에는 손잡이만 화면 끝에 걸치고, 다가가면 통째로 올라옵니다. */
   .pager {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    left: 0;
     z-index: 20;
-    display: flex;
+    padding: calc(10 * var(--u)) 0 calc(16 * var(--u));
+    translate: 0 calc(100% - 20 * var(--u));
     flex-direction: column;
     align-items: center;
-    padding: calc(10 * var(--u)) 0 calc(16 * var(--u));
-    /* 손잡이 높이만 남기고 내려 둡니다. */
-    translate: 0 calc(100% - 20 * var(--u));
-    transition: translate 460ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: translate 0.46s cubic-bezier(0.22, 1, 0.36, 1);
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
 
-  /* 화면 끝에 딱 붙기 전에도 잡히도록 위쪽에 보이지 않는 자리를 둡니다. */
-  .pager::before {
+  .pager:before {
     content: "";
+    height: calc(28 * var(--u));
     position: absolute;
-    right: 0;
     bottom: 100%;
     left: 0;
-    height: calc(28 * var(--u));
+    right: 0;
   }
 
   .pager:hover,
   .pager:focus-within {
-    translate: 0 0;
+    translate: 0;
   }
 
   .pager-grip {
     height: calc(3 * var(--u));
     width: calc(56 * var(--u));
     margin-bottom: calc(11 * var(--u));
+    background: #19191938;
     border-radius: 999px;
-    background: rgb(25 25 25 / 0.22);
     transition:
-      background 300ms ease,
-      opacity 300ms ease;
+      background 0.3s,
+      opacity 0.3s;
   }
 
   .pager:hover .pager-grip,
   .pager:focus-within .pager-grip {
-    background: rgb(25 25 25 / 0.1);
+    background: #1919191a;
   }
 
   .pager-list {
-    display: flex;
     align-items: baseline;
     gap: calc(16 * var(--u));
     padding: calc(9 * var(--u)) calc(20 * var(--u));
-    border-radius: 999px;
-    background: rgb(255 255 255 / 0.92);
-    box-shadow: 0 calc(4 * var(--u)) calc(22 * var(--u)) rgb(25 25 25 / 0.1);
+    box-shadow: 0 calc(4 * var(--u)) calc(22 * var(--u)) #1919191a;
+    -webkit-backdrop-filter: blur(calc(8 * var(--u)));
     backdrop-filter: blur(calc(8 * var(--u)));
+    background: #ffffffeb;
+    border-radius: 999px;
+    display: flex;
   }
 
   .pager-item {
-    display: flex;
     align-items: baseline;
     gap: calc(5 * var(--u));
-    color: rgb(25 25 25 / 0.35);
+    color: #19191959;
     font-family: var(--font-display);
     font-size: calc(10 * var(--u));
-    font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     white-space: nowrap;
     cursor: pointer;
-    transition: color 240ms ease;
+    font-weight: 700;
+    transition: color 0.24s;
+    display: flex;
   }
 
   .pager-item:hover,
@@ -2398,40 +2373,35 @@
     opacity: 0.6;
   }
 
-  /* 지금 화면을 짚는 장. 목업이 흰 판 위에 놓입니다. */
   .section:has(.store-slot) {
-    background: #ffffff;
+    background: #fff;
   }
 
-  /* 비율 고정 캔버스. 섹션마다 안쪽 레이아웃은 다릅니다. */
   .canvas {
-    position: relative;
     width: var(--canvas-w);
     height: var(--canvas-h);
     flex: none;
+    position: relative;
     overflow: hidden;
   }
 
-  /* 캔버스를 채우는 8×6 그리드.
-     자식은 Tailwind의 col-span-* / row-span-* / col-start-* 로 배치합니다. */
   .page-grid {
-    position: relative;
-    display: grid;
     grid-template-columns: repeat(var(--grid-cols), 1fr);
     grid-template-rows: repeat(var(--grid-rows), 1fr);
     gap: var(--grid-gap);
     padding: var(--page-margin);
-    height: 100%;
     width: 100%;
+    height: 100%;
+    display: grid;
+    position: relative;
   }
 
-  /* 2장 — 캔버스 정중앙에 놓인 문장 */
   .statement {
-    position: relative;
-    display: flex;
-    height: 100%;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    height: 100%;
+    display: flex;
+    position: relative;
   }
 
   .statement-text {
@@ -2440,16 +2410,14 @@
   }
 
   .statement-line {
-    display: flex;
     justify-content: center;
     gap: 0.25em;
+    display: flex;
   }
 
-  /* 단어는 섹션이 화면에 들어왔을 때 하나씩 떠오릅니다.
-     섹션을 벗어나면 다시 숨어서, 올라갔다 내려오면 처음부터 재생됩니다. */
   .word {
-    display: inline-block;
     opacity: 0;
+    display: inline-block;
   }
 
   .statement[data-visible] .word {
@@ -2457,84 +2425,71 @@
     animation-delay: calc(var(--delay, 0s) * var(--stagger));
   }
 
-  /* ── 스크롤 유도 ───────────────────────────────
-     문장이 다 나온 뒤에 나타나, 마우스 휠이 아래로 굴러가는 모양을 반복합니다. */
   .scroll-cue {
-    position: absolute;
     right: 0;
     bottom: calc(40 * var(--u));
-    left: 0;
-    display: flex;
-    flex-direction: column;
     align-items: center;
     gap: calc(4 * var(--u));
     opacity: 0;
-    /* 마우스 외곽선과 화살표가 같은 굵기를 쓰도록 한 곳에서 정합니다. */
     --cue-stroke: calc(1.5 * var(--u));
+    flex-direction: column;
+    display: flex;
+    position: absolute;
+    left: 0;
   }
 
   .statement[data-visible] .scroll-cue {
-    animation: cue-in 0.6s ease 1.7s both;
+    animation: 0.6s 1.7s both cue-in;
   }
 
   .scroll-cue-mouse {
-    position: relative;
-    display: block;
     height: calc(38 * var(--u));
     width: calc(24 * var(--u));
     border: var(--cue-stroke) solid currentColor;
     border-radius: calc(12 * var(--u));
+    display: block;
+    position: relative;
   }
 
   .scroll-cue-dot {
-    position: absolute;
     left: 50%;
     top: calc(7 * var(--u));
     height: calc(6 * var(--u));
     width: calc(3 * var(--u));
     margin-left: calc(-1.5 * var(--u));
     border-radius: calc(2 * var(--u));
-    background: currentColor;
     opacity: 0;
+    background: currentColor;
+    position: absolute;
   }
 
   .statement[data-visible] .scroll-cue-dot {
-    animation: cue-wheel 1.8s cubic-bezier(0.4, 0, 0.2, 1) 2s infinite;
+    animation: 1.8s cubic-bezier(0.4, 0, 0.2, 1) 2s infinite cue-wheel;
   }
 
-  /* 꼬리 없는 아래 화살표. 정사각형의 두 변만 남기고 45° 돌린 것입니다. */
   .scroll-cue-chevron {
-    display: block;
     height: calc(12 * var(--u));
     width: calc(12 * var(--u));
     border-right: var(--cue-stroke) solid currentColor;
     border-bottom: var(--cue-stroke) solid currentColor;
-    rotate: 45deg;
     opacity: 0.4;
+    display: block;
+    rotate: 45deg;
   }
 
-  /* rotate 와 translate 는 따로 쌓이므로 회전은 그대로 두고 위치만 움직입니다. */
   .statement[data-visible] .scroll-cue-chevron {
-    animation: cue-arrow 1.8s ease-in-out 2.15s infinite;
+    animation: 1.8s ease-in-out 2.15s infinite cue-arrow;
   }
 
-  /* ── 타입 ──────────────────────────────────────
-     크기는 :root 의 --type-* 토큰에서 가져옵니다. 자간은 모두 1%,
-     행간은 제목류 1.1 / 본문 1.4 입니다. */
   .type-display {
     font-family: var(--font-display);
     font-size: var(--type-display);
-    font-weight: 700;
-    line-height: 1.1;
     letter-spacing: 0.01em;
     text-transform: uppercase;
+    font-weight: 700;
+    line-height: 1.1;
   }
 
-  /* ── 캡 높이 정렬 ──────────────────────────────
-     폰트는 글자 위에 크기에 비례한 여백(하프 리딩 + 어센더 여유)을 남깁니다.
-     그래서 박스 top 을 맞춰도 62px 과 24px 글자는 서로 다른 높이에서 시작합니다.
-     그 여백(Inter 기준 0.195em)만큼 끌어올려 캡 상단을 행 선에 맞춥니다.
-     2섹션 문장은 가운데 정렬이라 대상이 아닙니다. */
   .page-grid .type-display,
   .page-grid .type-lead,
   .page-grid .type-title,
@@ -2542,59 +2497,259 @@
     margin-top: -0.195em;
   }
 
-  /* 1섹션 h1 전용 크기. 사유는 --type-headline 주석 참고. */
   .intro-headline {
     font-size: var(--type-headline);
   }
 
-  /* 3섹션 헤드라인. 대문자로 바꾸지 않습니다. */
   .type-lead {
     font-family: var(--font-display);
     font-size: var(--type-lead);
+    letter-spacing: 0.01em;
     font-weight: 700;
     line-height: 1.1;
-    letter-spacing: 0.01em;
   }
 
   .type-title {
     font-family: var(--font-display);
     font-size: var(--type-title);
+    letter-spacing: 0.01em;
     font-weight: 700;
     line-height: 1.1;
-    letter-spacing: 0.01em;
   }
 
   .type-body {
     font-family: var(--font-body);
     font-size: var(--type-body);
-    font-weight: 500;
-    line-height: 1.4;
     letter-spacing: 0.01em;
     color: var(--fg-soft);
+    font-weight: 500;
+    line-height: 1.4;
   }
-}
 
-@layer components {
-  /* ── 노브 ─────────────────────────────────────
-     이미지가 아니라 그라디언트로 그려서 캔버스 스케일(--u)을 그대로 따릅니다. */
-  .knob-panel {
-    display: flex;
-    height: 100%;
-    align-items: center;
+  /* ── 벽 스위치 ─────────────────────────────────────────
+     벽에 뚫린 알약 구멍 안에 스위치 한 덩어리가 여유를 두고 앉습니다.
+     옆에서 보면 가운데가 골인 V 단면이라, 한쪽을 누르면 그쪽이 들어가고
+     반대쪽 끝이 앞으로 나옵니다. 나온 끝의 틈이 벌어지며 그리로 빛이 새는데,
+     그 틈은 가운데로 갈수록 좁아져 저절로 사라집니다. */
+  .switch-panel {
+    /* 조명이 꺼져 있으면 이 판도 그만큼 그늘집니다. */
+    background:
+      linear-gradient(
+        rgb(18 17 15 / calc(0.04 * var(--dim, 1))),
+        rgb(18 17 15 / calc(0.04 * var(--dim, 1)))
+      ),
+      #eae8e3;
     justify-content: center;
+    align-items: center;
+    height: 100%;
+    display: flex;
+  }
+
+  /* 판 왼쪽 위에 놓이는 안내. 켜지면 사라집니다. */
+  .switch-note {
+    position: absolute;
+    left: calc(18 * var(--u));
+    top: calc(16 * var(--u));
+    color: rgb(24 22 19 / 0.72);
+    font-family: var(--font-body);
+    font-size: calc(13 * var(--u));
+    letter-spacing: -0.01em;
+    /* 동그라미와 같은 박자로 함께 숨 쉽니다. */
+    animation: switch-dot-breathe 2.4s ease-in-out infinite;
+    transition: opacity 320ms ease;
+  }
+
+  .switch-note[data-gone] {
+    animation: none;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .switch-note {
+      animation: none;
+    }
+  }
+
+  .wall-switch {
+    position: relative;
+    width: calc(67 * var(--u));
+    height: calc(184 * var(--u));
+    padding: 0;
+    border: calc(1.8 * var(--u)) solid
+      rgb(28 28 28 / calc(0.14 - 0.09 * var(--dim, 0)));
+    border-radius: 999px;
+    background:
+      linear-gradient(
+        rgb(18 17 15 / calc(0.04 * var(--dim, 1))),
+        rgb(18 17 15 / calc(0.04 * var(--dim, 1)))
+      ),
+      #e7e5e0;
+    cursor: pointer;
+    /* 테와 모듈 사이 여유 */
+    --switch-gap: 0px;
+    transition: box-shadow 320ms ease;
+  }
+
+  /* 켜지면 그 빛이 벽으로도 조금 번집니다. */
+  .wall-switch[data-on] {
+    box-shadow: 0 calc(-5 * var(--u)) calc(26 * var(--u)) calc(-4 * var(--u))
+      rgb(255 239 195 / 0.4);
+  }
+
+  .wall-switch:focus-visible {
+    outline: 2px solid rgb(28 28 28 / 0.5);
+    outline-offset: calc(6 * var(--u));
+  }
+
+  /* 몸통·빛·그림자가 모두 같은 알약을 씁니다.
+     서로 조금씩 어긋나 있을 뿐이라, 삐져나온 만큼만 초승달로 보입니다. */
+  .wall-switch-face,
+  .wall-switch-glow,
+  .wall-switch-drop {
+    position: absolute;
+    inset: var(--switch-gap);
+    border-radius: 999px;
+    pointer-events: none;
+    transition:
+      translate 130ms cubic-bezier(0.3, 1.4, 0.5, 1),
+      opacity 320ms ease;
+  }
+
+  /* 겉면 한 장. 두 면이 각자 고른 톤을 갖고 가운데에서 짧게 건너뜁니다.
+     앞으로 나온 면은 빛을 비껴 받아 들어간 면보다 조금 어둡습니다. */
+  .wall-switch-face {
+    z-index: 2;
+    /* 꺼짐 — 아래쪽이 눌려 있어 아래가 어둡습니다. */
+    background:
+      linear-gradient(
+        rgb(18 17 15 / calc(0.04 * var(--dim, 1))),
+        rgb(18 17 15 / calc(0.04 * var(--dim, 1)))
+      ),
+      linear-gradient(#eeece8 0 45%, #e8e6e1 49%, #e2dfd9 53% 100%);
+    transition: background 1ms linear 65ms;
+  }
+
+  /* 켜짐 — 아래쪽이 나와 있어 아래가 어둡습니다. */
+  /* 켜짐 — 위쪽이 눌려 있어 위가 어둡습니다. */
+  .wall-switch[data-on] .wall-switch-face {
+    background:
+      linear-gradient(
+        rgb(18 17 15 / calc(0.04 * var(--dim, 1))),
+        rgb(18 17 15 / calc(0.04 * var(--dim, 1)))
+      ),
+      linear-gradient(#e2dfd9 0 47%, #e8e6e1 51%, #eeece8 55% 100%);
+  }
+
+  /* 누를 자리를 가리키는 점. 아래를 누르면 켜지므로 아래쪽 면에 둡니다.
+     조명이 꺼져 있는 동안 이 점에만 불이 듭니다 — 어두운 데서 스위치를
+     찾을 수 있어야 하니까요. 방이 밝아지면 도로 물러납니다. */
+  .wall-switch-dot {
+    position: absolute;
+    left: 50%;
+    top: 84%;
+    z-index: 3;
+    width: calc(8 * var(--u));
+    height: calc(8 * var(--u));
+    translate: -50% -50%;
+    border-radius: 50%;
+    /* 심지는 하얗게 타고 둘레로 갈수록 조명 색이 됩니다. */
+    background: radial-gradient(
+      circle at 50% 42%,
+      #fffefa 38%,
+      rgb(255 239 195) 88%,
+      rgb(255 214 140) 100%
+    );
+    box-shadow:
+      0 0 calc(12 * var(--u)) calc(1 * var(--u)) rgb(255 206 120 / 0.6),
+      0 0 calc(28 * var(--u)) calc(5 * var(--u)) rgb(255 196 100 / 0.28);
+    pointer-events: none;
+    /* 세기가 오르내려 눈이 이 자리로 옵니다. */
+    animation: switch-dot-breathe 2.4s ease-in-out infinite;
+    transition:
+      background 320ms ease,
+      box-shadow 320ms ease;
+  }
+
+  @keyframes switch-dot-breathe {
+    0%,
+    100% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  /* 켜지고 나면 부를 일이 없으니 숨을 멈춥니다. */
+  .wall-switch[data-on] .wall-switch-dot {
+    animation: none;
+    opacity: 1;
+    background: rgb(28 28 28 / 0.16);
+    box-shadow: none;
+  }
+
+  /* 벌어진 틈으로 새는 빛. 겉면과 같은 알약을 조금 밀어 둔 것이라
+     끝에서 가장 두껍고 옆구리로 갈수록 얇아지다 가운데에서 사라집니다.
+     색은 조명(glow.png)에서 그대로 가져왔습니다. */
+  .wall-switch-glow {
+    z-index: 1;
+    background: rgb(255 239 195);
+    /* 테두리를 흐려 두면 틈에서 배어 나오듯 보입니다. */
+    filter: blur(calc(1.6 * var(--u)));
+    box-shadow: 0 0 calc(14 * var(--u)) calc(1 * var(--u))
+      rgb(255 239 195 / 0.4);
+    /* 꺼져 있는 동안에는 새어 나올 빛이 없습니다. */
+    opacity: 0;
+    /* 빛은 오른쪽으로 조금 치우칩니다. */
+    translate: calc(1.6 * var(--u)) calc(3.4 * var(--u));
+  }
+
+  .wall-switch[data-on] .wall-switch-glow {
+    opacity: 0.72;
+    translate: calc(1.6 * var(--u)) calc(-3.4 * var(--u));
+  }
+
+  /* 나온 끝이 벽에 드리우는 그림자. 빛이 오른쪽 위에서 들어옵니다. */
+  .wall-switch-drop {
+    z-index: 0;
+    background: rgb(20 18 15);
+    filter: blur(calc(7 * var(--u)));
+    opacity: calc(0.13 - 0.07 * var(--dim, 1));
+    translate: calc(-7 * var(--u)) calc(3 * var(--u));
+  }
+
+  .wall-switch[data-on] .wall-switch-drop {
+    translate: calc(-7 * var(--u)) calc(-3 * var(--u));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wall-switch-dot {
+      animation: none;
+    }
+
+    .wall-switch-face,
+    .wall-switch-glow,
+    .wall-switch-drop {
+      transition-duration: 1ms;
+    }
+  }
+
+  .knob-panel {
     background: #eae8e3;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    display: flex;
   }
 
   .knob {
-    position: relative;
     width: calc(224 * var(--u));
     height: calc(224 * var(--u));
-    border-radius: 50%;
     cursor: grab;
-    /* 포인터 드래그가 스크롤/줌으로 새지 않게 */
     touch-action: none;
-    /* 얕게 파인 자리. 테두리 선 없이 배경 톤 차이로만 구분합니다. */
     background: #e4e1db;
+    border-radius: 50%;
+    position: relative;
   }
 
   .knob:active {
@@ -2606,145 +2761,146 @@
     outline-offset: calc(6 * var(--u));
   }
 
-  /* 마우스/터치로 잡았을 때는 링을 지웁니다. */
   .knob[data-pointer]:focus-visible {
     outline: none;
   }
 
-  /* 값 표시 아크. 12시에서 시작하도록 -90° 돌려 둡니다. */
   .knob-arc {
+    width: 100%;
+    height: 100%;
     position: absolute;
     inset: 0;
-    height: 100%;
-    width: 100%;
     rotate: -90deg;
+  }
+
+  /* 캡 한가운데에서 읽는 지금 밝기. 도트 매트릭스라 밝기 자체가 눈금처럼 읽힙니다. */
+  .knob-read {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 3;
+    height: auto;
+    translate: -50% -50%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  /* 꺼진 자리. 격자를 남겨 두어야 켜진 자리가 숫자로 읽힙니다. */
+  .knob-read circle {
+    fill: rgb(25 25 25 / 0.045);
+    transition: fill 200ms ease;
+  }
+
+  .knob-read circle[data-on] {
+    fill: rgb(25 25 25 / calc(0.2 + 0.26 * var(--light, 0)));
   }
 
   .knob-arc-track {
     fill: none;
-    stroke: rgb(0 0 0 / 0.08);
-    stroke-width: 2.2;
+    stroke: #00000014;
+    stroke-width: 2.2px;
   }
 
   .knob-arc-value {
     fill: none;
-    /* 주황이 아니라 노란기 도는 흰빛 */
     stroke: #fff7e0;
-    stroke-width: 2.2;
+    stroke-width: 2.2px;
     stroke-linecap: round;
-    /* 켜진 불은 가만히 있지 않고 아주 느리게 숨을 쉽니다. */
-    animation: knob-breathe 4.6s ease-in-out infinite;
+    animation: 4.6s ease-in-out infinite knob-breathe;
   }
 
   @keyframes knob-breathe {
     0%,
     100% {
-      filter: drop-shadow(0 0 calc(3 * var(--u)) rgb(255 233 176 / 0.55));
+      filter: drop-shadow(0 0 calc(3 * var(--u)) #ffe9b08c);
     }
+
     50% {
-      filter: drop-shadow(0 0 calc(7 * var(--u)) rgb(255 233 176 / 0.95));
+      filter: drop-shadow(0 0 calc(7 * var(--u)) #ffe9b0f2);
     }
   }
 
-  /* 아직 돌리지 않은 노브. 불이 켜질 링 한 바퀴가 옅게 밝아졌다 잦아들며
-     어디를 돌리면 되는지 가리킵니다. 돌리기 시작하면 값 아크가 이어받습니다. */
   .knob-arc-hint {
     fill: none;
     stroke: #fff7e0;
-    stroke-width: 2.2;
+    stroke-width: 2.2px;
     stroke-linecap: round;
     opacity: 0;
   }
 
   .knob[data-idle] .knob-arc-hint {
-    animation: knob-wink 4.6s ease-in-out infinite;
+    animation: 4.6s ease-in-out infinite knob-wink;
   }
 
   @keyframes knob-wink {
     0%,
     100% {
       opacity: 0;
-      filter: drop-shadow(0 0 calc(1 * var(--u)) rgb(255 233 176 / 0.16));
+      filter: drop-shadow(0 0 calc(1 * var(--u)) #ffe9b029);
     }
+
     50% {
       opacity: 0.42;
-      filter: drop-shadow(0 0 calc(4 * var(--u)) rgb(255 233 176 / 0.42));
+      filter: drop-shadow(0 0 calc(4 * var(--u)) #ffe9b06b);
     }
   }
 
-  /* 값에 따라 도는 눈금 삼각형 */
   .knob-marker {
     position: absolute;
     inset: 0;
   }
 
-  /* 가운데 캡 안쪽에 놓습니다. 캡은 21.5%~78.5% 구간이라 26% 면 캡 위입니다. */
   .knob-marker span {
-    position: absolute;
-    left: 50%;
-    top: 26%;
-    height: 0;
-    width: 0;
-    translate: -50% 0;
     border-left: calc(5 * var(--u)) solid transparent;
     border-right: calc(5 * var(--u)) solid transparent;
     border-bottom: calc(8 * var(--u)) solid #8b857a;
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: 26%;
+    left: 50%;
+    translate: -50%;
   }
 
-  /* 납작하게 줄였던 판. 되돌릴 일이 있을 때 여기서 가져다 씁니다.
-  .knob-rim { background: #f2f0eb; }
-  .knob-cap {
-    background: #fbfaf8;
-    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.05);
-  }
-  */
-
-  /* 캡 바깥 테두리(넓고 낮은 단) */
   .knob-rim {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    height: 78%;
     width: 78%;
-    translate: -50% -50%;
-    border-radius: 50%;
+    height: 78%;
+    box-shadow: 0 calc(2 * var(--u)) calc(6 * var(--u)) #0000001a;
     background: linear-gradient(160deg, #fbfaf8 0%, #eeebe5 100%);
-    box-shadow: 0 calc(2 * var(--u)) calc(6 * var(--u)) rgb(0 0 0 / 0.1);
-  }
-
-  /* 가운데 캡 */
-  .knob-cap {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    height: 57%;
-    width: 57%;
-    translate: -50% -50%;
     border-radius: 50%;
-    background: linear-gradient(160deg, #ffffff 0%, #f0ede8 100%);
-    box-shadow:
-      0 0 0 calc(1 * var(--u)) rgb(0 0 0 / 0.05),
-      0 calc(3 * var(--u)) calc(7 * var(--u)) rgb(0 0 0 / 0.1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
   }
 
-  /* ── 6섹션 작업 카드 ───────────────────────────
-     머리글 높이를 원본대로 고정해 세 카드의 이미지 자리가 같은 선에서 시작합니다. */
+  .knob-cap {
+    width: 57%;
+    height: 57%;
+    box-shadow:
+      0 0 0 calc(1 * var(--u)) #0000000d,
+      0 calc(3 * var(--u)) calc(7 * var(--u)) #0000001a;
+    background: linear-gradient(160deg, #fff 0%, #f0ede8 100%);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+  }
+
   .work {
-    display: flex;
-    flex-direction: column;
     gap: calc(16 * var(--u));
+    flex-direction: column;
+    display: flex;
   }
 
   .work-head {
-    display: flex;
-    /* 번호를 띄운 만큼 원본 109 보다 조금 키웠습니다. */
     height: calc(120 * var(--u));
-    flex-direction: column;
     gap: calc(8 * var(--u));
+    flex-direction: column;
+    display: flex;
   }
 
-  /* 번호는 제목·설명 묶음에서 한 단 떨어뜨립니다.
-     비포/애프터 장의 설명도 같은 간격을 씁니다. */
   .work-head .card-index,
   .why-card .card-index,
   .issue .card-index {
@@ -2752,58 +2908,52 @@
     text-transform: uppercase;
   }
 
-  /* 문제를 짚는 항목. 번호 → 제목 → 설명 순서는 다른 장과 같습니다. */
-  /* 항목을 눌러도 그 점이 켜지고 그 칸이 다시 재생됩니다. */
   .issue {
-    display: flex;
-    flex-direction: column;
     gap: calc(8 * var(--u));
     cursor: pointer;
     text-align: left;
+    flex-direction: column;
+    display: flex;
   }
 
-  /* 마지막 항목은 한 행보다 길어 두 행을 잡고 아래 여백 선에 바닥을 맞춥니다.
-     한 행에 두면 행이 늘어나 다른 행까지 밀립니다(1fr 은 최소가 auto). */
   .issue-low {
     align-self: end;
   }
 
   .work-visual {
-    position: relative;
     flex: 1 1 0;
+    position: relative;
     overflow: hidden;
   }
 
-  /* 갈 곳이 있는 카드 위에서만 기본 커서를 감춥니다. */
   .work[data-linked] {
     cursor: none;
   }
 
-  /* 커서를 따라다니는 원형 표시 */
   .view-cursor {
-    position: fixed;
-    left: 0;
-    top: 0;
     z-index: 40;
-    display: grid;
     height: calc(72 * var(--u));
     width: calc(72 * var(--u));
-    place-items: center;
-    border-radius: 50%;
     background: var(--fg);
     color: var(--bg);
     font-family: var(--font-display);
     font-size: calc(11 * var(--u));
-    font-weight: 700;
     letter-spacing: 0.1em;
     text-indent: 0.1em;
     text-transform: uppercase;
     pointer-events: none;
     opacity: 0;
-    scale: 0.6;
+    border-radius: 50%;
+    place-items: center;
+    font-weight: 700;
     transition:
-      scale 260ms cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 180ms linear;
+      scale 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.18s linear;
+    display: grid;
+    position: fixed;
+    top: 0;
+    left: 0;
+    scale: 0.6;
   }
 
   .view-cursor[data-on] {
@@ -2811,26 +2961,22 @@
     scale: 1;
   }
 
-  /* ── 4섹션 카드 ────────────────────────────────
-     칼럼에 맞추지 않고 콘텐츠 폭을 정확히 4등분합니다. 사이는 여백 대신 세로 선입니다. */
   .card-row {
     display: flex;
   }
 
   .card {
-    display: flex;
-    flex: 1 1 0;
-    flex-direction: column;
     gap: calc(16 * var(--u));
     padding: calc(16 * var(--u)) calc(32 * var(--u));
+    flex-direction: column;
+    flex: 1 1 0;
+    display: flex;
   }
 
   .card + .card {
-    border-left: calc(1 * var(--u)) solid rgb(0 0 0 / 0.14);
+    border-left: calc(1 * var(--u)) solid #00000024;
   }
 
-  /* ── 시작점을 왜 옮기는지 짚는 장 ──────────────
-     칸마다 글은 위, 화면은 아래. 마지막 칸만 한 행 더 높아 글이 먼저 시작합니다. */
   .why-row {
     align-items: flex-end;
   }
@@ -2845,310 +2991,126 @@
   }
 
   .why-visual {
-    position: relative;
-    width: 100%;
     flex: 1 1 0;
+    width: 100%;
     min-height: 0;
+    position: relative;
     overflow: hidden;
   }
 
-  /* 목업은 칸 위쪽에 붙고, 넘치는 부분은 칸에서 잘립니다.
-     폭은 글이 놓인 폭과 같게 늘립니다. */
   .why-mock {
-    position: relative;
     height: 100%;
+    position: relative;
   }
 
-  /* 그 칸이 말하는 자리만 또렷하게 두고 나머지는 물러납니다. */
   [data-blur] {
     filter: blur(calc(2 * var(--u)));
     opacity: 0.5;
   }
 
   .why-mock .store-panel {
-    left: 0;
     width: 100%;
     margin-left: 0;
+    left: 0;
   }
 
-  /* 선택 상자도 늘어난 폭을 반씩 나눠 씁니다. */
   .why-mock .store-selects {
     align-self: stretch;
   }
 
   .why-mock .store-select {
-    width: auto;
     flex: 1 1 0;
+    width: auto;
   }
 
-  /* 번호 → 삽화 → 내용 순서. 삽화가 가운데 남는 자리를 차지합니다. */
   .card-text {
-    display: flex;
-    flex-direction: column;
     gap: calc(8 * var(--u));
+    flex-direction: column;
+    display: flex;
   }
 
   .card-index {
     font-family: var(--font-display);
     font-size: var(--type-body);
+    letter-spacing: 0.01em;
+    color: #19191980;
     font-weight: 700;
     line-height: 1.1;
-    letter-spacing: 0.01em;
-    color: rgb(25 25 25 / 0.5);
   }
 
-  /* 삽화. 남는 자리를 채우고 가운데 놓입니다. */
   .card-art {
-    display: flex;
-    flex: 1 1 0;
-    align-items: center;
-    justify-content: center;
     color: var(--fg);
+    flex: 1 1 0;
+    justify-content: center;
+    align-items: center;
+    display: flex;
   }
 
-  /* Iconsax 아이콘은 24 단위 viewBox 입니다.
-     120px 로 키우면서 선이 화면에서 1px 로 남도록 굵기를 24/120 = 0.2 로 둡니다.
-     원이 여러 겹 포개지는 그림이라 굵으면 뭉칩니다. */
   .card-art svg {
     height: calc(120 * var(--u));
     width: calc(120 * var(--u));
-    stroke-width: 0.2;
+    stroke-width: 0.2px;
     stroke-linecap: round;
     stroke-linejoin: round;
     opacity: 0.85;
   }
 
-  /* 소제목 + 본문 한 덩어리. 원본은 둘 사이에 20px 짜리 빈 줄을 두었습니다.
-     본문은 행 선에 맞출 대상이 아니라 소제목을 따라가므로, 캡 보정 대신 이 간격을 씁니다. */
   .note > .type-body {
     margin-top: calc(22 * var(--u));
   }
 
-  /* 섹션이 화면에 들어오면 떠오릅니다. 섹션을 벗어나면 다시 숨습니다. */
   .rise {
     opacity: 0;
   }
 
-  /* 자손까지 걸리게 둡니다. 카드처럼 한 단계 감싸인 요소도 있습니다. */
   [data-visible] .rise {
     animation: reveal-up var(--reveal-time) cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: calc(var(--delay, 0s) * var(--stagger));
   }
 
-  /* ── 텍스트 등장 ───────────────────────────────
-     불이 켜지듯 아래에서 차례로 떠오릅니다. --delay 로 순서를 줍니다. */
   .reveal {
     animation: reveal-up var(--reveal-time) cubic-bezier(0.22, 1, 0.36, 1)
       backwards;
     animation-delay: calc(var(--delay, 0s) * var(--stagger));
   }
 
-  /* 안내 문구는 천천히 반짝이고, 조명이 켜질수록 물러납니다. */
-  /* 조작 안내는 어느 장에서나 같은 결로 둡니다(.field-hint 와 같은 값). */
   .hint {
-    color: rgb(25 25 25 / 0.5);
+    color: #19191980;
     font-size: calc(14 * var(--u));
-    line-height: 1.4;
     letter-spacing: 0.01em;
-    animation: hint-pulse 2.6s ease-in-out infinite;
-  }
-}
-
-@keyframes reveal-up {
-  from {
-    opacity: 0;
-    translate: 0 calc(16 * var(--u));
-  }
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
-}
-
-@keyframes word-in {
-  from {
-    opacity: 0;
-    translate: 0 calc(20 * var(--u));
-  }
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
-}
-
-@keyframes cue-in {
-  from {
-    opacity: 0;
-    translate: 0 calc(8 * var(--u));
-  }
-  to {
-    opacity: 0.45;
-    translate: 0 0;
-  }
-}
-
-@keyframes cue-wheel {
-  0% {
-    opacity: 0;
-    translate: 0 0;
-  }
-  25% {
-    opacity: 1;
-  }
-  70% {
-    opacity: 0;
-    translate: 0 calc(11 * var(--u));
-  }
-  100% {
-    opacity: 0;
-    translate: 0 calc(11 * var(--u));
-  }
-}
-
-@keyframes cue-arrow {
-  0%,
-  100% {
-    opacity: 0.4;
-    translate: 0 0;
-  }
-  50% {
-    opacity: 1;
-    translate: 0 calc(6 * var(--u));
-  }
-}
-
-@keyframes hint-pulse {
-  0%,
-  100% {
-    opacity: calc(1 - 0.75 * var(--light));
-  }
-  50% {
-    /* 조명이 켜질수록 반짝임 폭이 좁아져, 다 켜지면 깜빡임이 멎습니다. */
-    opacity: calc((1 - 0.75 * var(--light)) * (0.4 + 0.6 * var(--light)));
-  }
-}
-
-/* 지금 칸이 차오르는 동안 */
-@keyframes step-fill {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-/* 잇는 선이 그어지는 동안 */
-@keyframes link-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-/* 화면이 바뀔 때 한 번 */
-@keyframes soft-in {
-  from {
-    opacity: 0;
-    translate: 0 calc(6 * var(--u));
-  }
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
-}
-
-/* 핀과 그 아래 카드가 떠오릅니다 */
-@keyframes tip-in {
-  from {
-    opacity: 0;
-    translate: 0 calc(8 * var(--u));
-  }
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
-}
-
-/* 클릭 유도 점에서 번져 나가는 고리 */
-@keyframes dot-pulse {
-  0% {
-    opacity: 0.45;
-    scale: 1;
-  }
-  70%,
-  100% {
-    opacity: 0;
-    scale: 2.2;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    line-height: 1.4;
+    animation: 2.6s ease-in-out infinite hint-pulse;
   }
 
-  /* 무한 반복은 짧은 duration 으로 두면 오히려 빠르게 깜빡입니다. 아예 끄고 정지값을 줍니다. */
-  .hint {
-    animation: none;
-    opacity: calc(1 - 0.75 * var(--light));
-  }
-
-  .statement[data-visible] .scroll-cue {
-    animation: none;
-    opacity: 0.45;
-  }
-
-  .statement[data-visible] .scroll-cue-dot {
-    animation: none;
-    opacity: 1;
-  }
-
-  .statement[data-visible] .scroll-cue-chevron {
-    animation: none;
-    opacity: 0.8;
-  }
-}
-
-@layer components {
-  /* ── 지구본 ────────────────────────────────────
-     정사영으로 그린 선 지도. 끌어서 돌리고, 놓으면 관성으로 이어집니다. */
   .globe {
-    position: relative;
-    display: flex;
-    height: 100%;
-    width: 100%;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    position: relative;
   }
 
-  /* 화면 한가운데 놓이는 조작 안내. 잠깐 떠 있다 스스로 물러납니다.
-     지구본은 확대 전과 후에 할 말이 다르고, 탬버린즈는 무엇을 눌러야 하는지 말합니다. */
   .center-note {
-    position: absolute;
-    left: 50%;
-    top: 50%;
     z-index: 3;
-    translate: -50% -50%;
-    border-radius: 999px;
-    background: rgb(255 255 255 / 0.94);
     padding: calc(12 * var(--u)) calc(24 * var(--u));
-    color: #191919;
+    color: #767676;
     font-family: var(--font-body);
     font-size: calc(16 * var(--u));
-    font-weight: 600;
     letter-spacing: 0.01em;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    animation: note-fade 5s ease both;
+    background: #fffffff0;
+    border-radius: 999px;
+    font-weight: 600;
+    animation: 5s both note-fade;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
   }
 
-  /* 판 한가운데가 아니라 그리드 마지막 행 한가운데에 앉힙니다.
-     55 는 한 행(110)의 절반이라, 판이 어디서 끝나든 마지막 행에 맞습니다. */
   .center-note[data-last-row] {
     top: auto;
     bottom: calc(55 * var(--u));
@@ -3159,58 +3121,57 @@
     0% {
       opacity: 0;
     }
+
     14% {
-      opacity: 0.4;
+      opacity: 0.88;
     }
+
     68% {
-      opacity: 0.4;
+      opacity: 0.88;
     }
+
     100% {
       opacity: 0;
     }
   }
 
   .globe-canvas {
-    height: 100%;
-    width: 100%;
     cursor: grab;
     touch-action: none;
+    width: 100%;
+    height: 100%;
   }
 
   .globe-canvas:active {
     cursor: grabbing;
   }
-}
 
-@layer components {
-  /* 매장 보유국 위에 뜨는 이름표. 왼쪽 끝을 붙잡고 오른쪽으로 펼쳐집니다. */
   .globe-badge {
-    position: absolute;
-    left: 0;
-    top: 0;
-    display: flex;
     align-items: center;
     gap: calc(7 * var(--tip));
     padding: calc(6 * var(--tip)) calc(12 * var(--tip));
-    border-radius: 999px;
     background: var(--fg);
     color: var(--bg);
     font-family: var(--font-display);
     font-size: calc(11 * var(--tip));
-    font-weight: 700;
-    line-height: 1.1;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     white-space: nowrap;
     pointer-events: none;
     opacity: 0;
     clip-path: inset(0 100% 0 0 round 999px);
+    border-radius: 999px;
+    font-weight: 700;
+    line-height: 1.1;
     transition:
-      clip-path 620ms cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 300ms ease;
+      clip-path 0.62s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.3s;
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
   }
 
-  /* 눌러서 펼칠 수 있다는 표시. 열리면 위를 봅니다. */
   .globe-badge-cue {
     width: calc(5 * var(--tip));
     height: calc(5 * var(--tip));
@@ -3219,7 +3180,7 @@
     border-bottom: calc(1.2 * var(--tip)) solid currentColor;
     rotate: 45deg;
     translate: 0 calc(-1.4 * var(--tip));
-    transition: rotate 240ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: rotate 0.24s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .globe-badge[data-open] .globe-badge-cue {
@@ -3233,35 +3194,27 @@
 
   .globe-badge[data-on] {
     opacity: 1;
-    clip-path: inset(0 0 0 0 round 999px);
+    clip-path: inset(0 round 999px);
   }
 
-  /* 매장 보유국마다 늘 떠 있는 이름표. 호버 뱃지와 같은 모양이고,
-     지구 뒤로 넘어간 나라만 접힙니다.
-     손이 아니라 지구가 도는 속도에 맞춰 펼쳐지므로 호버 뱃지보다 여유를 둡니다. */
   .globe-tag {
     transition:
-      clip-path 620ms cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 420ms ease;
+      clip-path 0.62s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.42s;
   }
 
   .globe-tag[data-off] {
     opacity: 0;
     clip-path: inset(0 100% 0 0 round 999px);
   }
-}
 
-@layer components {
-  /* 도는 지구본 위에 안경을 겹쳐 놓은 인트로 장면 */
   .globe-scene {
-    position: relative;
-    height: 100%;
     width: 100%;
-    /* 안경이 좌측으로 넘쳐도 잘리지 않게 둡니다. */
+    height: 100%;
+    position: relative;
     overflow: visible;
   }
 
-  /* width 만 주고 height 는 비워 두어 이미지 자체 비율을 따릅니다. */
   .globe-glasses {
     pointer-events: none;
     width: 100%;
@@ -3272,238 +3225,207 @@
     translate: -50% -50%;
   }
 
-  /* 손대지 않는 지구본에는 커서를 바꾸지 않습니다. */
   .globe-canvas[data-static] {
     cursor: default;
     pointer-events: none;
   }
-}
 
-@layer components {
-  /* ── 제안을 한 화면으로 보여 주는 장 ───────────
-     목업을 1.53 배로 키워 놓고, 장을 넘어가는 아래쪽은 캔버스가 자릅니다. */
-  /* ── 지구본만 놓고 만져 보는 장 ─────────────────
-     판 전체가 지구본이고, 글은 그 위에 얹힙니다. */
-  /* 지구본이 판을 다 덮고 있어 왼쪽 글이 점밭 위에 얹힙니다.
-     흰빛을 왼쪽에서 오른쪽으로 풀어 글 뒤만 가라앉힙니다.
-     판 여백 밖까지 물려 두어 경계가 사각형으로 드러나지 않게 합니다. */
   .field-veil {
     z-index: 1;
     margin-top: calc(-1 * var(--viewport-margin));
     margin-bottom: calc(-1 * var(--viewport-margin));
     margin-left: calc(-1 * var(--viewport-margin));
-    background: linear-gradient(
-      90deg,
-      #ffffff 0 46%,
-      rgb(255 255 255 / 0.86) 68%,
-      rgb(255 255 255 / 0) 100%
-    );
     pointer-events: none;
+    background: linear-gradient(90deg, #fff 0 46%, #ffffffdb 68%, #fff0 100%);
   }
 
   .field {
     --tip: calc(1.4 * var(--u));
     position: relative;
-    /* 펴진 지도가 판 밖으로 나가지 않게 자릅니다. */
     overflow: hidden;
   }
 
   .field-note {
-    display: flex;
-    flex-direction: column;
     gap: calc(22 * var(--u));
+    flex-direction: column;
+    display: flex;
   }
 
-  /* 조작 안내 한 줄. 본문보다 한 톤 눌러 둡니다. */
   .field-hint {
     margin-top: calc(-12 * var(--u));
-    color: rgb(25 25 25 / 0.5);
+    color: #19191980;
     font-family: var(--font-body);
     font-size: calc(14 * var(--u));
-    line-height: 1.4;
     letter-spacing: 0.01em;
+    line-height: 1.4;
   }
 
-  /* ── 현재 국가 ↔ 글로벌 전환 그림 ────────────── */
   .switch-map {
-    display: flex;
-    height: 100%;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     gap: calc(10 * var(--u));
+    flex-direction: column;
+    height: 100%;
+    display: flex;
   }
 
   .switch-tabs {
-    display: flex;
     width: 100%;
     padding: calc(3.51 * var(--u));
     border-radius: calc(10.54 * var(--u));
-    background: #e4e6e8;
     font-family: var(--font-store);
     font-size: calc(14.93 * var(--u));
-    line-height: 1.294;
     text-transform: uppercase;
+    background: #e4e6e8;
+    line-height: 1.294;
+    display: flex;
   }
 
   .switch-tabs span {
-    flex: 1 1 0;
     padding: calc(5.27 * var(--u)) 0;
     border-radius: calc(7.03 * var(--u));
     color: #858585;
     text-align: center;
+    flex: 1 1 0;
   }
 
   .switch-tabs span[data-on] {
-    background: #ffffff;
-    box-shadow: 0 calc(1 * var(--u)) calc(3 * var(--u)) rgb(0 0 0 / 0.08);
-    color: #111111;
+    box-shadow: 0 calc(1 * var(--u)) calc(3 * var(--u)) #00000014;
+    color: #111;
+    background: #fff;
   }
 
   .switch-arrow {
     height: calc(40 * var(--u));
     width: calc(24 * var(--u));
     fill: none;
-    stroke: rgb(25 25 25 / 0.4);
-    stroke-width: 1.5;
+    stroke: #19191966;
+    stroke-width: 1.5px;
   }
 
   .section:has(.field) {
+    background: #fff;
     position: relative;
-    background: #ffffff;
   }
 
-  /* 지도가 화면 끝까지 깔리는 장이라, 아래를 흰빛으로 눌러
-     넘어가는 버튼이 점밭에 묻히지 않게 합니다. 화면 너비를 다 씁니다. */
-  .section:has(.field)::after {
+  .section:has(.field):after {
     content: "";
-    position: absolute;
     right: 0;
-    /* 장은 화면 높이를 다 쓰지만 판은 가운데 놓입니다. 판 바닥에 맞춥니다. */
     bottom: calc(50% - var(--canvas-h) / 2);
-    left: 0;
     height: calc(190 * var(--u));
-    background: linear-gradient(to bottom, rgb(255 255 255 / 0), #ffffff 62%);
     pointer-events: none;
+    background: linear-gradient(#fff0, #fff 62%);
+    position: absolute;
+    left: 0;
   }
 
-  /* 지구본이 휠을 가져가는 장이라, 다음 장으로 넘어갈 길을 따로 둡니다.
-     화살표는 첫 장 스크롤 유도에 쓴 것과 같은 조각입니다. */
   .page-next {
-    position: relative;
     z-index: 1;
     --cue-stroke: calc(1.5 * var(--u));
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-self: center;
+    align-items: center;
     gap: calc(8 * var(--u));
     padding: calc(8 * var(--u)) calc(16 * var(--u));
-    border: 0;
-    background: none;
     color: var(--fg);
     font-family: var(--font-display);
     font-size: calc(11 * var(--u));
-    font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     cursor: pointer;
     opacity: 0.5;
-    transition: opacity 220ms ease;
+    background: none;
+    border: 0;
+    flex-direction: column;
+    font-weight: 700;
+    transition: opacity 0.22s;
+    display: flex;
+    position: relative;
   }
 
-  .page-next:hover {
-    opacity: 1;
-  }
-
+  .page-next:hover,
   .page-next .scroll-cue-chevron {
     opacity: 1;
   }
 
   .page-grid[data-visible] .page-next .scroll-cue-chevron {
-    animation: cue-arrow 1.8s ease-in-out infinite;
+    animation: 1.8s ease-in-out infinite cue-arrow;
   }
 
-  /* 판은 없습니다. 목업이 그리드 두 단을 그대로 채웁니다 —
-     앞 장 목업과 같은 칼럼이라 두 장의 화면이 같은 선에 섭니다. */
   .after-frame {
     position: relative;
   }
-}
 
-@layer components {
-  /* ── 제안하는 스토어 화면 목업 ─────────────────
-     화면은 넓지만 글자는 기존 스토어 화면과 같은 크기입니다.
-     화면이 넓어졌다고 글자가 커지지는 않으니까요. */
-  /* 휴대폰 한 대. 그리드 두 단 × 여섯 행을 그대로 채우고, 안쪽만 스크롤됩니다. */
   .globe-mock {
-    position: relative;
-    height: 100%;
     width: 100%;
-    overflow-y: auto;
+    height: 100%;
     padding: calc(21.08 * var(--u)) 0 calc(28.11 * var(--u));
-    background: #fafaf8;
-    color: #111111;
+    color: #111;
     font-family: var(--font-store);
-    font-weight: 400;
     scrollbar-width: none;
+    background: #fafaf8;
+    font-weight: 400;
+    position: relative;
+    overflow-y: auto;
   }
 
   .globe-mock::-webkit-scrollbar {
     display: none;
   }
 
-  /* 현재 국가 / 글로벌. 바깥 트랙은 옅은 회색, 고른 쪽만 흰색입니다. */
   .globe-tabs {
-    position: relative;
-    display: flex;
-    /* 머리글과 조금 떨어뜨립니다. */
     margin: calc(8 * var(--u)) calc(21.08 * var(--u)) 0;
     padding: calc(3.51 * var(--u));
     border-radius: calc(10.54 * var(--u));
     background: #ededed;
+    display: flex;
+    position: relative;
   }
 
   .globe-tab {
-    flex: 1 1 0;
     padding: calc(5.27 * var(--u)) 0;
     border-radius: calc(7.03 * var(--u));
     color: #858585;
     font-size: calc(14.93 * var(--u));
-    line-height: 1.294;
     text-transform: uppercase;
     cursor: pointer;
+    flex: 1 1 0;
+    line-height: 1.294;
     transition:
-      background 260ms ease,
-      color 260ms ease;
+      background 0.26s,
+      color 0.26s;
   }
 
   .globe-tab[data-on] {
-    background: #ffffff;
-    box-shadow: 0 calc(1 * var(--u)) calc(3 * var(--u)) rgb(0 0 0 / 0.08);
-    color: #111111;
+    box-shadow: 0 calc(1 * var(--u)) calc(3 * var(--u)) #00000014;
+    color: #111;
+    background: #fff;
   }
 
-  /* 선택 상자 두 개 대신 지금 보고 있는 범위를 한 줄로 적습니다. */
   .globe-scope-row {
-    display: flex;
     align-items: center;
     gap: calc(5 * var(--u));
     margin: calc(14.05 * var(--u)) calc(21.08 * var(--u)) 0;
     padding-left: calc(2 * var(--u));
+    display: flex;
   }
 
   .globe-pick {
-    position: relative;
     display: inline-flex;
+    position: relative;
   }
 
   .globe-scope-sep,
+  /* 나라 이름도 눌러서 고르는 자리입니다. 누르면 그 나라 매장을 다 봅니다. */
   .globe-scope-fixed {
     color: #858585;
     font-size: calc(10.54 * var(--u));
     font-weight: 300;
     line-height: 1.416;
+    cursor: pointer;
+  }
+
+  .globe-scope-fixed[data-on] {
+    color: #1d1d1d;
   }
 
   .globe-scope[disabled] {
@@ -3512,50 +3434,49 @@
   }
 
   .globe-scope {
-    display: flex;
     align-items: center;
     gap: calc(2 * var(--u));
     font-size: calc(10.54 * var(--u));
+    cursor: pointer;
     font-weight: 300;
     line-height: 1.416;
-    cursor: pointer;
+    display: flex;
   }
 
   .globe-scope .store-icon {
     flex: none;
-    transition: rotate 240ms ease;
+    transition: rotate 0.24s;
   }
 
   .globe-scope[data-open] .store-icon {
     rotate: 180deg;
   }
 
-  /* 눌러서 여는 지역 목록 */
   .globe-scope-list {
-    position: absolute;
     left: 0;
     top: calc(100% + 6 * var(--u));
     z-index: 2;
-    display: flex;
     width: calc(120 * var(--u));
-    flex-direction: column;
-    overflow: hidden;
     border-radius: calc(7.03 * var(--u));
     outline: calc(0.88 * var(--u)) solid #d8d8d8;
     outline-offset: calc(-0.88 * var(--u));
-    background: #ffffff;
-    animation: soft-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    background: #fff;
+    flex-direction: column;
+    animation: 0.24s cubic-bezier(0.22, 1, 0.36, 1) both soft-in;
+    display: flex;
+    position: absolute;
+    overflow: hidden;
   }
 
   .globe-scope-item {
     padding: calc(9 * var(--u)) calc(12 * var(--u));
     color: #858585;
     font-size: calc(10.54 * var(--u));
-    font-weight: 300;
-    line-height: 1.416;
     text-align: left;
     cursor: pointer;
-    transition: background 180ms ease;
+    font-weight: 300;
+    line-height: 1.416;
+    transition: background 0.18s;
   }
 
   .globe-scope-item + .globe-scope-item {
@@ -3563,76 +3484,68 @@
   }
 
   .globe-scope-item[data-on] {
-    color: #111111;
+    color: #111;
   }
 
   .globe-scope-item:hover {
     background: #f7f7f7;
   }
 
-  /* 지구본과 지도가 놓이는 자리. 화면 폭을 꽉 채웁니다. */
   .globe-stage {
-    position: relative;
     height: calc(380 * var(--u));
     margin: calc(10.54 * var(--u)) calc(8 * var(--u)) 0;
+    position: relative;
     overflow: hidden;
   }
 
-  /* 이름표도 포트폴리오 글자가 아니라 이 화면의 글자를 씁니다. */
   .globe-stage .globe-badge {
     gap: calc(4 * var(--u));
     padding: calc(4 * var(--u)) calc(8 * var(--u));
     font-family: var(--font-store);
     font-size: calc(8.78 * var(--u));
-    font-weight: 400;
     letter-spacing: normal;
     text-transform: none;
+    font-weight: 400;
   }
 
-  /* 누를 수 있는 이름표 */
   .globe-badge[data-tap] {
     cursor: pointer;
     pointer-events: auto;
   }
 
-  /* 이름표 아래로 열리는 매장 카드. 글자는 다른 목업과 같은 얼굴입니다. */
-  /* 카드가 쌓이는 자리. 겹친 매장 수만큼 같은 카드가 아래로 이어집니다. */
   .globe-card {
     font-family: var(--font-store);
-    position: absolute;
-    left: 0;
-    top: 0;
-    display: flex;
-    /* 카드 그림자가 굴림 상자에 잘리지 않도록 사방에 자리를 두고,
-       그만큼 왼쪽으로 당겨 카드가 이름표와 같은 선에서 시작하게 합니다. */
     width: calc(324 * var(--tip));
     padding: calc(12 * var(--tip));
     margin-left: calc(-12 * var(--tip));
-    flex-direction: column;
     gap: calc(8 * var(--u));
-    overflow-y: auto;
     scrollbar-width: none;
     pointer-events: none;
     opacity: 0;
+    flex-direction: column;
     transition:
-      opacity 260ms ease,
-      translate 0s;
+      opacity 0.26s,
+      translate;
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
   }
 
   .globe-card::-webkit-scrollbar {
     display: none;
   }
 
-  /* 누른 핀 아래로 뜨는 매장 카드 한 장 */
   .globe-tip {
-    display: flex;
-    flex: 0 0 auto;
-    flex-direction: column;
     gap: calc(4 * var(--tip));
     padding: calc(16 * var(--tip));
     border-radius: calc(8 * var(--tip));
-    background: #ffffff;
-    box-shadow: 0 calc(4 * var(--tip)) calc(14 * var(--tip)) rgb(0 0 0 / 0.1);
+    box-shadow: 0 calc(4 * var(--tip)) calc(14 * var(--tip)) #0000001a;
+    background: #fff;
+    flex-direction: column;
+    flex: none;
+    display: flex;
   }
 
   .globe-card[data-on] {
@@ -3640,32 +3553,25 @@
     opacity: 1;
   }
 
-  /* 오른쪽 자리가 모자라면 왼쪽에 붙고, 펼쳐지는 방향도 뒤집습니다. */
   .globe-badge[data-left] {
     clip-path: inset(0 0 0 100% round 999px);
   }
 
   .globe-badge[data-left][data-on] {
-    clip-path: inset(0 0 0 0 round 999px);
+    clip-path: inset(0 round 999px);
   }
 
-  /* 이 크기에서는 지도 글자와 핀이 작아 한 번 더 당겨 봅니다. */
   .globe-stage img {
     scale: 1.4;
   }
 
-  /* 화면 위 세 점. 각자 짚는 자리 오른쪽에 걸칩니다.
-     버튼 안에 버튼을 넣을 수 없어 모두 바깥에서 얹습니다.
-     .store-dot 이 뒤에 오므로 클래스를 겹쳐 우선순위를 올립니다. */
-  /* 탭 묶음 왼쪽에 걸칩니다. */
   .store-dot.globe-dot-tabs {
     left: calc(-9 * var(--u));
-    right: auto;
     top: 50%;
+    right: auto;
     translate: 0 -50%;
   }
 
-  /* 카드 오른쪽에 걸치되 화면 밖으로 잘리지 않을 만큼만 나갑니다. */
   .store-dot.globe-dot-list {
     left: auto;
     right: calc(-4 * var(--u));
@@ -3673,7 +3579,6 @@
     translate: 0 -50%;
   }
 
-  /* 구의 오른쪽 끝. 반지름은 자리의 짧은 변 × 0.46 이라 여기서 계산해 둡니다. */
   .store-dot.globe-dot-globe {
     left: auto;
     right: calc(13 * var(--u));
@@ -3682,358 +3587,404 @@
   }
 
   .globe-locate {
-    position: absolute;
     right: calc(21.08 * var(--u));
     bottom: calc(10.54 * var(--u));
-    display: inline-flex;
     align-items: center;
     gap: calc(3.51 * var(--u));
     padding: calc(5.27 * var(--u)) calc(10.54 * var(--u));
-    border-radius: 999px;
-    background: #ffffff;
-    box-shadow: 0 calc(2 * var(--u)) calc(6 * var(--u)) rgb(0 0 0 / 0.12);
+    box-shadow: 0 calc(2 * var(--u)) calc(6 * var(--u)) #0000001f;
     font-size: calc(8.78 * var(--u));
-    line-height: 1.5;
     white-space: nowrap;
     cursor: pointer;
+    background: #fff;
+    border-radius: 999px;
+    line-height: 1.5;
+    display: inline-flex;
+    position: absolute;
   }
 
-  /* 지구본 아래 매장 목록. 카드는 기존 목업과 같은 것을 씁니다. */
   .globe-list {
-    display: flex;
-    flex-direction: column;
     gap: calc(10.54 * var(--u));
     margin: calc(14.05 * var(--u)) calc(10.54 * var(--u)) 0;
+    flex-direction: column;
+    display: flex;
   }
 
   .globe-list .store-card {
-    position: relative;
     height: auto;
+    position: relative;
   }
 
   .globe-list .store-hours {
     display: block;
   }
-}
 
-@layer components {
-  /* ── 젠틀몬스터 스토어 목록 화면 목업 ──────────────
-     실제 화면을 0.703배로 줄여 옮긴 것이라 수치가 딱 떨어지지 않습니다.
-     프레임보다 길어서 아래쪽은 프레임 밖으로 잘려 나갑니다. */
-  /* 일부만 보여 줄 때는 잘린 티가 나지 않게 아래도 여백을 둡니다. */
   .store-panel[data-parts] {
     padding-bottom: calc(21.08 * var(--u));
   }
 
   .store-panel {
-    position: absolute;
-    /* 목업은 그림입니다. 눌리는 건 점뿐이라, 커진 요소나 펼친 목록이
-       다른 점을 덮어도 그 점을 누를 수 있습니다. */
     pointer-events: none;
-    left: 50%;
-    top: 0;
     width: calc(332 * var(--u));
     margin-left: calc(-166 * var(--u));
-    background: #fafaf8;
-    color: #111111;
+    color: #111;
     font-family: var(--font-store);
+    background: #fafaf8;
     font-weight: 400;
+    position: absolute;
+    top: 0;
+    left: 50%;
   }
 
-  /* 목업만 따로 놓는 자리 */
   .store-slot {
     position: relative;
     overflow: hidden;
   }
 
-  /* 이 목업은 자리 안에서 아래로 내려 앉고, 아래쪽은 잘려 나갑니다. */
   .store-slot .store-panel {
     top: calc(52 * var(--u));
-  }
-
-  /* 목업을 실제 기기처럼 감싸는 테두리.
-     8장 화면은 아래가 열린 채 흐려지므로 위 모서리만 둥글립니다. */
-  .store-slot .store-panel {
+    box-shadow: 0 calc(2 * var(--u)) calc(26 * var(--u)) #1919190a;
     border: 1px solid #1919190a;
     border-bottom: 0;
-    border-radius: calc(26 * var(--u)) calc(26 * var(--u)) 0 0;
-    box-shadow: 0 calc(2 * var(--u)) calc(26 * var(--u)) #1919190a;
   }
 
-  /* 11장 화면도 같은 테두리를 쓰되, 아래는 열어 두고 흐리게 지웁니다. */
   .after-frame .globe-mock {
-    border: 1px solid rgb(250 250 250 / 0.14);
-    border-bottom: 0;
-    border-radius: calc(26 * var(--u)) calc(26 * var(--u)) 0 0;
-    box-shadow: 0 calc(2 * var(--u)) calc(26 * var(--u)) rgb(0 0 0 / 0.4);
-    /* 아래로 갈수록 화면 자체가 지워집니다. 같은 색을 위에 덮는 것과 달리
-       판 색이 무엇이든 맞고, 테두리와 그림자도 함께 풀립니다. */
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      #000 80%,
-      rgb(0 0 0 / 0.5) 92%,
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      #000 80%,
-      rgb(0 0 0 / 0.5) 92%,
-      transparent 100%
-    );
-    /* 8장 화면은 판 밖으로 흘러 그림자 아랫단이 잘립니다. 여기서도 잘라 맞춥니다. */
+    box-shadow: 0 calc(2 * var(--u)) calc(26 * var(--u)) #0006;
     clip-path: inset(
       calc(-40 * var(--u)) calc(-40 * var(--u)) 0 calc(-40 * var(--u))
     );
+    border: 1px solid #fafafa24;
+    border-bottom: 0;
+    -webkit-mask-image: linear-gradient(#000 80%, #00000080 92%, #0000 100%);
+    mask-image: linear-gradient(#000 80%, #00000080 92%, #0000 100%);
   }
 
-  /* 화면 아래가 장 바닥에서 끊긴 것처럼 보이도록 흰빛을 덮습니다.
-     투명에서 시작해 바닥에서 온전히 흰색이 되도록 고르게 걸칩니다. */
-
-  /* 매장 수와 필터 버튼 */
   .store-head {
-    display: flex;
     height: calc(49.19 * var(--u));
-    align-items: center;
-    justify-content: space-between;
     padding: 0 calc(21.08 * var(--u));
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
   }
 
   .store-count {
     font-size: calc(14.93 * var(--u));
-    line-height: 1.294;
     text-transform: uppercase;
+    line-height: 1.294;
   }
 
-  /* 개수는 글자보다 작게 붙습니다. */
   .store-count span {
     font-size: calc(11.2 * var(--u));
   }
 
   .store-icon {
-    display: block;
+    color: #111;
     flex: none;
-    color: #111111;
+    display: block;
   }
 
-  /* 국가·지역 선택과 현재 위치 */
   .store-filters {
     padding: calc(21.08 * var(--u)) calc(21.08 * var(--u)) 0;
   }
 
   .store-selects {
-    display: flex;
     gap: calc(7.03 * var(--u));
+    display: flex;
   }
 
   .store-select {
-    position: relative;
     width: calc(141.41 * var(--u));
     height: calc(42.16 * var(--u));
     border-radius: calc(7.03 * var(--u));
-    background: #ffffff;
+    background: #fff;
+    position: relative;
   }
 
   .store-select-label {
-    position: absolute;
     left: calc(10.55 * var(--u));
     top: calc(7.03 * var(--u));
     color: #858585;
     font-size: calc(8.78 * var(--u));
     font-weight: 300;
     line-height: 1.5;
+    position: absolute;
   }
 
   .store-select-value {
-    position: absolute;
     left: calc(9.66 * var(--u));
     top: calc(20.2 * var(--u));
     font-size: calc(10.54 * var(--u));
     font-weight: 300;
     line-height: 1.416;
+    position: absolute;
   }
 
-  /* 폭이 늘어나도 끝에서 같은 거리에 남도록 오른쪽 기준으로 둡니다. */
   .store-select .store-icon {
-    position: absolute;
     right: calc(10.54 * var(--u));
     top: calc(12.3 * var(--u));
+    position: absolute;
   }
 
   .store-locate {
-    position: relative;
-    display: inline-flex;
     align-items: center;
     gap: calc(3.51 * var(--u));
     margin-top: calc(7.03 * var(--u));
     padding: calc(3.51 * var(--u)) calc(10.54 * var(--u));
     font-size: calc(8.78 * var(--u));
     line-height: 1.5;
+    display: inline-flex;
+    position: relative;
   }
 
-  /* 목록 / 지도 전환 */
   .store-tabs {
-    display: flex;
     height: calc(59.72 * var(--u));
     justify-content: center;
     gap: calc(10.54 * var(--u));
     padding: calc(21.96 * var(--u)) 0 calc(11.42 * var(--u));
+    display: flex;
   }
 
   .store-tab {
-    position: relative;
-    display: flex;
-    transition:
-      background 320ms ease,
-      color 320ms ease;
     height: calc(26.35 * var(--u));
-    align-items: center;
     padding: 0 calc(10.54 * var(--u));
     border-radius: calc(7.03 * var(--u));
     color: #858585;
     font-size: calc(14.93 * var(--u));
-    line-height: 1.294;
     text-transform: uppercase;
+    align-items: center;
+    line-height: 1.294;
+    transition:
+      background 0.32s,
+      color 0.32s;
+    display: flex;
+    position: relative;
   }
 
   .store-tab[data-on] {
+    color: #111;
     background: #e2e4e5;
-    color: #111111;
   }
 
-  /* 지도 탭에서 목록 자리를 대신하는 지도. 목록과 같은 높이를 씁니다. */
   .store-map {
-    position: relative;
     height: calc(495.37 * var(--u));
     width: 100%;
+    position: relative;
     overflow: hidden;
   }
 
-  /* 이미 좁혀 찍은 지도라 살짝만 더 당기고, 고른 핀이 위쪽에 오도록 끌어올립니다. */
   .store-map img {
     scale: 1.35;
     translate: 0 calc(-86 * var(--u));
   }
 
-  /* 눌린 핀. 지도 이미지 안 핀 자리에 맞춰 테를 두릅니다. */
   .store-pin {
-    position: absolute;
     left: calc(160.3 * var(--u));
     top: calc(147.1 * var(--u));
     height: calc(27 * var(--u));
     width: calc(27 * var(--u));
-    border-radius: 50%;
-    outline: calc(3 * var(--u)) solid rgb(25 25 25 / 0.28);
+    outline: calc(3 * var(--u)) solid #19191947;
     outline-offset: calc(3 * var(--u));
-    animation: tip-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    border-radius: 50%;
+    animation: 0.32s cubic-bezier(0.22, 1, 0.36, 1) both tip-in;
+    position: absolute;
   }
 
-  /* 누른 핀 아래로 뜨는 매장 카드. 목업이 아니라 실제 화면 크기를 씁니다. */
   .store-tip {
-    position: absolute;
     left: calc(16 * var(--u));
     top: calc(186 * var(--u));
-    display: flex;
     width: calc(300 * var(--u));
-    flex-direction: column;
     gap: calc(4 * var(--u));
     padding: calc(16 * var(--u));
     border-radius: calc(8 * var(--u));
-    background: #ffffff;
-    animation: tip-in 380ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
+    background: #fff;
+    flex-direction: column;
+    animation: 0.38s cubic-bezier(0.22, 1, 0.36, 1) 80ms both tip-in;
+    display: flex;
+    position: absolute;
   }
 
   .store-tip-top {
-    display: flex;
     justify-content: space-between;
     gap: calc(8 * var(--tip));
+    display: flex;
   }
 
   .store-tip-name {
-    color: #111111;
+    color: #111;
     font-size: calc(12 * var(--tip));
-    line-height: 1.416;
     text-transform: uppercase;
     white-space: nowrap;
+    line-height: 1.416;
   }
 
   .store-tip-distance,
   .store-tip-address {
     color: #858585;
     font-size: calc(10 * var(--tip));
-    line-height: 1.5;
     white-space: nowrap;
+    line-height: 1.5;
   }
 
   .store-tip-hours {
-    display: flex;
     gap: calc(4 * var(--u));
     color: #858585;
     font-size: calc(12 * var(--u));
+    white-space: nowrap;
     font-weight: 300;
     line-height: 1.416;
-    white-space: nowrap;
+    display: flex;
   }
 
   .store-tip-tags {
-    display: flex;
     align-items: center;
     gap: calc(8 * var(--tip));
     padding-top: calc(4 * var(--tip));
+    display: flex;
   }
 
   .store-tip-tag {
-    display: flex;
     height: calc(15 * var(--tip));
-    align-items: center;
     padding: 0 calc(4 * var(--tip));
     border-radius: calc(4 * var(--tip));
-    background: #dfe3e8;
     color: #858585;
     font-size: calc(10 * var(--tip));
-    line-height: 1.5;
     white-space: nowrap;
+    background: #dfe3e8;
+    align-items: center;
+    line-height: 1.5;
+    display: flex;
   }
 
-  /* ── 자동 전환 진행 막대 ───────────────────────
-     목업 아래 세 칸. 지금 칸이 시간에 맞춰 차오릅니다. */
   .store-steps {
-    position: absolute;
     left: 50%;
-    bottom: calc(16 * var(--u));
-    display: flex;
+    bottom: calc(18 * var(--u));
     width: calc(332 * var(--u));
     gap: calc(6 * var(--u));
     margin-left: calc(-166 * var(--u));
     padding: 0 calc(32 * var(--u));
+    display: flex;
+    position: absolute;
   }
 
-  /* 막대 뒤를 아래로 갈수록 하얗게 덮어 화면과 겹쳐 보이지 않게 합니다. */
-  .store-scrim {
+  /* 목업 아래에 놓이는 재생 단추. 눌러야 순서대로 훑기 시작합니다. */
+  .store-play {
     position: absolute;
     left: 50%;
-    bottom: 0;
+    bottom: calc(14 * var(--u));
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(12 * var(--u));
+    padding: 0;
+    border: 0;
+    background: none;
+    translate: -50% 0;
+    color: rgb(25 25 25 / 0.62);
+    cursor: pointer;
+    transition: opacity 260ms ease;
+  }
+
+  .store-play-key {
+    display: grid;
+    place-items: center;
+    width: calc(30 * var(--u));
+    height: calc(30 * var(--u));
+    border-radius: 50%;
+    border: 1px solid rgb(25 25 25 / 0.14);
+    background: rgb(255 255 255 / 0.92);
+    transition:
+      background 200ms ease,
+      color 200ms ease;
+  }
+
+  .store-play-key svg {
+    width: calc(19 * var(--u));
+    height: calc(19 * var(--u));
+    fill: currentColor;
+    /* 삼각형이 원 한가운데로 보이게 반 칸 당깁니다. */
+    margin-left: calc(1 * var(--u));
+  }
+
+  /* 단추 위에 뜨는 다크 툴팁. 꼬리가 단추를 가리킵니다. */
+  .store-play-label {
+    position: relative;
+    padding: calc(5 * var(--u)) calc(9 * var(--u));
+    border-radius: calc(5 * var(--u));
+    background: #191919;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: calc(10 * var(--u));
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    white-space: nowrap;
+    /* 가만히 있지 않고 조금씩 떠올라, 눌러 보라는 신호가 됩니다. */
+    animation: store-play-bob 2.2s ease-in-out infinite;
+  }
+
+  @keyframes store-play-bob {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    50% {
+      translate: 0 calc(-3 * var(--u));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .store-play-label {
+      animation: none;
+    }
+  }
+
+  .store-play-label::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: 0;
+    height: 0;
+    translate: -50% 0;
+    border: calc(4 * var(--u)) solid transparent;
+    border-top-color: #191919;
+  }
+
+  .store-play:hover .store-play-key {
+    background: #191919;
+    color: #fff;
+  }
+
+  .store-play[data-gone] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .store-scrim {
     height: calc(140 * var(--u));
     width: calc(332 * var(--u));
     margin-left: calc(-166 * var(--u));
-    background: linear-gradient(to bottom, rgb(255 255 255 / 0), #ffffff 72%);
+    background: linear-gradient(#fff0, #fff 72%);
+    position: absolute;
+    bottom: 0;
+    left: 50%;
   }
 
   .step {
     height: calc(3 * var(--u));
+    background: #19191926;
     flex: 1 1 0;
     overflow: hidden;
-    background: rgb(25 25 25 / 0.15);
   }
 
   .step-fill {
-    display: block;
-    height: 100%;
     background: var(--fg);
+    transform-origin: 0;
+    height: 100%;
+    display: block;
     transform: scaleX(0);
-    transform-origin: left center;
   }
 
-  /* 지나온 칸은 채운 채로 둡니다. */
   .step[data-state="done"] .step-fill {
     transform: scaleX(1);
   }
@@ -4042,81 +3993,76 @@
     animation: step-fill var(--dwell) linear forwards;
   }
 
-  /* 목록과 지도가 서로 바뀔 때 한 번 부드럽게 떠오릅니다. */
   .store-results {
-    animation: soft-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: 0.52s cubic-bezier(0.22, 1, 0.36, 1) both soft-in;
   }
 
-  /* 매장 카드 목록. 자리는 지도와 같은 높이로 고정하고 안쪽만 움직입니다. */
   .store-list {
     height: calc(495.37 * var(--u));
-    overflow: hidden;
     padding: 0 calc(10.54 * var(--u));
+    overflow: hidden;
   }
 
   .store-list-inner {
-    display: flex;
-    flex-direction: column;
     gap: calc(21.08 * var(--u));
     padding: calc(10.54 * var(--u)) 0 calc(28.11 * var(--u));
+    flex-direction: column;
     transition: translate 1.8s cubic-bezier(0.33, 1, 0.68, 1);
+    display: flex;
   }
 
-  /* 현재 위치로 정렬한 뒤 목록이 자리 안에서 스스로 내려갑니다. */
   .store-list[data-scrolled] .store-list-inner {
     translate: 0 calc(-190 * var(--u));
   }
 
   .store-card {
-    display: flex;
     height: calc(98.37 * var(--u));
-    flex-direction: column;
     gap: calc(3.51 * var(--u));
-    /* overflow: hidden; */
     padding: calc(14.05 * var(--u));
     border-radius: calc(7.03 * var(--u));
-    background: #ffffff;
+    background: #fff;
+    flex-direction: column;
+    display: flex;
   }
 
   .store-card-top {
-    display: flex;
     justify-content: space-between;
     gap: calc(7.03 * var(--u));
+    display: flex;
   }
 
   .store-name {
     font-size: calc(10.54 * var(--u));
-    line-height: 1.416;
     text-transform: uppercase;
     white-space: nowrap;
+    line-height: 1.416;
   }
 
   .store-distance,
   .store-address {
     color: #858585;
     font-size: calc(8.78 * var(--u));
-    line-height: 1.5;
     white-space: nowrap;
+    line-height: 1.5;
   }
 
   .store-hours {
-    display: flex;
     gap: calc(3.51 * var(--u));
     color: #858585;
     font-size: calc(10.54 * var(--u));
+    white-space: nowrap;
     font-weight: 300;
     line-height: 1.416;
-    white-space: nowrap;
+    display: flex;
   }
 
   .store-tags {
-    display: flex;
     align-items: center;
     gap: calc(7.03 * var(--u));
     padding-top: calc(3.52 * var(--u));
+    display: flex;
   }
 
-  /* 누른 자리가 제자리에서 조금 커집니다. 자리는 그대로 두고 위로만 자랍니다. */
   .store-select,
   .store-locate,
   .store-tab {
@@ -4128,31 +4074,29 @@
     scale: 1.2;
   }
 
-  /* 시/군/구를 켜면 그 아래로 지역 목록이 열립니다. 상자와 함께 커집니다. */
   .store-open-list {
-    animation: soft-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
-    position: absolute;
     left: 0;
     top: calc(100% + 5.98 * var(--u));
-    display: flex;
     max-height: calc(237.14 * var(--u));
     width: 100%;
-    flex-direction: column;
-    overflow: hidden;
     padding: 0 calc(4 * var(--u));
     border-radius: calc(7.03 * var(--u));
     outline: calc(0.88 * var(--u)) solid #d8d8d8;
     outline-offset: calc(-0.88 * var(--u));
-    background: #ffffff;
+    background: #fff;
+    flex-direction: column;
+    animation: 0.3s cubic-bezier(0.22, 1, 0.36, 1) both soft-in;
+    display: flex;
+    position: absolute;
+    overflow: hidden;
   }
 
   .store-open-item {
     height: calc(43.04 * var(--u));
-    flex: none;
-    /* 목록 여백을 줄이고 그만큼 지역에 넘겨, 짚은 자리가 글자에 붙지 않게 합니다. */
     padding: calc(12.3 * var(--u)) calc(7.47 * var(--u)) 0;
     border-bottom: calc(0.88 * var(--u)) solid #d8d8d8;
     font-size: calc(10.54 * var(--u));
+    flex: none;
     font-weight: 300;
     line-height: 1.416;
   }
@@ -4163,13 +4107,12 @@
 
   .store-open-item {
     transition:
-      background 180ms ease,
-      color 180ms ease;
+      background 0.18s,
+      color 0.18s;
   }
 
-  /* 지금 고른 지역 */
   .store-open-item[data-on] {
-    color: #111111;
+    color: #111;
     font-weight: 500;
   }
 
@@ -4177,147 +4120,2308 @@
     color: #858585;
   }
 
-  /* 서울 위에 손이 올라가 눌리는 참 */
   .store-open-item[data-press] {
+    color: #111;
     background: #f7f7f7;
-    color: #111111;
   }
 
-  /* 펼쳐 놓은 상자는 테두리로 표시합니다. */
   .store-select[data-hot] {
-    outline: calc(0.88 * var(--u)) solid #111111;
+    outline: calc(0.88 * var(--u)) solid #111;
     outline-offset: calc(-0.88 * var(--u));
   }
 
-  /* 눌러야 하는 자리를 짚는 점. 누르게 될 자리 위에 얹힙니다.
-     목업이 아니라 그 위에 얹는 주석이라 페이지 배율을 그대로 씁니다. */
   .store-dot {
-    position: absolute;
     left: calc(50% + 4 * var(--u));
-    top: 50%;
-    display: flex;
     height: calc(18 * var(--u));
     width: calc(18 * var(--u));
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    translate: -50% -50%;
-    border-radius: 50%;
     background: var(--fg);
     color: var(--bg);
     font-family: var(--font-display);
     font-size: calc(8 * var(--u));
-    font-weight: 700;
-    line-height: 1;
     letter-spacing: 0.02em;
     cursor: pointer;
     pointer-events: auto;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    font-weight: 700;
+    line-height: 1;
+    display: flex;
+    position: absolute;
+    top: 50%;
+    translate: -50% -50%;
   }
 
-  /* 번호는 번지는 고리보다 앞에 둡니다. */
   .store-dot span {
-    position: relative;
     z-index: 1;
+    position: relative;
   }
 
-  /* 좁은 요소에서는 글자를 덮지 않도록 옆으로 비켜섭니다.
-     여백 자리만 살짝 물고 글자에는 닿지 않습니다. */
-  /* 아이콘 왼쪽 절반에 걸칩니다. 아이콘이 아주 가려지지는 않습니다. */
   .store-dot-left {
     left: auto;
-    right: calc(100% - 17.6 * var(--u));
+    right: calc(100% - 5 * var(--u));
     translate: 0 -50%;
   }
 
-  /* 탭은 둘이 나란해서, 왼쪽에 두면 어느 탭을 가리키는지 흐려집니다. */
   .store-dot-right {
     left: auto;
     right: calc(-8 * var(--u));
     translate: 0 -50%;
   }
 
-  /* 점을 고르면 짝이 되는 항목만 남고 나머지 항목은 물러납니다.
-     목업은 그대로 둡니다. 등장 애니메이션이 항목의 opacity 를 붙잡고 있어
-     (fill-mode: both) 흐려지는 건 안쪽 요소에 겁니다. */
-  /* 점을 고르면 짝이 되는 항목만 남고 나머지 항목은 물러납니다.
-     등장 애니메이션이 항목의 opacity 를 붙잡고 있어(fill-mode: both)
-     흐려지는 건 안쪽 요소에 겁니다. */
   .issue > * {
-    transition: opacity 0.5s ease;
+    transition: opacity 0.5s;
   }
 
   .issue[data-dim] > * {
     opacity: 0.18;
   }
 
-  /* 고른 항목과 그 점을 잇는 점선. 두 번 꺾여 들어갑니다. */
   .link {
-    position: absolute;
-    inset: 0;
     z-index: 3;
-    /* svg 는 고유 크기(300×150)를 가진 요소라 inset 만으로는 늘어나지 않습니다.
-       마스크가 뷰포트를 기준으로 잘리므로 크기를 분명히 줘야 합니다. */
-    height: 100%;
-    width: 100%;
-    overflow: visible;
     fill: none;
     pointer-events: none;
-  }
-
-  .section:has(.after-frame) .link-dash {
-    stroke: rgb(250 250 250 / 0.3);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    overflow: visible;
   }
 
   .link-dash {
-    stroke: rgb(25 25 25 / 0.22);
-    stroke-width: 0.5;
+    stroke: rgb(150 150 150 / 0.9);
+    stroke-width: 0.8px;
     stroke-dasharray: 2 3;
   }
 
-  /* 글이 다 뜬 뒤에 점에서 항목 쪽으로 열립니다. */
   .link-reveal {
-    stroke: #ffffff;
-    stroke-width: 3;
+    stroke: #fff;
+    stroke-width: 3px;
     stroke-dasharray: var(--len);
     stroke-dashoffset: var(--len);
-    animation: link-draw 760ms cubic-bezier(0.33, 1, 0.68, 1) 460ms both;
+    animation: 0.76s cubic-bezier(0.33, 1, 0.68, 1) 0.46s both link-draw;
   }
 
-  /* 지금 가리키는 점만 또렷하게 뜁니다.
-     셋이 한꺼번에 뛰면 어느 순서로 보는 것인지 읽히지 않습니다. */
   .store-dot[aria-pressed="false"] {
-    opacity: 0.3;
+    opacity: 0.45;
   }
 
-  .store-dot[aria-pressed="false"]::after {
-    animation: none;
-    opacity: 0;
+  /* 고른 것이 없을 때는 셋 다 제 밝기로 서 있습니다. */
+  .store-panel[data-idle] .store-dot[aria-pressed="false"] {
+    opacity: 1;
+  }
+
+  .store-dot[aria-pressed="false"]:after {
+    animation: 2.6s ease-out infinite dot-pulse-idle;
   }
 
   .store-dot {
-    transition: opacity 0.45s ease;
+    transition: opacity 0.45s;
   }
 
-  /* 천천히 번져 나가는 고리 */
-  .store-dot::after {
+  .store-dot:after {
     content: "";
+    background: var(--fg);
+    border-radius: 50%;
+    animation: 2.2s ease-out infinite dot-pulse;
     position: absolute;
     inset: 0;
-    border-radius: 50%;
-    background: var(--fg);
-    animation: dot-pulse 2.2s ease-out infinite;
   }
 
   .store-tag {
-    display: flex;
     height: calc(13.17 * var(--u));
-    align-items: center;
     padding: 0 calc(3.51 * var(--u));
     border-radius: calc(3.51 * var(--u));
-    background: #dfe3e8;
     color: #858585;
     font-size: calc(8.78 * var(--u));
+    white-space: nowrap;
+    background: #dfe3e8;
+    align-items: center;
+    line-height: 1.5;
+    display: flex;
+  }
+
+  /* ── 03장 지금의 과정 — 화면들이 놓이는 판 ────────
+     자리는 하나하나 단·행으로 찍습니다. 넷을 한 줄로 세우지 않고
+     두 짝씩 비스듬히 내려 놓아, 옮겨 다닌 자국이 남게 합니다. */
+  .shift-stage {
+    position: relative;
+  }
+
+  .shift-slot {
+    position: absolute;
+  }
+
+  /* 제안에서 사라지는 화면. 물러나고, 이름에 줄이 그어집니다. */
+  .shift-slot[data-gone] .wf,
+  .shift-slot[data-gone] .shift-cap {
+    opacity: 0.32;
+  }
+
+  .shift-slot[data-gone] .shift-name {
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0;
+  }
+
+  /* 양쪽 무리에 붙는 이름 */
+  .shift-side {
+    position: absolute;
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(11 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* 02장을 통째로 줄여 넣는 자리. 판 하나를 그대로 옮겨 놓기 때문에
+     그 장을 고치면 여기도 같이 따라옵니다. */
+  .shift-copy {
+    position: absolute;
+    transform: scale(var(--scale));
+    transform-origin: top left;
+    pointer-events: none;
+  }
+
+  /* 넷이 하나로 모인 화면. 안쪽은 실제 화면이라 위쪽만 보이게 자릅니다. */
+  .shift-new {
+    position: absolute;
+    overflow: hidden;
+    background: #ffffff;
+  }
+
+  .shift-cap {
+    display: flex;
+    align-items: baseline;
+    gap: calc(8 * var(--u));
+    padding-bottom: calc(10 * var(--u));
+  }
+
+  .shift-no {
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(11 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.14em;
+  }
+
+  .shift-name {
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: calc(12.22 * var(--u));
+    font-weight: 500;
+    letter-spacing: 0.01em;
     line-height: 1.5;
     white-space: nowrap;
+  }
+
+  /* ── 지금의 화면들, 와이어프레임 ────────────────
+     덩이와 줄만 남긴 회색 판입니다. 무엇이 예쁜지가 아니라
+     몇 번을 옮겨 다녀야 하는지를 보여 주는 그림이라 색을 뺍니다.
+
+     안쪽은 375 × 812 로 짜고, --wu 하나로 통째로 줄입니다.
+     그래야 어떤 크기로 세워도 휴대폰 비율과 안쪽 비례가 함께 유지됩니다. */
+  .wf {
+    --wf-h: calc(320 * var(--u));
+    --wu: calc(var(--wf-h) / 812);
+    display: flex;
+    height: var(--wf-h);
+    width: calc(var(--wf-h) * 375 / 812);
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #ececec;
+    border-radius: calc(28 * var(--wu));
+    background: #fafafa;
+  }
+
+  /* 머리 — 가운데 이름 한 줄 */
+  .wf-head {
+    position: relative;
+    display: flex;
+    height: calc(56 * var(--wu));
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #ececec;
+  }
+
+  .wf-back {
+    position: absolute;
+    left: calc(16 * var(--wu));
+    height: calc(14 * var(--wu));
+    width: calc(14 * var(--wu));
+    border-left: calc(2 * var(--wu)) solid #cfcfcf;
+    border-bottom: calc(2 * var(--wu)) solid #cfcfcf;
+    rotate: 45deg;
+  }
+
+  /* 글 한 줄 */
+  .wf-l {
+    height: calc(9 * var(--wu));
+    flex: none;
+    border-radius: calc(3 * var(--wu));
+    background: #e4e4e4;
+  }
+
+  .wf-l[data-tall] {
+    height: calc(14 * var(--wu));
+    background: #d8d8d8;
+  }
+
+  .wf-head .wf-l {
+    width: calc(120 * var(--wu));
+  }
+
+  /* 사진이 앉을 자리 */
+  .wf-hero {
+    height: calc(240 * var(--wu));
+    flex: none;
+    background: #e0e0e0;
+  }
+
+  .wf-hero[data-tall] {
+    height: calc(300 * var(--wu));
+  }
+
+  .wf-pad {
+    display: flex;
+    flex-direction: column;
+    gap: calc(12 * var(--wu));
+    padding: calc(22 * var(--wu)) calc(18 * var(--wu)) 0;
+  }
+
+  .wf-gap {
+    height: calc(16 * var(--wu));
+  }
+
+  /* 옆으로 미는 제품 줄 */
+  .wf-row {
+    display: flex;
+    gap: calc(12 * var(--wu));
+    padding: calc(22 * var(--wu)) 0 0 calc(18 * var(--wu));
+  }
+
+  .wf-card {
+    display: flex;
+    flex: none;
+    width: calc(120 * var(--wu));
+    flex-direction: column;
+    gap: calc(10 * var(--wu));
+  }
+
+  .wf-card-shot {
+    height: calc(140 * var(--wu));
+    border-radius: calc(6 * var(--wu));
+    background: #e0e0e0;
+  }
+
+  /* 옵션 썸네일 두 칸 */
+  .wf-thumbs {
+    display: flex;
+    gap: calc(12 * var(--wu));
+    padding-top: calc(8 * var(--wu));
+  }
+
+  .wf-thumb {
+    height: calc(92 * var(--wu));
+    width: calc(74 * var(--wu));
+    border: 1px solid #dcdcdc;
+    border-radius: calc(8 * var(--wu));
+    background: #ededed;
+  }
+
+  .wf-rule {
+    height: 1px;
+    margin: calc(12 * var(--wu)) 0;
+    background: #ececec;
+  }
+
+  /* 고른 것이 적히는 칸 */
+  .wf-opt {
+    display: flex;
+    height: calc(86 * var(--wu));
+    align-items: center;
+    gap: calc(14 * var(--wu));
+    border: 1px solid #e2e2e2;
+    border-radius: calc(8 * var(--wu));
+    background: #ffffff;
+    padding-right: calc(16 * var(--wu));
+  }
+
+  .wf-opt-shot {
+    height: 100%;
+    width: calc(70 * var(--wu));
+    flex: none;
+    border-radius: calc(8 * var(--wu)) 0 0 calc(8 * var(--wu));
+    background: #e6e6e6;
+  }
+
+  /* 목록 한 줄 */
+  .wf-li {
+    display: flex;
+    align-items: flex-start;
+    gap: calc(14 * var(--wu));
+    padding: calc(14 * var(--wu)) 0;
+    border-bottom: 1px solid #efefef;
+  }
+
+  .wf-shot {
+    height: calc(76 * var(--wu));
+    width: calc(64 * var(--wu));
+    flex: none;
+    border-radius: calc(6 * var(--wu));
+    background: #e0e0e0;
+  }
+
+  .wf-li-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: calc(10 * var(--wu));
+    padding-top: calc(5 * var(--wu));
+  }
+
+  /* 펼친 줄에만 딸려 나오는 설명 */
+  .wf-story {
+    display: flex;
+    flex-direction: column;
+    gap: calc(9 * var(--wu));
+    padding-top: calc(11 * var(--wu));
+  }
+
+  .wf-check {
+    height: calc(18 * var(--wu));
+    width: calc(18 * var(--wu));
+    flex: none;
+    margin-top: calc(6 * var(--wu));
+    border: 1px solid #d2d2d2;
+    border-radius: calc(4 * var(--wu));
+  }
+
+  /* 누르는 것 — 와이어프레임에서 유일하게 짙은 덩이입니다. */
+  .wf-foot {
+    display: flex;
+    gap: calc(12 * var(--wu));
+    margin-top: auto;
+    padding: calc(20 * var(--wu)) calc(18 * var(--wu));
+  }
+
+  .wf-btn {
+    height: calc(52 * var(--wu));
+    flex: 1;
+    border-radius: calc(8 * var(--wu));
+    background: #4a4a4a;
+  }
+
+  .wf-pad .wf-btn {
+    margin-top: calc(10 * var(--wu));
+  }
+
+  .wf-btn[data-ghost] {
+    border: 1px solid #cfcfcf;
+    background: transparent;
+  }
+
+  /* ── 02장 지금의 경험 — 화면이 마지막 행까지 내려갑니다 ────
+     마디가 화면 위 한 행에 따로 서므로 판 밖으로 흘러도 자르지 않습니다. */
+  /* 넷이 한 걸음으로 합쳐지는 장.
+     뒤의 셋은 첫 자리로 미끄러져 사라지고, 그 자리에 합친 화면이 들어섭니다. */
+  .merge-shot {
+    /* 멈칫하지 않고 한 번에 미끄러져 붙습니다. */
+    transition:
+      left 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      top 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      rotate 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      height 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* 겹친 넉 장은 서로 조금씩 그늘을 집니다. */
+  .merge-shot .steps-frame {
+    box-shadow: 0 calc(2 * var(--u)) calc(18 * var(--u)) rgb(25 25 25 / 0.06);
+  }
+
+  /* 자리에 맞물린 뒤에 사라집니다. 그래야 한 칸씩 착 붙는 것으로 읽힙니다. */
+  .merge-shot > * {
+    transition: opacity 700ms ease;
+  }
+
+  .merge-shot[data-gone] {
+    pointer-events: none;
+  }
+
+  .merge-shot[data-gone] > * {
+    opacity: 0;
+  }
+
+  /* 한 번 더 굴리면 걸음 표시가 걷힙니다. */
+  .tall-cap[data-gone] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .tall-cap {
+    transition:
+      top 420ms cubic-bezier(0.2, 0.9, 0.2, 1),
+      opacity 320ms ease;
+  }
+
+  /* 합쳐진 한 화면만 남는 장. 판을 눌러 두고 화면 하나에 눈이 모이게 합니다. */
+  .section:has(.compose-full) {
+    --bg: #202020;
+    --fg: #fafafa;
+    --fg-soft: rgb(250 250 250 / 0.72);
+    background: #202020;
+    color: #fafafa;
+  }
+
+  /* 어두운 장이라 항목 번호도 밝은 쪽으로 뒤집습니다. */
+  .compose-full .card-index {
+    color: rgb(250 250 250 / 0.5);
+  }
+
+  /* 이 장의 항목은 눌러 여는 것이 아니라 읽는 것입니다. */
+  .compose-full .issue {
+    cursor: default;
+  }
+
+  /* 잇는 선은 목업 위로 지나가야 점까지 이어져 보입니다. */
+  .section:has(.compose-full) .link {
+    z-index: 30;
+  }
+
+  /* 목업 안은 실제 화면이라 밝기 기준을 도로 세웁니다. */
+  .compose-full-frame {
+    --fg: #191919;
+    --bg: #ffffff;
+    --fg-soft: rgb(25 25 25 / 0.72);
+    position: absolute;
+    left: 50%;
+    top: var(--page-margin);
+    z-index: 20;
+    width: calc(333 * var(--u));
+    /* 앞장 화면 높이에서 시작해 판 높이까지 자랍니다. */
+    height: var(--tall, calc(740 * var(--u)));
+    color: #191919;
+    /* --lift 가 이 장이 올라온 거리를 되돌려, 화면이 제자리에 머뭅니다. */
+    translate: -50% var(--lift, 0px);
+  }
+
+  .compose-full-frame > * {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* 넷이 하나로 합쳐진 뒤에는 장이 어두워집니다.
+     남은 화면 하나에 눈이 모이도록 판을 눌러 둡니다. */
+  .section:has(.page-grid[data-past]) {
+    --bg: #202020;
+    --fg: #fafafa;
+    --fg-soft: rgb(250 250 250 / 0.72);
+    background: #202020;
+    color: #fafafa;
+    transition:
+      background 900ms ease,
+      color 900ms ease;
+  }
+
+  /* 목업 안은 실제 화면이라 밝기 기준을 도로 세웁니다. */
+  .section:has(.page-grid[data-past]) .merge-new {
+    --fg: #191919;
+    --bg: #ffffff;
+    --fg-soft: rgb(25 25 25 / 0.72);
+    color: #191919;
+  }
+
+  /* 넉 장 위로 올라서는 제안 화면 */
+  .merge-new {
+    position: absolute;
+    z-index: 9;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    translate: 0 calc(18 * var(--u));
+    pointer-events: none;
+    transition:
+      opacity 800ms ease 200ms,
+      translate 800ms cubic-bezier(0.22, 1, 0.36, 1) 200ms,
+      left 420ms cubic-bezier(0.2, 0.9, 0.2, 1),
+      top 420ms cubic-bezier(0.2, 0.9, 0.2, 1),
+      height 420ms cubic-bezier(0.2, 0.9, 0.2, 1);
+  }
+
+  .merge-new[data-in] {
+    opacity: 1;
+    translate: 0 0;
+    pointer-events: auto;
+  }
+
+  .merge-new .steps-frame {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .merge-before,
+  .merge-after {
+    position: absolute;
+    inset: 0;
+    transition: opacity 700ms ease;
+  }
+
+  .merge-before[data-gone] {
+    opacity: 0;
+  }
+
+  .merge-after {
+    z-index: 1;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .merge-after[data-in] {
+    opacity: 1;
+    pointer-events: auto;
+    transition-delay: 420ms;
+  }
+
+  /* 02장 목업 안은 손으로 굴리지 않습니다. 스스로 도는 것만 보여 줍니다. */
+  .steps-frame .gift-screen,
+  .steps-frame .prod-screen,
+  .steps-frame .scent-list,
+  .steps-frame .cart-body,
+  .steps-frame .gift-screen-row {
+    overflow: hidden;
+    touch-action: none;
+    overscroll-behavior: none;
+  }
+
+  .tall-shot {
+    position: absolute;
+    gap: 0;
+    transition:
+      left 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+      top 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+      height 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 620ms ease;
+  }
+
+  .steps:has(.tall-shot) {
+    overflow: visible;
+  }
+
+  /* 물러난 화면은 이 장에서 더 옅게 둡니다. 마디가 읽히는 것이 먼저입니다. */
+  .tall-shot[data-idle] .steps-frame::after {
+    opacity: 0.78;
+  }
+
+  /* 차례가 오면 화면이 위로 자라 판을 다 씁니다. */
+  .tall-shot .steps-frame {
+    transition:
+      height 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+      margin-top 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* 마디는 제 화면 바로 윗 행에 붙어 다닙니다. 겹치지 않고, 그 행의 바닥에 앉습니다. */
+  .tall-cap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    transition: top 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* 걸음과 걸음을 잇는 선. STEP 글자에서 나가 다음 걸음의 글자 앞에서 멈춥니다.
+     지나기 전에는 아무것도 없고, 그 화면이 도는 동안 진행 막대처럼 차오릅니다.
+     그 걸음을 지나가면 그 구간의 선은 지워집니다. */
+  .tall-cap .steps-no {
+    display: flex;
+    align-items: center;
+    gap: calc(12 * var(--u));
+  }
+
+  .tall-cap .steps-no i {
+    position: relative;
+    height: 1px;
+    flex: 1;
+    overflow: hidden;
+    margin-right: calc(-4 * var(--u));
+    transition: opacity 720ms ease;
+  }
+
+  .tall-cap .steps-no i[data-gone] {
+    opacity: 0;
+  }
+
+  .tall-cap .steps-no i::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgb(25 25 25 / 0.14);
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  .tall-cap .steps-no i[data-run]::after {
+    animation: step-fill var(--fill-ms, 4000ms) linear forwards;
+  }
+  @keyframes step-fill {
+    from {
+      transform: scaleX(0);
+    }
+
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* 아직 닿지 않은 걸음의 글. 08장 항목과 같은 값으로 물러납니다.
+     등장 애니메이션이 칸의 opacity 를 붙잡고 있어 안쪽 요소에 겁니다. */
+  .tall-cap > * {
+    transition: opacity 0.5s ease;
+  }
+
+  .tall-cap[data-dim] > * {
+    opacity: 0.18;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    translate: 0 calc(16 * var(--u));
+  }
+
+  to {
+    opacity: 1;
+    translate: 0;
+  }
+}
+
+@keyframes word-in {
+  from {
+    opacity: 0;
+    translate: 0 calc(20 * var(--u));
+  }
+
+  to {
+    opacity: 1;
+    translate: 0;
+  }
+}
+
+@keyframes cue-in {
+  from {
+    opacity: 0;
+    translate: 0 calc(8 * var(--u));
+  }
+
+  to {
+    opacity: 0.45;
+    translate: 0;
+  }
+}
+
+@keyframes cue-wheel {
+  0% {
+    opacity: 0;
+    translate: 0;
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 0;
+    translate: 0 calc(11 * var(--u));
+  }
+
+  100% {
+    opacity: 0;
+    translate: 0 calc(11 * var(--u));
+  }
+}
+
+@keyframes cue-arrow {
+  0%,
+  100% {
+    opacity: 0.4;
+    translate: 0;
+  }
+
+  50% {
+    opacity: 1;
+    translate: 0 calc(6 * var(--u));
+  }
+}
+
+@keyframes hint-pulse {
+  0%,
+  100% {
+    opacity: calc(1 - 0.75 * var(--light));
+  }
+
+  50% {
+    opacity: calc((1 - 0.75 * var(--light)) * (0.4 + 0.6 * var(--light)));
+  }
+}
+
+@keyframes link-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes soft-in {
+  from {
+    opacity: 0;
+    translate: 0 calc(6 * var(--u));
+  }
+
+  to {
+    opacity: 1;
+    translate: 0;
+  }
+}
+
+@keyframes tip-in {
+  from {
+    opacity: 0;
+    translate: 0 calc(8 * var(--u));
+  }
+
+  to {
+    opacity: 1;
+    translate: 0;
+  }
+}
+
+/* 물러나 있는 점의 고리. 흐려진 만큼 더 진하게 시작합니다. */
+@keyframes dot-pulse-idle {
+  0% {
+    opacity: 0.8;
+    scale: 1;
+  }
+
+  70%,
+  100% {
+    opacity: 0;
+    scale: 2.4;
+  }
+}
+
+@keyframes dot-pulse {
+  0% {
+    opacity: 0.45;
+    scale: 1;
+  }
+
+  70%,
+  100% {
+    opacity: 0;
+    scale: 2.2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  :before,
+  :after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .hint {
+    opacity: calc(1 - 0.75 * var(--light));
+    animation: none;
+  }
+
+  .statement[data-visible] .scroll-cue {
+    opacity: 0.45;
+    animation: none;
+  }
+
+  .statement[data-visible] .scroll-cue-dot {
+    opacity: 1;
+    animation: none;
+  }
+
+  .statement[data-visible] .scroll-cue-chevron {
+    opacity: 0.8;
+    animation: none;
+  }
+}
+
+@layer components {
+  /* ── 제안 화면(COMPOSE GIFT) ────────────────────
+     네 화면에 나뉘어 있던 고르기를 한 화면에 모읍니다.
+     값은 12장 목업에서 뽑은 규칙 그대로입니다 — 좌우 여백 15 하나,
+     검정은 #1d1d1d 하나, 라운드 3·5·알약, 화면 안 버튼 45, 글자 10~16.
+     서체도 목업이 쓰는 한 벌(--font-body)만 씁니다. */
+
+  /* ── 개선 화면(COMPOSE GIFT) ────────────────────
+     네 화면에 나뉘어 있던 고르기를 한 화면에 모읍니다.
+     12장 목업에서 뽑은 규칙을 그대로 쓰되, 어긋나 있던 값은 여기서 맞춥니다.
+     좌우 여백 15 하나, 검정은 #1d1d1d 하나, 라운드는 3·5·알약 셋. */
+  .cmp-screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    color: #1d1d1d;
+    font-family: var(--font-tam);
+    font-weight: 500;
+    text-align: left;
+  }
+
+  /* 머리 — 가운데 이름, 양쪽에 나가기와 쇼핑백 */
+  .cmp-head {
+    position: relative;
+    display: flex;
+    height: calc(52 * var(--u));
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #efefef;
+    padding: 0 calc(15 * var(--u));
+  }
+
+  .cmp-head h4 {
+    font-size: calc(15 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.5;
+  }
+
+  .cmp-back {
+    position: absolute;
+    left: calc(15 * var(--u));
+    height: calc(9 * var(--u));
+    width: calc(9 * var(--u));
+    border-left: 1px solid #1d1d1d;
+    border-bottom: 1px solid #1d1d1d;
+    rotate: 45deg;
+  }
+
+  /* 쇼핑백 — 몸통 하나에 손잡이 하나 */
+  .cmp-bag {
+    position: absolute;
+    right: calc(15 * var(--u));
+    height: calc(14 * var(--u));
+    width: calc(13 * var(--u));
+    border: 1px solid #1d1d1d;
+    border-radius: 0 0 calc(1 * var(--u)) calc(1 * var(--u));
+  }
+
+  .cmp-bag::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: calc(-3 * var(--u));
+    height: calc(6 * var(--u));
+    width: calc(7 * var(--u));
+    translate: -50% 0;
+    border: 1px solid #1d1d1d;
+    border-bottom: 0;
+    border-radius: calc(4 * var(--u)) calc(4 * var(--u)) 0 0;
+  }
+
+  /* 굴러가는 몸통 */
+  .cmp-body {
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .cmp-body::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 한 마디 — 왼쪽에 번호가 달린 세로줄이 흐릅니다. */
+  .cmp-sec {
+    border-bottom: 1px solid #efefef;
+    padding: calc(22 * var(--u)) calc(15 * var(--u));
+  }
+
+  .cmp-sec h5,
+  .cmp-list h5 {
+    display: flex;
+    align-items: baseline;
+    font-size: calc(17.5 * var(--u));
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .cmp-sec[data-shade] {
+    background: #ffffff;
+    border-bottom: 0;
+  }
+
+  .cmp-sub {
+    padding-top: calc(4 * var(--u));
+    color: #767676;
+    font-size: calc(12 * var(--u));
+    line-height: 1.5;
+  }
+
+  /* 오른쪽 끝에 붙는 더 보기 */
+  .cmp-all {
+    display: flex;
+    align-items: center;
+    gap: calc(5 * var(--u));
+    margin-left: auto;
+    font-family: var(--font-tam);
+    font-size: calc(12 * var(--u));
+  }
+
+  .cmp-all i {
+    height: calc(5 * var(--u));
+    width: calc(5 * var(--u));
+    border-right: 1px solid #1d1d1d;
+    border-bottom: 1px solid #1d1d1d;
+    rotate: -45deg;
+  }
+
+  /* ── 01 선물 미리보기 ─────────────────────
+     상자 사진 위에 제품을 그대로 세워, 담긴 모습을 먼저 보여 줍니다. */
+  .cmp-box {
+    position: relative;
+    width: 78%;
+    margin-left: auto;
+    margin-right: auto;
+    aspect-ratio: 1238 / 1480;
+    margin-top: calc(15 * var(--u));
+  }
+
+  .cmp-box img {
+    object-fit: contain;
+  }
+
+  .cmp-in-balm,
+  .cmp-in-wash {
+    position: absolute;
+    bottom: 31%;
+    opacity: 0;
+    translate: 0 calc(-10 * var(--u));
+    transition:
+      opacity 620ms ease,
+      translate 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* 세트를 고르면 그 자리에 담깁니다. 향수가 먼저, 핸드워시가 뒤따릅니다. */
+  .cmp-box[data-filled] .cmp-in-balm,
+  .cmp-box[data-filled] .cmp-in-wash {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .cmp-box[data-filled] .cmp-in-wash {
+    transition-delay: 160ms;
+  }
+
+  .cmp-in-balm {
+    left: 25.4%;
+    height: 22%;
+    aspect-ratio: 427 / 429;
+  }
+
+  .cmp-in-wash {
+    left: 50%;
+    height: 60%;
+    aspect-ratio: 165 / 481;
+  }
+
+  .cmp-fine {
+    padding-top: calc(10 * var(--u));
+    color: #b4b4b4;
+    font-size: calc(10 * var(--u));
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  /* ── 02 세트 고르기 ───────────────────────
+     넷을 한 줄에 욱여넣으면 이름이 잘립니다. 옆으로 밀어 보게 둡니다. */
+  /* 세트 카드는 넓어서 한 화면에 한 장 반쯤 들어옵니다. 옆으로 밀어 봅니다. */
+  .cmp-cards {
+    display: flex;
+    gap: calc(7 * var(--u));
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin: calc(18 * var(--u)) calc(-15 * var(--u)) 0;
+    padding: calc(3 * var(--u)) calc(15 * var(--u));
+  }
+
+  .cmp-cards::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 글이 왼쪽, 사진이 오른쪽. 고른 카드만 흰빛으로 떠오릅니다. */
+  .cmp-card {
+    display: flex;
+    flex: none;
+    cursor: pointer;
+    align-items: flex-start;
+    gap: calc(11 * var(--u));
+    border-radius: calc(7 * var(--u));
+    background: #fafafa;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.06);
+    padding: calc(14 * var(--u)) calc(12 * var(--u)) calc(14 * var(--u))
+      calc(14 * var(--u));
+    transition: background 300ms ease;
+  }
+
+  .cmp-card[data-on] {
+    background: #ffffff;
+  }
+
+  /* 이름은 위, 안내는 아래. 사이는 벌어진 채로 둡니다. */
+  .cmp-card-text {
+    display: flex;
+    width: calc(96 * var(--u));
+    flex-direction: column;
+    justify-content: flex-start;
+    align-self: stretch;
+  }
+
+  .cmp-card b {
+    font-size: calc(11 * var(--u));
+    font-weight: 500;
+    line-height: 1.45;
+    text-align: left;
+  }
+
+  .cmp-card-shot {
+    position: relative;
+    height: calc(44 * var(--u));
+    width: calc(44 * var(--u));
+    flex: none;
+    overflow: hidden;
+  }
+
+  /* 제품이 칸 가운데에 오도록 위쪽을 조금 잘라 냅니다. */
+  .cmp-card-shot img {
+    object-position: center 34%;
+  }
+
+  /* ── 03 · 04 향 고르기 ─────────────────────
+     스토어에서 옵션을 고를 때 쓰는 방식 그대로입니다.
+     펼친 채로 두어 어떤 향이 있는지가 먼저 보이고, 고른 줄만 살아 있습니다. */
+  .cmp-pick {
+    margin-top: calc(14 * var(--u));
+    border: 1px solid #e2e2e2;
+    border-radius: calc(5 * var(--u));
+    background: #ffffff;
+    overflow: hidden;
+  }
+
+  .cmp-pick-head {
+    display: flex;
+    width: 100%;
+    height: calc(42 * var(--u));
+    align-items: center;
+    cursor: pointer;
+    text-align: left;
+    justify-content: space-between;
+    padding: 0 calc(14 * var(--u));
+    font-size: calc(12 * var(--u));
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* 닫혀 있으면 아래를 향하고, 펼치면 위를 향합니다. */
+  .cmp-pick-head i {
+    height: calc(7 * var(--u));
+    width: calc(7 * var(--u));
+    border-right: 1px solid #1d1d1d;
+    border-bottom: 1px solid #1d1d1d;
+    rotate: 45deg;
+    translate: 0 calc(-2 * var(--u));
+  }
+
+  .cmp-pick[data-open] .cmp-pick-head {
+    border-bottom: 1px solid #efefef;
+  }
+
+  .cmp-pick[data-open] .cmp-pick-head i {
+    rotate: 225deg;
+    translate: 0 calc(2 * var(--u));
+  }
+
+  /* 닫혀 있을 때는 목록을 접어 둡니다. */
+  .cmp-pick:not([data-open]) ul {
+    display: none;
+  }
+
+  .cmp-pick li {
+    display: flex;
+    align-items: center;
+    gap: calc(12 * var(--u));
+    border-top: 1px solid #efefef;
+    padding: calc(9 * var(--u)) calc(14 * var(--u));
+    transition: background 300ms ease;
+  }
+
+  .cmp-pick li:first-child {
+    border-top: 0;
+  }
+
+  /* 고른 줄만 이름이 진해지고 판이 한 톤 눌립니다. */
+  .cmp-pick li[data-on] {
+    background: #fafafa;
+  }
+
+  .cmp-pick-shot {
+    position: relative;
+    height: calc(40 * var(--u));
+    width: calc(40 * var(--u));
+    flex: none;
+    overflow: hidden;
+    border-radius: calc(3 * var(--u));
+    background: #efefef;
+  }
+
+  .cmp-pick-text {
+    display: flex;
+    flex-direction: column;
+    gap: calc(3 * var(--u));
+  }
+
+  .cmp-pick-text b {
+    color: #5f5f5f;
+    font-size: calc(11 * var(--u));
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+  }
+
+  .cmp-pick li[data-on] .cmp-pick-text b {
+    color: #1d1d1d;
+    font-weight: 600;
+  }
+
+  .cmp-pick-text em {
+    color: #767676;
+    font-size: calc(10 * var(--u));
+    font-style: normal;
+    line-height: 1.5;
+  }
+
+  /* ── 고른 것이 그대로 목록이 됩니다 ──────────── */
+  .cmp-list {
+    padding: calc(20 * var(--u)) calc(15 * var(--u)) calc(20 * var(--u));
+  }
+
+  .cmp-list h5 em {
+    margin-left: auto;
+    color: #767676;
+    font-family: var(--font-tam);
+    font-size: calc(10 * var(--u));
+    font-style: normal;
+  }
+
+  .cmp-list li {
+    display: flex;
+    height: calc(56 * var(--u));
+    align-items: center;
+    border-top: 1px solid #efefef;
+  }
+
+  .cmp-list li:first-child {
+    border-top: 0;
+    margin-top: calc(10 * var(--u));
+  }
+
+  .cmp-list-shot {
+    position: relative;
+    height: calc(40 * var(--u));
+    width: calc(40 * var(--u));
+    flex: none;
+    overflow: hidden;
+    border-radius: calc(3 * var(--u));
+    background: #efefef;
+  }
+
+  .cmp-list-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding-left: calc(12 * var(--u));
+  }
+
+  .cmp-list-text b {
+    font-size: calc(12 * var(--u));
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .cmp-list-text em {
+    color: #767676;
+    font-size: calc(10 * var(--u));
+    font-style: normal;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+  }
+
+  .cmp-list-qty {
+    color: #767676;
+    font-size: calc(10 * var(--u));
+    line-height: 1.5;
+  }
+
+  .cmp-list-price {
+    width: calc(56 * var(--u));
+    font-size: calc(12 * var(--u));
+    font-variant-numeric: tabular-nums;
+    line-height: 1.5;
+    text-align: right;
+  }
+
+  /* ── 바닥에 붙어 따라오는 셈과 담기 ──────────── */
+  .cmp-bar {
+    display: flex;
+    height: calc(70 * var(--u));
+    flex: none;
+    align-items: center;
+    border-top: 1px solid #efefef;
+    padding: 0 calc(15 * var(--u));
+  }
+
+  .cmp-total {
+    display: flex;
+    flex-direction: column;
+    gap: calc(3 * var(--u));
+  }
+
+  .cmp-total em {
+    color: #767676;
+    font-size: calc(10 * var(--u));
+    font-style: normal;
+    line-height: 1;
+  }
+
+  .cmp-total b {
+    display: flex;
+    align-items: baseline;
+    gap: calc(4 * var(--u));
+    font-size: calc(16 * var(--u));
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .cmp-total i {
+    color: #767676;
+    font-size: calc(10 * var(--u));
+    font-style: normal;
+    letter-spacing: 0.06em;
+  }
+
+  .cmp-add {
+    display: flex;
+    height: calc(45 * var(--u));
+    width: calc(170 * var(--u));
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    border-radius: calc(5 * var(--u));
+    background: #1d1d1d;
+    color: #ffffff;
+    font-size: calc(13 * var(--u));
+    font-weight: 500;
+    line-height: 1.5;
+  }
+}
+
+@layer components {
+  /* 개선 화면이 서는 자리. 판을 세로로 다 쓰고, 안쪽만 굴러갑니다. */
+  .compose-stage {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .compose-frame {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    background: #ffffff;
+  }
+}
+
+@layer components {
+  /* ── 개선 화면(COMPOSE GIFT) ────────────────────
+     네 화면에 나뉘어 있던 고르기를 한 화면에 모읍니다.
+     12장 목업에서 뽑은 규칙을 그대로 쓰되, 어긋나 있던 값은 여기서 맞춥니다.
+     좌우 여백 15 하나, 검정은 #1d1d1d 하나, 라운드는 3·5·알약 셋. */
+  .cmpb-screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fafafa;
+    color: #1d1d1d;
+    font-family: var(--font-tam);
+    font-weight: 500;
+    text-align: left;
+  }
+
+  /* 머리 — 가운데 이름, 양쪽에 나가기와 쇼핑백 */
+  .cmpb-head {
+    position: relative;
+    display: flex;
+    height: calc(52 * var(--u));
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #efefef;
+    padding: 0 calc(15 * var(--u));
+  }
+
+  .cmpb-head h4 {
+    font-family: var(--font-tam);
+    font-size: calc(15 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+  }
+
+  .cmpb-back {
+    position: absolute;
+    left: calc(15 * var(--u));
+    height: calc(9 * var(--u));
+    width: calc(9 * var(--u));
+    border-left: 1px solid #1d1d1d;
+    border-bottom: 1px solid #1d1d1d;
+    rotate: 45deg;
+  }
+
+  /* 쇼핑백 — 몸통 하나에 손잡이 하나 */
+  .cmpb-bag {
+    position: absolute;
+    right: calc(15 * var(--u));
+    height: calc(14 * var(--u));
+    width: calc(13 * var(--u));
+    border: 1px solid #1d1d1d;
+    border-radius: 0 0 calc(1 * var(--u)) calc(1 * var(--u));
+  }
+
+  .cmpb-bag::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: calc(-3 * var(--u));
+    height: calc(6 * var(--u));
+    width: calc(7 * var(--u));
+    translate: -50% 0;
+    border: 1px solid #1d1d1d;
+    border-bottom: 0;
+    border-radius: calc(4 * var(--u)) calc(4 * var(--u)) 0 0;
+  }
+
+  /* 굴러가는 몸통 */
+  .cmpb-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .cmpb-body::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 한 마디 — 왼쪽에 번호가 달린 세로줄이 흐릅니다. */
+  .cmpb-sec {
+    position: relative;
+    border-bottom: 1px solid #efefef;
+    padding: calc(20 * var(--u)) calc(15 * var(--u));
+  }
+
+  .cmpb-sec h5 {
+    display: flex;
+    align-items: baseline;
+    font-family: var(--font-tam);
+    font-size: calc(16 * var(--u));
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* ── 01 선물 미리보기 ─────────────────────
+     상자 사진 위에 제품을 그대로 세워, 담긴 모습을 먼저 보여 줍니다. */
+  /* 담긴 모습은 늘 같은 자리에 있습니다. 굴러가는 것은 아래 목록뿐입니다.
+     볕과 바닥은 12장 표지의 것을 그대로 쓰고, 벽과 바닥이 갈리는 선만
+     이 자리 크기에 맞춰 다시 잡습니다. */
+  .cmpb-stage {
+    position: relative;
+    z-index: 5;
+    /* 판이 길든 짧든 화면 높이의 같은 몫만 씁니다.
+       늘고 주는 것을 flex 에 맡기면 판 높이에 따라 널을 뜁니다. */
+    flex: none;
+    height: 50%;
+    /* 세트를 고르고 나면 자리를 아래 걸음들에게 내줍니다. */
+    transition: height 520ms cubic-bezier(0.22, 1, 0.36, 1);
+    overflow: hidden;
+    background: #fafafa;
+    --ground: 168;
+  }
+
+  .cmpb-stage .cmpb-box {
+    z-index: 1;
+  }
+
+  /* 지면은 상자 밑동에 맞춰야 합니다. 상자 키가 자리에 따라 달라지므로
+     고정 수치가 아니라 무대 높이의 몫으로 잡습니다. */
+  .cmpb-stage .tam-floor,
+  .cmpb-stage .tam-sun-floor {
+    top: 62%;
+  }
+
+  /* 04장 목업은 판이 짧아 상자가 눌립니다. 거기서는 카드 아래가 조금 잘리더라도
+     상자를 크게 두는 편이 낫습니다 — 그 장의 주인공은 상자입니다. */
+  .merge-new .cmpb-stage {
+    height: 76%;
+  }
+
+  .merge-new .cmpb-stage[data-small] {
+    height: 56%;
+  }
+
+  .merge-new .cmpb-stage[data-mid] {
+    height: 60%;
+  }
+
+  .cmpb-stage[data-small] {
+    height: 36%;
+  }
+
+  /* 마지막 걸음 — 목록과 금액이 다 보이는 선에서 상자를 가장 크게 둡니다. */
+  .cmpb-stage[data-mid] {
+    height: 46%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cmpb-box {
+      transition-duration: 1ms;
+    }
+  }
+
+  /* 상자는 뚜껑·바닥·앞면 세 겹으로 나뉘어 있어야 열립니다.
+     겹의 자리는 12장 표지의 그림 비율(683 × 740)에서 그대로 가져왔습니다. */
+  .cmpb-box {
+    position: relative;
+    /* 무대가 받은 만큼을 그대로 씁니다. 폭은 비율이 정합니다.
+       여기서 폭을 따로 조이면 비율이 깨져 뚜껑과 바닥이 어긋납니다. */
+    height: 100%;
+    width: auto;
+    max-width: none;
+    margin-left: auto;
+    margin-right: auto;
+    aspect-ratio: 683 / 740;
+    perspective: calc(2600 * var(--u));
+    perspective-origin: 50% -18%;
+  }
+
+  .cmpb-base,
+  .cmpb-front,
+  .cmpb-lid {
+    position: absolute;
+    left: 4.69%;
+    width: 90.62%;
+  }
+
+  .cmpb-base,
+  .cmpb-front {
+    opacity: 0;
+    transition: opacity 1700ms cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  .cmpb-box[data-open] .cmpb-base,
+  .cmpb-box[data-open] .cmpb-front {
+    opacity: 1;
+  }
+
+  .cmpb-base {
+    top: 55.8%;
+    height: 44.2%;
+  }
+
+  .cmpb-front {
+    top: 69.05%;
+    height: 30.95%;
+    z-index: 2;
+  }
+
+  /* 뚜껑은 닫힌 채로 있다가 뒤쪽 모서리를 축으로 열립니다. */
+  .cmpb-lid {
+    top: 0;
+    height: 55.8%;
+    z-index: 0;
+    transform-origin: 50% 100%;
+    transform: rotateX(-88deg);
+    opacity: 0;
+    transition:
+      transform 1800ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 1700ms cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  .cmpb-box[data-open] .cmpb-lid {
+    transform: rotateX(0);
+    opacity: 1;
+  }
+
+  /* 상자 앞면에 매인 리본. 열려도 풀리지 않고 그 자리에 남습니다.
+     비율(2018 × 779)은 원본 그대로 지킵니다. */
+  .cmpb-ribbon {
+    position: absolute;
+    left: 50%;
+    top: 84%;
+    z-index: 3;
+    width: 74%;
+    aspect-ratio: 2018 / 779;
+    translate: -50% -50%;
+    /* 상자와 같은 박자로 함께 떠오릅니다. */
+    opacity: 0;
+    transition: opacity 1700ms cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  .cmpb-box[data-open] .cmpb-ribbon {
+    opacity: 1;
+  }
+
+  .cmpb-box img {
+    object-fit: contain;
+  }
+
+  /* 담기는 것. 그 세트의 썸네일을 반으로 잘라 한쪽씩 세웁니다. */
+  .cmpb-in {
+    position: absolute;
+    bottom: 24%;
+    z-index: 1;
+    height: 46%;
+    width: 32%;
+    overflow: hidden;
+    opacity: 0;
+    translate: 0 calc(-26 * var(--u));
+    /* 사진 바탕이 상자 안쪽과 같은 흰빛이라, 곱하기로 얹으면 경계가 사라집니다. */
+    mix-blend-mode: multiply;
+    transition:
+      opacity 420ms ease,
+      translate 620ms cubic-bezier(0.34, 1.32, 0.5, 1);
+  }
+
+  .cmpb-in img {
+    width: 200%;
+    object-fit: contain;
+  }
+
+  /* 세트를 이루는 두 제품. 바닥선에 밑동을 맞춰 나란히 섭니다. */
+  .cmpb-item {
+    position: absolute;
+    bottom: 26%;
+    z-index: 1;
+    width: 40%;
+    height: 65%;
+    opacity: 0;
+    transform-origin: bottom;
+    translate: 0 -260%;
+    --tilt: 0deg;
+  }
+
+  .cmpb-item[data-at="left"] {
+    left: 13%;
+  }
+
+  .cmpb-item[data-at="right"] {
+    left: 47%;
+  }
+
+  .cmpb-item img {
+    object-fit: contain;
+    object-position: bottom;
+  }
+
+  .cmpb-box[data-open] .cmpb-item {
+    animation: 1.9s cubic-bezier(0.22, 1, 0.36, 1) both gift-drop;
+    animation-delay: var(--delay, 0s);
+  }
+
+  /* 12장 표지에 쓴 그 제품. 표지와 같은 비율·같은 밝기로 놓입니다.
+     곱하기로 얹지 않아 표지에서 보던 색 그대로입니다. */
+  .cmpb-good {
+    position: absolute;
+    z-index: 1;
+    opacity: 0;
+    transform-origin: bottom;
+    translate: 0 -260%;
+    rotate: var(--tilt, 0deg);
+  }
+
+  .cmpb-good img {
+    object-fit: contain;
+  }
+
+  .cmpb-box[data-open] .cmpb-good {
+    animation: 1.9s cubic-bezier(0.22, 1, 0.36, 1) both gift-drop;
+    animation-delay: var(--delay, 0s);
+  }
+
+  .cmpb-in[data-at="left"] {
+    left: 16%;
+  }
+
+  .cmpb-in[data-at="left"] img {
+    left: 0;
+  }
+
+  .cmpb-in[data-at="right"] {
+    left: 51%;
+  }
+
+  .cmpb-in[data-at="right"] img {
+    left: -100%;
+  }
+
+  .cmpb-box[data-open] .cmpb-in {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  /* ── 02 세트 고르기 ───────────────────────
+     넷을 한 줄에 욱여넣으면 이름이 잘립니다. 옆으로 밀어 보게 둡니다. */
+  .cmpb-cards {
+    display: flex;
+    gap: calc(12 * var(--u));
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    margin-top: calc(14 * var(--u));
+    margin-right: calc(-15 * var(--u));
+    padding-right: calc(15 * var(--u));
+  }
+
+  .cmpb-cards::-webkit-scrollbar,
+
+  /* ── 고르는 층 ─────────────────────────────
+     고른 층은 접혀 제목만 남고, 다음 층이 그 위를 조금 덮으며 올라옵니다.
+     쌓인 자국이 보여야 어디까지 골랐는지가 읽힙니다. */
+  .cmpb-stack {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .cmpb-layer {
+    position: relative;
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    min-height: 0;
+    background: #ffffff;
+    border-top: 1px solid #efefef;
+    box-shadow: none;
+    padding: 0 calc(15 * var(--u));
+    transition: margin 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .cmpb-layer + .cmpb-layer {
+    margin-top: 0;
+  }
+
+  .cmpb-layer-head {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: calc(10 * var(--u));
+    cursor: pointer;
+    padding: calc(9 * var(--u)) 0;
+    text-align: left;
+  }
+
+  /* 판 위 설명과 잇는 번호 점.
+     제목줄에서는 오른쪽 끝 꺾쇠를 가리지 않게 그 왼쪽에 섭니다. */
+  .cmpb-dot {
+    left: auto;
+    right: calc(24 * var(--u));
+    top: calc(16 * var(--u));
+    translate: 0 -50%;
+  }
+
+  /* 상자 점 — 왼쪽 항목과 이어지므로 왼쪽에 서고,
+     썸네일 세로 가운데에서 상자 위에 살짝 걸칩니다. */
+  .cmpb-dot-box {
+    left: calc(44 * var(--u));
+    right: auto;
+    top: 50%;
+    bottom: auto;
+    translate: 0 -50%;
+  }
+
+  /* 층 제목줄 오른쪽 끝의 꺾쇠. 열리면 위를 가리킵니다. */
+  .cmpb-layer-arrow {
+    height: calc(5 * var(--u));
+    width: calc(5 * var(--u));
+    flex: none;
+    margin-left: auto;
+    border-right: 1px solid #767676;
+    border-bottom: 1px solid #767676;
+    rotate: 45deg;
+    translate: 0 calc(-1.5 * var(--u));
+    transition: rotate 260ms ease;
+  }
+
+  .cmpb-layer[data-open] .cmpb-layer-arrow {
+    rotate: 225deg;
+    translate: 0 calc(1.5 * var(--u));
+  }
+
+  .cmpb-layer-no {
+    color: #a4a4a4;
+    font-size: calc(10 * var(--u));
+    font-weight: 500;
+    letter-spacing: 0.06em;
+  }
+
+  .cmpb-layer[data-open] .cmpb-layer-no {
+    color: #1d1d1d;
+  }
+
+  .cmpb-layer h5 {
+    font-size: calc(16 * var(--u));
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* 열린 층만 속을 보이고, 그 안의 목록만 굴러갑니다. */
+  .cmpb-layer-body {
+    display: none;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding-bottom: calc(14 * var(--u));
+  }
+
+  /* 닫힌 마지막 층은 자리를 늘려 갖지 않습니다. 늘리면 제목 아래만 벌어집니다. */
+  .cmpb-layer:last-of-type {
+    flex: none;
+  }
+
+  /* 마지막 층 아래는 바닥 단추의 여백이 이어받습니다.
+     둘 다 두면 단추 위가 아래보다 넓어집니다. */
+  .cmpb-layer:last-of-type .cmpb-layer-body {
+    padding-bottom: 0;
+  }
+
+  .cmpb-layer-body::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cmpb-layer[data-open] {
+    flex: 1;
+  }
+
+  .cmpb-layer[data-open] .cmpb-layer-body {
+    display: block;
+  }
+
+  /* 세트 층은 옆으로만 굴러갑니다. 위아래로 굴릴 것이 없어야
+     휠이 가로줄로 넘어갑니다. */
+  .cmpb-layer-body:has(.cmpb-cards) {
+    position: relative;
+    overflow: hidden;
+    /* 카드(112) + 위 여백(14) + 아래 여백(14) */
+    min-height: calc(140 * var(--u));
+  }
+
+  .cmpb-layer[data-open]:has(.cmpb-cards) {
+    flex: none;
+  }
+
+  /* 글은 왼쪽 위, 제품은 오른쪽에 크게 걸칩니다. 카드 밖으로 흘러 잘립니다. */
+  .cmpb-card {
+    position: relative;
+    display: flex;
+    flex: none;
+    height: calc(112 * var(--u));
+    width: auto;
+    aspect-ratio: 1;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden;
+    border-radius: calc(8 * var(--u));
+    background: #fafafa;
+    padding: calc(14 * var(--u));
+    transition:
+      background 300ms ease,
+      color 300ms ease;
+  }
+
+  .cmpb-card[data-on] .cmpb-card-shot {
+    filter: none;
+  }
+
+  /* 고른 것은 테두리 한 올로 표시합니다. */
+  .cmpb-card[data-on] {
+    box-shadow: inset 0 0 0 1px #1d1d1d;
+  }
+
+  .cmpb-card[data-on] b {
+    font-weight: 600;
+  }
+
+  .cmpb-card b {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    font-size: calc(13 * var(--u));
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  /* 사진은 카드 오른쪽 아래에 통째로 놓입니다. */
+  .cmpb-card-shot {
+    position: absolute;
+    right: calc(6 * var(--u));
+    bottom: calc(10 * var(--u));
+    height: calc(62 * var(--u));
+    width: calc(86 * var(--u));
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    /* 고르지 않은 카드는 크기는 그대로 두고 색만 뺍니다. */
+    filter: grayscale(1);
+    transition: filter 300ms ease;
+    /* 사진 바탕이 판 색과 같아, 곱하기로 얹으면 경계가 사라집니다. */
+    mix-blend-mode: multiply;
+  }
+
+  .cmpb-card-shot img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    object-position: bottom;
+  }
+
+  .cmpb-cards::-webkit-scrollbar,
+
+  /* ── 03 · 04 향 고르기 ─────────────────────
+     펼친 채로 둡니다. 어떤 향이 있는지가 먼저 보이고, 고른 줄만 살아 있습니다. */
+  .cmpb-pick {
+    margin-top: calc(10 * var(--u));
+  }
+
+  .cmpb-pick-row {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    gap: calc(12 * var(--u));
+    cursor: pointer;
+    padding: calc(11 * var(--u)) calc(12 * var(--u));
+    text-align: left;
+  }
+
+  .cmpb-pick li {
+    border-bottom: 1px solid #efefef;
+  }
+
+  .cmpb-pick li:last-child {
+    border-bottom: 0;
+  }
+
+  .cmpb-pick-shot {
+    position: relative;
+    height: calc(34 * var(--u));
+    width: calc(34 * var(--u));
+    flex: none;
+    overflow: hidden;
+    border-radius: calc(3 * var(--u));
+    background: #efefef;
+  }
+
+  .cmpb-pick-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: calc(3 * var(--u));
+  }
+
+  /* 향노트 옆 꺾쇠. 누르면 그 줄에서 설명이 펼쳐집니다. */
+  .cmpb-pick-text em {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(6 * var(--u));
+  }
+
+  .cmpb-more {
+    display: flex;
+    height: calc(12 * var(--u));
+    width: calc(12 * var(--u));
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .cmpb-more i {
+    height: calc(5 * var(--u));
+    width: calc(5 * var(--u));
+    border-right: 1px solid #767676;
+    border-bottom: 1px solid #767676;
+    rotate: 45deg;
+    translate: 0 calc(-1.5 * var(--u));
+    transition: rotate 260ms ease;
+  }
+
+  .cmpb-pick li[data-told] .cmpb-more i {
+    rotate: 225deg;
+    translate: 0 calc(1.5 * var(--u));
+  }
+
+  /* 펼쳐진 향 설명 */
+  .cmpb-story {
+    color: #767676;
+    font-size: calc(11 * var(--u));
+    line-height: 1.7;
+    padding: 0 calc(12 * var(--u)) calc(12 * var(--u));
+  }
+
+  /* 줄 오른쪽 위에 붙는 표. 12장 향 선택 창과 같은 값입니다. */
+  .cmpb-check {
+    position: relative;
+    height: calc(14 * var(--u));
+    width: calc(14 * var(--u));
+    flex: none;
+    align-self: flex-start;
+    margin-top: calc(2 * var(--u));
+    border: 1px solid #c4c4c4;
+    border-radius: calc(3 * var(--u));
+    transition:
+      background 220ms ease,
+      border-color 220ms ease;
+  }
+
+  .cmpb-check[data-on] {
+    border-color: #1d1d1d;
+  }
+
+  .cmpb-check[data-on]::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: calc(6.5 * var(--u));
+    width: calc(3.5 * var(--u));
+    translate: -50% calc(-60% - 0.5 * var(--u));
+    border-right: calc(1.4 * var(--u)) solid #1d1d1d;
+    border-bottom: calc(1.4 * var(--u)) solid #1d1d1d;
+    rotate: 45deg;
+  }
+
+  .cmpb-pick-text b {
+    color: #5f5f5f;
+    font-size: calc(13 * var(--u));
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+  }
+
+  /* 고른 줄만 이름이 진해집니다. */
+  .cmpb-pick-row[data-on] .cmpb-pick-text b {
+    color: #1d1d1d;
+    font-weight: 600;
+  }
+
+  .cmpb-pick-text em {
+    color: #767676;
+    font-size: calc(10 * var(--u));
+    font-style: normal;
+    line-height: 1.5;
+  }
+
+  /* ── 고른 것이 그대로 목록이 됩니다 ──────────── */
+  /* 이름 옆에 붙는 영문 향 이름. 스토어 표기를 그대로 따릅니다. */
+  .cmpb-pick-en {
+    margin-left: calc(6 * var(--u));
+    color: #a4a4a4;
+    font-size: calc(9 * var(--u));
+    font-style: normal;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  /* 펼친 설명 아래 붙는 향노트 세 줄 */
+  .cmpb-notes {
+    margin-top: calc(10 * var(--u));
+    display: flex;
+    flex-direction: column;
+    gap: calc(4 * var(--u));
+  }
+
+  .cmpb-notes > div {
+    display: flex;
+    gap: calc(8 * var(--u));
+  }
+
+  .cmpb-notes dt {
+    flex: none;
+    width: calc(38 * var(--u));
+    color: #a4a4a4;
+  }
+
+  .cmpb-list {
+    flex: none;
+    margin-top: calc(10 * var(--u));
+  }
+
+  .cmpb-list li {
+    display: flex;
+    align-items: center;
+    gap: calc(12 * var(--u));
+    border-bottom: 1px solid #efefef;
+    padding: calc(11 * var(--u)) calc(12 * var(--u));
+  }
+
+  .cmpb-list li:last-child {
+    border-bottom: 0;
+  }
+
+  .cmpb-list li:first-child {
+    border-top: 0;
+    margin-top: calc(10 * var(--u));
+  }
+
+  .cmpb-list-shot {
+    position: relative;
+    box-sizing: border-box;
+    height: calc(34 * var(--u));
+    width: calc(34 * var(--u));
+    flex: none;
+    overflow: hidden;
+    border-radius: calc(3 * var(--u));
+    background: #efefef;
+  }
+
+  /* 제품이 상자 아래에 딱 붙지 않게 그만큼만 띄웁니다.
+     fill 로 깔린 사진은 inset: 0 이라 안쪽 여백을 따르지 않으므로 키로 줄입니다. */
+  .cmpb-list-shot img {
+    height: calc(100% - 8 * var(--u));
+    object-position: bottom;
+  }
+
+  .cmpb-list-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: calc(3 * var(--u));
+  }
+
+  .cmpb-list-text b {
+    font-size: calc(13 * var(--u));
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .cmpb-list-text em {
+    color: #767676;
+    font-size: calc(10 * var(--u));
+    font-style: normal;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+  }
+
+  .cmpb-list-qty {
+    color: #767676;
+    font-size: calc(10 * var(--u));
+    line-height: 1.5;
+  }
+
+  .cmpb-list-price {
+    width: calc(56 * var(--u));
+    font-size: calc(13 * var(--u));
+    font-variant-numeric: tabular-nums;
+    line-height: 1.5;
+    text-align: right;
+  }
+
+  /* ── 바닥에 붙어 따라오는 셈과 담기 ──────────── */
+  /* 바닥 버튼 바로 위, 담긴 것과 값을 한 줄로 적습니다. */
+  .cmpb-list .cmpb-sum {
+    padding: calc(14 * var(--u)) calc(12 * var(--u)) 0;
+    border-top: 1px solid #efefef;
+    font-size: calc(12 * var(--u));
+  }
+
+  .cmpb-sum {
+    display: flex;
+    flex: none;
+    align-items: baseline;
+    justify-content: space-between;
+    border-top: 1px solid #efefef;
+    padding: calc(12 * var(--u)) calc(15 * var(--u));
+    font-size: calc(11 * var(--u));
+  }
+
+  .cmpb-sum em {
+    color: #767676;
+    font-style: normal;
+    margin-left: calc(8 * var(--u));
+  }
+
+  .cmpb-sum b {
+    font-size: calc(15 * var(--u));
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cmpb-bar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: calc(8 * var(--u));
+    padding: calc(9 * var(--u)) calc(15 * var(--u));
+  }
+
+  .cmpb-add {
+    display: flex;
+    height: calc(45 * var(--u));
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    border-radius: calc(5 * var(--u));
+    background: #1d1d1d;
+    color: #ffffff;
+    font-size: calc(13 * var(--u));
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* 담기만 테두리로 둡니다. 사기가 먼저 읽혀야 합니다. */
+  .cmpb-add[data-ghost] {
+    border: 1px solid #1d1d1d;
+    background: #ffffff;
+    color: #1d1d1d;
+  }
+}
+
+@layer components {
+  /* 개선 화면이 서는 자리. 판을 세로로 다 쓰고, 안쪽만 굴러갑니다. */
+  .compose-stage {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .compose-frame {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    background: #ffffff;
+  }
+}
+
+@layer components {
+  /* 휴대폰으로 열어 보는 화면.
+     이 화면은 두 단(333) 폭으로 짜여 있습니다. 판 위에서는 --u 가 1440 캔버스에
+     맞춰 잡히지만, 여기서는 기기 폭이 곧 그 333 이 되도록 단위를 다시 잡습니다.
+     그래야 글자·여백·지구본이 한꺼번에 같은 비율로 커집니다. */
+  .phone-page {
+    --u: calc(min(100vw, 560px) / 316);
+    --tip: var(--u);
+    position: relative;
+    min-height: 100dvh;
+    background: #fafaf8;
+    display: flex;
+    justify-content: center;
+  }
+
+  .phone-page .globe-mock {
+    height: 100dvh;
+    width: 100%;
+    max-width: min(100vw, 560px);
+    /* 판 위에서는 아래를 흐려 잘랐지만, 손에 쥔 화면에서는 끝까지 보여 줍니다. */
+    -webkit-mask-image: none;
+    mask-image: none;
+    overscroll-behavior-y: contain;
+  }
+
+  /* 탭 글자만 유독 커 보입니다. 한 단 낮춰 나머지와 무게를 맞춥니다. */
+  .phone-page .globe-tab {
+    font-size: calc(12.4 * var(--u));
+  }
+
+  /* 현재 위치 사용. 지도 위에 떠 있어 흰 버튼은 배경에 묻힙니다. */
+  .phone-page .globe-locate {
+    background: #1d1d1d;
+    color: #fafafa;
+    box-shadow: 0 calc(2 * var(--u)) calc(8 * var(--u)) rgb(0 0 0 / 0.22);
+  }
+
+  .phone-page .globe-locate svg {
+    color: #fafafa;
+  }
+
+  /* 손에 쥔 화면에서는 머리글을 기기 표준 높이(44)로 둡니다. */
+  .phone-page .store-head {
+    height: 44px;
+  }
+
+  /* 기기 아래 안전 영역만큼 바닥을 띄웁니다. */
+  .phone-page .globe-list {
+    padding-bottom: calc(24 * var(--u) + env(safe-area-inset-bottom));
+  }
+
+  /* ── 손에 쥔 기기로 넘기는 자리 ─────────────────
+     어두운 장에 놓이므로 코드는 밝은 쪽으로 그립니다. */
+  .qr-card {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    gap: calc(14 * var(--u));
+  }
+
+  .qr-eyebrow {
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(11 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .qr-mark {
+    height: calc(104 * var(--u));
+    width: calc(104 * var(--u));
+  }
+
+  .qr-mark svg {
+    height: 100%;
+    width: 100%;
+    display: block;
+  }
+
+  .qr-note {
+    color: var(--fg-soft);
+    font-size: calc(13 * var(--u));
+    line-height: 1.7;
+  }
+
+  .qr-link {
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(11 * var(--u));
+    letter-spacing: 0.02em;
+    text-decoration: underline;
+    text-underline-offset: calc(3 * var(--u));
+    width: fit-content;
   }
 }

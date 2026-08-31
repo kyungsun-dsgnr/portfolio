@@ -3,16 +3,20 @@ import { GlobePaper } from "@/components/GlobePaper";
 import { LightStage } from "@/components/LightStage";
 import { SceneCase } from "@/components/07-SceneCase";
 import { SceneFlow } from "@/components/14-SceneFlow";
-import { SceneScreens } from "@/components/15-SceneScreens";
+import { SceneShift } from "@/components/16-SceneShift";
+import { SceneComposeFull } from "@/components/21-SceneComposeFull";
+// 내려 둔 A 안에서 씁니다: import { SceneCompose } from "@/components/18-SceneCompose";
+// 내려 둔 B 안에서 씁니다: import { SceneComposeB } from "@/components/19-SceneComposeB";
+import { SceneScreensTall } from "@/components/17-SceneScreensTall";
 // 내려 둔 장에서 씁니다: import { SceneGiftBox } from "@/components/13-SceneGiftBox";
 import { SceneTamburinsCover } from "@/components/12-SceneTamburinsCover";
 import { SceneAfter } from "@/components/11-SceneAfter";
 import { SceneExplore } from "@/components/10-SceneExplore";
 import { SceneIntro } from "@/components/01-SceneIntro";
+import { SceneSwitch } from "@/components/02-SceneSwitch";
 import { SceneNudakeCover } from "@/components/18-SceneNudakeCover";
 import { SceneDraft } from "@/components/SceneDraft";
 import { SceneProblem } from "@/components/08-SceneProblem";
-import { ScenePerspective } from "@/components/03-ScenePerspective";
 import { ScenePrinciples } from "@/components/04-ScenePrinciples";
 import { SceneStatement } from "@/components/02-SceneStatement";
 import { SceneWhy } from "@/components/09-SceneWhy";
@@ -23,6 +27,7 @@ export default function Home() {
     <LightStage
       sections={[
         { id: "intro", label: "Intro", node: <SceneIntro /> },
+        { id: "switch", label: "Switch", node: <SceneSwitch /> },
         {
           id: "statement",
           label: "Memory",
@@ -36,7 +41,8 @@ export default function Home() {
             />
           ),
         },
-        { id: "perspective", label: "Perspective", node: <ScenePerspective /> },
+        /* 뒷장과 제목이 같아 접어 둡니다. 되살릴 때 이 줄만 풀면 됩니다.
+        { id: "perspective", label: "Perspective", node: <ScenePerspective /> }, */
         { id: "principles", label: "Principles", node: <ScenePrinciples /> },
         {
           id: "closing",
@@ -149,6 +155,14 @@ export default function Home() {
           node: <SceneAfter />,
         },
 
+        /* QR 을 앞장 안으로 옮겼습니다. 되살릴 때 이 묶음만 풀면 됩니다.
+        {
+          id: "gentle-monster-try",
+          index: "05 — Gentle Monster",
+          label: "Try It",
+          node: <SceneAfterQr />,
+        }, */
+
         {
           id: "tamburins",
           label: "Tamburins",
@@ -173,59 +187,29 @@ export default function Home() {
           id: "tamburins-screens",
           index: "02 — Tamburins",
           label: "Current Experience",
-          node: <SceneScreens />,
+          node: <SceneScreensTall />,
         },
 
         {
           id: "tamburins-shift",
           index: "03 — Tamburins",
           label: "Shift",
-          node: (
-            <SceneDraft
-              title={
-                <>
-                  From Selection
-                  <br />
-                  to Composition.
-                </>
-              }
-              lines={[
-                "왼쪽 CURRENT — Gift / Product / Scent 01 / Scent 02",
-                "오른쪽 PROPOSED — COMPOSE 한 마디",
-                "아래 한 문장 — 여러 화면에 나뉜 선택을 하나의 선물을 구성하는 연속적인 경험으로 재구성합니다.",
-                "복잡한 UI 없이 아주 단순하게. 여백을 크게 둡니다.",
-                "핵심은 단계를 줄였다가 아니라, 구매 절차(Selection)를 선물을 만드는 행동(Composition)으로 바꿨다는 선언",
-              ]}
-            />
-          ),
+          node: <SceneShift />,
         },
+
         {
-          id: "tamburins-compose",
-          index: "04 — Tamburins",
-          label: "Compose",
-          node: (
-            <SceneDraft
-              title={
-                <>
-                  Choose,
-                  <br />
-                  Place, Compose.
-                </>
-              }
-              lines={[
-                "가운데 — 열린 탬버린즈 상자를 크게",
-                "제품을 고르면 상자로 들어가는 모션: 제품 선택 → 상자로 이동 → 구성 확인",
-                "화면 구조 — 기프트 페이지 하나로 통합. 여기서 세트를 고르고, 이어서 향을 하나씩 고르고(각 향 설명을 그 자리에서 보고), 그대로 담습니다.",
-                "지금은 기프트에 들어가도 제품 페이지로 한 번 더 들어가야 향을 고를 수 있습니다. 그 이동을 없애는 것이 이 장의 핵심입니다.",
-                "01 CHOOSE — 원하는 구성을 고릅니다.",
-                "02 PLACE — 선택한 제품이 상자 안에 놓입니다.",
-                "03 COMPOSE — 구성을 확인하며 하나의 선물을 완성합니다.",
-                "Drag & Drop 은 넣지 않습니다. 누르면 스스로 담기는 것으로 충분합니다.",
-                "젠틀몬스터 Turn the World, Find a City 에 대응하는 탬버린즈의 대표 장면",
-              ]}
-            />
-          ),
+          id: "tamburins-one",
+          label: "One Screen",
+          node: <SceneComposeFull />,
         },
+        /* A 안. 지우지 않고 내려 둡니다. 다시 보려면 주석만 풀면 됩니다.
+        {
+          id: "tamburins-compose-screen",
+          index: "05 — Tamburins",
+          label: "Compose Gift",
+          node: <SceneCompose />,
+        },
+        */
 
         {
           id: "nudake",

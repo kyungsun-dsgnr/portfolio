@@ -9,6 +9,9 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const nextConfig: NextConfig = {
   // 홈 디렉터리에 있는 package-lock.json을 워크스페이스 루트로 오인하지 않게 고정합니다.
   turbopack: { root: import.meta.dirname },
+  // 같은 망의 휴대폰에서 열어 볼 수 있게 사설망 주소를 허용합니다.
+  // 이 값이 없으면 개발 서버가 다른 origin 의 /_next 요청을 403 으로 막습니다.
+  allowedDevOrigins: ["192.168.*.*", "10.*.*.*", "172.16.*.*"],
   output: "export",
   basePath,
   trailingSlash: true,

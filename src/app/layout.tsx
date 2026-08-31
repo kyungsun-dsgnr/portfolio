@@ -35,6 +35,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT/fonts/variable/woff2/SUIT-Variable.css"
         />
+        {/* 탬버린즈 목업 안에서만 쓰는 서체입니다. 실제 스토어 화면의 결에 가깝습니다. */}
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css"
+        />
       </head>
       <body>
         {children}

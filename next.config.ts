@@ -17,7 +17,10 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   images: {
     // 정적 내보내기에서는 Next.js 이미지 최적화 서버를 쓸 수 없습니다.
-    unoptimized: true,
+    // 기본 로더는 경로를 그대로 돌려주며 basePath 를 붙이지 않아,
+    // 저장소 하위에 배포하면 이미지가 전부 404 가 됩니다. 로더에서 붙입니다.
+    loader: "custom",
+    loaderFile: "./src/image-loader.ts",
   },
 };
 

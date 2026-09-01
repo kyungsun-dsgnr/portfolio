@@ -6400,14 +6400,20 @@
     font-size: calc(7.6 * var(--u));
   }
 
-  /* 손에 쥔 화면은 판 위 목업보다 세로가 깁니다. 그 여유를 상자가 가져가고,
-     걸음들은 그만큼 아래로 내려와 브라우저 막대 가까이까지 섭니다. */
+  /* 손에 쥔 화면에서는 상자가 남는 자리를 전부 가져갑니다.
+     걸음들은 제 키만 쓰고 아래로 내려붙어, 화면 바닥까지 빈틈 없이 찹니다.
+     판 위 목업처럼 정해진 몫(%)으로 두면 기기 높이가 바뀔 때마다 여백이 남습니다. */
   .phone-page .cmpb-stage {
-    height: 52%;
+    height: 58%;
   }
 
   .phone-page .cmpb-stage[data-small] {
-    height: 38%;
+    height: 42%;
+  }
+
+  /* 홈 인디케이터와 주소 입력 막대가 걸치는 만큼은 비워 둡니다. */
+  .phone-page .cmpb-screen {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .phone-page .cmpb-card b,

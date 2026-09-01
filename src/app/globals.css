@@ -670,6 +670,242 @@
     object-fit: cover;
   }
 
+  /* ── 누데이크 9장 구성에서 쓰는 조각들 ─────────────── */
+
+  /* 작은 대문자 라벨. 여러 장에서 같은 결로 씁니다. */
+  .nud-eyebrow {
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(10.5 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: calc(14 * var(--u));
+  }
+
+  /* 01 표지의 프로젝트 키워드 셋 */
+  .nud-keys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(8 * var(--u)) calc(10 * var(--u));
+    align-self: start;
+  }
+
+  .nud-keys span {
+    padding: calc(5 * var(--u)) calc(11 * var(--u));
+    border: 1px solid #19191926;
+    border-radius: 999px;
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(9.5 * var(--u));
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* 02 브랜드를 이루는 넷 */
+  .nud-part {
+    display: flex;
+    flex-direction: column;
+    gap: calc(6 * var(--u));
+    align-self: end;
+  }
+
+  .nud-part-name {
+    font-family: var(--font-display);
+    font-size: calc(19 * var(--u));
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  /* 넷이 한 점으로 모이는 선 */
+  .nud-merge svg {
+    height: 100%;
+    width: 100%;
+    overflow: visible;
+  }
+
+  .nud-merge path {
+    fill: none;
+    stroke: #19191933;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .nud-merge-name {
+    align-self: start;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: calc(17 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  /* 03 지금의 길과 여는 길 */
+  .nud-route {
+    display: flex;
+    flex-direction: column;
+    align-self: start;
+  }
+
+  .nud-route-label {
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(10.5 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding-bottom: calc(10 * var(--u));
+    margin-bottom: calc(12 * var(--u));
+    border-bottom: 1px solid #19191926;
+  }
+
+  .nud-route[data-lead] .nud-route-label {
+    color: var(--fg);
+    border-bottom-color: var(--fg);
+  }
+
+  .nud-route-steps {
+    display: flex;
+    flex-direction: column;
+    gap: calc(7 * var(--u));
+    font-size: calc(13 * var(--u));
+    color: var(--fg-soft);
+  }
+
+  .nud-route[data-lead] .nud-route-steps {
+    color: var(--fg);
+  }
+
+  /* 이 케이스에서 가장 중요한 한 문장 */
+  .nud-define {
+    align-self: center;
+    font-size: calc(15 * var(--u));
+    line-height: 1.7;
+    padding-left: calc(20 * var(--u));
+    border-left: 1px solid var(--fg);
+  }
+
+  .nud-define b {
+    font-weight: 600;
+  }
+
+  /* 05 사용자가 들고 온 것 하나 */
+  .nud-intent-say {
+    font-family: var(--font-display);
+    font-size: calc(22 * var(--u));
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+
+  /* 05 화면이 되묻는 것 셋 */
+  .nud-asks ol {
+    display: flex;
+    flex-direction: column;
+    gap: calc(11 * var(--u));
+  }
+
+  .nud-asks li {
+    display: flex;
+    align-items: center;
+    gap: calc(12 * var(--u));
+    font-size: calc(14 * var(--u));
+    line-height: 1;
+  }
+
+  .nud-asks em {
+    color: var(--fg-soft);
+    font-style: normal;
+    width: calc(120 * var(--u));
+    flex: none;
+  }
+
+  .nud-asks i {
+    height: 1px;
+    width: calc(28 * var(--u));
+    flex: none;
+    background: var(--fg-soft);
+  }
+
+  .nud-asks b {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+
+  /* 06 설계 목표 셋 */
+  .nud-goal {
+    display: flex;
+    flex-direction: column;
+    gap: calc(6 * var(--u));
+  }
+
+  .nud-goal-name {
+    font-family: var(--font-display);
+    font-size: calc(20 * var(--u));
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: calc(2 * var(--u));
+  }
+
+  /* 07 정보 구조 나무 */
+  .nud-tree {
+    display: flex;
+    flex-direction: column;
+    gap: calc(7 * var(--u));
+    font-family: var(--font-display);
+    font-size: calc(12.5 * var(--u));
+    color: var(--fg-soft);
+  }
+
+  .nud-tree li[data-depth="0"] {
+    color: var(--fg);
+    font-weight: 600;
+  }
+
+  .nud-tree li[data-depth="1"] {
+    padding-left: calc(18 * var(--u));
+  }
+
+  .nud-tree li[data-depth="2"] {
+    padding-left: calc(36 * var(--u));
+  }
+
+  .nud-tree li[data-depth="3"] {
+    padding-left: calc(54 * var(--u));
+  }
+
+  /* 지금 문제가 되는 자리, 그리고 새로 나는 문 */
+  .nud-tree li[data-lead] {
+    color: var(--fg);
+    font-weight: 600;
+  }
+
+  .nud-tree li[data-add] {
+    position: relative;
+  }
+
+  .nud-tree li[data-add]::before {
+    content: "";
+    position: absolute;
+    left: calc(6 * var(--u));
+    top: 50%;
+    height: calc(4 * var(--u));
+    width: calc(4 * var(--u));
+    translate: 0 -50%;
+    border-radius: 50%;
+    background: var(--fg);
+  }
+
+  /* 08 엽서를 넣는 판 */
+  .nud-gift-stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+  }
+
   /* ── 카드를 고르고 말을 적는 자리 ──────────────────── */
   .nud-write {
     display: flex;

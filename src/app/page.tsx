@@ -16,13 +16,14 @@ import { SceneExplore } from "@/components/10-SceneExplore";
 // 접어 둔 장에서 씁니다: import { SceneIntro } from "@/components/01-SceneIntro";
 import { SceneSwitch } from "@/components/02-SceneSwitch";
 import { SceneNudakeCover } from "@/components/18-SceneNudakeCover";
-import { SceneNudakeCurrent } from "@/components/22-SceneNudakeCurrent";
-import { SceneNudakeGesture } from "@/components/23-SceneNudakeGesture";
-import { SceneNudakeSteps } from "@/components/24-SceneNudakeSteps";
-import { SceneNudakeWrite } from "@/components/25-SceneNudakeWrite";
-import { SceneNudakeInsert } from "@/components/26-SceneNudakeInsert";
-import { SceneNudakeReceive } from "@/components/27-SceneNudakeReceive";
-import { SceneNudakeClosing } from "@/components/28-SceneNudakeClosing";
+import { SceneNudakeContext } from "@/components/22-SceneNudakeContext";
+import { SceneNudakeOpportunity } from "@/components/23-SceneNudakeOpportunity";
+import { SceneNudakeHidden } from "@/components/24-SceneNudakeHidden";
+import { SceneNudakeProblem } from "@/components/25-SceneNudakeProblem";
+import { SceneNudakeGoal } from "@/components/26-SceneNudakeGoal";
+import { SceneNudakeIA } from "@/components/27-SceneNudakeIA";
+import { SceneNudakeGift } from "@/components/28-SceneNudakeGift";
+import { SceneNudakeFinal } from "@/components/29-SceneNudakeFinal";
 // 밑그림 장이 다 채워져 내려 둡니다: import { SceneDraft } from "@/components/SceneDraft";
 import { SceneProblem } from "@/components/08-SceneProblem";
 import { ScenePrinciples } from "@/components/04-ScenePrinciples";
@@ -226,46 +227,52 @@ export default function Home() {
           node: <SceneNudakeCover />,
         },
         {
-          id: "nudake-current",
+          id: "nudake-context",
           index: "01 — Nudake",
-          label: "Current",
-          node: <SceneNudakeCurrent />,
+          label: "Context",
+          node: <SceneNudakeContext />,
         },
         {
-          id: "nudake-reframe",
+          id: "nudake-opportunity",
           index: "02 — Nudake",
-          label: "Reframe",
-          node: <SceneNudakeGesture />,
+          label: "Opportunity",
+          node: <SceneNudakeOpportunity />,
         },
         {
-          id: "nudake-insert",
+          id: "nudake-hidden",
           index: "03 — Nudake",
-          label: "Insert",
-          node: <SceneNudakeSteps />,
+          label: "Current",
+          node: <SceneNudakeHidden />,
         },
         {
-          id: "nudake-proposed",
+          id: "nudake-problem",
           index: "04 — Nudake",
-          label: "Write",
-          node: <SceneNudakeWrite />,
+          label: "UX Problem",
+          node: <SceneNudakeProblem />,
         },
         {
-          id: "nudake-give",
+          id: "nudake-goal",
           index: "05 — Nudake",
-          label: "Insert",
-          node: <SceneNudakeInsert />,
+          label: "Design Goal",
+          node: <SceneNudakeGoal />,
         },
         {
-          id: "nudake-receive",
+          id: "nudake-ia",
           index: "06 — Nudake",
-          label: "Receiving",
-          node: <SceneNudakeReceive />,
+          label: "Proposed IA",
+          node: <SceneNudakeIA />,
         },
         {
-          id: "nudake-closing",
+          id: "nudake-gift",
           index: "07 — Nudake",
-          label: "Closing",
-          node: <SceneNudakeClosing />,
+          label: "Gift UX",
+          node: <SceneNudakeGift />,
+        },
+        {
+          id: "nudake-final",
+          index: "08 — Nudake",
+          label: "Result",
+          node: <SceneNudakeFinal />,
         },
         /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.
         {

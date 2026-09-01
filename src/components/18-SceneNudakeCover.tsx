@@ -181,10 +181,20 @@ export function SceneNudakeCover() {
       </div>
 
       <h2 className="type-display rise col-start-1 col-span-3 row-start-1 row-span-2">
-        Nudake
+        Nudake,
         <br />
-        Communicate
+        Beyond the Store
       </h2>
+
+      {/* 프로젝트 키워드 셋. 이 케이스가 무엇을 다루는지 한눈에. */}
+      <p
+        className="nud-keys rise col-start-1 col-span-4 row-start-3"
+        style={{ "--delay": "0.06s" } as CSSProperties}
+      >
+        <span>Online Gift Experience</span>
+        <span>Information Architecture</span>
+        <span>Brand Experience</span>
+      </p>
 
       {/* 이 케이스가 무엇을 다루는지 한 줄로 못 박습니다.
           2장 오른쪽 제목과 같은 단입니다. */}
@@ -192,27 +202,23 @@ export function SceneNudakeCover() {
         className="type-title rise self-start col-start-1 col-span-3 row-start-4"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        A gift is completed
+        From Visiting Nudake
         <br />
-        when it is handed over.
+        to Sending Nudake
       </h3>
 
       <p
         className="type-body rise col-start-1 col-span-3 row-start-5 row-span-2"
         style={{ "--delay": "0.16s" } as CSSProperties}
       >
-        우리는 선물을 고르고,
+        제한된 오프라인 공간을 넘어,
         <br />
-        메시지를 적고,
-        <br />
-        그것을 안에 넣어 상대에게 건넵니다.
+        어디서든 누데이크를 경험할 수 있도록.
         <br />
         <br />
-        이 프로젝트는 디지털에서 사라진
+        선물을 새로운 브랜드 접점으로 정의하고,
         <br />
-        &lsquo;메시지를 넣어 건네는 행동&rsquo;을
-        <br />
-        Nudake의 선물 경험으로 다시 설계합니다.
+        그 관점에서 정보 구조부터 다시 세웠습니다.
       </p>
 
       {/* 로고는 왼쪽 아래 두 단, 판 왼쪽 끝에 맞춰 섭니다. */}

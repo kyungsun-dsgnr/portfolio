@@ -3337,17 +3337,28 @@
     translate: calc(1.6 * var(--u)) calc(-3.4 * var(--u));
   }
 
-  /* 나온 끝이 벽에 드리우는 그림자. 빛이 오른쪽 위에서 들어옵니다. */
+  /* 나온 끝이 벽에 드리우는 그림자. 빛이 오른쪽 위에서 들어옵니다.
+     그림자를 알약 전체에 두면 어느 쪽이 나왔는지 알 수 없습니다.
+     그래서 앞으로 나온 반쪽에만 두고, 그 반쪽만 왼쪽 아래로 그늘을 던집니다. */
   .wall-switch-drop {
     z-index: 0;
+    /* 꺼짐 — 아직 눌리지 않은 아래쪽이 나와 있습니다. */
+    inset: 46% var(--switch-gap) var(--switch-gap);
     background: rgb(20 18 15);
-    filter: blur(calc(7 * var(--u)));
-    opacity: calc(0.13 - 0.07 * var(--dim, 1));
-    translate: calc(-7 * var(--u)) calc(3 * var(--u));
+    filter: blur(calc(8 * var(--u)));
+    opacity: calc(0.15 - 0.06 * var(--dim, 1));
+    translate: calc(-9 * var(--u)) calc(5 * var(--u));
+    /* 면이 넘어가는 중간에 그늘도 함께 자리를 바꿉니다. */
+    transition:
+      translate 130ms cubic-bezier(0.3, 1.4, 0.5, 1),
+      opacity 320ms ease,
+      inset 1ms linear 65ms;
   }
 
+  /* 켜짐 — 위쪽이 나옵니다. */
   .wall-switch[data-on] .wall-switch-drop {
-    translate: calc(-7 * var(--u)) calc(-3 * var(--u));
+    inset: var(--switch-gap) var(--switch-gap) 46%;
+    translate: calc(-9 * var(--u)) calc(-1 * var(--u));
   }
 
   @media (prefers-reduced-motion: reduce) {

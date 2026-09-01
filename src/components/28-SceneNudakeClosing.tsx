@@ -50,7 +50,8 @@ export function SceneNudakeClosing() {
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
         기능을 더한 것이 아니라, 이미 하던 행동을 화면 안으로 들여왔습니다.
-        선물은 고르는 것에서 끝나지 않고 건네며 완성됩니다.
+        고르는 데까지만 누데이크이던 경험을, 건네고 받는 자리까지 이어
+        붙였습니다 &mdash; 어디서 만나든 누데이크.
       </p>
 
       {CHANGES.map((one, i) => (

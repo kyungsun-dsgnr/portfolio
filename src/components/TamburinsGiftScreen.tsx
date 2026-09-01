@@ -16,14 +16,16 @@ const NOTES = [
   "커스텀 기프트 구매 시, 쇼핑백을 증정해 드립니다.",
 ];
 
-/* 아래에 가로로 이어지는 관련 제품. 두 번째를 고르는 참입니다. */
+/* 아래에 가로로 이어지는 관련 제품. 두 번째를 고르는 참입니다.
+   사진은 개선 화면(`One screen, one gift.`)의 세트 사진을 그대로 씁니다 —
+   같은 세트가 앞뒤 장에서 다른 얼굴로 나오면 같은 것으로 읽히지 않습니다. */
 const RELATED = [
-  { name: "에그 퍼퓸 & 립밤 세트", shot: "/images/tam-set-1.png" },
-  { name: "룸 스프레이 & 핸드워시 세트", shot: "/images/tam-set-2.png" },
-  { name: "쉘 퍼퓸 핸드 & 립밤 세트", shot: "/images/tam-set-3.png" },
-  { name: "에그 퍼퓸 & 퍼퓸 밤 세트", shot: "/images/tam-set-4.png" },
-  { name: "캔들 & 룸 스프레이 세트" },
-  { name: "캔들 & 핸드워시 세트" },
+  { name: "에그 퍼퓸 & 립밤 세트", shot: "/images/tam/set-egg-lip.png" },
+  { name: "룸 스프레이 & 핸드워시 세트", shot: "/images/tam/set-room-wash.png" },
+  { name: "쉘 퍼퓸 핸드 & 립밤 세트", shot: "/images/tam/set-hand-lip.png" },
+  { name: "에그 퍼퓸 & 퍼퓸 밤 세트", shot: "/images/tam/set-egg-balm.png" },
+  { name: "캔들 & 룸 스프레이 세트", shot: "/images/tam/set-candle-room.png" },
+  { name: "캔들 & 핸드워시 세트", shot: "/images/tam/set-candle-wash.png" },
 ];
 
 /** 고르는 참인 세트의 차례 */
@@ -128,15 +130,7 @@ export function TamburinsGiftScreen({
           {RELATED.map((set, i) => (
             <article key={set.name} data-pick={i === PICKED || undefined}>
               <div className="gift-screen-shot">
-                {set.shot && (
-                  <Image
-                    src={set.shot}
-                    alt=""
-                    fill
-                    sizes="12vw"
-                    className="object-cover"
-                  />
-                )}
+                <Image src={set.shot} alt="" fill sizes="12vw" />
               </div>
               <h6>{set.name}</h6>
             </article>

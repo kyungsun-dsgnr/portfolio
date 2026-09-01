@@ -22,7 +22,8 @@ export const metadata: Metadata = {
 export default function ComposePhonePage() {
   return (
     <main className="phone-page">
-      <TamburinsComposeScreenB />
+      {/* 손에 쥔 화면에서는 고른 만큼만 보여 줍니다. */}
+      <TamburinsComposeScreenB stepped />
     </main>
   );
 }

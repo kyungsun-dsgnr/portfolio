@@ -458,7 +458,8 @@ function ScentRow({
               }
             }}
           >
-            <span className="cmpb-pick-shot">
+            {/* 제품마다 병 길이가 달라, 칸에 앉히는 방법을 종류별로 나눕니다. */}
+            <span className="cmpb-pick-shot" data-kind={kind}>
               <Image
                 src={`/images/tam/${scent.file}.png`}
                 alt=""
@@ -529,12 +530,16 @@ export function TamburinsComposeScreenB({
   auto = false,
   dots = false,
   dotRef,
+  stepped = false,
 }: {
   /** 아무도 만지지 않는 자리에서는 스스로 한 세트를 담아 보입니다. */
   auto?: boolean;
   /** 판 위 설명과 이을 수 있게 자리마다 번호 점을 얹습니다. */
   dots?: boolean;
   dotRef?: (key: string, el: HTMLSpanElement | null) => void;
+  /** 손에 쥔 화면에서는 고른 만큼만 보여 줍니다. 판 위에서는 걸음 넷을
+      한눈에 보여야 해서 처음부터 다 세워 둡니다. */
+  stepped?: boolean;
 } = {}) {
   /* 처음에는 리본이 묶인 상자입니다. 장에 들어서면 포장이 풀리고
      뚜껑이 열려 빈 상자가 드러납니다. 담기는 것은 세트를 고른 뒤입니다. */
@@ -813,160 +818,167 @@ export function TamburinsComposeScreenB({
 
         {/* 고르는 층. 하나를 고르면 그 층이 접히고 다음 층이 그 위를 덮습니다. */}
         <div className="cmpb-stack">
-          {LAYERS.map((title, n) => (
-            <section
-              key={`${n}-${title}`}
-              className="cmpb-layer"
-              data-open={step === n || undefined}
-              /* 세트 층만 다 고르고 나면 잉크로 뒤집힙니다. */
-              data-done={(n === 0 && step > 0) || undefined}
-              style={{ zIndex: n + 1 }}
-            >
-              <button
-                type="button"
-                className="cmpb-layer-head"
-                onClick={() => setStep(n)}
+          {LAYERS.map((title, n) => {
+            /* 손에 쥔 화면에서는 세트가 정해져야 향을 고를 수 있으니,
+               고르기 전에는 층 자체를 두지 않습니다.
+               판 위 목업은 걸음 넷을 한눈에 보여야 해서 처음부터 다 섭니다. */
+            if (stepped && n > 0 && set === null) return null;
+
+            return (
+              <section
+                key={`${n}-${title}`}
+                className="cmpb-layer"
+                data-open={step === n || undefined}
+                /* 세트 층만 다 고르고 나면 잉크로 뒤집힙니다. */
+                data-done={(n === 0 && step > 0) || undefined}
+                style={{ zIndex: n + 1 }}
               >
-                <span className="cmpb-layer-no">
-                  {String(n + 1).padStart(2, "0")}
-                </span>
-                <h5>{titleOf(n, title)}</h5>
-                <i className="cmpb-layer-arrow" aria-hidden />
-              </button>
+                <button
+                  type="button"
+                  className="cmpb-layer-head"
+                  onClick={() => setStep(n)}
+                >
+                  <span className="cmpb-layer-no">
+                    {String(n + 1).padStart(2, "0")}
+                  </span>
+                  <h5>{titleOf(n, title)}</h5>
+                  <i className="cmpb-layer-arrow" aria-hidden />
+                </button>
 
-              {dots &&
-                n < 3 &&
-                n !== 1 &&
-                (() => {
-                  const no = n === 2 ? "03" : "02";
-                  return (
-                    <span
-                      className="store-dot cmpb-dot"
-                      ref={(el) => dotRef?.(no, el)}
-                      aria-hidden
-                    >
-                      <span>{no}</span>
-                    </span>
-                  );
-                })()}
-
-              <div className="cmpb-layer-body">
-                {n === 0 && (
-                  <div
-                    className="cmpb-cards"
-                    ref={bindLine}
-                    onPointerDown={onDown}
-                    onPointerMove={onMove}
-                    onPointerUp={onUp}
-                    onPointerCancel={onUp}
-                  >
-                    {SETS.map((item, i) => (
-                      <article
-                        key={item.head}
-                        className="cmpb-card"
-                        data-on={set === i || undefined}
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => {
-                          if (drag.current.moved > 4) return;
-                          chooseSet(i);
-                        }}
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter" || event.key === " ") {
-                            event.preventDefault();
-                            chooseSet(i);
-                          }
-                        }}
+                {dots &&
+                  n < 3 &&
+                  n !== 1 &&
+                  (() => {
+                    const no = n === 2 ? "03" : "02";
+                    return (
+                      <span
+                        className="store-dot cmpb-dot"
+                        ref={(el) => dotRef?.(no, el)}
+                        aria-hidden
                       >
-                        <b>
-                          {item.head.split("&")[0].trim()} &
-                          <br />
-                          {item.head.split("&")[1].trim()}
-                        </b>
+                        <span>{no}</span>
+                      </span>
+                    );
+                  })()}
 
-                        <span className="cmpb-card-shot">
-                          <Image
-                            src={item.shot}
-                            alt=""
-                            width={240}
-                            height={240}
-                          />
-                        </span>
-                      </article>
-                    ))}
-                  </div>
-                )}
+                <div className="cmpb-layer-body">
+                  {n === 0 && (
+                    <div
+                      className="cmpb-cards"
+                      ref={bindLine}
+                      onPointerDown={onDown}
+                      onPointerMove={onMove}
+                      onPointerUp={onUp}
+                      onPointerCancel={onUp}
+                    >
+                      {SETS.map((item, i) => (
+                        <article
+                          key={item.head}
+                          className="cmpb-card"
+                          data-on={set === i || undefined}
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => {
+                            if (drag.current.moved > 4) return;
+                            chooseSet(i);
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                              event.preventDefault();
+                              chooseSet(i);
+                            }
+                          }}
+                        >
+                          <b>
+                            {item.head.split("&")[0].trim()} &
+                            <br />
+                            {item.head.split("&")[1].trim()}
+                          </b>
 
-                {n === 1 && set !== null && (
-                  <ScentRow
-                    kind={SETS[set].kinds[0]}
-                    picked={one}
-                    onPick={(i) => {
-                      setOne(i);
-                      goNext(2);
-                    }}
-                  />
-                )}
+                          <span className="cmpb-card-shot">
+                            <Image
+                              src={item.shot}
+                              alt=""
+                              width={240}
+                              height={240}
+                            />
+                          </span>
+                        </article>
+                      ))}
+                    </div>
+                  )}
 
-                {n === 2 && set !== null && (
-                  <ScentRow
-                    kind={SETS[set].kinds[1]}
-                    picked={two}
-                    onPick={(i) => {
-                      setTwo(i);
-                      goNext(3);
-                    }}
-                  />
-                )}
+                  {n === 1 && set !== null && (
+                    <ScentRow
+                      kind={SETS[set].kinds[0]}
+                      picked={one}
+                      onPick={(i) => {
+                        setOne(i);
+                        goNext(2);
+                      }}
+                    />
+                  )}
 
-                {n === 3 && set !== null && (
-                  <div className="cmpb-list">
-                    <ul>
-                      {SETS[set].kinds.map((kind, i) => {
-                        const at = i === 0 ? one : two;
-                        return (
-                          <li key={kind}>
-                            <span className="cmpb-list-shot">
-                              <Image
-                                src={shotOf(kind, at)}
-                                alt=""
-                                fill
-                                sizes="4vw"
-                                className="object-contain"
-                              />
-                            </span>
-                            <span className="cmpb-list-text">
-                              <b>
-                                {KINDS[kind].name}
-                                {at === null
-                                  ? ""
-                                  : ` ${KINDS[kind].scents[at].ko}`}
-                              </b>
-                              <em>
-                                {at === null
-                                  ? "향 미선택"
-                                  : KINDS[kind].scents[at].name}
-                              </em>
-                            </span>
-                            <span className="cmpb-list-qty">1 ×</span>
-                            <span className="cmpb-list-price">
-                              {won(PRICES[kind])}
-                            </span>
-                          </li>
-                        );
-                      })}
-                    </ul>
+                  {n === 2 && set !== null && (
+                    <ScentRow
+                      kind={SETS[set].kinds[1]}
+                      picked={two}
+                      onPick={(i) => {
+                        setTwo(i);
+                        goNext(3);
+                      }}
+                    />
+                  )}
 
-                    {/* 값은 목록 끝에 붙습니다. 무엇을 더해 나온 값인지가 바로 위에 있습니다. */}
-                    <p className="cmpb-sum">
-                      <span>총 금액</span>
-                      <b>{won(SETS[set].price)}원</b>
-                    </p>
-                  </div>
-                )}
-              </div>
-            </section>
-          ))}
+                  {n === 3 && set !== null && (
+                    <div className="cmpb-list">
+                      <ul>
+                        {SETS[set].kinds.map((kind, i) => {
+                          const at = i === 0 ? one : two;
+                          return (
+                            <li key={kind}>
+                              <span className="cmpb-list-shot">
+                                <Image
+                                  src={shotOf(kind, at)}
+                                  alt=""
+                                  fill
+                                  sizes="4vw"
+                                  className="object-contain"
+                                />
+                              </span>
+                              <span className="cmpb-list-text">
+                                <b>
+                                  {KINDS[kind].name}
+                                  {at === null
+                                    ? ""
+                                    : ` ${KINDS[kind].scents[at].ko}`}
+                                </b>
+                                <em>
+                                  {at === null
+                                    ? "향 미선택"
+                                    : KINDS[kind].scents[at].name}
+                                </em>
+                              </span>
+                              <span className="cmpb-list-qty">1 ×</span>
+                              <span className="cmpb-list-price">
+                                {won(PRICES[kind])}
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+
+                      {/* 값은 목록 끝에 붙습니다. 무엇을 더해 나온 값인지가 바로 위에 있습니다. */}
+                      <p className="cmpb-sum">
+                        <span>총 금액</span>
+                        <b>{won(SETS[set].price)}원</b>
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </section>
+            );
+          })}
         </div>
       </div>
 

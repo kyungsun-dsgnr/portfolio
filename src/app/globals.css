@@ -3177,7 +3177,9 @@
     color: rgb(24 22 19 / 0.72);
     font-family: var(--font-body);
     font-size: calc(13 * var(--u));
-    letter-spacing: -0.01em;
+    /* 대문자로 서므로 자간을 조금 벌립니다. */
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     /* 동그라미와 같은 박자로 함께 숨 쉽니다. */
     animation: switch-dot-breathe 2.4s ease-in-out infinite;
     transition: opacity 320ms ease;
@@ -3322,8 +3324,9 @@
     filter: blur(calc(1.6 * var(--u)));
     box-shadow: 0 0 calc(14 * var(--u)) calc(1 * var(--u))
       rgb(255 239 195 / 0.4);
-    /* 꺼져 있는 동안에는 새어 나올 빛이 없습니다. */
-    opacity: 0;
+    /* 꺼져 있어도 구멍으로 아주 조금은 배어 나옵니다.
+       아랫부분이 눌려 있어 그 빛은 오른쪽 아래에 남습니다. */
+    opacity: 0.18;
     /* 빛은 오른쪽으로 조금 치우칩니다. */
     translate: calc(1.6 * var(--u)) calc(3.4 * var(--u));
   }
@@ -7049,7 +7052,7 @@
 
   /* 탭 글자만 유독 커 보입니다. 한 단 낮춰 나머지와 무게를 맞춥니다. */
   .phone-page .globe-tab {
-    font-size: calc(14 * var(--u));
+    font-size: calc(12 * var(--u));
   }
 
   /* ── 손에 쥔 화면의 글자 크기 ──────────────────

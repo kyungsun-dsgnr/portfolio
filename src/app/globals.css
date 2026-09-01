@@ -3245,18 +3245,19 @@
      앞으로 나온 면은 빛을 비껴 받아 들어간 면보다 조금 어둡습니다. */
   .wall-switch-face {
     z-index: 2;
-    /* 꺼짐 — 아래쪽이 눌려 있어 아래가 어둡습니다. */
+    /* 꺼짐 — 아래쪽이 아직 눌리지 않아 앞으로 나와 있습니다.
+       나온 면이 볕을 먼저 받으므로 아래가 위보다 밝습니다.
+       다만 켜졌을 때보다는 차이를 얕게 두어 두 상태가 헷갈리지 않게 합니다. */
     background:
       linear-gradient(
         rgb(18 17 15 / calc(0.04 * var(--dim, 1))),
         rgb(18 17 15 / calc(0.04 * var(--dim, 1)))
       ),
-      linear-gradient(#eeece8 0 45%, #e8e6e1 49%, #e2dfd9 53% 100%);
+      linear-gradient(#e6e4df 0 45%, #e9e7e2 49%, #ecebe7 53% 100%);
     transition: background 1ms linear 65ms;
   }
 
-  /* 켜짐 — 아래쪽이 나와 있어 아래가 어둡습니다. */
-  /* 켜짐 — 위쪽이 눌려 있어 위가 어둡습니다. */
+  /* 켜짐 — 위쪽이 눌려 들어가 위가 어둡습니다. 아래위 차이가 더 벌어집니다. */
   .wall-switch[data-on] .wall-switch-face {
     background:
       linear-gradient(

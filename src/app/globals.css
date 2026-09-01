@@ -5650,6 +5650,28 @@
     width: 90.62%;
   }
 
+  /* 닫힌 채로 놓인 상자. 세 겹보다 앞에 서 있다가, 열리기 시작하면
+     흐려지며 물러납니다. 사진과 3D 겹의 각도가 달라 겹쳐 두고 바꿉니다. */
+  .cmpb-closed {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    transition: opacity 1100ms cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  .cmpb-closed img {
+    object-fit: contain;
+    /* 사진에는 상자 둘레로 빈 자리가 들어 있어, 그대로 두면 열린 상자보다
+       작게 앉습니다. 그 여백만큼 키우고 열린 상자와 가운데를 맞춥니다. */
+    scale: 1.02;
+    translate: 0 calc(-4 * var(--u));
+  }
+
+  .cmpb-box[data-open] .cmpb-closed {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   .cmpb-base,
   .cmpb-front {
     opacity: 0;
@@ -6394,11 +6416,10 @@
     height: 42%;
   }
 
-  /* 사파리 아래 주소 막대는 화면 위에 겹쳐 앉습니다. 그 높이만큼 비워 두어야
-     마지막 걸음이 막대 뒤로 들어가지 않고 그 위에 올라섭니다.
-     홈 인디케이터가 있는 기기에서는 그만큼 더 띄웁니다. */
+  /* 100dvh 는 이미 주소 막대를 뺀 높이입니다. 여기서 막대만큼 또 비우면
+     단추 아래에 빈 띠가 남습니다. 홈 인디케이터가 걸치는 만큼만 띄웁니다. */
   .phone-page .cmpb-screen {
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 44 * var(--u));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .phone-page .cmpb-card b,

@@ -683,11 +683,16 @@ export function TamburinsComposeScreenB({
 
   /* 세트를 다시 고르면 담긴 제품도 고른 향도 처음으로 돌아갑니다.
      앞 세트에서 고른 향이 새 세트의 제품에 그대로 붙으면 엉뚱한 짝이 됩니다. */
-  const chooseSet = useCallback((i: number) => {
-    setSet(i);
-    setOne(null);
-    setTwo(null);
-  }, []);
+  const chooseSet = useCallback(
+    (i: number) => {
+      setSet(i);
+      setOne(null);
+      setTwo(null);
+      /* 고른 표가 켜지는 것을 보여 준 뒤 첫 향 고르는 층으로 넘어갑니다. */
+      goNext(1);
+    },
+    [goNext],
+  );
 
   return (
     <div className="cmpb-screen">
@@ -773,6 +778,18 @@ export function TamburinsComposeScreenB({
                   />
                 </span>
               ))}
+
+            {/* 닫힌 채로 놓인 상자. 열리기 시작하면 흐려지며 물러나고,
+                그 아래에서 뚜껑이 열린 상자가 드러납니다. 각도가 서로 달라
+                이어 붙이지 않고 겹쳐 두고 바꿉니다. */}
+            <span className="cmpb-closed" aria-hidden>
+              <Image
+                src="/images/tam-box-closed.png"
+                alt=""
+                fill
+                sizes="16vw"
+              />
+            </span>
 
             <span className="cmpb-front">
               <Image

@@ -57,7 +57,7 @@ export function SceneNudakeCover() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <div className="nud-scene rise col-start-1 col-span-4 row-start-1 row-span-6">
+      <div className="nud-scene rise col-start-5 col-span-4 row-start-1 row-span-6">
         <div className="absolute" style={put(FULL)}>
           <Image
             src="/images/nudake-bg.png"
@@ -180,37 +180,52 @@ export function SceneNudakeCover() {
         </div>
       </div>
 
-      <h2 className="type-display rise col-start-6 col-span-3 row-start-1 row-span-2 text-right">
+      <h2 className="type-display rise col-start-1 col-span-3 row-start-1 row-span-2">
         Nudake
         <br />
-        Gift
+        Communicate
       </h2>
 
-      <p
-        className="type-body rise col-start-6 col-span-3 row-start-5 text-right"
-        style={{ "--delay": "0.12s" } as CSSProperties}
+      {/* 이 케이스가 무엇을 다루는지 한 줄로 못 박습니다.
+          2장 오른쪽 제목과 같은 단입니다. */}
+      <h3
+        className="type-title rise self-start col-start-1 col-span-3 row-start-4"
+        style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        선물은 무엇을 고르는 것에서 끝나지 않습니다.
+        A gift is completed
         <br />
-        마음을 적고, 담아, 누군가에게 건네며 완성됩니다.
+        when it is handed over.
+      </h3>
+
+      <p
+        className="type-body rise col-start-1 col-span-3 row-start-5 row-span-2"
+        style={{ "--delay": "0.16s" } as CSSProperties}
+      >
+        우리는 선물을 고르고,
+        <br />
+        메시지를 적고,
+        <br />
+        그것을 안에 넣어 상대에게 건넵니다.
         <br />
         <br />
-        &lsquo;고르고, 적고, 넣고, 건네는&rsquo; 익숙한 행동을 바탕으로
+        이 프로젝트는 디지털에서 사라진
         <br />
-        Nudake의 디지털 선물 경험을 재구성합니다.
+        &lsquo;메시지를 넣어 건네는 행동&rsquo;을
+        <br />
+        Nudake의 선물 경험으로 다시 설계합니다.
       </p>
 
-      {/* 로고는 오른쪽 아래 두 단, 판 오른쪽 끝에 맞춰 섭니다. */}
+      {/* 로고는 왼쪽 아래 두 단, 판 왼쪽 끝에 맞춰 섭니다. */}
       <div
-        className="nud-logo rise relative col-start-7 col-span-2 row-start-6"
-        style={{ "--delay": "0.2s" } as CSSProperties}
+        className="nud-logo rise relative col-start-1 col-span-2 row-start-6"
+        style={{ "--delay": "0.24s" } as CSSProperties}
       >
         <Image
-          src="/images/nudake-logo-2.png"
+          src="/images/nudake-mark.png"
           alt="Nudake"
           fill
           sizes="24vw"
-          className="object-contain object-right"
+          className="object-contain"
         />
       </div>
     </div>

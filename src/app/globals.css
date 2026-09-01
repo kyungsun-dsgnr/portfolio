@@ -532,9 +532,625 @@
   }
 
   .nud-logo {
-    justify-content: flex-end;
+    justify-content: flex-start;
     align-items: flex-end;
     display: flex;
+  }
+
+  /* 채우기(fill) 그림은 흐름 밖에 있어 flex 정렬이 닿지 않습니다.
+     판 왼쪽 끝에 붙이는 것은 object-position 이 맡습니다. */
+  .nud-logo img {
+    object-position: left bottom;
+  }
+
+  /* ── 손의 순서를 화면의 순서로 옮겨 적는 판 ───────────── */
+  .nud-trans {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: calc(34 * var(--u));
+  }
+
+  /* 아래 줄(화면의 순서)은 위 줄에서 내려온 것으로 읽혀야 합니다.
+     줄 사이에 내려오는 화살표를 하나 둡니다. */
+  .nud-trans-row[data-of="digital"] {
+    position: relative;
+  }
+
+  .nud-trans-row[data-of="digital"]::before {
+    content: "";
+    position: absolute;
+    left: calc(-16 * var(--u));
+    top: calc(-52 * var(--u));
+    height: calc(40 * var(--u));
+    width: 1px;
+    background: var(--fg-soft);
+  }
+
+  .nud-trans-label {
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(11 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: calc(14 * var(--u));
+  }
+
+  /* 같은 차례의 걸음이 위아래로 정확히 마주 봐야 옮겨진 것으로 읽힙니다.
+     그래서 넉 줄이 아니라 네 칸으로 나눕니다. */
+  .nud-trans-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+  }
+
+  .nud-trans-steps li {
+    display: flex;
+    align-items: center;
+    gap: calc(10 * var(--u));
+    font-size: calc(15 * var(--u));
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    animation: 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s) both soft-in;
+  }
+
+  /* 걸음과 걸음을 잇는 선. 남는 폭을 그대로 받아 칸을 채웁니다.
+     마지막 걸음 뒤에는 두지 않습니다. */
+  .nud-trans-steps li:not(:last-child)::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    min-width: calc(10 * var(--u));
+    background: var(--fg-soft);
+  }
+
+  [data-visible] .nud-trans-steps li {
+    opacity: 1;
+  }
+
+  /* 세 케이스가 같은 실험이었음을 짧게 적는 자리 */
+  .nud-echo {
+    display: flex;
+    flex-direction: column;
+    gap: calc(8 * var(--u));
+    color: var(--fg-soft);
+    font-size: calc(11.5 * var(--u));
+    align-self: end;
+  }
+
+  .nud-echo span {
+    display: flex;
+    gap: calc(12 * var(--u));
+    font-family: var(--font-display);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .nud-echo em {
+    color: var(--fg);
+    font-style: normal;
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.55;
+  }
+
+  .nud-echo span[data-on] em {
+    opacity: 1;
+  }
+
+  /* ── 걸음 넷을 가로로 세우는 칸 ───────────────────── */
+  .nud-step {
+    display: flex;
+    flex-direction: column;
+    gap: calc(6 * var(--u));
+  }
+
+  .nud-step-shot {
+    position: relative;
+    height: calc(196 * var(--u));
+    margin-bottom: calc(14 * var(--u));
+    background: #f2f2f2;
+  }
+
+  .nud-step-shot img {
+    padding: calc(18 * var(--u));
+  }
+
+  /* 세 번째 걸음이 이 케이스의 주인공이라, 그 칸만 바탕을 뒤집습니다. */
+  .nud-step[data-lead] .nud-step-shot {
+    background: #1d1d1d;
+  }
+
+  /* 제 바탕을 가진 사진은 칸을 그대로 채웁니다. 오려 낸 것들과 섞으면
+     혼자만 액자에 든 것처럼 보입니다. */
+  .nud-step[data-full] .nud-step-shot img {
+    padding: 0;
+    object-fit: cover;
+  }
+
+  /* ── 카드를 고르고 말을 적는 자리 ──────────────────── */
+  .nud-write {
+    display: flex;
+    flex-direction: column;
+    gap: calc(20 * var(--u));
+    min-height: 0;
+  }
+
+  /* 크게 두는 카드 한 장. 세로로 긴 엽서 비율입니다. */
+  .nud-face {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    aspect-ratio: 268 / 381;
+    align-self: center;
+    background: #fbfaf7;
+    box-shadow: 0 calc(10 * var(--u)) calc(30 * var(--u)) #1919190f;
+    display: flex;
+    flex-direction: column;
+    padding: calc(20 * var(--u));
+    overflow: hidden;
+  }
+
+  .nud-face[data-tone="ink"] {
+    background: #1d1d1d;
+    color: #f4f4f4;
+  }
+
+  .nud-face[data-tone="grey"] {
+    background: #d8d7d3;
+  }
+
+  /* 그림이 있는 카드는 위쪽 절반이 그림입니다. */
+  .nud-face-art {
+    position: absolute;
+    inset: 0 0 46% 0;
+  }
+
+  .nud-face-logo {
+    position: relative;
+    font-family: var(--font-display);
+    font-size: calc(10 * var(--u));
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-align: center;
+  }
+
+  .nud-face[data-tone="art"] .nud-face-logo {
+    color: #fff;
+    mix-blend-mode: difference;
+  }
+
+  /* 적히는 말. 손글씨 서체로, 카드 가운데에서 아래쪽에 앉습니다. */
+  .nud-face-text {
+    position: relative;
+    margin-top: auto;
+    margin-bottom: calc(22 * var(--u));
+    font-family: var(--font-script), var(--font-inter), sans-serif;
+    font-size: calc(15 * var(--u));
+    line-height: 1.7;
+    min-height: calc(60 * var(--u));
+  }
+
+  /* 적는 자리를 알리는 깜박이는 선 */
+  .nud-face-text i {
+    display: inline-block;
+    width: 1px;
+    height: calc(15 * var(--u));
+    margin-left: calc(2 * var(--u));
+    translate: 0 calc(2 * var(--u));
+    background: currentcolor;
+    animation: nud-caret 1s steps(2, start) infinite;
+  }
+
+  .nud-face-text i[data-done] {
+    animation-delay: 0.6s;
+    opacity: 0.4;
+  }
+
+  @keyframes nud-caret {
+    to {
+      opacity: 0;
+    }
+  }
+
+  .nud-face-date {
+    position: relative;
+    font-size: calc(8.5 * var(--u));
+    letter-spacing: 0.14em;
+    text-align: center;
+    opacity: 0.5;
+  }
+
+  /* 고를 수 있는 나머지 카드들 */
+  .nud-picks {
+    display: flex;
+    justify-content: center;
+    gap: calc(10 * var(--u));
+  }
+
+  .nud-pick {
+    position: relative;
+    height: calc(46 * var(--u));
+    width: calc(32 * var(--u));
+    flex: none;
+    background: #fbfaf7;
+    cursor: pointer;
+    overflow: hidden;
+    outline: 1px solid #19191914;
+    outline-offset: -1px;
+    transition:
+      outline-color 240ms ease,
+      translate 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nud-pick[data-tone="ink"] {
+    background: #1d1d1d;
+  }
+
+  .nud-pick[data-tone="grey"] {
+    background: #d8d7d3;
+  }
+
+  .nud-pick[data-on] {
+    outline: 1px solid var(--fg);
+    translate: 0 calc(-4 * var(--u));
+  }
+
+  /* ── 카드를 패키지에 넣는 시그니처 장면 ─────────────── */
+  .nud-insert {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: none;
+  }
+
+  /* 패키지는 늘 판 한가운데 섭니다. 끌고 가는 카드는 흐름 밖에 두어,
+     그것이 사라져도 패키지가 옆으로 밀리지 않습니다. */
+  .nud-pack {
+    position: relative;
+    height: calc(340 * var(--u));
+    width: calc(268 * var(--u));
+    flex: none;
+  }
+
+  .nud-pack-back {
+    position: absolute;
+    inset: calc(60 * var(--u)) 0 0 0;
+    background: #e8e6e1;
+  }
+
+  /* 카드가 들어가 앉는 자리. 화면에는 보이지 않고 거리 재는 데만 씁니다. */
+  .nud-pack-slot {
+    position: absolute;
+    left: 50%;
+    top: calc(68 * var(--u));
+    height: calc(80 * var(--u));
+    width: calc(190 * var(--u));
+    translate: -50% 0;
+  }
+
+  /* 들어간 카드. 넣기 전에는 주머니 뒤에 눕혀 두었다가 올라옵니다. */
+  /* 카드가 지나다니는 창. 이 창 밖으로 나간 카드는 보이지 않습니다 —
+     주머니 위쪽에서 내려와 안으로 들어가는 것처럼 읽힙니다. */
+  .nud-pack-inner {
+    position: absolute;
+    inset: calc(70 * var(--u)) calc(26 * var(--u)) 0;
+    overflow: hidden;
+  }
+
+  .nud-inserted {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: calc(230 * var(--u));
+    display: flex;
+    flex-direction: column;
+    gap: calc(10 * var(--u));
+    padding: calc(18 * var(--u));
+    background: #fbfaf7;
+    box-shadow: 0 calc(6 * var(--u)) calc(16 * var(--u)) #19191914;
+    user-select: none;
+    translate: 0 -120%;
+    transition: translate 720ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nud-insert[data-done] .nud-inserted {
+    translate: 0 calc(30 * var(--u));
+  }
+
+  .nud-inserted em {
+    font-family: var(--font-display);
+    font-size: calc(9 * var(--u));
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+  }
+
+  .nud-inserted b {
+    font-family: var(--font-script), var(--font-inter), sans-serif;
+    font-size: calc(13 * var(--u));
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  /* 주머니 앞면. 카드보다 앞에 서서 카드를 가립니다. */
+  .nud-pack-front {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 3;
+    height: calc(140 * var(--u));
+    background: #dedbd5;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: calc(20 * var(--u));
+    font-family: var(--font-display);
+    font-size: calc(11 * var(--u));
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    color: #6d6a65;
+  }
+
+  /* 덮개. 넣고 나면 앞으로 접혀 내려옵니다. */
+  .nud-pack-lid {
+    position: absolute;
+    inset: calc(60 * var(--u)) 0 auto 0;
+    z-index: 2;
+    height: calc(64 * var(--u));
+    background: #d3d0c9;
+    transform-origin: 50% 0;
+    transform: perspective(600px) rotateX(-104deg);
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1) 900ms;
+  }
+
+  .nud-insert[data-done] .nud-pack-lid {
+    transform: perspective(600px) rotateX(0deg);
+  }
+
+  /* 손으로 끌고 가는 카드 */
+  .nud-drag {
+    position: absolute;
+    left: 62%;
+    top: 16%;
+    z-index: 3;
+    height: calc(230 * var(--u));
+    width: calc(164 * var(--u));
+    display: flex;
+    flex-direction: column;
+    gap: calc(10 * var(--u));
+    padding: calc(18 * var(--u));
+    background: #fbfaf7;
+    box-shadow: 0 calc(12 * var(--u)) calc(28 * var(--u)) #19191914;
+    cursor: grab;
+    touch-action: none;
+    /* 끌 때 글자가 잡히면 카드 대신 글이 끌려옵니다. */
+    user-select: none;
+    transition:
+      translate 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 300ms ease,
+      rotate 300ms ease;
+    rotate: -3deg;
+  }
+
+  .nud-drag[data-held] {
+    cursor: grabbing;
+    rotate: 0deg;
+    transition: none;
+    box-shadow: 0 calc(20 * var(--u)) calc(40 * var(--u)) #1919191f;
+  }
+
+  /* 다 넣고 나면 끌던 카드는 사라집니다 — 안에 들어간 카드가 그 자리를 받습니다. */
+  .nud-insert[data-done] .nud-drag {
+    opacity: 0;
+    pointer-events: none;
+    translate: 0 calc(20 * var(--u));
+  }
+
+  .nud-drag em {
+    font-family: var(--font-display);
+    font-size: calc(9 * var(--u));
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+  }
+
+  .nud-drag b {
+    margin-top: auto;
+    font-family: var(--font-script), var(--font-inter), sans-serif;
+    font-size: calc(13 * var(--u));
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .nud-drag span {
+    font-size: calc(8 * var(--u));
+    letter-spacing: 0.14em;
+    opacity: 0.5;
+  }
+
+  .nud-insert-hint {
+    position: absolute;
+    inset: auto 0 0 0;
+    text-align: center;
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(10 * var(--u));
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  /* ── 받는 쪽 ──────────────────────────────── */
+  .nud-receive {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: calc(24 * var(--u));
+  }
+
+  .nud-recv-pack {
+    position: relative;
+    height: calc(260 * var(--u));
+    width: calc(220 * var(--u));
+    flex: none;
+  }
+
+  .nud-recv-body {
+    position: absolute;
+    inset: calc(46 * var(--u)) 0 0 0;
+    background: #e8e6e1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: calc(18 * var(--u));
+    font-family: var(--font-display);
+    font-size: calc(11 * var(--u));
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    color: #6d6a65;
+  }
+
+  /* 덮개는 첫 박자에 닫혀 있다가 열립니다. */
+  .nud-recv-lid {
+    position: absolute;
+    inset: calc(46 * var(--u)) 0 auto 0;
+    z-index: 3;
+    height: calc(54 * var(--u));
+    background: #d3d0c9;
+    transform-origin: 50% 0;
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nud-receive[data-beat="0"] .nud-recv-lid {
+    transform: perspective(600px) rotateX(0deg);
+  }
+
+  .nud-receive[data-beat="1"] .nud-recv-lid,
+  .nud-receive[data-beat="2"] .nud-recv-lid {
+    transform: perspective(600px) rotateX(-104deg);
+  }
+
+  /* 카드는 안에 잠겨 있다가 올라오고, 마지막에 앞으로 나와 펼쳐집니다. */
+  .nud-recv-card {
+    position: absolute;
+    left: 50%;
+    top: calc(62 * var(--u));
+    z-index: 2;
+    height: calc(196 * var(--u));
+    width: calc(150 * var(--u));
+    display: flex;
+    flex-direction: column;
+    gap: calc(10 * var(--u));
+    padding: calc(16 * var(--u));
+    background: #fbfaf7;
+    box-shadow: 0 calc(10 * var(--u)) calc(26 * var(--u)) #19191914;
+    translate: -50% 62%;
+    transition:
+      translate 760ms cubic-bezier(0.22, 1, 0.36, 1),
+      scale 760ms cubic-bezier(0.22, 1, 0.36, 1);
+    scale: 1;
+  }
+
+  .nud-receive[data-beat="1"] .nud-recv-card {
+    translate: -50% -14%;
+  }
+
+  .nud-receive[data-beat="2"] .nud-recv-card {
+    z-index: 4;
+    translate: -50% calc(-34%);
+    scale: 1.12;
+  }
+
+  .nud-recv-card em {
+    font-family: var(--font-display);
+    font-size: calc(9 * var(--u));
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+  }
+
+  .nud-recv-card b {
+    margin-top: auto;
+    font-family: var(--font-script), var(--font-inter), sans-serif;
+    font-size: calc(13 * var(--u));
+    font-weight: 400;
+    line-height: 1.6;
+    opacity: 0;
+    transition: opacity 520ms ease;
+  }
+
+  .nud-receive[data-beat="2"] .nud-recv-card b {
+    opacity: 1;
+  }
+
+  .nud-recv-card span {
+    font-size: calc(8 * var(--u));
+    letter-spacing: 0.14em;
+    opacity: 0.5;
+  }
+
+  .nud-recv-dots {
+    display: flex;
+    gap: calc(8 * var(--u));
+  }
+
+  .nud-recv-dot {
+    height: calc(18 * var(--u));
+    width: calc(18 * var(--u));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    background: #19191912;
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(8 * var(--u));
+    font-weight: 700;
+    transition:
+      background 260ms ease,
+      color 260ms ease;
+  }
+
+  .nud-recv-dot[data-on] {
+    background: var(--fg);
+    color: var(--bg);
+  }
+
+  /* ── 무엇이 무엇으로 바뀌었는지 ─────────────────── */
+  .nud-change {
+    display: flex;
+    flex-direction: column;
+    gap: calc(6 * var(--u));
+  }
+
+  .nud-change-pair {
+    display: flex;
+    align-items: center;
+    gap: calc(12 * var(--u));
+    margin-bottom: calc(4 * var(--u));
+    font-family: var(--font-display);
+    font-size: calc(17 * var(--u));
+    line-height: 1.2;
+  }
+
+  .nud-change-pair s {
+    color: var(--fg-soft);
+    text-decoration-thickness: 1px;
+  }
+
+  .nud-change-pair i {
+    height: 1px;
+    width: calc(16 * var(--u));
+    flex: none;
+    background: var(--fg-soft);
+  }
+
+  .nud-change-pair b {
+    font-weight: 600;
   }
 
   .nud-card {
@@ -2755,6 +3371,8 @@
     height: calc(224 * var(--u));
     cursor: grab;
     touch-action: none;
+    /* 끌 때 글자가 잡히면 카드 대신 글이 끌려옵니다. */
+    user-select: none;
     background: #e4e1db;
     border-radius: 50%;
     position: relative;
@@ -3146,6 +3764,8 @@
   .globe-canvas {
     cursor: grab;
     touch-action: none;
+    /* 끌 때 글자가 잡히면 카드 대신 글이 끌려옵니다. */
+    user-select: none;
     width: 100%;
     height: 100%;
   }

@@ -16,7 +16,14 @@ import { SceneExplore } from "@/components/10-SceneExplore";
 // 접어 둔 장에서 씁니다: import { SceneIntro } from "@/components/01-SceneIntro";
 import { SceneSwitch } from "@/components/02-SceneSwitch";
 import { SceneNudakeCover } from "@/components/18-SceneNudakeCover";
-import { SceneDraft } from "@/components/SceneDraft";
+import { SceneNudakeCurrent } from "@/components/22-SceneNudakeCurrent";
+import { SceneNudakeGesture } from "@/components/23-SceneNudakeGesture";
+import { SceneNudakeSteps } from "@/components/24-SceneNudakeSteps";
+import { SceneNudakeWrite } from "@/components/25-SceneNudakeWrite";
+import { SceneNudakeInsert } from "@/components/26-SceneNudakeInsert";
+import { SceneNudakeReceive } from "@/components/27-SceneNudakeReceive";
+import { SceneNudakeClosing } from "@/components/28-SceneNudakeClosing";
+// 밑그림 장이 다 채워져 내려 둡니다: import { SceneDraft } from "@/components/SceneDraft";
 import { SceneProblem } from "@/components/08-SceneProblem";
 import { ScenePrinciples } from "@/components/04-ScenePrinciples";
 import { SceneStatement } from "@/components/02-SceneStatement";
@@ -222,134 +229,43 @@ export default function Home() {
           id: "nudake-current",
           index: "01 — Nudake",
           label: "Current",
-          node: (
-            <SceneDraft
-              title={
-                <>
-                  A Gift,
-                  <br />
-                  Treated Like an Option.
-                </>
-              }
-              lines={[
-                "제목은 임시입니다. 실제 nudake.com 의 구매·선물 흐름을 먼저 확인하고 씁니다.",
-                "확인할 것 — 선물 옵션이 따로 있는지, 메시지 입력이 어느 단계에 붙는지, 카드나 포장을 고를 수 있는지",
-                "문제는 '화면이 많다' 가 아니라, 선물의 감정적 행위가 주문 옵션으로 축소되어 있다는 것",
-                "탬버린즈의 '분산' 과 겹치지 않게, 여기서는 '축소' 를 짚습니다.",
-              ]}
-            />
-          ),
+          node: <SceneNudakeCurrent />,
         },
         {
           id: "nudake-reframe",
           index: "02 — Nudake",
           label: "Reframe",
-          node: (
-            <SceneDraft
-              title={
-                <>
-                  From Message
-                  <br />
-                  to Gesture.
-                </>
-              }
-              lines={[
-                "타이포 위주의 전환 장. 화면은 넣지 않습니다.",
-                "아래 한 문장 — 메시지를 입력하는 기능이 아니라, 마음을 적어 선물에 넣는 행위로 다시 해석합니다.",
-                "탬버린즈의 From Selection to Composition 에 대응하되 내용은 완전히 다릅니다.",
-              ]}
-            />
-          ),
+          node: <SceneNudakeGesture />,
         },
         {
           id: "nudake-insert",
           index: "03 — Nudake",
           label: "Insert",
-          node: (
-            <SceneDraft
-              title={
-                <>
-                  Choose,
-                  <br />
-                  Write, Insert.
-                </>
-              }
-              lines={[
-                "누데이크의 대표 장면. UI 설명이 아니라 행동 자체를 보여 줍니다.",
-                "가운데 큰 엽서. 둘레에 누데이크 결의 카드 여러 장이 겹쳐 있다가 고르면 한 장이 앞으로 나옵니다.",
-                "01 Choose — 선물의 무드에 맞는 카드를 고릅니다.",
-                "02 Write — 전하고 싶은 메시지를 남깁니다.",
-                "03 Insert — 작성한 카드를 선물 안에 넣어 구성을 완성합니다.",
-                "INSERT 가 이 프로젝트의 시그니처. 젠틀몬스터의 Turn, 탬버린즈의 Place 에 대응합니다.",
-              ]}
-            />
-          ),
+          node: <SceneNudakeSteps />,
         },
         {
           id: "nudake-proposed",
           index: "04 — Nudake",
-          label: "Proposed",
-          node: (
-            <SceneDraft
-              title={
-                <>
-                  Make the Message
-                  <br />
-                  Part of the Gift.
-                </>
-              }
-              lines={[
-                "실제 모바일 화면을 크게 두는 장. 젠틀몬스터 Local Search, Global Discovery 에 대응합니다.",
-                "01 CARD — 비주얼 선택",
-                "02 MESSAGE — 메시지 작성",
-                "03 INSERT — 선물에 넣기",
-                "메시지가 결제 끝에 붙는 부가 기능이 아니라 선물 구성의 일부로 보이는 화면이어야 합니다.",
-              ]}
-            />
-          ),
+          label: "Write",
+          node: <SceneNudakeWrite />,
+        },
+        {
+          id: "nudake-give",
+          index: "05 — Nudake",
+          label: "Insert",
+          node: <SceneNudakeInsert />,
         },
         {
           id: "nudake-receive",
-          index: "05 — Nudake",
+          index: "06 — Nudake",
           label: "Receiving",
-          node: (
-            <SceneDraft
-              title={
-                <>
-                  From Giving
-                  <br />
-                  to Receiving.
-                </>
-              }
-              lines={[
-                "건넨다는 행동은 상대가 있어야 완성되므로, 받는 사람 화면까지 보여 줍니다.",
-                "패키지가 열림 → 카드가 먼저 나타남 → 카드를 열어 메시지를 봄 → 그 뒤 선물 콘텐츠",
-                "이 장이 있어야 메시지 UI 개선이 아니라 브랜드 경험 설계가 됩니다.",
-              ]}
-            />
-          ),
+          node: <SceneNudakeReceive />,
         },
         {
           id: "nudake-closing",
-          index: "06 — Nudake",
+          index: "07 — Nudake",
           label: "Closing",
-          node: (
-            <SceneDraft
-              title={
-                <>
-                  The Message
-                  <br />
-                  Becomes Part of the Gift.
-                </>
-              }
-              lines={[
-                "Input → Gesture — 메시지 입력을 익숙한 행동으로",
-                "Option → Composition — 부가 옵션을 선물 구성의 일부로",
-                "Checkout → Giving — 구매 완료를 건네는 순간으로",
-                "짧게 끝냅니다. 변화 셋 외에는 넣지 않습니다.",
-              ]}
-            />
-          ),
+          node: <SceneNudakeClosing />,
         },
         /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.
         {

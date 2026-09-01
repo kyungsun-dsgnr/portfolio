@@ -774,11 +774,6 @@ export function TamburinsComposeScreenB({
                 </span>
               ))}
 
-            {/* 상자를 두른 리본. 뚜껑이 열리기 전까지 앞을 덮고 있다가 풀립니다. */}
-            <span className="cmpb-ribbon" aria-hidden>
-              <Image src="/images/tam-ribbon.png" alt="" fill sizes="16vw" />
-            </span>
-
             <span className="cmpb-front">
               <Image
                 src="/images/tamburins-box-front.png"

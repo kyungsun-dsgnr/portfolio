@@ -3395,6 +3395,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    /* 실제 기기의 탭 높이를 그대로 둡니다. 판 위 목업에서도 줄이지 않습니다. */
+    min-height: 32px;
     padding: calc(5.27 * var(--u)) 0;
     border-radius: calc(7.03 * var(--u));
     color: #858585;
@@ -3991,7 +3993,8 @@
   }
 
   .step {
-    height: calc(3 * var(--u));
+    /* `One gift, across multiple screens.` 의 진행 막대와 같은 두께입니다. */
+    height: 1px;
     background: #19191926;
     flex: 1 1 0;
     overflow: hidden;
@@ -5891,6 +5894,28 @@
     translate: 0 -50%;
   }
 
+  /* 번호를 누르면 그 자리만 남고 나머지는 뒤로 물러납니다.
+     점 자체는 판 위 설명과 이어져 있어 흐리지 않습니다. */
+  .cmpb-stage .cmpb-box,
+  .cmpb-layer-head,
+  .cmpb-layer-body {
+    transition:
+      filter 340ms ease,
+      opacity 340ms ease;
+  }
+
+  .cmpb-stage[data-dim] .cmpb-box,
+  .cmpb-layer[data-dim] .cmpb-layer-head,
+  .cmpb-layer[data-dim] .cmpb-layer-body {
+    filter: blur(calc(3 * var(--u)));
+    opacity: 0.5;
+  }
+
+  /* 눌린 번호는 테를 둘러 어디를 보고 있는지 알립니다. */
+  .store-dot[data-on] {
+    box-shadow: 0 0 0 calc(3 * var(--u)) rgb(150 150 150 / 0.45);
+  }
+
   /* 상자 점 — 왼쪽 항목과 이어지므로 왼쪽에 서고,
      썸네일 세로 가운데에서 상자 위에 살짝 걸칩니다. */
   .cmpb-dot-box {
@@ -6405,7 +6430,6 @@
   /* 탭 글자만 유독 커 보입니다. 한 단 낮춰 나머지와 무게를 맞춥니다. */
   .phone-page .globe-tab {
     font-size: calc(14 * var(--u));
-    min-height: 32px;
   }
 
   /* ── 손에 쥔 화면의 글자 크기 ──────────────────

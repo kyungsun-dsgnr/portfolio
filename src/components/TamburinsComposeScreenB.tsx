@@ -526,20 +526,27 @@ function ScentRow({
 /** 고르는 순서. 하나를 고르면 그 층이 덮이고 다음 층이 올라옵니다. */
 const LAYERS = ["기프트 세트 선택", "향 선택", "향 선택", "기프트 세트 보기"];
 
+/** 번호 점이 가리키는 자리. 향은 두 층이 한 이야기라 함께 남습니다. */
+const DOT_AT: Record<string, number[]> = { "02": [0], "03": [1, 2] };
+
 export function TamburinsComposeScreenB({
   auto = false,
   dots = false,
   dotRef,
   stepped = false,
+  preset = false,
 }: {
   /** 아무도 만지지 않는 자리에서는 스스로 한 세트를 담아 보입니다. */
   auto?: boolean;
   /** 판 위 설명과 이을 수 있게 자리마다 번호 점을 얹습니다. */
   dots?: boolean;
-  dotRef?: (key: string, el: HTMLSpanElement | null) => void;
+  dotRef?: (key: string, el: HTMLElement | null) => void;
   /** 손에 쥔 화면에서는 고른 만큼만 보여 줍니다. 판 위에서는 걸음 넷을
       한눈에 보여야 해서 처음부터 다 세워 둡니다. */
   stepped?: boolean;
+  /** 들어서자마자 첫 세트가 담긴 채로 섭니다. 이 장의 이야기는
+      "고르고 나면 어떻게 되는가" 라서, 빈 상자로 시작하면 한 걸음 늦습니다. */
+  preset?: boolean;
 } = {}) {
   /* 처음에는 리본이 묶인 상자입니다. 장에 들어서면 포장이 풀리고
      뚜껑이 열려 빈 상자가 드러납니다. 담기는 것은 세트를 고른 뒤입니다. */
@@ -649,7 +656,10 @@ export function TamburinsComposeScreenB({
       cancelAnimationFrame(frame);
     };
   }, [follow]);
-  const [set, setSet] = useState<number | null>(null);
+  const [set, setSet] = useState<number | null>(preset ? 0 : null);
+
+  /* 번호 점을 누르면 그 자리만 남기고 나머지를 흐립니다. 한 번 더 누르면 풉니다. */
+  const [focus, setFocus] = useState<string | null>(null);
 
   /* 판 위 목업처럼 손이 닿지 않는 자리에서는, 뚜껑이 열린 뒤
      한 세트를 스스로 골라 담습니다. 12장 표지와 같은 흐름입니다. */
@@ -664,13 +674,14 @@ export function TamburinsComposeScreenB({
   useEffect(() => {
     if (inView) return;
     const back = window.setTimeout(() => {
-      setSet(null);
+      setSet(preset ? 0 : null);
       setOne(null);
       setTwo(null);
       setStep(0);
+      setFocus(null);
     }, 0);
     return () => clearTimeout(back);
-  }, [inView]);
+  }, [inView, preset]);
 
   /* 향 층의 제목. 고르기 전에는 "무엇의 향을 고르는지",
      고른 뒤에는 "무엇을 골랐는지"를 그대로 적습니다. */
@@ -715,6 +726,7 @@ export function TamburinsComposeScreenB({
           ref={stage}
           data-small={(step > 0 && step < 3) || undefined}
           data-mid={step === 3 || undefined}
+          data-dim={(focus !== null && focus !== "01") || undefined}
         >
           {/* 12장 표지와 같은 볕과 바닥. 상자보다 뒤에 깔립니다. */}
           <div className="tam-floor" aria-hidden />
@@ -722,13 +734,16 @@ export function TamburinsComposeScreenB({
           <div className="tam-sun-floor" aria-hidden />
 
           {dots && (
-            <span
+            <button
+              type="button"
               className="store-dot cmpb-dot cmpb-dot-box"
               ref={(el) => dotRef?.("01", el)}
-              aria-hidden
+              data-on={focus === "01" || undefined}
+              aria-label="상자 자리만 보기"
+              onClick={() => setFocus((now) => (now === "01" ? null : "01"))}
             >
               <span>01</span>
-            </span>
+            </button>
           )}
 
           <figure className="cmpb-box" data-open={ready || undefined}>
@@ -831,6 +846,10 @@ export function TamburinsComposeScreenB({
                 data-open={step === n || undefined}
                 /* 세트 층만 다 고르고 나면 잉크로 뒤집힙니다. */
                 data-done={(n === 0 && step > 0) || undefined}
+                data-dim={
+                  (focus !== null && !(DOT_AT[focus] ?? []).includes(n)) ||
+                  undefined
+                }
                 style={{ zIndex: n + 1 }}
               >
                 <button
@@ -851,13 +870,18 @@ export function TamburinsComposeScreenB({
                   (() => {
                     const no = n === 2 ? "03" : "02";
                     return (
-                      <span
+                      <button
+                        type="button"
                         className="store-dot cmpb-dot"
                         ref={(el) => dotRef?.(no, el)}
-                        aria-hidden
+                        data-on={focus === no || undefined}
+                        aria-label={`${titleOf(n, title)} 자리만 보기`}
+                        onClick={() =>
+                          setFocus((now) => (now === no ? null : no))
+                        }
                       >
                         <span>{no}</span>
-                      </span>
+                      </button>
                     );
                   })()}
 

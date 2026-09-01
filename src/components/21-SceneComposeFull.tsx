@@ -86,7 +86,7 @@ export function SceneComposeFull() {
 
   /* 항목과 화면 위 번호 점을 잇는 점선 */
   const cards = useRef<Record<string, HTMLDivElement | null>>({});
-  const dots = useRef<Record<string, HTMLSpanElement | null>>({});
+  const dots = useRef<Record<string, HTMLElement | null>>({});
   const [links, setLinks] = useState<
     Record<string, { d: string; len: number }>
   >({});
@@ -312,6 +312,7 @@ export function SceneComposeFull() {
         }
       >
         <TamburinsComposeScreenB
+          preset
           dots
           dotRef={(key, el) => {
             dots.current[key] = el;

@@ -52,7 +52,8 @@ export function SceneAfter() {
   >({});
 
   const dotRef = useCallback((key: string, el: HTMLButtonElement | null) => {
-    dots.current[key] = el;
+    /* 다시 그릴 때 잠깐 null 이 됩니다. 그때 지우면 선이 끊깁니다. */
+    if (el) dots.current[key] = el;
   }, []);
 
   /* 점을 누르면 그 자리가 켜집니다. 03 을 누르면 아래 매장 목록으로 굴러갑니다. */
@@ -211,7 +212,12 @@ export function SceneAfter() {
           const link = links[point.index];
           if (!link) return null;
           return (
-            <svg className="link" key={point.index} aria-hidden>
+            <svg
+              className="link"
+              key={point.index}
+              data-dim={picked && picked !== point.index ? true : undefined}
+              aria-hidden
+            >
               <defs>
                 <mask id={`after-${point.index}`} maskUnits="userSpaceOnUse">
                   <path
@@ -251,9 +257,11 @@ export function SceneAfter() {
           type="button"
           key={point.index}
           ref={(el) => {
-            cards.current[point.index] = el;
+            if (el) cards.current[point.index] = el;
           }}
           className={`issue rise ${point.place}`}
+          /* 하나를 고르면 나머지는 물러납니다. 8장과 같은 결입니다. */
+          data-dim={picked && picked !== point.index ? true : undefined}
           style={{ "--delay": `${0.18 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">{point.index}</span>

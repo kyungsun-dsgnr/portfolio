@@ -5574,6 +5574,16 @@
     overflow: visible;
   }
 
+  /* 물러난 항목으로 가는 선도 함께 물러납니다. 글만 흐려지고 선이 그대로면
+     흐려진 쪽으로 눈이 다시 끌립니다. 항목 글과 같은 박자로 옅어집니다. */
+  .link {
+    transition: opacity 0.5s;
+  }
+
+  .link[data-dim] {
+    opacity: 0.18;
+  }
+
   .link-dash {
     stroke: rgb(150 150 150 / 0.9);
     stroke-width: 0.8px;
@@ -6960,6 +6970,12 @@
 
   .cmpb-stage .cmpb-box {
     z-index: 1;
+  }
+
+  /* 번호 점은 상자보다 앞에 서야 눌립니다. 뒤에 두면 상자 그림이
+     클릭을 먼저 받아 01 번만 눌리지 않습니다. */
+  .cmpb-stage .store-dot {
+    z-index: 6;
   }
 
   /* 지면은 상자 밑동에 맞춰야 합니다. 상자 키가 자리에 따라 달라지므로

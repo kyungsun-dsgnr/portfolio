@@ -105,7 +105,8 @@ export function SceneProblem() {
   >({});
 
   const dotRef = useCallback((key: string, el: HTMLButtonElement | null) => {
-    dots.current[key] = el;
+    /* 다시 그릴 때 잠깐 null 이 됩니다. 그때 지우면 선이 끊깁니다. */
+    if (el) dots.current[key] = el;
   }, []);
 
   /* 요소가 떠오르는 동안 재면 선이 어긋납니다. 다 자리 잡은 뒤부터 긋습니다. */
@@ -255,7 +256,12 @@ export function SceneProblem() {
           const link = links[key];
           if (!link) return null;
           return (
-            <svg className="link" key={key} aria-hidden>
+            <svg
+              className="link"
+              key={key}
+              data-dim={picked && picked !== key ? true : undefined}
+              aria-hidden
+            >
               {/* 점선은 그 자리에 있고, 점에서부터 자라는 마스크가 그것을 열어 줍니다. */}
               <defs>
                 <mask id={`link-${key}`} maskUnits="userSpaceOnUse">
@@ -280,7 +286,7 @@ export function SceneProblem() {
           type="button"
           key={point.index}
           ref={(el) => {
-            cards.current[point.index] = el;
+            if (el) cards.current[point.index] = el;
           }}
           className={`issue rise ${point.place}`}
           data-dim={picked && picked !== point.index ? true : undefined}

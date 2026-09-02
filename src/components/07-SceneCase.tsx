@@ -11,7 +11,7 @@ type Props = {
   /** 64px 헤드라인. 대문자 변환은 CSS 가 합니다. 줄바꿈은 부르는 쪽에서 넣습니다. */
   title: ReactNode;
   /** 제목 아래 한 줄. 이 케이스가 무엇을 무엇으로 옮기는지 적습니다.
-      세 케이스 표지가 모두 3행 첫머리의 같은 자리에 답니다. */
+      세 케이스 표지가 모두 4행 첫머리의 같은 자리에 답니다. */
   subtitle?: ReactNode;
   /** 브랜드 로고. 원본이 333×110(2칼럼 × 1행)에 맞춰 그려져 있습니다. */
   logo?: { src: string; alt: string };
@@ -47,7 +47,7 @@ export function SceneCase({
 
       {subtitle && (
         <h3
-          className="type-title rise self-start col-span-4 row-start-3"
+          className="type-title rise self-start col-span-4 row-start-4"
           style={{ "--delay": "0.06s" } as CSSProperties}
         >
           {subtitle}

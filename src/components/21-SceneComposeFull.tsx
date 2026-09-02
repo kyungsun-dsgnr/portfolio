@@ -8,7 +8,13 @@
  * 판이 올라오는 만큼 높이만 자라게 합니다 — 화면이 길어지며 속이 바뀌는 셈입니다.
  */
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import QRCode from "qrcode";
 
 import { TamburinsComposeScreenB } from "@/components/TamburinsComposeScreenB";
@@ -54,6 +60,9 @@ export function SceneComposeFull() {
   /* 손에 쥔 기기에서 이 화면을 직접 굴려 보는 자리 */
   const [mark, setMark] = useState<string | null>(null);
 
+  /* 목업에서 어느 번호를 보고 있는지. 하나를 고르면 나머지 설명은 물러납니다. */
+  const [focus, setFocus] = useState<string | null>(null);
+
   useEffect(() => {
     const to = `${window.location.origin}${PHONE_PATH}`;
     QRCode.toString(to, {
@@ -92,6 +101,11 @@ export function SceneComposeFull() {
   >({});
   /* 마지막으로 그린 값. 같은 값이면 다시 그리지 않습니다. */
   const shown = useRef("");
+  /* 점을 적어 두는 손. 다시 그리는 사이 null 이 들어와도 앞서 잡은 것을 지키고,
+     참조가 매번 새로 만들어지지 않게 한 번만 만듭니다. */
+  const keepDot = useCallback((key: string, el: HTMLElement | null) => {
+    if (el) dots.current[key] = el;
+  }, []);
   const lifted = useRef(0);
   /* 되돌림 없이 잰 제자리 값. 한 번만 재면 되는 상수입니다. */
   const own = useRef<number | null>(null);
@@ -215,23 +229,39 @@ export function SceneComposeFull() {
       }
     }
 
-    function onScroll() {
-      /* 화면이 자라는 동안에도, 항목이 떠오르며 자리를 잡는 동안에도 따라갑니다.
-         먼저 멈추면 선이 아직 내려와 있던 글의 자리에 그어집니다. */
-      until = performance.now() + 2600;
+    /** 이만큼 더 따라갑니다. 이미 더 길게 잡혀 있으면 그대로 둡니다. */
+    function kick(ms: number) {
+      until = Math.max(until, performance.now() + ms);
       if (looping) return;
       looping = true;
       queued = requestAnimationFrame(loop);
     }
 
+    function onScroll() {
+      /* 화면이 자라는 동안에도, 항목이 떠오르며 자리를 잡는 동안에도 따라갑니다.
+         먼저 멈추면 선이 아직 내려와 있던 글의 자리에 그어집니다. */
+      kick(2600);
+    }
+
+    /* 목업 안에서 무엇이 움직이면 — 세트를 고르거나 층이 열려 상자가 줄고 늘면 —
+       점도 함께 움직입니다. 그동안 선이 점을 놓치지 않게 합니다.
+       상자 높이는 520ms, 담긴 카드는 760ms 걸리므로 그보다 넉넉히 잡습니다. */
+    function onMove() {
+      kick(1200);
+    }
+
     onScroll();
     root.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+    box.addEventListener("transitionrun", onMove);
+    box.addEventListener("transitionend", onMove);
 
     return () => {
       cancelAnimationFrame(queued);
       root.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      box.removeEventListener("transitionrun", onMove);
+      box.removeEventListener("transitionend", onMove);
     };
   }, []);
 
@@ -266,7 +296,12 @@ export function SceneComposeFull() {
       {inView &&
         tied &&
         Object.entries(links).map(([key, link]) => (
-          <svg className="link" key={`${key}-${play}`} aria-hidden>
+          <svg
+            className="link"
+            key={`${key}-${play}`}
+            data-dim={focus && focus !== key ? true : undefined}
+            aria-hidden
+          >
             <defs>
               <mask id={`fixed-${key}-${play}`} maskUnits="userSpaceOnUse">
                 <path
@@ -289,9 +324,12 @@ export function SceneComposeFull() {
         <div
           key={one.index}
           ref={(el) => {
-            cards.current[one.index] = el;
+            /* 다시 그릴 때 잠깐 null 이 됩니다. 그때 지우면 선이 끊깁니다. */
+            if (el) cards.current[one.index] = el;
           }}
           className={`issue rise ${one.place}`}
+          /* 목업에서 한 자리를 고르면 나머지 설명은 물러납니다. 8·11장과 같은 결입니다. */
+          data-dim={focus && focus !== one.index ? true : undefined}
           style={{ "--delay": `${0.3 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">{one.index}</span>
@@ -314,9 +352,8 @@ export function SceneComposeFull() {
         <TamburinsComposeScreenB
           preset
           dots
-          dotRef={(key, el) => {
-            dots.current[key] = el;
-          }}
+          onFocus={setFocus}
+          dotRef={keepDot}
         />
       </div>
     </div>

@@ -535,12 +535,16 @@ export function TamburinsComposeScreenB({
   dotRef,
   stepped = false,
   preset = false,
+  onFocus,
 }: {
   /** 아무도 만지지 않는 자리에서는 스스로 한 세트를 담아 보입니다. */
   auto?: boolean;
   /** 판 위 설명과 이을 수 있게 자리마다 번호 점을 얹습니다. */
   dots?: boolean;
   dotRef?: (key: string, el: HTMLElement | null) => void;
+  /** 어느 번호를 보고 있는지 판에도 알립니다. 판 위 설명이 함께 물러나야
+      한 자리만 남는 것으로 읽힙니다. */
+  onFocus?: (key: string | null) => void;
   /** 손에 쥔 화면에서는 고른 만큼만 보여 줍니다. 판 위에서는 걸음 넷을
       한눈에 보여야 해서 처음부터 다 세워 둡니다. */
   stepped?: boolean;
@@ -661,6 +665,24 @@ export function TamburinsComposeScreenB({
   /* 번호 점을 누르면 그 자리만 남기고 나머지를 흐립니다. 한 번 더 누르면 풉니다. */
   const [focus, setFocus] = useState<string | null>(null);
 
+  /* 부모가 준 콜백은 다시 그릴 때마다 새로 만들어집니다.
+     효과가 그때마다 돌지 않도록 ref 로 들고 있습니다. */
+  const told = useRef(onFocus);
+  useEffect(() => {
+    told.current = onFocus;
+  }, [onFocus]);
+
+  /* 누른 번호를 켜거나 끕니다. 판에도 같은 값을 알립니다. */
+  const look = useCallback((key: string) => {
+    setFocus((now) => {
+      const next = now === key ? null : key;
+      /* 갱신 함수 안에서 부모를 바로 건드리면 그리는 중에 상태가 바뀝니다.
+         한 박자 뒤로 미뤄 그리기가 끝난 다음에 알립니다. */
+      window.setTimeout(() => told.current?.(next), 0);
+      return next;
+    });
+  }, []);
+
   /* 판 위 목업처럼 손이 닿지 않는 자리에서는, 뚜껑이 열린 뒤
      한 세트를 스스로 골라 담습니다. 12장 표지와 같은 흐름입니다. */
   useEffect(() => {
@@ -679,6 +701,7 @@ export function TamburinsComposeScreenB({
       setTwo(null);
       setStep(0);
       setFocus(null);
+      told.current?.(null);
     }, 0);
     return () => clearTimeout(back);
   }, [inView, preset]);
@@ -740,7 +763,7 @@ export function TamburinsComposeScreenB({
               ref={(el) => dotRef?.("01", el)}
               data-on={focus === "01" || undefined}
               aria-label="상자 자리만 보기"
-              onClick={() => setFocus((now) => (now === "01" ? null : "01"))}
+              onClick={() => look("01")}
             >
               <span>01</span>
             </button>
@@ -877,7 +900,7 @@ export function TamburinsComposeScreenB({
                         data-on={focus === no || undefined}
                         aria-label={`${titleOf(n, title)} 자리만 보기`}
                         onClick={() =>
-                          setFocus((now) => (now === no ? null : no))
+                          look(no)
                         }
                       >
                         <span>{no}</span>

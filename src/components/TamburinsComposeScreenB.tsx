@@ -199,9 +199,6 @@ const COVER_GOODS = [
   },
 ];
 
-/* 고른 표가 켜지는 것을 눈으로 확인할 만큼만 머뭅니다. */
-const PICK_HOLD = 620;
-
 /** 향은 두 제품이 같은 목록에서 고릅니다. */
 /* 향노트는 스토어에 적힌 그대로, 설명도 그 자리에서 펼쳐 봅니다. */
 /** 향노트와 설명은 탬버린즈 스토어에 적힌 그대로입니다.
@@ -565,10 +562,8 @@ export function TamburinsComposeScreenB({
   const [step, setStep] = useState(0);
   const view = useRef<HTMLDivElement>(null);
 
-  /* 고른 표가 켜지는 것을 보여 준 뒤에 다음 층으로 넘어갑니다. */
-  const goNext = useCallback((to: number) => {
-    window.setTimeout(() => setStep(to), PICK_HOLD);
-  }, []);
+  /* 고르고 나서 다음 층으로 저절로 넘어가지 않습니다.
+     어디를 볼지는 보는 사람이 정합니다 — 층 제목줄을 누르면 열립니다. */
 
   /* 세트 줄은 끌어서 넘깁니다. 판 전체가 세로로 딱딱 넘어가는 자리라
      휠은 그쪽으로 먹히고, 손으로 끄는 것만 이 줄에 닿습니다. */
@@ -727,10 +722,8 @@ export function TamburinsComposeScreenB({
       setSet(i);
       setOne(null);
       setTwo(null);
-      /* 고른 표가 켜지는 것을 보여 준 뒤 첫 향 고르는 층으로 넘어갑니다. */
-      goNext(1);
     },
-    [goNext],
+    [],
   );
 
   return (
@@ -959,10 +952,7 @@ export function TamburinsComposeScreenB({
                     <ScentRow
                       kind={SETS[set].kinds[0]}
                       picked={one}
-                      onPick={(i) => {
-                        setOne(i);
-                        goNext(2);
-                      }}
+                      onPick={(i) => setOne(i)}
                     />
                   )}
 
@@ -970,10 +960,7 @@ export function TamburinsComposeScreenB({
                     <ScentRow
                       kind={SETS[set].kinds[1]}
                       picked={two}
-                      onPick={(i) => {
-                        setTwo(i);
-                        goNext(3);
-                      }}
+                      onPick={(i) => setTwo(i)}
                     />
                   )}
 

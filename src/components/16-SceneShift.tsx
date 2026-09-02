@@ -11,7 +11,13 @@
  * 선물을 만드는 행동(Composition)으로 바꿨다는 선언입니다.
  */
 
-import { useEffect, useState, type CSSProperties } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 
 import { TamburinsComposeScreenB } from "@/components/TamburinsComposeScreenB";
 import { TamburinsGiftScreen } from "@/components/TamburinsGiftScreen";
@@ -75,6 +81,17 @@ const px = (value: number) => `calc(${value} * var(--u))`;
 
 export function SceneShift() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
+
+  /* 개선 화면을 누르면 그 화면이 통째로 커지는 다음 장으로 넘어갑니다.
+     여기서 목업을 만져 보다가 다음 장으로 자연스럽게 이어지게 둔 자리입니다. */
+  const frame = useRef<HTMLDivElement>(null);
+  const goOn = useCallback(() => {
+    const here = frame.current?.closest<HTMLElement>(".section");
+    const root = here?.closest<HTMLElement>(".scroll-root");
+    const next = here?.nextElementSibling as HTMLElement | null;
+    if (!root || !next) return;
+    root.scrollTo({ top: next.offsetTop, behavior: "smooth" });
+  }, []);
 
   /* 넷이 한 걸음으로 합쳐졌는지 */
   const [one, setOne] = useState(false);
@@ -163,6 +180,8 @@ export function SceneShift() {
             네 화면 중 하나가 바뀌는 것이 아니라, 새 화면이 등장합니다. */}
         <div
           className="merge-new"
+          ref={frame}
+          onClick={goOn}
           data-in={settled || undefined}
           style={{
             left: px(CENTER_X),

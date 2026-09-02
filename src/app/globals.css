@@ -2790,17 +2790,23 @@
     animation: 0.9s cubic-bezier(0.3, 0.8, 0.3, 1) both set-open;
   }
 
+  /* 고른 세트가 한 번 눌렸다가 크게 부풀고, 제 크기로 돌아옵니다.
+     커진 채로 멈추면 그 칸만 계속 커 보여 줄이 어긋납니다. */
   @keyframes set-open {
     0% {
       scale: 1;
     }
 
-    22% {
+    18% {
       scale: 0.96;
     }
 
+    55% {
+      scale: 1.1;
+    }
+
     100% {
-      scale: 1.06;
+      scale: 1;
     }
   }
 
@@ -6031,7 +6037,9 @@
   }
 
   /* 넉 장 위로 올라서는 제안 화면 */
+  /* 이 장의 목업은 통째로 하나의 단추입니다. 눌러 보라는 표시를 손끝에 둡니다. */
   .merge-new {
+    cursor: pointer;
     position: absolute;
     z-index: 9;
     display: flex;

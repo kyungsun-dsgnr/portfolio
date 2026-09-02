@@ -667,6 +667,17 @@ export function TamburinsComposeScreenB({
     told.current = onFocus;
   }, [onFocus]);
 
+  /* 목업 안을 만지면 보고 있던 번호는 풀립니다.
+     한 자리를 들여다보다가 손을 대는 순간, 화면 전체로 눈이 돌아옵니다. */
+  const letGo = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+    if ((event.target as HTMLElement).closest(".store-dot")) return;
+    setFocus((now) => {
+      if (now === null) return now;
+      window.setTimeout(() => told.current?.(null), 0);
+      return null;
+    });
+  }, []);
+
   /* 누른 번호를 켜거나 끕니다. 판에도 같은 값을 알립니다. */
   const look = useCallback((key: string) => {
     setFocus((now) => {
@@ -735,7 +746,7 @@ export function TamburinsComposeScreenB({
         <span className="cmpb-bag" aria-hidden />
       </header>
 
-      <div className="cmpb-body" ref={view}>
+      <div className="cmpb-body" ref={view} onPointerDownCapture={letGo}>
         {/* 01 — 담긴 모습. 고르기 전에는 비어 있고, 세트를 고르면 담깁니다. */}
         <section
           className="cmpb-sec cmpb-stage"

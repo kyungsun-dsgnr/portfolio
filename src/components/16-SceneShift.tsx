@@ -181,8 +181,25 @@ export function SceneShift() {
         <div
           className="merge-new"
           ref={frame}
+          /* 이 장에서 목업은 만지는 것이 아니라 보는 것입니다.
+             제품이 담기는 것까지만 보이고, 누르면 직접 굴려 볼 수 있는
+             다음 장으로 넘어갑니다. */
+          role="button"
+          /* 이 장을 보고 있을 때만 잡힙니다. 장을 벗어난 뒤에도 잡히면,
+             다음 장에서 누른 것이 이 요소에 포커스를 주어 앞 장으로 되돌아갑니다. */
+          tabIndex={inView ? 0 : -1}
+          aria-label="개선 화면 자세히 보기"
+          /* 눌러도 포커스는 주지 않습니다. 포커스가 가면 브라우저가
+             그 요소를 보이려고 판을 앞 장으로 끌어올립니다. */
+          onMouseDown={(event) => event.preventDefault()}
           onClick={goOn}
-          data-in={settled || undefined}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              goOn();
+            }
+          }}
+          data-in={(settled && inView) || undefined}
           style={{
             left: px(CENTER_X),
             top: 0,
@@ -199,7 +216,9 @@ export function SceneShift() {
             <p className="steps-kind">{ONE.step}</p>
           </div>
 
-          <div className="steps-frame">
+          {/* inert 로 안쪽을 통째로 잠급니다 — 손도 키보드도 닿지 않아
+              목업 전체가 하나의 단추처럼 읽힙니다. */}
+          <div className="steps-frame" inert>
             <TamburinsComposeScreenB auto />
           </div>
         </div>

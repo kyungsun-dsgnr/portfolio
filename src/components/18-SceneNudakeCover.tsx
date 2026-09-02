@@ -182,7 +182,7 @@ export function SceneNudakeCover() {
       </h2>
 
       <h3
-        className="type-title rise self-start col-start-1 col-span-3 row-start-4"
+        className="type-title rise self-start col-start-1 col-span-4 row-start-3"
         style={{ "--delay": "0.14s" } as CSSProperties}
       >
         누데이크의 경험을, 장소 밖으로 확장하다

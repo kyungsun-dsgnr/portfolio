@@ -96,6 +96,7 @@ export function SceneTamburinsCover({ scale = 1 }: { scale?: number }) {
   return (
     <SceneCase
       title="Tamburins Compose"
+      subtitle="흩어진 선물 구성을, 한 화면으로 모으다"
       logo={{ src: "/images/tamburins-logo.png", alt: "Tamburins" }}
       body={
         <>

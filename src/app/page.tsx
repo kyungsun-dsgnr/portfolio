@@ -110,6 +110,7 @@ export default function Home() {
           node: (
             <SceneCase
               title="Gentle Monster Explore"
+              subtitle="매장 찾기를, 세계를 둘러보는 경험으로 넓히다"
               logo={{
                 src: "/images/gentle-monster-logo.png",
                 alt: "Gentle Monster",

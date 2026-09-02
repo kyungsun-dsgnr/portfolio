@@ -3,33 +3,47 @@
 /**
  * 26장 — Experience Nudake, Anywhere
  *
- * UI 를 더 설명하지 않고 결과만 한 장으로 정리합니다.
- * 표지에서 꺼낸 말을 여기서 다시 불러 케이스를 닫습니다.
- * 그리드 11번 — 큰 문장 1–7단 1–3행 · 본문 두 단락 5–6행.
+ * 기능을 다시 설명하지 않습니다. 브랜드 경험이 어떻게 달라졌는지만
+ * 한 장으로 적고, 표지의 말을 다시 불러 케이스를 닫습니다.
+ * 그리드 11번 — 큰 문장 1–7단 1–2행 · 본문 두 단락 5–6행.
  */
 
 import type { CSSProperties } from "react";
 
 import { useInView } from "@/components/useInView";
 
-const COL = 158.5;
-const PILL_H = 38;
-const PANEL_W = 1380;
-const PANEL_H = 60;
-const STEP_X = (PANEL_W - COL) / 4;
-const LINE_OVERLAP = 2;
+/* 지금은 길이 하나뿐입니다 — 방문해야 만납니다. */
+const BEFORE = [{ way: "Visit", to: "Experience Nudake" }];
 
-/* 마지막 걸음 하나가 늘었습니다 — 받는 사람의 자리입니다.
-   여기까지 이어져야 '전달할 수 있는 경험' 이 됩니다. */
-const FLOW = [
-  { id: "discover", label: "Discover" },
-  { id: "choose", label: "Choose" },
-  { id: "personal", label: "Personalize" },
-  { id: "send", label: "Send" },
-  { id: "experience", label: "Experience", tone: "start" },
+/* 제안한 뒤에는 길이 둘입니다. 앞의 것을 대체하지 않고 하나가 늘어납니다. */
+const AFTER = [
+  { way: "Visit", to: "Experience Nudake" },
+  { way: "Receive", to: "Experience Nudake", add: true },
 ];
 
-const px = (value: number) => `calc(${value} * var(--u))`;
+function Ways({
+  label,
+  ways,
+}: {
+  label: string;
+  ways: { way: string; to: string; add?: boolean }[];
+}) {
+  return (
+    <div className="nud-ways">
+      <p className="nud-eyebrow">{label}</p>
+
+      <div className="nud-ways-list">
+        {ways.map((one) => (
+          <div className="nud-way" key={one.way} data-add={one.add || undefined}>
+            <b>{one.way}</b>
+            <i aria-hidden />
+            <span>{one.to}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function SceneNudakeFinal() {
   const [ref, inView] = useInView<HTMLDivElement>(0.4);
@@ -43,62 +57,33 @@ export function SceneNudakeFinal() {
       </h2>
 
       <div
-        className="flow rise col-start-1 col-span-8 row-start-4"
-        style={
-          {
-            "--delay": "0.16s",
-            width: px(PANEL_W),
-            height: px(PANEL_H),
-          } as CSSProperties
-        }
+        className="rise col-start-1 col-span-3 row-start-3 row-span-2"
+        style={{ "--delay": "0.16s" } as CSSProperties}
       >
-        <svg
-          className="flow-lines"
-          viewBox={`0 0 ${PANEL_W} ${PANEL_H}`}
-          aria-hidden
-        >
-          {FLOW.slice(1).map((step, i) => (
-            <path
-              key={step.id}
-              d={`M ${i * STEP_X + COL - LINE_OVERLAP} ${PILL_H / 2} H ${(i + 1) * STEP_X + LINE_OVERLAP}`}
-            />
-          ))}
-        </svg>
+        <Ways label="Before" ways={BEFORE} />
+      </div>
 
-        {FLOW.map((step, i) => (
-          <span
-            key={step.id}
-            className="flow-pill"
-            data-tone={step.tone ?? "plain"}
-            style={
-              {
-                left: px(i * STEP_X),
-                top: 0,
-                width: px(COL),
-                height: px(PILL_H),
-              } as CSSProperties
-            }
-          >
-            {step.label}
-          </span>
-        ))}
+      <div
+        className="rise col-start-5 col-span-4 row-start-3 row-span-2"
+        style={{ "--delay": "0.26s" } as CSSProperties}
+      >
+        <Ways label="Proposed" ways={AFTER} />
       </div>
 
       <p
-        className="type-body rise col-start-1 col-span-3 row-start-6"
-        style={{ "--delay": "0.3s" } as CSSProperties}
+        className="type-title rise col-start-1 col-span-4 row-start-5 row-span-2"
+        style={{ "--delay": "0.38s" } as CSSProperties}
       >
-        누데이크의 경험을
+        누데이크의 공간 경험을 대체하지 않고,
         <br />
-        방문해야 하는 경험에서
-        <br />
-        전달할 수 있는 경험으로 확장합니다.
+        선물을 통해 브랜드를 경험할 수 있는
+        <br />또 하나의 접점을 만듭니다.
       </p>
 
       {/* 표지의 말을 그대로 다시 꺼내 케이스를 닫습니다. */}
       <p
         className="type-title rise col-start-6 col-span-3 row-start-6 text-right"
-        style={{ "--delay": "0.42s" } as CSSProperties}
+        style={{ "--delay": "0.5s" } as CSSProperties}
       >
         From Visiting Nudake
         <br />

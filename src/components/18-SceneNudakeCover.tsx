@@ -180,20 +180,21 @@ export function SceneNudakeCover() {
         </div>
       </div>
 
-      <h2 className="type-display rise col-start-1 col-span-3 row-start-1 row-span-2">
+      <h2 className="type-display rise col-start-1 col-span-4 row-start-1 row-span-2">
         Nudake,
         <br />
-        Beyond the Store
+        Beyond the Space
       </h2>
 
-      {/* 프로젝트 키워드 셋. 이 케이스가 무엇을 다루는지 한눈에. */}
+      {/* 이 케이스가 무엇을 확장하려는지 한 줄로. 첫 장에서는
+          문제를 설명하지 않고 이것만 보입니다. */}
       <p
-        className="nud-keys rise col-start-1 col-span-4 row-start-3"
-        style={{ "--delay": "0.06s" } as CSSProperties}
+        className="nud-claim-sm rise col-start-1 col-span-4 row-start-3"
+        style={{ "--delay": "0.08s" } as CSSProperties}
       >
-        <span>Online Gift Experience</span>
-        <span>Information Architecture</span>
-        <span>Brand Experience</span>
+        공간에서 시작된 누데이크의 경험을
+        <br />
+        선물이라는 디지털 접점으로 확장합니다.
       </p>
 
       {/* 이 케이스가 무엇을 다루는지 한 줄로 못 박습니다.
@@ -211,14 +212,11 @@ export function SceneNudakeCover() {
         className="type-body rise col-start-1 col-span-3 row-start-5 row-span-2"
         style={{ "--delay": "0.16s" } as CSSProperties}
       >
-        제한된 오프라인 공간을 넘어,
+        오프라인 경험을 대체하는 것이 아니라,
         <br />
-        어디서든 누데이크를 경험할 수 있도록.
+        방문하지 않아도 브랜드를 발견하고 전달할 수 있는
         <br />
-        <br />
-        선물을 새로운 브랜드 접점으로 정의하고,
-        <br />
-        그 관점에서 정보 구조부터 다시 세웠습니다.
+        새로운 접점을 제안합니다.
       </p>
 
       {/* 로고는 왼쪽 아래 두 단, 판 왼쪽 끝에 맞춰 섭니다. */}

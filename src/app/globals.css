@@ -703,6 +703,182 @@
     white-space: nowrap;
   }
 
+  /* 02 Space + Product + Visual + Package = Nudake Experience */
+  .nud-formula {
+    display: flex;
+    align-items: flex-start;
+    align-self: center;
+  }
+
+  .nud-term {
+    display: flex;
+    align-items: flex-start;
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* 합은 나머지보다 넓게 잡아 결론처럼 앉힙니다. */
+  .nud-term[data-sum] {
+    flex: 1.35;
+  }
+
+  .nud-op {
+    flex: none;
+    width: calc(30 * var(--u));
+    text-align: center;
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(15 * var(--u));
+    line-height: calc(24 * var(--u));
+  }
+
+  .nud-term-body {
+    display: flex;
+    flex-direction: column;
+    gap: calc(6 * var(--u));
+    min-width: 0;
+  }
+
+  .nud-term-body h3 {
+    font-family: var(--font-display);
+    font-size: calc(17 * var(--u));
+    font-weight: 500;
+    line-height: calc(24 * var(--u));
+    letter-spacing: -0.01em;
+  }
+
+  .nud-term[data-sum] .nud-term-body h3 {
+    font-weight: 700;
+  }
+
+  /* 03 한가운데 놓이는 관찰 한 줄 */
+  .nud-claim {
+    align-self: center;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: calc(34 * var(--u));
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  /* 표지에서 쓰는 작은 판. 본문보다 크고 제목보다 작습니다. */
+  .nud-claim-sm {
+    align-self: end;
+    font-size: calc(15 * var(--u));
+    line-height: 1.7;
+  }
+
+  /* 03 이미 있는 흔적 넷 */
+  .nud-sign {
+    display: flex;
+    flex-direction: column;
+    gap: calc(5 * var(--u));
+  }
+
+  .nud-sign-name {
+    font-family: var(--font-display);
+    font-size: calc(17 * var(--u));
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: calc(2 * var(--u));
+  }
+
+  /* 05 나란히 세우는 두 길. 길이가 다른 것이 곧 내용입니다. */
+  .nud-path ol {
+    display: flex;
+    flex-direction: column;
+    gap: calc(9 * var(--u));
+    font-family: var(--font-display);
+    font-size: calc(13.5 * var(--u));
+    color: var(--fg-soft);
+  }
+
+  .nud-path[data-lead] ol {
+    color: var(--fg);
+  }
+
+  /* 걸음과 걸음 사이의 내림 표시 */
+  .nud-path li {
+    position: relative;
+    padding-left: calc(16 * var(--u));
+  }
+
+  .nud-path li:not(:first-child)::before {
+    content: "";
+    position: absolute;
+    left: calc(4 * var(--u));
+    top: calc(-9 * var(--u));
+    height: calc(9 * var(--u));
+    width: 1px;
+    background: currentcolor;
+    opacity: 0.35;
+  }
+
+  /* 06 목표 카드의 한 줄 요약 */
+  .nud-goal-lead {
+    color: var(--fg);
+    font-size: calc(12.5 * var(--u));
+    margin-bottom: calc(2 * var(--u));
+  }
+
+  /* 06 아래에 남는 세 단어. 뒤 장의 뼈대입니다. */
+  .nud-triad {
+    display: flex;
+    align-items: center;
+    gap: calc(18 * var(--u));
+    align-self: end;
+    font-family: var(--font-display);
+    font-size: calc(13 * var(--u));
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fg-soft);
+  }
+
+  .nud-triad span:not(:last-child)::after {
+    content: "→";
+    margin-left: calc(18 * var(--u));
+  }
+
+  /* 09 누데이크를 만나는 길 */
+  .nud-ways-list {
+    display: flex;
+    flex-direction: column;
+    gap: calc(16 * var(--u));
+  }
+
+  .nud-way {
+    display: flex;
+    align-items: center;
+    gap: calc(12 * var(--u));
+    font-family: var(--font-display);
+    font-size: calc(15 * var(--u));
+    line-height: 1;
+    color: var(--fg-soft);
+  }
+
+  .nud-way b {
+    font-weight: 600;
+    color: var(--fg);
+    width: calc(72 * var(--u));
+    flex: none;
+  }
+
+  .nud-way i {
+    height: 1px;
+    width: calc(24 * var(--u));
+    flex: none;
+    background: var(--fg-soft);
+  }
+
+  /* 이번에 새로 나는 길 */
+  .nud-way[data-add] {
+    color: var(--fg);
+  }
+
+  .nud-way[data-add] i {
+    background: var(--fg);
+  }
+
   /* 02 브랜드를 이루는 넷 */
   .nud-part {
     display: flex;
@@ -792,8 +968,9 @@
 
   /* 05 사용자가 들고 온 것 하나 */
   .nud-intent-say {
+    align-self: end;
     font-family: var(--font-display);
-    font-size: calc(22 * var(--u));
+    font-size: calc(30 * var(--u));
     font-weight: 500;
     line-height: 1.35;
     letter-spacing: -0.01em;

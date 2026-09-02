@@ -1,11 +1,11 @@
 "use client";
 
 /**
- * 21장 — Gift, Hidden in the Menu
+ * 21장 — But the Experience Is Hard to Discover
  *
- * 여기서 처음 실제 사이트가 나옵니다. 2026-09-01 nudake.com/kr 에서
- * 직접 따라간 길이라, 없는 기능을 지어낸 것이 아니라
- * 이미 있는 기능이 어디에 묻혀 있는지를 짚는 장입니다.
+ * 앞장에서 선물이 이미 있다고 했으니, 여기서는 그것이 어디에 있는지를
+ * 그대로 따라갑니다. 2026-09-01 nudake.com/kr 에서 직접 지난 길입니다.
+ * 없는 기능을 지어낸 것이 아니라, 있는 기능이 어디에 묻혀 있는지를 짚습니다.
  * 그리드 10번 — 제목 1–3단 1–2행 · 본문 5–7단 1행 · 단 셋 3–6행.
  */
 
@@ -45,14 +45,14 @@ const POINTS = [
   },
   {
     index: "02",
-    title: "Buried Under a Store",
-    body: "선물은 메뉴 안, 그것도 특정 매장(티 하우스) 아래 카테고리로 들어가 있습니다.",
+    title: "Nested Under a Store",
+    body: "선물은 메뉴 안, 그것도 특정 매장(티 하우스) 아래 한 카테고리로 들어가 있습니다.",
     place: "col-start-4 col-span-2",
   },
   {
     index: "03",
-    title: "Ends Outside the Brand",
-    body: "제품 상세의 유일한 단추가 카카오톡 선물하기입니다. 고르는 데까지가 누데이크입니다.",
+    title: "Hard to Predict",
+    body: "선물하려는 목적을 갖고 들어와도, 그 길이 메뉴를 지난다는 것을 미리 알기 어렵습니다.",
     place: "col-start-7 col-span-2",
   },
 ];
@@ -65,15 +65,15 @@ export function SceneNudakeHidden() {
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-lead capitalize rise col-start-1 col-span-3 row-start-1">
-        Gift, Hidden in the Menu
+        But the Experience Is Hard to Discover
       </h2>
 
       <p
         className="type-body rise col-start-5 col-span-3 row-start-1"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        선물 기능은 이미 있습니다. 다만 그것을 찾으려면 여러 단계의 제품 탐색을
-        먼저 거쳐야 합니다.
+        선물 상품과 기능은 이미 있습니다. 다만 지금의 정보 구조에서는 그것이
+        제품 탐색 과정 안에 깊게 들어가 있습니다.
       </p>
 
       <div

@@ -17,13 +17,11 @@ import { SceneExplore } from "@/components/10-SceneExplore";
 import { SceneSwitch } from "@/components/02-SceneSwitch";
 import { SceneNudakeCover } from "@/components/18-SceneNudakeCover";
 import { SceneNudakeContext } from "@/components/22-SceneNudakeContext";
-import { SceneNudakeOpportunity } from "@/components/23-SceneNudakeOpportunity";
-import { SceneNudakeHidden } from "@/components/24-SceneNudakeHidden";
-import { SceneNudakeProblem } from "@/components/25-SceneNudakeProblem";
-import { SceneNudakeGoal } from "@/components/26-SceneNudakeGoal";
-import { SceneNudakeIA } from "@/components/27-SceneNudakeIA";
-import { SceneNudakeGift } from "@/components/28-SceneNudakeGift";
-import { SceneNudakeFinal } from "@/components/29-SceneNudakeFinal";
+import { SceneNudakeCurrent } from "@/components/23-SceneNudakeCurrent";
+import { SceneNudakeProblem } from "@/components/24-SceneNudakeProblem";
+import { SceneNudakeDirection } from "@/components/25-SceneNudakeDirection";
+import { SceneNudakeExperience } from "@/components/26-SceneNudakeExperience";
+import { SceneNudakeImpact } from "@/components/27-SceneNudakeImpact";
 // 밑그림 장이 다 채워져 내려 둡니다: import { SceneDraft } from "@/components/SceneDraft";
 import { SceneProblem } from "@/components/08-SceneProblem";
 import { ScenePrinciples } from "@/components/04-ScenePrinciples";
@@ -233,46 +231,34 @@ export default function Home() {
           node: <SceneNudakeContext />,
         },
         {
-          id: "nudake-opportunity",
+          id: "nudake-current",
           index: "02 — Nudake",
-          label: "Opportunity",
-          node: <SceneNudakeOpportunity />,
-        },
-        {
-          id: "nudake-hidden",
-          index: "03 — Nudake",
           label: "Current",
-          node: <SceneNudakeHidden />,
+          node: <SceneNudakeCurrent />,
         },
         {
           id: "nudake-problem",
-          index: "04 — Nudake",
-          label: "UX Problem",
+          index: "03 — Nudake",
+          label: "Problem",
           node: <SceneNudakeProblem />,
         },
         {
-          id: "nudake-goal",
+          id: "nudake-direction",
+          index: "04 — Nudake",
+          label: "Direction",
+          node: <SceneNudakeDirection />,
+        },
+        {
+          id: "nudake-experience",
           index: "05 — Nudake",
-          label: "Design Goal",
-          node: <SceneNudakeGoal />,
+          label: "Experience",
+          node: <SceneNudakeExperience />,
         },
         {
-          id: "nudake-ia",
+          id: "nudake-impact",
           index: "06 — Nudake",
-          label: "Proposed IA",
-          node: <SceneNudakeIA />,
-        },
-        {
-          id: "nudake-gift",
-          index: "07 — Nudake",
-          label: "Gift UX",
-          node: <SceneNudakeGift />,
-        },
-        {
-          id: "nudake-final",
-          index: "08 — Nudake",
-          label: "Result",
-          node: <SceneNudakeFinal />,
+          label: "Impact",
+          node: <SceneNudakeImpact />,
         },
         /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.
         {

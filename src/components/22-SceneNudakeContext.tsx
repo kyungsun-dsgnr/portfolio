@@ -1,96 +1,129 @@
 "use client";
 
 /**
- * 19장 — An Experience Built Around Space
+ * 19장 — Limited Offline Experience → Gift as a New Touchpoint
  *
- * 브랜드를 이해했다는 것만 보이는 장입니다.
- * "스토어가 적어서 문제" 라고 말하지 않습니다 — 공간 중심의 경험은
- * 강한 자산이고, 그 밖에서 브랜드를 만나는 방식에 가능성이 있다는 데까지만.
- * 그리드 7번 — 2단짜리 넷을 가로로.
+ * 맥락과 기회를 한 장에서 잇습니다. 위에서 접점이 제한적이라는 사실을
+ * 보이고, 아래에서 그 한계를 넘을 길이 이미 사이트 안에 있다는 것을 보입니다.
+ * 매장 정보는 2026-09-01 nudake.com/store 에 올라 있는 전부입니다.
+ * 그리드 10번 — 제목 1–3단 1행 · 본문 5–8단 1행 · 단 셋 5–6행.
  */
 
 import type { CSSProperties } from "react";
 
 import { useInView } from "@/components/useInView";
 
-/* 누데이크의 경험을 이루는 넷. 더해져야 하나가 됩니다. */
-const TERMS = [
-  { key: "space", name: "Space", body: "공간이 먼저 말을 겁니다." },
-  { key: "product", name: "Product", body: "디저트와 티가 그 말을 잇습니다." },
-  { key: "visual", name: "Visual", body: "이미지가 브랜드의 결을 만듭니다." },
-  { key: "package", name: "Package", body: "손에 남는 것이 마지막을 맡습니다." },
+const STORES = [
+  {
+    key: "teahouse",
+    name: "누데이크 티 하우스",
+    where: "서울 성동구 뚝섬로 433 5F",
+    hours: [
+      { label: "기프트 샵", time: "11:00 – 21:00", lead: true },
+      { label: "티 라운지", time: "12:00 – 21:00" },
+    ],
+    place: "col-start-1 col-span-2",
+  },
+  {
+    key: "dosan",
+    name: "하우스 노웨어 도산",
+    where: "서울 강남구 압구정로 46길 50 B1",
+    hours: [{ label: "운영시간", time: "11:00 – 21:00" }],
+    place: "col-start-3 col-span-2",
+  },
 ];
 
-/* 접점의 성격을 적는 말입니다. 단점을 적는 자리가 아닙니다. */
-const KEYS = ["Physical Experience", "Limited Touchpoint", "Brand Immersion"];
+/* 방문하지 않고도 그 경험을 건널 길. 이미 사이트 안에 있는 것들입니다. */
+const SIGNS = [
+  {
+    index: "01",
+    name: "Tea Gift",
+    body: "메뉴 상단 아이콘 셋 중 하나가 통째로 기프트입니다. 열여섯 종이 여기 있습니다.",
+    place: "col-start-1 col-span-2",
+  },
+  {
+    index: "02",
+    name: "Gift Package",
+    body: "티 컬렉션·아카이브·테이스터처럼 선물을 전제로 구성한 패키지가 따로 있습니다.",
+    place: "col-start-4 col-span-2",
+  },
+  {
+    index: "03",
+    name: "Priced to Send",
+    body: "매장 메뉴와 달리 값이 붙어 있고, 카카오 선물하기로 연결되어 있습니다.",
+    place: "col-start-7 col-span-2",
+  },
+];
 
 export function SceneNudakeContext() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1 row-span-2">
-        An Experience
-        <br />
-        Built Around Space
+      <h2 className="type-lead capitalize rise col-start-1 col-span-3 row-start-1">
+        Limited Offline Experience
       </h2>
 
       <p
         className="type-body rise col-start-6 col-span-3 row-start-1"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        누데이크의 강한 브랜드 경험은 공간과 제품, 패키지 같은 물리적 접점을
-        중심으로 만들어집니다.
+        누데이크는 독특한 공간과 제품 경험으로 강한 인상을 만들어 왔습니다.
+        다만 그 접점은 서울의 두 곳뿐이라, 더 많은 사람이 브랜드를 만나는 데는
+        물리적인 한계가 있습니다.
       </p>
 
-      {/* Space + Product + Visual + Package = Nudake Experience */}
-      <div
-        className="nud-formula rise col-start-1 col-span-8 row-start-3 row-span-2"
-        style={{ "--delay": "0.18s" } as CSSProperties}
-      >
-        {TERMS.map((term, i) => (
-          <div className="nud-term" key={term.key}>
-            {i > 0 && (
-              <span className="nud-op" aria-hidden>
-                +
-              </span>
-            )}
+      {STORES.map((store, i) => (
+        <div
+          key={store.key}
+          className={`nud-store rise ${store.place} row-start-2 row-span-2`}
+          style={{ "--delay": `${0.16 + i * 0.08}s` } as CSSProperties}
+        >
+          <p className="nud-eyebrow">Korea &middot; Seoul</p>
+          <h3 className="nud-store-name">{store.name}</h3>
+          <p className="type-body">{store.where}</p>
 
-            <div className="nud-term-body">
-              <h3>{term.name}</h3>
-              <p className="type-body">{term.body}</p>
-            </div>
-          </div>
-        ))}
-
-        <div className="nud-term" data-sum>
-          <span className="nud-op" aria-hidden>
-            =
-          </span>
-
-          <div className="nud-term-body">
-            <h3>Nudake Experience</h3>
-          </div>
+          <dl className="nud-hours">
+            {store.hours.map((hour) => (
+              <div key={hour.label} data-lead={hour.lead || undefined}>
+                <dt>{hour.label}</dt>
+                <dd>{hour.time}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
-      </div>
+      ))}
 
       <p
-        className="type-body rise col-start-1 col-span-4 row-start-5"
-        style={{ "--delay": "0.42s" } as CSSProperties}
+        className="type-title rise self-start col-start-6 col-span-3 row-start-2 row-span-2"
+        style={{ "--delay": "0.3s" } as CSSProperties}
       >
-        이러한 경험은 강력한 브랜드 자산인 동시에,
+        직접 경험할 수 있는 접점이 제한적입니다.
         <br />
-        물리적 공간 밖에서 브랜드를 경험하는 방식에 새로운 가능성을 만듭니다.
+        그래서 온라인이 브랜드 경험을 넓힐 채널이 됩니다.
       </p>
 
+      {/* 이 케이스의 관점이 넘어가는 자리 */}
       <p
-        className="nud-keys rise col-start-1 col-span-5 row-start-6"
-        style={{ "--delay": "0.52s" } as CSSProperties}
+        className="nud-shift rise col-start-1 col-span-8 row-start-4"
+        style={{ "--delay": "0.38s" } as CSSProperties}
       >
-        {KEYS.map((key) => (
-          <span key={key}>{key}</span>
-        ))}
+        <span>Store Experience</span>
+        <i aria-hidden />
+        <b>Gift Experience</b>
       </p>
+
+      {SIGNS.map((sign, i) => (
+        <div
+          key={sign.index}
+          className={`nud-sign rise ${sign.place} row-start-5 row-span-2`}
+          style={{ "--delay": `${0.46 + i * 0.08}s` } as CSSProperties}
+        >
+          <span className="card-index">{sign.index}</span>
+          <h3 className="nud-sign-name">{sign.name}</h3>
+          <p className="type-body">{sign.body}</p>
+        </div>
+      ))}
     </div>
   );
 }

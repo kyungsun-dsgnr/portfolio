@@ -703,6 +703,295 @@
     white-space: nowrap;
   }
 
+  /* 02 셀 수 있는 것들. 제목 옆에 한 줄로 늘어놓습니다. */
+  .nud-counts {
+    display: flex;
+    gap: calc(26 * var(--u));
+    align-self: start;
+  }
+
+  .nud-counts span {
+    display: flex;
+    flex-direction: column;
+    gap: calc(2 * var(--u));
+  }
+
+  .nud-counts b {
+    font-family: var(--font-display);
+    font-size: calc(30 * var(--u));
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .nud-counts em {
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(9 * var(--u));
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .nud-counts i {
+    color: var(--fg-soft);
+    font-size: calc(10.5 * var(--u));
+    font-style: normal;
+  }
+
+  /* 03 문제를 사람의 상황으로 잇는 짧은 글 */
+  .nud-scenario {
+    padding-left: calc(18 * var(--u));
+    border-left: 1px solid var(--fg);
+  }
+
+  /* 03 이 케이스가 한 단 올라서는 문장 */
+  .nud-need {
+    align-self: end;
+    font-family: var(--font-display);
+    font-size: calc(24 * var(--u));
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  /* 04 관점이 뒤집히는 자리 */
+  .nud-turn {
+    display: flex;
+    flex-direction: column;
+    align-self: start;
+  }
+
+  .nud-turn .nud-eyebrow {
+    margin-bottom: calc(8 * var(--u));
+  }
+
+  .nud-turn-line {
+    display: flex;
+    align-items: center;
+    gap: calc(12 * var(--u));
+    margin-bottom: calc(22 * var(--u));
+    font-family: var(--font-display);
+    font-size: calc(19 * var(--u));
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  .nud-turn-line:last-child {
+    margin-bottom: 0;
+  }
+
+  .nud-turn-line i {
+    height: 1px;
+    width: calc(22 * var(--u));
+    flex: none;
+    background: var(--fg-soft);
+  }
+
+  /* 지나간 관점은 물러나 있습니다. */
+  .nud-turn-line[data-old] {
+    color: var(--fg-soft);
+    font-size: calc(15 * var(--u));
+  }
+
+  /* 06 접점 둘 */
+  .nud-reach {
+    display: flex;
+    flex-direction: column;
+    gap: calc(8 * var(--u));
+    align-self: start;
+    padding-top: calc(14 * var(--u));
+    border-top: 1px solid #19191926;
+    color: var(--fg-soft);
+  }
+
+  .nud-reach-name {
+    font-family: var(--font-display);
+    font-size: calc(24 * var(--u));
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  /* 이번에 새로 생기는 접점 */
+  .nud-reach[data-add] {
+    border-top-color: var(--fg);
+    color: var(--fg);
+  }
+
+  /* 01 매장 카드 */
+  .nud-store {
+    display: flex;
+    flex-direction: column;
+    gap: calc(6 * var(--u));
+  }
+
+  .nud-store-name {
+    font-family: var(--font-display);
+    font-size: calc(21 * var(--u));
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .nud-hours {
+    display: flex;
+    flex-direction: column;
+    gap: calc(6 * var(--u));
+    margin-top: calc(10 * var(--u));
+    padding-top: calc(10 * var(--u));
+    border-top: 1px solid #19191914;
+    font-size: calc(12 * var(--u));
+    color: var(--fg-soft);
+  }
+
+  .nud-hours > div {
+    display: flex;
+    gap: calc(12 * var(--u));
+  }
+
+  .nud-hours dt {
+    width: calc(72 * var(--u));
+    flex: none;
+  }
+
+  /* 기프트 샵이 따로 열려 있다는 것이 이 장의 근거입니다. */
+  .nud-hours > div[data-lead] {
+    color: var(--fg);
+    font-weight: 600;
+  }
+
+  /* 02 관점이 넘어가는 자리 */
+  .nud-shift {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(24 * var(--u));
+    align-self: center;
+    font-family: var(--font-display);
+    font-size: calc(26 * var(--u));
+    letter-spacing: -0.01em;
+  }
+
+  .nud-shift span {
+    color: var(--fg-soft);
+  }
+
+  .nud-shift i {
+    height: 1px;
+    width: calc(64 * var(--u));
+    flex: none;
+    background: var(--fg-soft);
+  }
+
+  .nud-shift b {
+    font-weight: 600;
+  }
+
+  /* 03 흐름 위에 '기프트' 가 처음 나오는 자리를 표시합니다. */
+  .flow-first {
+    position: absolute;
+    top: calc(-6 * var(--u));
+    padding-bottom: calc(10 * var(--u));
+    border-bottom: 1px dashed #19191933;
+    color: var(--fg-soft);
+    font-size: calc(9.5 * var(--u));
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  /* 03 셀 수 있는 것들 */
+  .nud-count {
+    display: flex;
+    flex-direction: column;
+    gap: calc(4 * var(--u));
+  }
+
+  .nud-count-value {
+    display: flex;
+    align-items: baseline;
+    gap: calc(8 * var(--u));
+    font-family: var(--font-display);
+    font-size: calc(46 * var(--u));
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: calc(6 * var(--u));
+  }
+
+  .nud-count-value em {
+    font-size: calc(11 * var(--u));
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg-soft);
+  }
+
+  /* 06 인물 */
+  .nud-who dl {
+    display: flex;
+    flex-direction: column;
+    gap: calc(11 * var(--u));
+  }
+
+  .nud-who > dl > div {
+    display: flex;
+    gap: calc(14 * var(--u));
+    font-size: calc(12.5 * var(--u));
+  }
+
+  .nud-who dt {
+    width: calc(64 * var(--u));
+    flex: none;
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(10.5 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding-top: calc(2 * var(--u));
+  }
+
+  /* 브랜드 밖으로 나가는 박자는 흐리게 둡니다. */
+  .issue[data-away] {
+    opacity: 0.55;
+  }
+
+  /* 10 층마다 무엇이 달라지는지 */
+  .nud-move {
+    display: flex;
+    flex-direction: column;
+    gap: calc(5 * var(--u));
+  }
+
+  .nud-move-pair {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: calc(10 * var(--u));
+    margin: calc(4 * var(--u)) 0 calc(8 * var(--u));
+    font-family: var(--font-display);
+    font-size: calc(14 * var(--u));
+    line-height: 1.2;
+  }
+
+  .nud-move-pair s {
+    color: var(--fg-soft);
+    text-decoration-thickness: 1px;
+  }
+
+  .nud-move-pair i {
+    height: 1px;
+    width: calc(16 * var(--u));
+    flex: none;
+    background: var(--fg-soft);
+  }
+
+  .nud-move-pair b {
+    font-weight: 600;
+  }
+
   /* 02 Space + Product + Visual + Package = Nudake Experience */
   .nud-formula {
     display: flex;

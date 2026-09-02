@@ -181,7 +181,7 @@ export function SceneNudakeCover() {
       </div>
 
       <h2 className="type-display rise col-start-1 col-span-4 row-start-1 row-span-2">
-        Nudake,
+        Nudake Tea,
         <br />
         Beyond the Space
       </h2>
@@ -192,9 +192,9 @@ export function SceneNudakeCover() {
         className="nud-claim-sm rise col-start-1 col-span-4 row-start-3"
         style={{ "--delay": "0.08s" } as CSSProperties}
       >
-        공간에서 시작된 누데이크의 경험을
+        서울의 두 방에서만 열리던 고급 티의 경험을,
         <br />
-        선물이라는 디지털 접점으로 확장합니다.
+        선물이라는 길로 넓힙니다.
       </p>
 
       {/* 이 케이스가 무엇을 다루는지 한 줄로 못 박습니다.
@@ -203,20 +203,20 @@ export function SceneNudakeCover() {
         className="type-title rise self-start col-start-1 col-span-3 row-start-4"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        From Visiting Nudake
+        From a Room in Seoul
         <br />
-        to Sending Nudake
+        to Anyone&rsquo;s Table
       </h3>
 
       <p
         className="type-body rise col-start-1 col-span-3 row-start-5 row-span-2"
         style={{ "--delay": "0.16s" } as CSSProperties}
       >
-        오프라인 경험을 대체하는 것이 아니라,
+        매장 경험을 대체하지 않습니다.
         <br />
-        방문하지 않아도 브랜드를 발견하고 전달할 수 있는
+        가지 못한 사람도 그 차를 받아 볼 수 있도록,
         <br />
-        새로운 접점을 제안합니다.
+        이미 있는 기프트 샵을 화면 앞으로 꺼냅니다.
       </p>
 
       {/* 로고는 왼쪽 아래 두 단, 판 왼쪽 끝에 맞춰 섭니다. */}

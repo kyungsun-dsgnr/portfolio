@@ -14,17 +14,17 @@ const SEOUL = ["Seoul"];
 /** 시작점을 하나 더 두는 이유 셋. 마지막 칸만 한 행 더 높아 글이 위에서 시작합니다. */
 const REASONS = [
   {
-    index: "before-01",
+    index: "As is 01",
     title: "Local Start",
     body: "접속 국가와 현재 위치를 기준으로 가까운 매장을 찾습니다.",
   },
   {
-    index: "before-02",
+    index: "As is 02",
     title: "Quick Store Search",
     body: "지역을 선택해 필요한 매장 정보를 빠르게 확인합니다.",
   },
   {
-    index: "after",
+    index: "To be",
     title: "Global Start",
     body: "세계의 도시를 둘러보며 브랜드의 글로벌 스토어를 발견합니다.",
     tall: true,

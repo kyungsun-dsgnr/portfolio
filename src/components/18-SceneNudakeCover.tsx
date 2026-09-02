@@ -3,12 +3,9 @@
 /**
  * 18장 — 누데이크 케이스 표지
  *
- * 두 면으로 갈라 이 케이스가 무엇을 옮기는지 한눈에 보입니다.
- * 왼쪽은 공간에서 만나는 경험, 오른쪽은 그것을 담아 보내는 기프트.
- *
- * 왼쪽 큰 면은 지금 브랜드 정물(배경·잔·카드·티백)로 세워 두었습니다.
- * 실제 매장 사진이 생기면 이 자리만 바꿔 끼우면 됩니다 —
- * `nud-scene` 안의 겹만 사진 한 장으로 갈면 나머지는 그대로 섭니다.
+ * 글이 왼쪽, 큰 그림이 오른쪽에 섭니다.
+ * 그림은 지금 브랜드 정물(배경·잔·카드·티백)입니다. 실제 매장 사진이
+ * 생기면 `nud-scene` 안의 겹만 사진 한 장으로 갈면 나머지는 그대로 섭니다.
  */
 
 import Image from "next/image";
@@ -59,14 +56,13 @@ export function SceneNudakeCover() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      {/* 왼쪽 — 공간에서 만나는 경험 */}
-      <div className="nud-scene rise col-start-1 col-span-3 row-start-1 row-span-6">
+      <div className="nud-scene rise col-start-5 col-span-4 row-start-1 row-span-6">
         <div className="absolute" style={put(FULL)}>
           <Image
             src="/images/nudake-bg.png"
             alt=""
             fill
-            sizes="40vw"
+            sizes="50vw"
             priority
             className="object-cover"
           />
@@ -142,7 +138,7 @@ export function SceneNudakeCover() {
             src="/images/nudake-cup.png"
             alt=""
             fill
-            sizes="40vw"
+            sizes="50vw"
             className="object-cover"
           />
         </div>
@@ -172,49 +168,28 @@ export function SceneNudakeCover() {
             src="/images/nudake-teabag.png"
             alt=""
             fill
-            sizes="24vw"
+            sizes="30vw"
             className="object-contain"
           />
         </div>
-
-        <p className="nud-side" aria-hidden>
-          Store
-        </p>
       </div>
 
-      {/* 오른쪽 — 그 경험을 담아 보내는 기프트 */}
-      <div
-        className="nud-gift-shot rise col-start-7 col-span-2 row-start-1 row-span-4"
-        style={{ "--delay": "0.12s" } as CSSProperties}
-      >
-        <Image
-          src="/images/nudake-pouch.png"
-          alt=""
-          fill
-          sizes="24vw"
-          className="object-contain"
-        />
 
-        <p className="nud-side" aria-hidden>
-          Gift
-        </p>
-      </div>
-
-      <h2 className="type-display rise col-start-4 col-span-3 row-start-2 row-span-2">
+      <h2 className="type-display rise col-start-1 col-span-4 row-start-1 row-span-2">
         From Store
         <br />
         to Gift
       </h2>
 
       <h3
-        className="type-title rise self-start col-start-4 col-span-3 row-start-4"
+        className="type-title rise self-start col-start-1 col-span-3 row-start-4"
         style={{ "--delay": "0.14s" } as CSSProperties}
       >
         누데이크의 경험을, 장소 밖으로 확장하다
       </h3>
 
       <p
-        className="type-body rise col-start-4 col-span-3 row-start-5 row-span-2"
+        className="type-body rise col-start-1 col-span-3 row-start-5 row-span-2"
         style={{ "--delay": "0.2s" } as CSSProperties}
       >
         누데이크의 브랜드 경험은 강렬하지만, 직접 경험할 수 있는 공간은
@@ -225,14 +200,14 @@ export function SceneNudakeCover() {
       </p>
 
       <div
-        className="nud-logo rise relative col-start-7 col-span-2 row-start-6"
+        className="nud-logo rise relative col-start-1 col-span-2 row-start-6"
         style={{ "--delay": "0.28s" } as CSSProperties}
       >
         <Image
           src="/images/nudake-mark.png"
           alt="Nudake"
           fill
-          sizes="16vw"
+          sizes="24vw"
           className="object-contain"
         />
       </div>

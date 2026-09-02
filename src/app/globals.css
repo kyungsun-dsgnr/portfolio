@@ -703,36 +703,6 @@
     white-space: nowrap;
   }
 
-  /* 표지 오른쪽 — 그 경험을 담아 보내는 기프트 */
-  .nud-gift-shot {
-    position: relative;
-    background: #f2f1ee;
-    overflow: hidden;
-  }
-
-  .nud-gift-shot img {
-    padding: calc(26 * var(--u));
-  }
-
-  /* 두 면에 각각 붙는 작은 이름표. 무엇에서 무엇으로 가는지 표시합니다. */
-  .nud-side {
-    position: absolute;
-    left: calc(14 * var(--u));
-    bottom: calc(12 * var(--u));
-    color: var(--fg-soft);
-    font-family: var(--font-display);
-    font-size: calc(9.5 * var(--u));
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-  }
-
-  /* 밝은 사진 위에 놓이는 이름표는 한 단 더 진하게 둡니다. */
-  .nud-scene .nud-side {
-    color: rgb(255 255 255 / 0.82);
-    mix-blend-mode: difference;
-  }
-
   /* 02 셀 수 있는 것들. 제목 옆에 한 줄로 늘어놓습니다. */
   .nud-counts {
     display: flex;

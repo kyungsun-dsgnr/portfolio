@@ -1,18 +1,22 @@
 "use client";
 
 /**
- * 19장 — Limited Offline Experience → Gift as a New Touchpoint
+ * 19장 — The Experience Is Still Bound to Place.
  *
- * 맥락과 기회를 한 장에서 잇습니다. 위에서 접점이 제한적이라는 사실을
- * 보이고, 아래에서 그 한계를 넘을 길이 이미 사이트 안에 있다는 것을 보입니다.
- * 매장 정보는 2026-09-01 nudake.com/store 에 올라 있는 전부입니다.
- * 그리드 10번 — 제목 1–3단 1행 · 본문 5–8단 1행 · 단 셋 5–6행.
+ * 지금은 제목과 설명만 세워 둡니다. 아래에 무엇을 놓을지는 다시 잡습니다.
+ *
+ * 걷어 낸 것들은 지우지 않고 아래에 내려 두었습니다.
+ * 매장 정보는 2026-09-01 nudake.com/store 에서 직접 확인한 값이라
+ * 다시 구하기 번거롭습니다. 되살릴 때 주석만 풀면 됩니다.
  */
 
 import type { CSSProperties } from "react";
 
 import { useInView } from "@/components/useInView";
 
+/* 서울의 두 매장. 2026-09-01 nudake.com/store 에 올라 있는 전부입니다.
+   티 하우스에는 기프트 샵이 운영시간까지 따로 두고 열려 있습니다 —
+   선물은 오프라인에서 이미 정식 코너라는 근거가 됩니다. */
 const STORES = [
   {
     key: "teahouse",
@@ -22,18 +26,18 @@ const STORES = [
       { label: "기프트 샵", time: "11:00 – 21:00", lead: true },
       { label: "티 라운지", time: "12:00 – 21:00" },
     ],
-    place: "col-start-1 col-span-2",
+    place: "col-start-1 col-span-3",
   },
   {
     key: "dosan",
     name: "하우스 노웨어 도산",
     where: "서울 강남구 압구정로 46길 50 B1",
     hours: [{ label: "운영시간", time: "11:00 – 21:00" }],
-    place: "col-start-3 col-span-2",
+    place: "col-start-5 col-span-3",
   },
 ];
 
-/* 방문하지 않고도 그 경험을 건널 길. 이미 사이트 안에 있는 것들입니다. */
+/* 내려 둔 것 2 — 방문하지 않고도 그 경험을 건널 길. 이미 사이트 안에 있는 것들입니다.
 const SIGNS = [
   {
     index: "01",
@@ -54,30 +58,35 @@ const SIGNS = [
     place: "col-start-7 col-span-2",
   },
 ];
+*/
 
 export function SceneNudakeContext() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-lead capitalize rise col-start-1 col-span-3 row-start-1">
-        Limited Offline Experience
+      <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1 row-span-2">
+        The Experience
+        <br />
+        Is Still Bound to Place.
       </h2>
 
+      {/* 설명은 제목 바로 아랫행, 같은 단에 놓입니다. */}
       <p
-        className="type-body rise col-start-6 col-span-3 row-start-1"
+        className="type-body rise col-start-1 col-span-4 row-start-3"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        누데이크는 독특한 공간과 제품 경험으로 강한 인상을 만들어 왔습니다.
-        다만 그 접점은 서울의 두 곳뿐이라, 더 많은 사람이 브랜드를 만나는 데는
-        물리적인 한계가 있습니다.
+        누데이크의 경험은 강렬하지만,
+        <br />
+        직접 경험할 수 있는 공간은 제한적입니다.
       </p>
 
+      {/* 그 제한이 실제로 어느 정도인지. 두 곳이 전부입니다. */}
       {STORES.map((store, i) => (
         <div
           key={store.key}
-          className={`nud-store rise ${store.place} row-start-2 row-span-2`}
-          style={{ "--delay": `${0.16 + i * 0.08}s` } as CSSProperties}
+          className={`nud-store rise ${store.place} row-start-5 row-span-2`}
+          style={{ "--delay": `${0.2 + i * 0.08}s` } as CSSProperties}
         >
           <p className="nud-eyebrow">Korea &middot; Seoul</p>
           <h3 className="nud-store-name">{store.name}</h3>
@@ -91,37 +100,6 @@ export function SceneNudakeContext() {
               </div>
             ))}
           </dl>
-        </div>
-      ))}
-
-      <p
-        className="type-title rise self-start col-start-6 col-span-3 row-start-2 row-span-2"
-        style={{ "--delay": "0.3s" } as CSSProperties}
-      >
-        직접 경험할 수 있는 접점이 제한적입니다.
-        <br />
-        그래서 온라인이 브랜드 경험을 넓힐 채널이 됩니다.
-      </p>
-
-      {/* 이 케이스의 관점이 넘어가는 자리 */}
-      <p
-        className="nud-shift rise col-start-1 col-span-8 row-start-4"
-        style={{ "--delay": "0.38s" } as CSSProperties}
-      >
-        <span>Store Experience</span>
-        <i aria-hidden />
-        <b>Gift Experience</b>
-      </p>
-
-      {SIGNS.map((sign, i) => (
-        <div
-          key={sign.index}
-          className={`nud-sign rise ${sign.place} row-start-5 row-span-2`}
-          style={{ "--delay": `${0.46 + i * 0.08}s` } as CSSProperties}
-        >
-          <span className="card-index">{sign.index}</span>
-          <h3 className="nud-sign-name">{sign.name}</h3>
-          <p className="type-body">{sign.body}</p>
         </div>
       ))}
     </div>

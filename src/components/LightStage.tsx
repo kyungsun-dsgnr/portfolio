@@ -204,52 +204,6 @@ export function LightStage({ sections }: { sections: Section[] }) {
     );
   }
 
-  /* 목차를 펼쳤을 때만 축소본을 만듭니다. 스물여섯 장을 늘 들고 있을 이유가 없고,
-     한 번 만들어 두면 다시 펼칠 때는 그대로 씁니다. */
-  const [peek, setPeek] = useState(false);
-  const shots = useRef<Record<number, HTMLDivElement | null>>({});
-  const list = useRef<HTMLOListElement>(null);
-
-  useEffect(() => {
-    if (!peek) return;
-    const pages = rootRef.current?.querySelectorAll<HTMLElement>(".section");
-    if (!pages) return;
-
-    pages.forEach((page, i) => {
-      const box = shots.current[i];
-      /* 이미 만들어 둔 것이 있으면 그대로 둡니다. */
-      if (!box || box.firstChild) return;
-
-      const copy = page.cloneNode(true) as HTMLElement;
-      /* 같은 id 가 둘이 되면 SVG 의 url(#..) 이 엉뚱한 쪽을 가리킵니다. */
-      copy.removeAttribute("id");
-      copy.querySelectorAll("[id]").forEach((el) => el.removeAttribute("id"));
-      /* 축소본은 보는 것일 뿐이라 손도 키보드도 닿지 않게 잠급니다. */
-      copy.setAttribute("inert", "");
-      /* 아직 가 보지 않은 장은 떠오르기 전이라 비어 보입니다.
-         다 그려진 뒤의 모습으로 세워 둡니다. */
-      copy.setAttribute("data-visible", "");
-      copy
-        .querySelectorAll(".page-grid, .statement")
-        .forEach((el) => el.setAttribute("data-visible", ""));
-
-      copy.style.width = `${page.offsetWidth}px`;
-      copy.style.height = `${page.offsetHeight}px`;
-      box.style.setProperty(
-        "--zoom",
-        String(box.clientWidth / (page.offsetWidth || 1)),
-      );
-      box.append(copy);
-    });
-  }, [peek]);
-
-  /* 지금 보고 있는 장이 목차 안에서도 보이게 따라갑니다. */
-  useEffect(() => {
-    if (!peek) return;
-    const item = list.current?.children[at] as HTMLElement | undefined;
-    item?.scrollIntoView({ block: "nearest", inline: "center" });
-  }, [peek, at]);
-
   return (
     <LightContext.Provider value={{ level, setLevel: handleLevel }}>
       <main
@@ -278,14 +232,9 @@ export function LightStage({ sections }: { sections: Section[] }) {
       </main>
 
       {/* 하단 목차. 평소에는 손잡이만 걸쳐 두고, 다가가면 올라옵니다. */}
-      <nav
-        className="pager"
-        aria-label="목차"
-        onPointerEnter={() => setPeek(true)}
-        onFocusCapture={() => setPeek(true)}
-      >
+      <nav className="pager" aria-label="목차">
         <span className="pager-grip" aria-hidden />
-        <ol className="pager-list" ref={list}>
+        <ol className="pager-list">
           {sections.map((section, index) => (
             <li key={section.id}>
               <button
@@ -294,21 +243,7 @@ export function LightStage({ sections }: { sections: Section[] }) {
                 aria-current={index === at ? "true" : undefined}
                 onClick={() => go(index)}
               >
-                {/* 그 장을 그대로 줄여 놓은 그림. 글자만으로는 어느 장인지
-                    떠오르지 않아, 화면을 함께 둡니다. */}
-                <span
-                  className="pager-shot"
-                  ref={(el) => {
-                    shots.current[index] = el;
-                  }}
-                  aria-hidden
-                />
-                <span className="pager-cap">
-                  <span className="pager-no">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span>{section.label ?? section.id}</span>
-                </span>
+                {section.label ?? section.id}
               </button>
             </li>
           ))}

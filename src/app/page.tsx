@@ -35,10 +35,10 @@ export default function Home() {
       sections={[
         /* 스위치 장과 제목이 같아 접어 둡니다. 되살릴 때 이 줄만 풀면 됩니다.
         { id: "intro", label: "Intro", node: <SceneIntro /> }, */
-        { id: "switch", label: "Switch", node: <SceneSwitch /> },
+        { id: "switch", label: "intro-1", node: <SceneSwitch /> },
         {
           id: "statement",
-          label: "Memory",
+          label: "intro-2",
           node: (
             <SceneStatement
               lines={[
@@ -51,10 +51,10 @@ export default function Home() {
         },
         /* 뒷장과 제목이 같아 접어 둡니다. 되살릴 때 이 줄만 풀면 됩니다.
         { id: "perspective", label: "Perspective", node: <ScenePerspective /> }, */
-        { id: "principles", label: "Principles", node: <ScenePrinciples /> },
+        { id: "principles", label: "intro-3", node: <ScenePrinciples /> },
         {
           id: "closing",
-          label: "Experience",
+          label: "intro-4",
           node: (
             <SceneStatement
               lines={[
@@ -66,7 +66,7 @@ export default function Home() {
             />
           ),
         },
-        { id: "work", label: "Work", node: <SceneWork /> },
+        { id: "work", label: "intro-5", node: <SceneWork /> },
         // 점으로 찍은 지구본 표지. 지금은 내려 두었습니다. 주석을 풀면 다시 섭니다.
         // {
         // id: "gentle-monster",
@@ -106,7 +106,7 @@ export default function Home() {
         /* 표지 한 벌 더. 점으로 찍던 지구본 대신 종이에 인쇄한 듯한 지구본을 둡니다. */
         {
           id: "gentle-monster-paper",
-          label: "Paper Globe",
+          label: "gentlemonster-1",
           node: (
             <SceneCase
               title="Gentle Monster Explore"
@@ -142,25 +142,25 @@ export default function Home() {
         {
           id: "gentle-monster-problem",
           index: "01 — Gentle Monster",
-          label: "Problem",
+          label: "gentlemonster-2",
           node: <SceneProblem />,
         },
         {
           id: "gentle-monster-why",
           index: "02 — Gentle Monster",
-          label: "Why",
+          label: "gentlemonster-3",
           node: <SceneWhy />,
         },
         {
           id: "gentle-monster-explore",
           index: "03 — Gentle Monster",
-          label: "Globe",
+          label: "gentlemonster-4",
           node: <SceneExplore />,
         },
         {
           id: "gentle-monster-after",
           index: "04 — Gentle Monster",
-          label: "Proposal",
+          label: "gentlemonster-5",
           node: <SceneAfter />,
         },
 
@@ -174,7 +174,7 @@ export default function Home() {
 
         {
           id: "tamburins",
-          label: "Tamburins",
+          label: "tamburins-1",
           node: <SceneTamburinsCover scale={0.8} />,
         },
         /* 선(SVG)으로 그린 상자 표지. 지금은 내려 두었습니다.
@@ -189,26 +189,26 @@ export default function Home() {
         {
           id: "tamburins-flow",
           index: "01 — Tamburins",
-          label: "Current Flow",
+          label: "tamburins-2",
           node: <SceneFlow />,
         },
         {
           id: "tamburins-screens",
           index: "02 — Tamburins",
-          label: "Current Experience",
+          label: "tamburins-3",
           node: <SceneScreensTall />,
         },
 
         {
           id: "tamburins-shift",
           index: "03 — Tamburins",
-          label: "Shift",
+          label: "tamburins-4",
           node: <SceneShift />,
         },
 
         {
           id: "tamburins-one",
-          label: "One Screen",
+          label: "tamburins-5",
           node: <SceneComposeFull />,
         },
         /* A 안. 지우지 않고 내려 둡니다. 다시 보려면 주석만 풀면 됩니다.
@@ -222,43 +222,43 @@ export default function Home() {
 
         {
           id: "nudake",
-          label: "Nudake",
+          label: "nudake-1",
           node: <SceneNudakeCover />,
         },
         {
           id: "nudake-context",
           index: "01 — Nudake",
-          label: "Context",
+          label: "nudake-2",
           node: <SceneNudakeContext />,
         },
         {
           id: "nudake-current",
           index: "02 — Nudake",
-          label: "Current",
+          label: "nudake-3",
           node: <SceneNudakeCurrent />,
         },
         {
           id: "nudake-problem",
           index: "03 — Nudake",
-          label: "Problem",
+          label: "nudake-4",
           node: <SceneNudakeProblem />,
         },
         {
           id: "nudake-direction",
           index: "04 — Nudake",
-          label: "Direction",
+          label: "nudake-5",
           node: <SceneNudakeDirection />,
         },
         {
           id: "nudake-experience",
           index: "05 — Nudake",
-          label: "Experience",
+          label: "nudake-6",
           node: <SceneNudakeExperience />,
         },
         {
           id: "nudake-impact",
           index: "06 — Nudake",
-          label: "Impact",
+          label: "nudake-7",
           node: <SceneNudakeImpact />,
         },
         /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.

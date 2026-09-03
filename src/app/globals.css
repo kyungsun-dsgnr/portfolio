@@ -3692,17 +3692,16 @@
     background: #1919191a;
   }
 
-  /* 축소본이 들어오면서 알약이 아니라 낮은 판이 됩니다.
-     스물여섯 장이 한 줄에 다 들어가지 않아 옆으로 굴립니다. */
+  /* 장이 스물이 넘어 한 줄에 다 들어가지 않습니다. 옆으로 굴립니다. */
   .pager-list {
-    align-items: flex-start;
-    gap: calc(10 * var(--u));
-    padding: calc(10 * var(--u)) calc(14 * var(--u));
+    align-items: baseline;
+    gap: calc(16 * var(--u));
+    padding: calc(9 * var(--u)) calc(20 * var(--u));
     box-shadow: 0 calc(4 * var(--u)) calc(22 * var(--u)) #1919191a;
     -webkit-backdrop-filter: blur(calc(8 * var(--u)));
     backdrop-filter: blur(calc(8 * var(--u)));
     background: #ffffffeb;
-    border-radius: calc(14 * var(--u));
+    border-radius: 999px;
     display: flex;
     max-width: calc(100vw - 60 * var(--u));
     overflow-x: auto;
@@ -3714,9 +3713,7 @@
   }
 
   .pager-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: calc(6 * var(--u));
+    align-items: baseline;
     color: #19191959;
     font-family: var(--font-display);
     font-size: calc(10 * var(--u));
@@ -3732,58 +3729,6 @@
   .pager-item:hover,
   .pager-item[aria-current="true"] {
     color: var(--fg);
-  }
-
-  .pager-cap {
-    display: flex;
-    align-items: baseline;
-    gap: calc(5 * var(--u));
-    max-width: calc(96 * var(--u));
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .pager-no {
-    font-size: calc(8 * var(--u));
-    opacity: 0.6;
-  }
-
-  /* 그 장을 그대로 줄여 놓은 그림. 판 비율(1440 × 800)을 그대로 씁니다. */
-  .pager-shot {
-    display: block;
-    position: relative;
-    height: calc(53 * var(--u));
-    width: calc(96 * var(--u));
-    flex: none;
-    overflow: hidden;
-    border-radius: calc(3 * var(--u));
-    background: #f2f2f0;
-    outline: 1px solid #1919191f;
-    outline-offset: -1px;
-    transition: outline-color 0.24s;
-  }
-
-  .pager-item:hover .pager-shot,
-  .pager-item[aria-current="true"] .pager-shot {
-    outline-color: #19191966;
-  }
-
-  /* 복제한 장은 제 크기 그대로 들어와, 여기서 칸에 맞게 줄어듭니다. */
-  .pager-shot > * {
-    transform: scale(var(--zoom, 0.07));
-    transform-origin: 0 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-
-  /* 축소본은 멈춰 있는 그림입니다. 움직임이 남아 있으면 목차가 어수선해집니다. */
-  .pager-shot *,
-  .pager-shot *::before,
-  .pager-shot *::after {
-    animation-delay: 0s !important;
-    animation-duration: 1ms !important;
-    transition: none !important;
   }
 
   .section:has(.store-slot) {

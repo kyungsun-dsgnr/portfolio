@@ -176,9 +176,9 @@ export function SceneNudakeCover() {
 
 
       <h2 className="type-display rise col-start-1 col-span-4 row-start-1 row-span-2">
-        From Store
+        Gift the
         <br />
-        to Gift
+        Nudake Experience
       </h2>
 
       <h3

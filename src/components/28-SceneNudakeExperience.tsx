@@ -19,12 +19,12 @@ const PANEL_W = 1380;
 const PANEL_H = 54;
 const LINE_OVERLAP = 2;
 
-/* 앞장의 Discover · Experience · Gift 가 여기서 다섯 걸음이 됩니다. */
+/* 앞장의 뒤집힌 관점이 여기서 다섯 걸음이 됩니다. */
 const BEATS = [
-  { id: "landing", label: "Gift Landing", tone: "start" },
-  { id: "choose", label: "Choose Tea" },
-  { id: "compose", label: "Compose Gift" },
-  { id: "message", label: "Add Message", tone: "mark" },
+  { id: "choose", label: "Choose Tea", tone: "start" },
+  { id: "postcard", label: "Write Postcard", tone: "mark" },
+  { id: "compose", label: "Compose" },
+  { id: "preview", label: "Preview" },
   { id: "send", label: "Send" },
 ];
 
@@ -47,7 +47,7 @@ const NOTES = [
   },
   {
     index: "03",
-    title: "Add Message",
+    title: "Write Postcard",
     body: "고른 뒤 카드를 적어 패키지에 직접 넣습니다. 매장에서 선물을 포장해 건네던 행동을 화면으로 옮긴 자리라, 엽서는 장식이 아니라 준비를 마쳤다는 신호입니다.",
     place: "col-start-7 col-span-2 row-start-3 row-span-3",
   },

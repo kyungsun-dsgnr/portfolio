@@ -16,12 +16,24 @@ import { SceneExplore } from "@/components/10-SceneExplore";
 // 접어 둔 장에서 씁니다: import { SceneIntro } from "@/components/01-SceneIntro";
 import { SceneSwitch } from "@/components/02-SceneSwitch";
 import { SceneNudakeCover } from "@/components/18-SceneNudakeCover";
-import { SceneNudakeContext } from "@/components/22-SceneNudakeContext";
-import { SceneNudakeCurrent } from "@/components/23-SceneNudakeCurrent";
-import { SceneNudakeProblem } from "@/components/24-SceneNudakeProblem";
-import { SceneNudakeDirection } from "@/components/25-SceneNudakeDirection";
-import { SceneNudakeExperience } from "@/components/26-SceneNudakeExperience";
-import { SceneNudakeImpact } from "@/components/27-SceneNudakeImpact";
+// 내려 둔 앞 판에서 씁니다: import { SceneNudakeContext } from "@/components/22-SceneNudakeContext";
+import { SceneNudakeContext2 } from "@/components/23-SceneNudakeContext2";
+import { SceneNudakeSigns } from "@/components/24-SceneNudakeSigns";
+import {
+  NUDAKE_COMPOSE,
+  NUDAKE_TURN,
+  SceneNudakePlan,
+} from "@/components/30-SceneNudakePlan";
+import { SceneNudakeGap } from "@/components/32-SceneNudakeGap";
+// import { SceneNudakeGap2 } from "@/components/33-SceneNudakeGap2";
+import { SceneNudakeGap3 } from "@/components/34-SceneNudakeGap3";
+import { SceneNudakeGap4 } from "@/components/35-SceneNudakeGap4";
+// import { SceneNudakeContext3 } from "@/components/31-SceneNudakeContext3";
+// import { SceneNudakeCurrent } from "@/components/25-SceneNudakeCurrent";
+// import { SceneNudakeProblem } from "@/components/26-SceneNudakeProblem";
+// import { SceneNudakeDirection } from "@/components/27-SceneNudakeDirection";
+// import { SceneNudakeExperience } from "@/components/28-SceneNudakeExperience";
+// import { SceneNudakeImpact } from "@/components/29-SceneNudakeImpact";
 // 밑그림 장이 다 채워져 내려 둡니다: import { SceneDraft } from "@/components/SceneDraft";
 import { SceneProblem } from "@/components/08-SceneProblem";
 import { ScenePrinciples } from "@/components/04-ScenePrinciples";
@@ -225,42 +237,108 @@ export default function Home() {
           label: "nudake-1",
           node: <SceneNudakeCover />,
         },
+        /* 앞 판. 지도 판으로 갈음해 내려 둡니다. 되살릴 때 이 묶음만 풀면 됩니다.
         {
           id: "nudake-context",
           index: "01 — Nudake",
           label: "nudake-2",
           node: <SceneNudakeContext />,
         },
+        */
         {
-          id: "nudake-current",
+          id: "nudake-context-2",
+          index: "01 — Nudake",
+          label: "nudake-2",
+          node: <SceneNudakeContext2 />,
+        },
+        /* 좌우를 뒤집어 본 판. 다시 잡을 때 이 묶음만 풀면 됩니다.
+           컴포넌트 파일(31)은 지우지 않고 그대로 두었습니다.
+        {
+          id: "nudake-context-3",
           index: "02 — Nudake",
           label: "nudake-3",
+          node: <SceneNudakeContext3 />,
+        },
+        */
+        {
+          id: "nudake-signs",
+          index: "02 — Nudake",
+          label: "nudake-3",
+          node: <SceneNudakeSigns />,
+        },
+        /* 아래 셋은 아직 무엇을 넣을지만 적어 둔 자리입니다. */
+        {
+          id: "nudake-gap",
+          index: "03 — Nudake",
+          label: "nudake-4",
+          node: <SceneNudakeGap />,
+        },
+        /* 20 간격으로 아래에 붙였던 판. 다시 잡을 때 이 묶음만 풀면 됩니다.
+           컴포넌트 파일(33)은 지우지 않고 그대로 두었습니다.
+        {
+          id: "nudake-gap-2",
+          index: "04 — Nudake",
+          label: "nudake-5",
+          node: <SceneNudakeGap2 />,
+        },
+        */
+        {
+          id: "nudake-gap-3",
+          index: "04 — Nudake",
+          label: "nudake-5",
+          node: <SceneNudakeGap3 />,
+        },
+        {
+          id: "nudake-gap-4",
+          index: "05 — Nudake",
+          label: "nudake-6",
+          node: <SceneNudakeGap4 />,
+        },
+        {
+          id: "nudake-turn",
+          index: "06 — Nudake",
+          label: "nudake-7",
+          node: <SceneNudakePlan plan={NUDAKE_TURN} />,
+        },
+        {
+          id: "nudake-compose",
+          index: "07 — Nudake",
+          label: "nudake-8",
+          node: <SceneNudakePlan plan={NUDAKE_COMPOSE} />,
+        },
+        /* Already There 뒤의 다섯 장을 내려 둡니다. 다시 잡을 때 이 묶음만 풀면 됩니다.
+           컴포넌트 파일(25~29)은 지우지 않고 그대로 두었습니다.
+        {
+          id: "nudake-current",
+          index: "03 — Nudake",
+          label: "nudake-4",
           node: <SceneNudakeCurrent />,
         },
         {
           id: "nudake-problem",
-          index: "03 — Nudake",
-          label: "nudake-4",
+          index: "04 — Nudake",
+          label: "nudake-5",
           node: <SceneNudakeProblem />,
         },
         {
           id: "nudake-direction",
-          index: "04 — Nudake",
-          label: "nudake-5",
+          index: "05 — Nudake",
+          label: "nudake-6",
           node: <SceneNudakeDirection />,
         },
         {
           id: "nudake-experience",
-          index: "05 — Nudake",
-          label: "nudake-6",
+          index: "06 — Nudake",
+          label: "nudake-7",
           node: <SceneNudakeExperience />,
         },
         {
           id: "nudake-impact",
-          index: "06 — Nudake",
-          label: "nudake-7",
+          index: "07 — Nudake",
+          label: "nudake-8",
           node: <SceneNudakeImpact />,
         },
+        */
         /* 다음 화면을 만들 때 여기서 소스를 가져다 씁니다. 그때까지는 내려 둡니다.
         {
           id: "gentle-monster-2",

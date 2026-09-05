@@ -112,9 +112,7 @@ export function SceneShift() {
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-lead capitalize rise col-start-1 col-span-6 row-start-1">
-        From Selection
-        <br />
-        to Composition.
+        From Selection to Composition.
       </h2>
 
       <div className="steps col-start-1 col-span-8 row-start-3 row-span-4">

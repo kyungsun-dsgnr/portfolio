@@ -42,8 +42,8 @@ export function SceneNudakeProblem() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-lead capitalize rise col-start-1 col-span-3 row-start-1">
-        Problem
+      <h2 className="type-lead capitalize rise col-start-1 col-span-5 row-start-1">
+        From Buying a Gift to Making One
       </h2>
 
       {/* 문제를 사람의 상황으로 곧장 잇습니다. 짧게만 둡니다. */}

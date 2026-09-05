@@ -34,9 +34,9 @@ export function SceneNudakeDirection() {
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-display rise col-start-1 col-span-7 row-start-1 row-span-2">
-        Gift the
+        Compose a
         <br />
-        Nudake Experience
+        Nudake Gift
       </h2>
 
       <p

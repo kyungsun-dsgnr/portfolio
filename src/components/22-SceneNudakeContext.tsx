@@ -10,30 +10,32 @@
  * 다시 구하기 번거롭습니다. 되살릴 때 주석만 풀면 됩니다.
  */
 
-import type { CSSProperties } from "react";
+import Image from "next/image";
+import { useEffect, useState, type CSSProperties } from "react";
 
 import { useInView } from "@/components/useInView";
 
+/** 사진이 다음 매장으로 넘어가기까지 */
+const SWAP = 3600;
+
 /* 서울의 두 매장. 2026-09-01 nudake.com/store 에 올라 있는 전부입니다.
-   티 하우스에는 기프트 샵이 운영시간까지 따로 두고 열려 있습니다 —
-   선물은 오프라인에서 이미 정식 코너라는 근거가 됩니다. */
+   두 곳이 전부이고, 둘 다 서울입니다. */
 const STORES = [
   {
     key: "teahouse",
+    no: "01",
     name: "누데이크 티 하우스",
     where: "서울 성동구 뚝섬로 433 5F",
-    hours: [
-      { label: "기프트 샵", time: "11:00 – 21:00", lead: true },
-      { label: "티 라운지", time: "12:00 – 21:00" },
-    ],
-    place: "col-start-1 col-span-3",
+    shot: "/images/nudake-store-teahouse.webp",
+    place: "col-start-1 col-span-2",
   },
   {
     key: "dosan",
+    no: "02",
     name: "하우스 노웨어 도산",
     where: "서울 강남구 압구정로 46길 50 B1",
-    hours: [{ label: "운영시간", time: "11:00 – 21:00" }],
-    place: "col-start-5 col-span-3",
+    shot: "/images/nudake-store-dosan.webp",
+    place: "col-start-3 col-span-2",
   },
 ];
 
@@ -63,9 +65,24 @@ const SIGNS = [
 export function SceneNudakeContext() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
 
+  /* 두 매장을 번갈아 보여 줍니다. 카드에 손을 올리면 그 매장에서 멈춥니다 —
+     글과 사진이 같은 곳을 가리켜야 둘이 한 짝으로 읽힙니다. */
+  const [at, setAt] = useState(0);
+  const [held, setHeld] = useState<number | null>(null);
+  const shown = held ?? at;
+
+  useEffect(() => {
+    if (!inView || held !== null) return;
+    const id = window.setInterval(
+      () => setAt((n) => (n + 1) % STORES.length),
+      SWAP,
+    );
+    return () => clearInterval(id);
+  }, [inView, held]);
+
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1 row-span-2">
+      <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1">
         The Experience
         <br />
         Is Still Bound to Place.
@@ -73,35 +90,52 @@ export function SceneNudakeContext() {
 
       {/* 설명은 제목 바로 아랫행, 같은 단에 놓입니다. */}
       <p
-        className="type-body rise col-start-1 col-span-4 row-start-3"
+        className="type-body rise col-start-1 col-span-4 row-start-5"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
         누데이크의 경험은 강렬하지만,
         <br />
-        직접 경험할 수 있는 공간은 제한적입니다.
+        직접 경험할 수 있는 공간은 두 곳으로 제한적입니다.
       </p>
 
       {/* 그 제한이 실제로 어느 정도인지. 두 곳이 전부입니다. */}
       {STORES.map((store, i) => (
         <div
           key={store.key}
-          className={`nud-store rise ${store.place} row-start-5 row-span-2`}
+          className={`nud-store rise ${store.place} row-start-6`}
+          data-on={shown === i || undefined}
+          onPointerEnter={() => setHeld(i)}
+          onPointerLeave={() => setHeld(null)}
           style={{ "--delay": `${0.2 + i * 0.08}s` } as CSSProperties}
         >
-          <p className="nud-eyebrow">Korea &middot; Seoul</p>
+          <p className="nud-eyebrow">
+            Store {store.no} - Korea &middot; Seoul
+          </p>
           <h3 className="nud-store-name">{store.name}</h3>
           <p className="type-body">{store.where}</p>
-
-          <dl className="nud-hours">
-            {store.hours.map((hour) => (
-              <div key={hour.label} data-lead={hour.lead || undefined}>
-                <dt>{hour.label}</dt>
-                <dd>{hour.time}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
       ))}
+
+      {/* 오른쪽 네 단을 사진이 꽉 채웁니다. 글로만 적힌 '제한적' 이
+          실제로 어떤 자리인지 눈으로 보이게 하는 몫입니다. */}
+      <div className="nud-stores rise col-start-5 col-span-4 row-start-1 row-span-6">
+        {STORES.map((store, i) => (
+          <Image
+            key={store.key}
+            src={store.shot}
+            alt=""
+            fill
+            sizes="50vw"
+            priority={i === 0}
+            className="object-cover"
+            data-on={shown === i || undefined}
+          />
+        ))}
+
+        <p className="nud-stores-tag" aria-hidden>
+          {STORES[shown].name}
+        </p>
+      </div>
     </div>
   );
 }

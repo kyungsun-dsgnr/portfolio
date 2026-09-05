@@ -142,10 +142,10 @@ export function SwitchScene() {
       >
         <WallSwitch on={on} onChange={setOn} />
 
-        {/* 손이 가야 할 자리를 스위치 바로 아래에서 일러 줍니다.
+        {/* 스위치 바로 위에 툴팁으로 떠서 손이 가야 할 자리를 가리킵니다.
             한 번 켜고 나면 할 말을 다한 셈이라 물러납니다. */}
         <p className="switch-note" data-gone={on || undefined}>
-          Turn on the light
+          Turn On The Light
         </p>
       </div>
     </>

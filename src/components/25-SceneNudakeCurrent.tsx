@@ -71,8 +71,10 @@ export function SceneNudakeCurrent() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-lead capitalize rise col-start-1 col-span-3 row-start-1">
-        Current Experience
+      <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1">
+        Found Here,
+        <br />
+        Experienced Elsewhere
       </h2>
 
       <p

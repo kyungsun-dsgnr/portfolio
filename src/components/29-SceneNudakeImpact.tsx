@@ -16,13 +16,13 @@ import { useInView } from "@/components/useInView";
 const REACH = [
   {
     key: "store",
-    label: "Store",
+    label: "Product Delivery",
     body: "제한적인 물리적 경험",
     place: "col-start-1 col-span-3",
   },
   {
     key: "gift",
-    label: "Digital Gift",
+    label: "Brand Experience",
     body: "지역에 관계없는 누데이크 경험",
     place: "col-start-5 col-span-3",
     add: true,

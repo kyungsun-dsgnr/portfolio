@@ -171,6 +171,17 @@
     background: #ffffff;
   }
 
+  /* 다만 누데이크 목업 장은 흰 화면이 얹히는 자리라, 바탕을 페이지 색으로 둡니다. */
+  #nudake-signs.section:has(.work) {
+    background: #fafafa;
+  }
+
+  /* 단절 장은 반대로 — 바탕이 희고 왼쪽 바닥만 페이지 색으로 앉습니다. */
+  #nudake-gap-3,
+  #nudake-gap-4 {
+    background: #fff;
+  }
+
   /* 제안 장은 어둡게 둡니다. 밝기 기준을 뒤집어 두면 글과 선이 함께 따라옵니다.
      화면 목업은 실제 화면 그대로라 흰색을 지킵니다. */
   .section:has(.after-frame) {
@@ -716,6 +727,27 @@
     gap: calc(2 * var(--u));
   }
 
+  /* 두 단짜리 좁은 자리에서도 가로로 섭니다. 빈 사이를 두지 않고,
+     셋을 가르는 몫은 사이에 선 하나가 맡습니다. */
+  .nud-counts[data-tight] {
+    gap: 0;
+  }
+
+  .nud-counts[data-tight] span {
+    flex: 1;
+    gap: calc(6 * var(--u));
+  }
+
+  .nud-counts[data-tight] span + span {
+    border-left: 1px solid rgb(25 25 25 / 0.16);
+    padding-left: calc(10 * var(--u));
+  }
+
+  /* 숫자와 라벨 사이만 한 번 더 벌려, 숫자가 라벨에 붙지 않게 합니다. */
+  .nud-counts[data-tight] em {
+    margin-top: calc(6 * var(--u));
+  }
+
   .nud-counts b {
     font-family: var(--font-display);
     font-size: calc(30 * var(--u));
@@ -820,11 +852,210 @@
     color: var(--fg);
   }
 
+  /* 두 매장이 놓인 서울. 지도는 옅게 깔고 닷만 진하게 얹습니다. */
+  .nud-atlas {
+    position: relative;
+    background: var(--placeholder);
+    overflow: hidden;
+  }
+
+  /* 강을 사이에 둔 두 구 이름. 지도의 일부처럼 옅게 앉힙니다. */
+  .nud-area {
+    position: absolute;
+    translate: -50% -50%;
+    color: #19191959;
+    font-family: var(--font-display);
+    font-size: calc(14 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  /* 닷 하나와 그 아래에 붙는 매장 카드. 통째로 하나의 단추입니다. */
+  .nud-pin {
+    position: absolute;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(24 * var(--u));
+    translate: -50% 0;
+    cursor: pointer;
+  }
+
+  /* 번호를 안고 있는 닷. 지도 위에서 카드와 짝을 이룹니다. */
+  .nud-pin-dot {
+    height: calc(22 * var(--u));
+    width: calc(22 * var(--u));
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--fg);
+    color: var(--bg);
+    font-family: var(--font-display);
+    font-size: calc(9.5 * var(--u));
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    box-shadow: 0 0 0 calc(5 * var(--u)) rgb(25 25 25 / 0.1);
+    transition:
+      box-shadow 300ms ease,
+      scale 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nud-pin[data-on] .nud-pin-dot {
+    scale: 1.16;
+    box-shadow: 0 0 0 calc(9 * var(--u)) rgb(25 25 25 / 0.14);
+  }
+
+  /* 닷 아래 카드. 지금 보고 있는 매장의 것만 뜹니다.
+     둘 다 떠 있으면 지도가 글로 덮여, 어디를 보는지 오히려 흐려집니다.
+     자리는 그대로 두어(감추기만) 꺼져 있어도 누를 수 있습니다. */
+  /* 작은 지도에서는 닷만 두고 정보 카드는 접습니다. */
+  .nud-atlas[data-mini] .nud-pin-card {
+    display: none;
+  }
+
+  .nud-pin-card {
+    display: flex;
+    flex-direction: column;
+    gap: calc(3 * var(--u));
+    padding: calc(9 * var(--u)) calc(12 * var(--u));
+    background: #fffffff2;
+    box-shadow: 0 calc(3 * var(--u)) calc(12 * var(--u)) #19191914;
+    white-space: nowrap;
+    text-align: left;
+    opacity: 0;
+    translate: 0 calc(-6 * var(--u));
+    transition:
+      opacity 360ms ease,
+      translate 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nud-pin[data-on] .nud-pin-card {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .nud-pin-name {
+    font-size: calc(12 * var(--u));
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .nud-pin-where {
+    color: var(--fg-soft);
+    font-size: calc(10 * var(--u));
+  }
+
+  /* 매장 사진. 고르기 전에는 색을 빼고 한 행으로 낮게 눕혀 둡니다. */
+  .nud-shot {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--placeholder);
+    /* 자리는 두 행을 잡아 두고 아래 끝에 붙습니다.
+       고르면 높이만 두 행까지 자라 바닥선이 흔들리지 않습니다. */
+    align-self: end;
+    height: calc(110 * var(--u));
+    transition: height 560ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nud-shot[data-on] {
+    /* 두 행 + 그 사이 간격 */
+    height: calc(236 * var(--u));
+  }
+
+  /* 고르기 전에는 옅게 물러납니다. 사진의 투명도를 낮추면 뒤의 회색 바탕이
+     비쳐 탁해지므로, 사진은 그대로 두고 판 색을 위에 덮습니다. */
+  .nud-shot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: var(--bg);
+    opacity: 0.78;
+    pointer-events: none;
+    transition: opacity 460ms ease;
+  }
+
+  .nud-shot[data-on]::after {
+    opacity: 0;
+  }
+
+  /* 켜졌을 때만 뜨는 이름표. 사진 왼쪽 위에 걸칩니다. */
+  .nud-shot-tag {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    top: 0;
+    padding: calc(6 * var(--u)) calc(11 * var(--u));
+    background: var(--fg);
+    color: var(--bg);
+    font-family: var(--font-display);
+    font-size: calc(9.5 * var(--u));
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    /* 꺼져 있을 때도 어느 매장인지 읽혀야 해서 늘 띄웁니다.
+       고른 쪽만 잉크로 서고, 나머지는 한 겹 물러납니다. */
+    background: #19191954;
+    transition: background 400ms ease;
+  }
+
+  .nud-shot[data-on] .nud-shot-tag {
+    background: var(--fg);
+  }
+
+  /* 매장 사진. 두 장이 겹쳐 있다가 번갈아 넘어갑니다. */
+  .nud-stores {
+    position: relative;
+    background: #eceae6;
+    overflow: hidden;
+  }
+
+  .nud-stores img {
+    opacity: 0;
+    transition: opacity 900ms ease;
+  }
+
+  .nud-stores img[data-on] {
+    opacity: 1;
+  }
+
+  /* 지금 어느 매장인지. 사진 위라 밝은 글자로 둡니다. */
+  .nud-stores-tag {
+    position: absolute;
+    left: calc(16 * var(--u));
+    bottom: calc(14 * var(--u));
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: calc(10 * var(--u));
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-shadow: 0 calc(1 * var(--u)) calc(6 * var(--u)) #00000059;
+  }
+
   /* 01 매장 카드 */
+  /* 설명과 그 아래 매장 정보를 한 덩이로 묶습니다. */
+  .nud-aside {
+    flex-direction: column;
+    gap: calc(20 * var(--u));
+    display: flex;
+  }
+
   .nud-store {
     display: flex;
     flex-direction: column;
     gap: calc(6 * var(--u));
+    transition: opacity 400ms ease;
+  }
+
+  /* 사진이 다른 매장을 비추는 동안, 그 카드가 앞에 섭니다. */
+  .nud-store:not([data-on]) {
+    opacity: 0.45;
   }
 
   .nud-store-name {
@@ -832,33 +1063,6 @@
     font-size: calc(21 * var(--u));
     font-weight: 500;
     letter-spacing: -0.01em;
-  }
-
-  .nud-hours {
-    display: flex;
-    flex-direction: column;
-    gap: calc(6 * var(--u));
-    margin-top: calc(10 * var(--u));
-    padding-top: calc(10 * var(--u));
-    border-top: 1px solid #19191914;
-    font-size: calc(12 * var(--u));
-    color: var(--fg-soft);
-  }
-
-  .nud-hours > div {
-    display: flex;
-    gap: calc(12 * var(--u));
-  }
-
-  .nud-hours dt {
-    width: calc(72 * var(--u));
-    flex: none;
-  }
-
-  /* 기프트 샵이 따로 열려 있다는 것이 이 장의 근거입니다. */
-  .nud-hours > div[data-lead] {
-    color: var(--fg);
-    font-weight: 600;
   }
 
   /* 02 관점이 넘어가는 자리 */
@@ -1339,6 +1543,10 @@
 
   .nud-tree li[data-depth="3"] {
     padding-left: calc(54 * var(--u));
+  }
+
+  .nud-tree li[data-depth="4"] {
+    padding-left: calc(72 * var(--u));
   }
 
   /* 지금 문제가 되는 자리, 그리고 새로 나는 문 */
@@ -2481,6 +2689,66 @@
     font-weight: 500;
     display: flex;
     position: absolute;
+  }
+
+  /* 알약 몇 개를 한 줄로 잇는 짧은 띠. 판 없이 글 아래에 바로 붙습니다. */
+  .nud-chain {
+    align-items: center;
+    gap: calc(10 * var(--u));
+    margin-top: calc(16 * var(--u));
+    flex-wrap: wrap;
+    display: flex;
+  }
+
+  .nud-chain .flow-pill {
+    padding: calc(7 * var(--u)) calc(15 * var(--u));
+    position: static;
+  }
+
+  .nud-chain i {
+    color: #19191959;
+    font-size: calc(12 * var(--u));
+    font-style: normal;
+  }
+
+  /* 오른쪽에 쌓이는 덩이들. 사이는 20, 무리 전체는 판 아래에 붙습니다. */
+  .nud-notes {
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: calc(20 * var(--u));
+    height: 100%;
+    display: flex;
+  }
+
+  /* 왼쪽에 깔리는 바닥. 장 바탕이 흰색이라 이쪽이 페이지 색을 씁니다.
+     글보다 뒤에 서도록 DOM 앞에 둡니다. */
+  .nud-field {
+    background: #fafafa;
+    pointer-events: none;
+  }
+
+  /* 사이를 고르게 벌려 위아래 끝에 붙이는 판 */
+  .nud-notes[data-spread] {
+    justify-content: space-between;
+    gap: 0;
+  }
+
+  /* 덩이를 서로 가르는 실선. 글 바로 위에 그어집니다. */
+  .nud-ruled {
+    border-top: 1px solid #19191924;
+    /* 선은 단 너비를 그대로 가로지르고, 글만 안으로 들여씁니다. */
+    padding: calc(20 * var(--u)) 0 0 calc(20 * var(--u));
+  }
+
+  /* 아래로 쌓는 띠. 화살표도 같이 눕습니다. */
+  .nud-chain[data-stack] {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(6 * var(--u));
+  }
+
+  .nud-chain[data-stack] i {
+    rotate: 90deg;
   }
 
   .flow-pill[data-tone="start"] {
@@ -3904,19 +4172,41 @@
   }
 
   /* 판 왼쪽 위에 놓이는 안내. 켜지면 사라집니다. */
+  /* 툴팁은 08장의 `As-is Preview` 와 같은 모양입니다 — 검은 칩에 아래로 꼬리.
+     스위치(184u)가 판 한가운데 서 있으니, 그 위쪽 끝보다 조금 더 위에 띄웁니다. */
   .switch-note {
     position: absolute;
-    left: calc(18 * var(--u));
-    top: calc(16 * var(--u));
-    color: rgb(24 22 19 / 0.72);
-    font-family: var(--font-body);
-    font-size: calc(13 * var(--u));
-    /* 대문자로 서므로 자간을 조금 벌립니다. */
-    text-transform: uppercase;
+    left: 50%;
+    bottom: calc(50% + 126 * var(--u));
+    /* 가운데 맞추기는 transform 이 맡습니다 — translate 는 아래 애니메이션 몫입니다. */
+    transform: translateX(-50%);
+    padding: calc(5 * var(--u)) calc(9 * var(--u));
+    border-radius: calc(5 * var(--u));
+    background: #191919;
+    color: #fff;
+    /* 타이포는 지구본 위 뱃지(.globe-badge)와 같습니다. */
+    font-family: var(--font-display);
+    font-size: calc(11 * var(--u));
+    font-weight: 700;
     letter-spacing: 0.08em;
-    /* 동그라미와 같은 박자로 함께 숨 쉽니다. */
-    animation: switch-dot-breathe 2.4s ease-in-out infinite;
+    text-transform: uppercase;
+    line-height: 1.1;
+    white-space: nowrap;
+    /* 가만히 있지 않고 조금씩 떠올라, 눌러 보라는 신호가 됩니다. */
+    animation: store-play-bob 2.2s ease-in-out infinite;
     transition: opacity 320ms ease;
+  }
+
+  .switch-note::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: 0;
+    height: 0;
+    translate: -50% 0;
+    border: calc(4 * var(--u)) solid transparent;
+    border-top-color: #191919;
   }
 
   .switch-note[data-gone] {
@@ -4265,7 +4555,6 @@
   }
 
   .work {
-    gap: calc(16 * var(--u));
     flex-direction: column;
     display: flex;
   }
@@ -4300,6 +4589,288 @@
     flex: 1 1 0;
     position: relative;
     overflow: hidden;
+  }
+
+  /* 채울 그림이 아직 정해지지 않은 자리 */
+  .nud-empty {
+    background: var(--placeholder);
+  }
+
+  /* 무엇을 넣을지만 적어 둔 장 */
+  .nud-plan {
+    flex-direction: column;
+    display: flex;
+  }
+
+  .nud-plan-chain {
+    align-items: center;
+    gap: calc(8 * var(--u));
+    margin-bottom: calc(18 * var(--u));
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: calc(12.5 * var(--u));
+    font-weight: 600;
+    flex-wrap: wrap;
+    display: flex;
+  }
+
+  .nud-plan-chain span {
+    align-items: center;
+    gap: calc(8 * var(--u));
+    display: flex;
+  }
+
+  .nud-plan-chain i {
+    color: var(--fg-soft);
+    font-style: normal;
+  }
+
+  .nud-plan-list {
+    flex-direction: column;
+    gap: calc(9 * var(--u));
+    color: var(--fg-soft);
+    font-size: calc(13 * var(--u));
+    line-height: 1.5;
+    display: flex;
+  }
+
+  .nud-plan-list li {
+    padding-left: calc(14 * var(--u));
+    position: relative;
+  }
+
+  .nud-plan-list li::before {
+    content: "";
+    width: calc(4 * var(--u));
+    height: calc(4 * var(--u));
+    background: currentcolor;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    top: calc(9 * var(--u));
+  }
+
+  /* 누데이크 모바일 목업 — 가로 333 짜리 판을 카드 자리의 폭에 맞춥니다.
+     자리 폭이 마침 333u 라 --s 는 --u 그대로이고, 남는 세로는 잘립니다. */
+  .nud-mock {
+    --s: var(--u);
+
+    color: #000;
+    /* 페이지 바탕은 #fafafa, 화면은 그 위에 얹힌 흰 판입니다. */
+    background: #fff;
+    flex: none;
+    position: relative;
+    overflow: hidden;
+    font-family: var(--font-display);
+    font-weight: 400;
+  }
+
+  .nud-mock b {
+    font-weight: 400;
+  }
+
+  .nud-mock-page {
+    flex-direction: column;
+    display: flex;
+  }
+
+  .nud-mock-hero {
+    border-bottom: 1px solid #000;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nud-mock-hero span {
+    background: #eee;
+    position: absolute;
+  }
+
+  .nud-mock-band {
+    border-bottom: 1px solid #000;
+  }
+
+  .nud-mock-cells {
+    position: relative;
+  }
+
+  .nud-mock-cells span {
+    border-bottom: 1px solid #000;
+    position: absolute;
+  }
+
+  .nud-mock-cells span[data-edge] {
+    border-left: 1px solid #000;
+  }
+
+  .nud-mock-bar {
+    background: #fff;
+    border-bottom: 1px solid #000;
+    position: absolute;
+    inset: 0 0 auto;
+  }
+
+  .nud-mock-tap {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    position: absolute;
+  }
+
+  .nud-mock-logo {
+    position: absolute;
+  }
+
+  /* 내보내기에서 네모로 눌린 벡터들은 SVG 로 다시 그려 넣습니다. */
+  .nud-mock-icon {
+    flex: none;
+    display: block;
+  }
+
+  .nud-mock-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .nud-mock-caret {
+    border-bottom: calc(1.4 * var(--s)) solid currentcolor;
+    border-right: calc(1.4 * var(--s)) solid currentcolor;
+    rotate: 45deg;
+    translate: 0 calc(-1 * var(--s));
+    flex: none;
+  }
+
+  .nud-mock-menu {
+    background: #fff;
+    position: absolute;
+    inset: 0 auto auto 0;
+  }
+
+  .nud-mock-list {
+    flex-direction: column;
+    display: flex;
+    position: absolute;
+  }
+
+  .nud-mock-list > span {
+    align-items: center;
+    display: flex;
+    position: relative;
+  }
+
+  /* 메뉴를 펼치면 보고 있는 갈래만 검게 남습니다. */
+  .nud-mock-list > span[data-off] {
+    color: #acacac;
+  }
+
+  .nud-mock-sub {
+    padding-right: calc(17 * var(--s));
+    flex-direction: column;
+    display: flex;
+    position: absolute;
+    color: #000;
+    white-space: nowrap;
+  }
+
+  .nud-mock-lang {
+    align-items: center;
+    display: flex;
+    position: absolute;
+  }
+
+  .nud-mock-close {
+    position: absolute;
+  }
+
+  .nud-mock-close::before,
+  .nud-mock-close::after {
+    content: "";
+    width: 100%;
+    height: calc(1.4 * var(--s));
+    background: #000;
+    position: absolute;
+    top: 50%;
+    left: 0;
+  }
+
+  .nud-mock-close::before {
+    rotate: 45deg;
+  }
+
+  .nud-mock-close::after {
+    rotate: -45deg;
+  }
+
+  /* 03 목록 화면 */
+  .nud-mock-tabs {
+    border-bottom: 1px solid #000;
+    justify-content: center;
+    display: flex;
+    white-space: nowrap;
+  }
+
+  .nud-mock-tabs b[data-off] {
+    opacity: 0.3;
+  }
+
+  .nud-mock-kinds {
+    border-bottom: 1px solid #000;
+    justify-content: center;
+    display: flex;
+  }
+
+  .nud-mock-kinds span {
+    flex-direction: column;
+    align-items: center;
+    display: flex;
+    text-align: center;
+  }
+
+  .nud-mock-kinds i {
+    background: #f4f4f2;
+    border-radius: 50%;
+    flex: none;
+  }
+
+  .nud-mock-kinds i[data-ring] {
+    outline: 1px solid #000;
+    outline-offset: -1px;
+  }
+
+  .nud-mock-filter {
+    border-bottom: 1px solid #000;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+  }
+
+  .nud-mock-filter span {
+    align-items: center;
+    display: flex;
+  }
+
+  .nud-mock-filter i {
+    border: 1px solid #000;
+    flex: none;
+  }
+
+  .nud-mock-grid {
+    grid-template-columns: calc(166.5 * var(--s)) 1fr;
+    display: grid;
+  }
+
+  .nud-mock-grid > span {
+    border-bottom: 1px solid #000;
+    position: relative;
+  }
+
+  .nud-mock-grid > span[data-edge] {
+    border-right: 1px solid #000;
+  }
+
+  .nud-mock-grid b {
+    text-align: center;
+    position: absolute;
   }
 
   .work[data-linked] {
@@ -4783,7 +5354,6 @@
   }
 
   .globe-tab[data-on] {
-    box-shadow: 0 calc(1 * var(--u)) calc(3 * var(--u)) #00000014;
     color: #111;
     background: #fff;
   }
@@ -4985,7 +5555,6 @@
     align-items: center;
     gap: calc(3.51 * var(--u));
     padding: calc(6 * var(--u)) calc(12 * var(--u));
-    box-shadow: 0 calc(2 * var(--u)) calc(6 * var(--u)) #0000001f;
     font-size: calc(11 * var(--u));
     white-space: nowrap;
     cursor: pointer;
@@ -5036,12 +5605,9 @@
 
   .store-slot .store-panel {
     top: calc(52 * var(--u));
-    /* 테두리 없이 그늘만으로 떠 있게 둡니다. */
-    box-shadow: 0 calc(2 * var(--u)) calc(26 * var(--u)) #1919190a;
   }
 
   .after-frame .globe-mock {
-    box-shadow: 0 calc(2 * var(--u)) calc(26 * var(--u)) #0006;
     clip-path: inset(
       calc(-40 * var(--u)) calc(-40 * var(--u)) 0 calc(-40 * var(--u))
     );
@@ -5305,10 +5871,13 @@
     border-radius: calc(5 * var(--u));
     background: #191919;
     color: #fff;
-    font-family: var(--font-body);
-    font-size: calc(10 * var(--u));
-    letter-spacing: -0.01em;
-    line-height: 1.2;
+    /* 타이포는 지구본 위 뱃지(.globe-badge)와 같습니다. */
+    font-family: var(--font-display);
+    font-size: calc(11 * var(--u));
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.1;
     white-space: nowrap;
     /* 가만히 있지 않고 조금씩 떠올라, 눌러 보라는 신호가 됩니다. */
     animation: store-play-bob 2.2s ease-in-out infinite;
@@ -5939,11 +6508,6 @@
       top 420ms cubic-bezier(0.22, 1, 0.36, 1),
       rotate 420ms cubic-bezier(0.22, 1, 0.36, 1),
       height 420ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  /* 겹친 넉 장은 서로 조금씩 그늘을 집니다. */
-  .merge-shot .steps-frame {
-    box-shadow: 0 calc(2 * var(--u)) calc(18 * var(--u)) rgb(25 25 25 / 0.06);
   }
 
   /* 자리에 맞물린 뒤에 사라집니다. 그래야 한 칸씩 착 붙는 것으로 읽힙니다. */

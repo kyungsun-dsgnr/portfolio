@@ -242,7 +242,7 @@ export function SceneProblem() {
           data-gone={picked ? true : undefined}
           onClick={play}
         >
-          <span className="store-play-label">As-is Preview</span>
+          <span className="store-play-label">As-Is Preview</span>
           <span className="store-play-key">
             <svg viewBox="0 0 24 24" aria-hidden>
               <path d="M8 5 19 12 8 19 Z" />

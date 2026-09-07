@@ -79,7 +79,7 @@ export function SceneNudakeContext3() {
       <h2 className="type-lead capitalize rise col-start-5 col-span-4 row-start-1">
         The Experience
         <br />
-        Is Still Bound to Place.
+        Is Still Bound to Place
       </h2>
 
       {/* 오른쪽 넉 단을 매장 사진이 꽉 채웁니다. 고른 매장으로 넘어갑니다. */}

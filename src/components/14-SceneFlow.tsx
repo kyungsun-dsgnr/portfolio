@@ -147,7 +147,7 @@ export function SceneFlow() {
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1">
-        One Gift, Too Many Steps.
+        One Gift, Too Many Steps
       </h2>
 
       <div
@@ -216,7 +216,6 @@ export function SceneFlow() {
               } as CSSProperties
             }
           >
-            <em>{node.pain!.no}</em>
             <p>{node.pain!.text}</p>
           </div>
         ))}

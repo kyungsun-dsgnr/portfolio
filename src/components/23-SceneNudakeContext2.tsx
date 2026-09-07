@@ -79,7 +79,7 @@ export function SceneNudakeContext2() {
       <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1">
         The Experience
         <br />
-        Is Still Bound to Place.
+        Is Still Bound to Place
       </h2>
 
       <p

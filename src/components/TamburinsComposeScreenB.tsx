@@ -173,32 +173,6 @@ const SETS: {
 
 const won = (n: number) => n.toLocaleString("ko-KR");
 
-/* 손이 닿지 않는 자리에서 스스로 담을 때는, 12장 표지에 쓴 그 제품을 그대로 씁니다.
-   자리·비율은 표지의 도면 좌표(663 × 643)를 이 상자(683 × 740)에 옮겨 적은 값입니다.
-   가로는 바닥 폭(4.69% ~ 95.31%)에, 세로는 안쪽 바닥선과 앞면 윗선에 맞췄습니다. */
-const COVER_GOODS = [
-  {
-    id: "perfume",
-    src: "/images/tamburins-perfume.png",
-    left: "26.5%",
-    top: "44%",
-    width: "26.4%",
-    height: "24.6%",
-    tilt: "-11deg",
-    delay: "0s",
-  },
-  {
-    id: "wash",
-    src: "/images/tamburins-handwash.png",
-    left: "55.4%",
-    top: "20%",
-    width: "18%",
-    height: "48.5%",
-    tilt: "5.5deg",
-    delay: "0.34s",
-  },
-];
-
 /** 향은 두 제품이 같은 목록에서 고릅니다. */
 /* 향노트는 스토어에 적힌 그대로, 설명도 그 자리에서 펼쳐 봅니다. */
 /** 향노트와 설명은 탬버린즈 스토어에 적힌 그대로입니다.
@@ -783,28 +757,6 @@ export function TamburinsComposeScreenB({
             </span>
 
             {set !== null &&
-              auto &&
-              COVER_GOODS.map((good) => (
-                <span
-                  key={good.id}
-                  className="cmpb-good"
-                  style={
-                    {
-                      left: good.left,
-                      top: good.top,
-                      width: good.width,
-                      height: good.height,
-                      "--tilt": good.tilt,
-                      "--delay": good.delay,
-                    } as CSSProperties
-                  }
-                >
-                  <Image src={good.src} alt="" fill sizes="8vw" />
-                </span>
-              ))}
-
-            {set !== null &&
-              !auto &&
               SETS[set].kinds.map((kind, n) => (
                 <span
                   key={kind}

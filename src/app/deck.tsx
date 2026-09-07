@@ -30,7 +30,8 @@ import { SceneSwitch } from "@/components/02-SceneSwitch";
 import { SceneNudakeCover } from "@/components/18-SceneNudakeCover";
 // 내려 둔 앞 판에서 씁니다: import { SceneNudakeContext } from "@/components/22-SceneNudakeContext";
 import { SceneNudakeContext2 } from "@/components/23-SceneNudakeContext2";
-import { SceneNudakeSigns } from "@/components/24-SceneNudakeSigns";
+// import { SceneNudakeSigns } from "@/components/24-SceneNudakeSigns";
+import { SceneNudakeSigns2 } from "@/components/37-SceneNudakeSigns2";
 import {
   NUDAKE_COMPOSE,
   NUDAKE_TURN,
@@ -277,11 +278,20 @@ export function Deck() {
           node: <SceneNudakeContext3 />,
         },
         */
+        /* 걸음 셋짜리 첫 판. 다시 잡을 때 이 묶음만 풀면 됩니다.
+           컴포넌트 파일(24)은 지우지 않고 그대로 두었습니다.
         {
           id: "nudake-signs",
           index: "02 — Nudake",
           label: "nudake-3",
           node: <SceneNudakeSigns />,
+        },
+        */
+        {
+          id: "nudake-signs-2",
+          index: "02 — Nudake",
+          label: "nudake-3",
+          node: <SceneNudakeSigns2 />,
         },
         /* 아래 셋은 아직 무엇을 넣을지만 적어 둔 자리입니다. */
         /* 덩이 셋을 3–5단·6–8단에 흩어 놓았던 첫 판. 다시 잡을 때 이 묶음만 풀면 됩니다.

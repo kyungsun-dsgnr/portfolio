@@ -46,7 +46,7 @@ export function SceneNudakeGap5() {
       <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1 row-span-2">
         Found Here,
         <br />
-        Experienced Elsewhere.
+        Experienced Elsewhere
       </h2>
 
       {/* 화면은 가운데 넉 단의 한가운데에 섭니다. 남는 좌우는 덩이가 걸칠 자리입니다. */}

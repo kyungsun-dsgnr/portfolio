@@ -72,6 +72,12 @@ export function SceneProblem() {
     setStage({ picked: POINTS[0].index, phase: 0 });
   }, []);
 
+  /* 도는 중에 다시 누르면 멈추고 처음 화면으로 돌아갑니다. */
+  const stop = useCallback(() => {
+    setPlaying(false);
+    setStage({ picked: null, phase: 0 });
+  }, []);
+
   /* 사람이 직접 고르면 자동 재생은 자리를 내줍니다. */
   const pick = useCallback((key: string) => {
     setPlaying(false);
@@ -91,7 +97,11 @@ export function SceneProblem() {
     const now = POINTS.findIndex((point) => point.index === picked);
     /* 마지막 칸까지 다 보여 주고 멈춥니다. 다시 보려면 또 누르면 됩니다. */
     if (now === POINTS.length - 1) {
-      const done = setTimeout(() => setPlaying(false), DWELL);
+      /* 다 훑고 나면 처음 화면으로 돌아가고 재생 단추가 다시 뜹니다. */
+      const done = setTimeout(() => {
+        setPlaying(false);
+        setStage({ picked: null, phase: 0 });
+      }, DWELL);
       return () => clearTimeout(done);
     }
 
@@ -201,10 +211,35 @@ export function SceneProblem() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-lead rise col-start-1 col-span-4 row-start-1 row-span-2">
+      {/* 단추가 제목 끝줄에 함께 서도록 한 단 넓게 잡습니다. */}
+      <h2 className="type-lead rise col-start-1 col-span-5 row-start-1 row-span-2">
         {c("Beyond Finding")}
         <br />
         Toward Global Awareness
+        {/* 순서대로 훑어 보여 주는 장치. 제목 끝에 붙어 섭니다.
+            도는 동안에는 멈춤 단추가 됩니다. */}
+        <button
+          type="button"
+          className="store-play"
+          data-playing={playing || undefined}
+          aria-label={playing ? "훑기 멈추기" : "As-Is Preview 재생"}
+          onClick={playing ? stop : play}
+        >
+          <span className="store-play-key">
+            <svg viewBox="0 0 24 24" aria-hidden>
+              {playing ? (
+                <rect x="5" y="5" width="14" height="14" />
+              ) : (
+                <path d="M8 5 19 12 8 19 Z" />
+              )}
+            </svg>
+          </span>
+
+          {/* 손을 올렸을 때만 위로 뜨는 말풍선. 1장 스위치 안내와 같은 모양입니다. */}
+          <span className="store-play-tip" aria-hidden>
+            {playing ? "Stop" : "As-Is Preview"}
+          </span>
+        </button>
       </h2>
 
       {/* 지금 화면. 자리는 네 단이지만 목업은 그 가운데 두 단만 씁니다.
@@ -239,21 +274,6 @@ export function SceneProblem() {
             ))}
           </div>
         )}
-
-        {/* 순서대로 훑어 보여 주는 장치. 도는 동안에는 물러납니다. */}
-        <button
-          type="button"
-          className="store-play"
-          data-gone={picked ? true : undefined}
-          onClick={play}
-        >
-          <span className="store-play-label">As-Is Preview</span>
-          <span className="store-play-key">
-            <svg viewBox="0 0 24 24" aria-hidden>
-              <path d="M8 5 19 12 8 19 Z" />
-            </svg>
-          </span>
-        </button>
       </div>
 
       {ready &&

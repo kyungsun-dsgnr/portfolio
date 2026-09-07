@@ -26,22 +26,22 @@ const COUNTS = [
 const SIGNS = [
   {
     index: "01",
-    title: "MENU",
+    title: "Menu Entry",
     body: "선물 메뉴를 찾기 위해 탐색 시작",
     place: "col-start-3 col-span-2",
     screen: "menu",
   },
   {
     index: "02",
-    title: "NUDAKE TEAHOUSE",
+    title: "Category Depth",
     body: "하위 카테고리를 다시 선택",
     place: "col-start-5 col-span-2",
     screen: "open",
   },
   {
     index: "03",
-    title: "TEA GIFT",
-    body: "처음으로 ‘Gift’를 발견",
+    title: "Hidden Gift",
+    body: "세 번째 화면에서 Gift 발견",
     place: "col-start-7 col-span-2",
     screen: "list",
   },
@@ -54,7 +54,7 @@ export function SceneNudakeSigns() {
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       {/* 한 줄로 서려면 네 단으로는 좁아, 여섯 단을 씁니다. 카드는 3행부터라 겹치지 않습니다. */}
       <h2 className="type-lead capitalize rise col-start-1 col-span-6 row-start-1">
-        Already There, Just Not Visible.
+        Already There, Just Not Visible
       </h2>
 
       {/* 오른쪽 끝 두 단, 제목과 같은 행에 그 길의 길이를 숫자로 세웁니다. */}
@@ -71,22 +71,20 @@ export function SceneNudakeSigns() {
         ))}
       </p>
 
-      {/* 설명은 왼쪽 아래 두 단, 세 줄로 끊어 행 아래에 붙습니다. */}
+      {/* 설명은 왼쪽 넉 단, 2행부터. 끊지 않고 한 덩이로 흐릅니다. */}
       <p
-        className="type-body rise self-end col-start-1 col-span-2 row-start-6"
+        className="type-body rise self-start col-start-1 col-span-4 row-start-2"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        선물을 목적으로 방문해도,
-        <br />
-        사용자는 세 번째 화면에 도달해야
-        <br />
-        비로소 ‘Gift’를 발견합니다.
+        선물 목적의 사용자는 NUDAKE 안에 도착해도, ‘Gift’를 발견하기까지 메뉴
+        구조를 여러 번 거쳐야 합니다. 기능은 존재하지만 탐색 흐름 안에서 충분히
+        드러나지 않습니다.
       </p>
 
       {SIGNS.map((sign, i) => (
         <div
           key={sign.index}
-          className={`work rise row-start-3 row-span-4 ${sign.place}`}
+          className={`work rise row-start-4 row-span-3 ${sign.place}`}
           style={{ "--delay": `${0.2 + i * 0.08}s` } as CSSProperties}
         >
           {/* 글자 크기는 2장 `STEP 01 / Gift / 목록에서…` 와 같은 세 단을 씁니다. */}

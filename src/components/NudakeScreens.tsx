@@ -100,27 +100,32 @@ const CELLS = [
 /** 3번 판 위쪽의 세 갈래. 첫 갈래만 켜져 있습니다. */
 const TABS = ["누데이크 티 하우스", "하우스 노웨어 도산", "아카이브"];
 
-/** 그 아래 동그라미 셋. 가운데가 선물입니다. */
-const KINDS = ["티", "티 기프트", "디저트"];
+/* 그 아래 동그라미 셋. 가운데가 선물입니다.
+   그림은 2026-09-07 nudake.com/kr/menu 에서 받아 480px 로 줄여 둔 것입니다. */
+const KINDS = [
+  { name: "티", img: "/images/nudake-tea/kind-tea.webp" },
+  { name: "티 기프트", img: "/images/nudake-tea/kind-teagift.webp" },
+  { name: "디저트", img: "/images/nudake-tea/kind-dessert.webp" },
+];
 
-/** 목록에 깔리는 티 열두 종 */
+/** 목록에 깔리는 티 열두 종. 그림은 같은 자리에서 받았습니다. */
 const TEAS = [
-  "블루 몽크",
-  "레더 부츠",
-  "더 마피아",
-  "샤토 누아르",
-  "블랙 캐러멜",
-  "넘버 88",
-  "화이트 선셋",
-  "피치 로지",
-  "맨티스",
-  "루이",
-  "캐모 필로우",
-  "기문",
+  { name: "블루 몽크", img: "bluemonk" },
+  { name: "레더 부츠", img: "leatherboots" },
+  { name: "더 마피아", img: "themafia" },
+  { name: "샤토 누아르", img: "chateaunoir" },
+  { name: "블랙 캐러멜", img: "blackcaramel" },
+  { name: "넘버 88", img: "no88" },
+  { name: "화이트 선셋", img: "whitesunset" },
+  { name: "피치 로지", img: "peachrosy" },
+  { name: "맨티스", img: "mantis" },
+  { name: "루이", img: "louis" },
+  { name: "캐모 필로우", img: "camopillow" },
+  { name: "기문", img: "keemun" },
 ];
 
 /** 어느 화면에나 떠 있는 상단 바 */
-function TopBar() {
+function TopBar({ tap }: { tap?: "hamburger" } = {}) {
   return (
     <div className="nud-mock-bar" style={box({ height: 49 })}>
       <span
@@ -149,7 +154,11 @@ function TopBar() {
         className="nud-mock-tap"
         style={box({ left: 273, top: 0, width: 60, height: 48 })}
       >
-        <i className="nud-mock-icon" style={box({ width: 15, height: 15 })}>
+        <i
+          className="nud-mock-icon"
+          data-tap={tap === "hamburger" || undefined}
+          style={box({ width: 15, height: 15 })}
+        >
           <IconMenu />
         </i>
       </span>
@@ -164,12 +173,29 @@ function TopBar() {
  * 메뉴 판이 화면 전체를 덮으므로 그 아래 상품·푸터는 가려집니다. 내보내기에 있던
  * 겹이라 지우지 않고 그대로 두었습니다 — 메뉴를 걷으면 드러납니다.
  */
-export function NudakeMockMenu({ open = false }: { open?: boolean }) {
+export function NudakeMockMenu({
+  open = false,
+  menu = true,
+  hero,
+  tap,
+}: {
+  open?: boolean;
+  /** 메뉴 판을 걷으면 그 아래 홈 화면이 드러납니다. */
+  menu?: boolean;
+  /** 맨 위 큰 그림. 주지 않으면 회색 자리만 놓입니다. */
+  hero?: string;
+  /** 이 걸음의 마지막에 눌리는 자리. 손끝이 닿은 표시가 남습니다. */
+  tap?: "hamburger" | "menu" | "teahouse";
+}) {
   return (
     <div className="nud-mock" style={box({ width: 333, height: 726 })}>
       {/* 메뉴가 걷혔을 때 드러나는 화면 */}
       <div className="nud-mock-page" style={{ paddingTop: mk(49) }}>
-        <div className="nud-mock-hero" style={box({ height: 373.95 })}>
+        <div
+          className="nud-mock-hero"
+          data-shot={hero ? "" : undefined}
+          style={box({ height: 373.95 })}
+        >
           <span
             style={box({
               left: -3.33,
@@ -177,7 +203,17 @@ export function NudakeMockMenu({ open = false }: { open?: boolean }) {
               width: 339.66,
               height: 380.46,
             })}
-          />
+          >
+            {hero ? (
+              <Image
+                src={hero}
+                alt=""
+                fill
+                sizes="25vw"
+                className="object-cover"
+              />
+            ) : null}
+          </span>
         </div>
 
         <div className="nud-mock-band" style={box({ height: 280.58 })} />
@@ -191,62 +227,107 @@ export function NudakeMockMenu({ open = false }: { open?: boolean }) {
             />
           ))}
         </div>
+
+        {/* 화면 맨 아래. 메뉴를 걷었을 때만 눈에 듭니다. */}
+        <div className="nud-mock-foot" style={box({ height: 121 })}>
+          <div className="nud-mock-foot-in" style={{ padding: `${mk(22)} 0` }}>
+            <div
+              className="nud-mock-sns"
+              style={{ ...box({ width: 127, height: 30 }), gap: mk(22) }}
+            >
+              {[0, 1, 2, 3].map((i) => (
+                <span key={i} style={box({ width: 15, height: 15 })} />
+              ))}
+            </div>
+
+            <p
+              className="nud-mock-legal"
+              style={{ fontSize: mk(9), lineHeight: mk(14) }}
+            >
+              ㈜아이아이컴바인드 | 사업자등록번호: 119-86-38589 | 대표자: 김한국
+              <br />
+              서울특별시 성동구 뚝섬로 433
+              <br />
+              ©NUDAKE
+            </p>
+          </div>
+        </div>
       </div>
 
-      <TopBar />
+      <TopBar tap={tap === "hamburger" ? "hamburger" : undefined} />
 
       {/* 열려 있는 메뉴 판. 화면 전체를 덮습니다. */}
-      <div className="nud-mock-menu" style={box({ width: 333, height: 726 })}>
-        <nav
-          className="nud-mock-list"
-          style={{ ...box({ left: 30, top: 30, width: 77.31 }), gap: mk(6) }}
-        >
-          {MENU.map((item) => (
-            <span
-              key={item.label}
-              /* 펼쳤을 때는 지금 보고 있는 갈래만 검게 남습니다. */
-              data-off={(open && item.label !== "메뉴") || undefined}
-              style={{ height: mk(32), gap: mk(8) }}
-            >
-              <b style={type(16, 24)}>{item.label}</b>
-              {item.caret ? (
-                <i
-                  className="nud-mock-icon"
-                  style={box({ width: 14, height: 14 })}
+      {menu ? (
+        <div className="nud-mock-menu" style={box({ width: 333, height: 726 })}>
+          <nav
+            className="nud-mock-list"
+            style={{ ...box({ left: 30, top: 30, width: 77.31 }), gap: mk(6) }}
+          >
+            {MENU.map((item) => (
+              <span
+                key={item.label}
+                /* 펼쳤을 때는 지금 보고 있는 갈래만 검게 남습니다. */
+                data-off={(open && item.label !== "메뉴") || undefined}
+                style={{ height: mk(32), gap: mk(8) }}
+              >
+                <b
+                  data-tap={
+                    (tap === "menu" && item.label === "메뉴") || undefined
+                  }
+                  style={type(16, 24)}
                 >
-                  <IconArrow />
-                </i>
-              ) : null}
+                  {item.label}
+                </b>
+                {item.caret ? (
+                  <i
+                    className="nud-mock-icon"
+                    style={box({ width: 14, height: 14 })}
+                  >
+                    <IconArrow />
+                  </i>
+                ) : null}
 
-              {open && item.label === "메뉴" ? (
-                <span
-                  className="nud-mock-sub"
-                  style={box({ left: 110, top: 0, width: 154.67 })}
-                >
-                  {SUBMENU.map((name) => (
-                    <b key={name} style={{ ...type(16, 30), height: mk(39) }}>
-                      {name}
-                    </b>
-                  ))}
-                </span>
-              ) : null}
-            </span>
-          ))}
-        </nav>
+                {open && item.label === "메뉴" ? (
+                  <span
+                    className="nud-mock-sub"
+                    style={box({ left: 110, top: 0, width: 154.67 })}
+                  >
+                    {SUBMENU.map((name) => (
+                      <b
+                        key={name}
+                        data-tap={
+                          (tap === "teahouse" &&
+                            name === "누데이크 티 하우스") ||
+                          undefined
+                        }
+                        style={{ ...type(16, 30), height: mk(39) }}
+                      >
+                        {name}
+                      </b>
+                    ))}
+                  </span>
+                ) : null}
+              </span>
+            ))}
+          </nav>
 
-        <span
-          className="nud-mock-lang"
-          style={{ ...box({ left: 30, top: 670, height: 24 }), gap: mk(4) }}
-        >
-          <b style={type(16, 24)}>한국어</b>
-          <i className="nud-mock-caret" style={box({ width: 6, height: 6 })} />
-        </span>
+          <span
+            className="nud-mock-lang"
+            style={{ ...box({ left: 30, top: 670, height: 24 }), gap: mk(4) }}
+          >
+            <b style={type(16, 24)}>한국어</b>
+            <i
+              className="nud-mock-caret"
+              style={box({ width: 6, height: 6 })}
+            />
+          </span>
 
-        <span
-          className="nud-mock-close"
-          style={box({ left: 293, top: 20, width: 16, height: 16 })}
-        />
-      </div>
+          <span
+            className="nud-mock-close"
+            style={box({ left: 293, top: 20, width: 16, height: 16 })}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -257,7 +338,7 @@ export function NudakeMockMenu({ open = false }: { open?: boolean }) {
  * 위에서부터 갈래 셋 · 종류 동그라미 셋 · 거른 수와 필터 · 티 열두 종입니다.
  * 가운데 동그라미가 '티 기프트' — 여기서 처음 선물이라는 분류가 보입니다.
  */
-export function NudakeMockList() {
+export function NudakeMockList({ tap }: { tap?: "teagift" } = {}) {
   return (
     <div className="nud-mock" style={box({ width: 333, height: 1517 })}>
       <div className="nud-mock-page" style={{ paddingTop: mk(49) }}>
@@ -284,13 +365,24 @@ export function NudakeMockList() {
             gap: mk(14),
           }}
         >
-          {KINDS.map((kind, i) => (
-            <span key={kind} style={{ maxWidth: mk(59), gap: mk(6) }}>
-              <i
-                data-ring={i === 0 || undefined}
-                style={box({ width: 54, height: 54 })}
-              />
-              <b style={type(12, 14.4)}>{kind}</b>
+          {KINDS.map((kind) => (
+            <span
+              key={kind.name}
+              data-tap={
+                (tap === "teagift" && kind.name === "티 기프트") || undefined
+              }
+              style={{ maxWidth: mk(59), gap: mk(6) }}
+            >
+              <i style={box({ width: 54, height: 54 })}>
+                <Image
+                  src={kind.img}
+                  alt=""
+                  fill
+                  sizes="10vw"
+                  className="object-cover"
+                />
+              </i>
+              <b style={type(12, 14.4)}>{kind.name}</b>
             </span>
           ))}
         </div>
@@ -309,17 +401,29 @@ export function NudakeMockList() {
         <div className="nud-mock-grid">
           {TEAS.map((tea, i) => (
             <span
-              key={tea}
+              key={tea.name}
               data-edge={i % 2 === 0 || undefined}
               style={box({ height: 207.78 })}
             >
+              {/* 그림이 칸을 통째로 씁니다. 이름은 그 위 아래쪽에 얹힙니다. */}
+              <i>
+                <Image
+                  src={`/images/nudake-tea/${tea.img}.webp`}
+                  alt=""
+                  fill
+                  sizes="15vw"
+                  className="object-contain"
+                />
+              </i>
+
               <b
                 style={{
-                  ...box({ left: 10.75, top: 169.34, width: 144 }),
+                  ...box({ left: 10.75, width: 144 }),
+                  bottom: mk(18),
                   ...type(13, 16),
                 }}
               >
-                {tea}
+                {tea.name}
               </b>
             </span>
           ))}

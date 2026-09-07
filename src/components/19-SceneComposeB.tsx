@@ -26,7 +26,7 @@ export function SceneComposeB() {
       <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1 row-span-2">
         One screen,
         <br />
-        one gift.
+        one gift
       </h2>
 
       <p

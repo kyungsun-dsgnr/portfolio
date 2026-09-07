@@ -112,7 +112,7 @@ export function SceneShift() {
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-lead capitalize rise col-start-1 col-span-6 row-start-1">
-        From Selection to Composition.
+        From Selection to Composition
       </h2>
 
       <div className="steps col-start-1 col-span-8 row-start-3 row-span-4">
@@ -136,7 +136,6 @@ export function SceneShift() {
           >
             <div
               className="steps-cap tall-cap"
-              data-dim={(!one && i > 0) || undefined}
               /* 모이는 동안에는 어느 마디도 붙지 않습니다.
                  다 모인 뒤 첫 칸에만 한 걸음으로 다시 붙습니다. */
               data-gone={one || undefined}

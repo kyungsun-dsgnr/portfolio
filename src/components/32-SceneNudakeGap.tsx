@@ -50,7 +50,7 @@ export function SceneNudakeGap() {
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       {/* 제목은 다른 케이스의 하위 장들과 같은 단(type-lead)을 씁니다. */}
       <h2 className="type-lead capitalize rise col-start-1 col-span-6 row-start-1">
-        Found Here, Experienced Elsewhere.
+        Found Here, Experienced Elsewhere
       </h2>
 
       {NOTES.map((note) => (

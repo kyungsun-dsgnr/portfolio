@@ -106,7 +106,7 @@ export function SceneNudakeGap4() {
       <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1 row-span-2">
         From Buying a Gift
         <br />
-        to Making One.
+        to Making One
       </h2>
 
       <div

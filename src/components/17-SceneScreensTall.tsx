@@ -105,6 +105,11 @@ export function SceneScreensTall({
   const [scentStep, setScentStep] = useState<1 | 2>(1);
   const onStep = useCallback((step: 1 | 2) => setScentStep(step), []);
 
+  /* 저 혼자 돌지 않습니다. 제목 끝의 재생을 눌러야 첫 화면부터 훑습니다. */
+  const [playing, setPlaying] = useState(false);
+  /** 손으로 하나만 골라 둔 것. 재생과 따로 놉니다. */
+  const [solo, setSolo] = useState<number | null>(null);
+
   const [active, setActive] = useState(0);
   const at = useRef(0);
   const [plays, setPlays] = useState<number[]>(() => SHOTS.map(() => 0));
@@ -116,34 +121,72 @@ export function SceneScreensTall({
     setPlays((seen) => seen.map((n, i) => (i === to ? n + 1 : n)));
   }, []);
 
+  /** 처음 화면으로 돌려 놓습니다. */
+  const rewind = useCallback(() => {
+    at.current = 0;
+    setActive(0);
+    setScentStep(1);
+    setPlays((seen) => seen.map((n) => n + 1));
+  }, []);
+
+  const play = useCallback(() => {
+    setPlaying(true);
+    setSolo(null);
+    start(0);
+  }, [start]);
+
+  const stop = useCallback(() => {
+    setPlaying(false);
+    setSolo(null);
+    rewind();
+  }, [rewind]);
+
+  /* 화면을 누르면 처음부터 다시 돌지 않고 그 화면만 섭니다. */
+  const pick = useCallback((to: number) => {
+    setPlaying(false);
+    setSolo((now) => (now === to ? null : to));
+    at.current = to;
+    setActive(to);
+    if (to === 2) setScentStep(1);
+    setPlays((seen) => seen.map((n, i) => (i === to ? n + 1 : n)));
+  }, []);
+
   useEffect(() => {
     if (inView) return;
     const back = window.setTimeout(() => {
-      at.current = 0;
-      setActive(0);
-      setScentStep(1);
-      setPlays((seen) => seen.map((n) => n + 1));
+      setPlaying(false);
+      setSolo(null);
+      rewind();
     }, 0);
     return () => clearTimeout(back);
-  }, [inView]);
+  }, [inView, rewind]);
 
   /* 끝난 화면을 잠시 그대로 두었다가 다음 걸음으로 넘어갑니다. */
   const holdTimer = useRef(0);
   const advance = useCallback(
     (from: number) => {
       if (at.current !== from) return;
+      /* 손으로 고른 한 장은 그 자리에 머뭅니다. 이어 넘기지 않습니다. */
+      if (!playing) return;
       window.clearTimeout(holdTimer.current);
       holdTimer.current = window.setTimeout(() => {
-        if (at.current === from) start(from + 1);
+        if (at.current !== from) return;
+        /* 마지막 화면까지 다 보여 주면 멈추고 처음으로 돌아갑니다. */
+        if (from + 1 >= SHOTS.length) {
+          setPlaying(false);
+          rewind();
+          return;
+        }
+        start(from + 1);
       }, HOLD);
     },
-    [start],
+    [start, rewind, playing],
   );
 
   useEffect(() => () => window.clearTimeout(holdTimer.current), []);
 
   /* 물러난 판에서는 어느 칸도 차례를 갖지 않습니다. */
-  const live = still ? -1 : active;
+  const live = still ? -1 : playing ? active : (solo ?? -1);
 
   /* 넷이 한 자리로 모입니다. 장에 들어서고 한 박자 뒤에 움직입니다. */
   const [merged, setMerged] = useState(false);
@@ -157,7 +200,33 @@ export function SceneScreensTall({
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-lead capitalize rise col-start-1 col-span-6 row-start-1">
-        {title ?? c("One gift, across multiple screens.")}
+        {title ?? c("One gift, across multiple screens")}
+
+        {/* 순서대로 훑어 보여 주는 장치. 제목 바로 아래, 왼쪽 끝에 줄을 맞춰 섭니다.
+          도는 동안에는 멈춤 단추가 됩니다. */}
+        {still ? null : (
+          <button
+            type="button"
+            className="store-play store-play-block"
+            data-playing={playing || undefined}
+            aria-label={playing ? "훑기 멈추기" : "화면 훑어 보기"}
+            onClick={playing ? stop : play}
+          >
+            <span className="store-play-key">
+              <svg viewBox="0 0 24 24" aria-hidden>
+                {playing ? (
+                  <rect x="5" y="5" width="14" height="14" />
+                ) : (
+                  <path d="M8 5 19 12 8 19 Z" />
+                )}
+              </svg>
+            </span>
+
+            <span className="store-play-tip" data-side="right" aria-hidden>
+              {playing ? "Stop" : "Play"}
+            </span>
+          </button>
+        )}
       </h2>
 
       <div className="steps col-start-1 col-span-8 row-start-3 row-span-4">
@@ -165,15 +234,18 @@ export function SceneScreensTall({
           <div
             key={`${shot.screen}-${i}`}
             className="steps-shot tall-shot rise"
-            data-idle={live !== i || undefined}
+            /* 재생 전에는 넷 다 또렷하게 둡니다. */
+            data-idle={
+              ((still || playing || solo !== null) && live !== i) || undefined
+            }
             role="button"
             tabIndex={0}
-            onClick={still ? undefined : () => start(i)}
+            onClick={still ? undefined : () => pick(i)}
             onKeyDown={(event) => {
               if (still) return;
               if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
-                start(i);
+                pick(i);
               }
             }}
             style={
@@ -192,7 +264,8 @@ export function SceneScreensTall({
             {/* 마디는 3행 자리에 화면과 겹치지 않게 섭니다. */}
             <div
               className="steps-cap tall-cap"
-              data-dim={i > active || undefined}
+              /* 재생 전에는 다 또렷하고, 하나가 서면 나머지 글이 물러납니다. */
+              data-dim={(live >= 0 && i !== live) || undefined}
               style={{
                 height: px(CAP_H),
                 top: px((live === i ? 0 : drop(shot.idleRows)) - CAP_UP),
@@ -205,7 +278,7 @@ export function SceneScreensTall({
                     /* 다시 볼 때마다 처음부터 차오르도록 새로 답니다. */
                     key={plays[i]}
                     data-run={live === i || undefined}
-                    data-gone={(!still && active > i) || undefined}
+                    data-gone={!playing || (!still && active > i) || undefined}
                     style={{ "--fill-ms": `${shot.span}ms` } as CSSProperties}
                     aria-hidden
                   />

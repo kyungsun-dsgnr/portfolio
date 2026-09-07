@@ -85,7 +85,7 @@ export function SceneNudakeContext() {
       <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1">
         The Experience
         <br />
-        Is Still Bound to Place.
+        Is Still Bound to Place
       </h2>
 
       {/* 설명은 제목 바로 아랫행, 같은 단에 놓입니다. */}

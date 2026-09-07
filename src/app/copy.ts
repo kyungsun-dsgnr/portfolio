@@ -39,7 +39,7 @@ export const POLISHED: CopyMap = {
   "선물을 준비할 때, 무엇을 담을지 선택하고 하나의 구성으로 완성합니다.":
     "선물을 준비할 때 우리는 무엇을 담을지 고르고, 하나의 구성으로 완성합니다.",
   "재구성합니다.": "재설계합니다.",
-  "One gift, across multiple screens.": "One Gift, Across Multiple Screens.",
+  "One gift, across multiple screens": "One Gift, Across Multiple Screens",
   "Seen Before Bought": "Seen Before Buying",
   "Notes Where You Choose": "Notes Where Choices Happen",
 

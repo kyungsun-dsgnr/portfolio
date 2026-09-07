@@ -34,7 +34,7 @@ export const SLUGS: Record<string, string> = {
 
   nudake: "nudake",
   "nudake-context-2": "nudake/01",
-  "nudake-signs": "nudake/02",
+  "nudake-signs-2": "nudake/02",
   "nudake-gap-3": "nudake/03",
   "nudake-gap-5": "nudake/04",
   "nudake-gap-4": "nudake/05",

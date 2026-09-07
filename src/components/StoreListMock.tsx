@@ -169,6 +169,8 @@ export function StoreListMock({
         ref={(el) => dotRef?.(key, el)}
         aria-label={label}
         aria-pressed={picked === key}
+        /* 안내가 그 자리에서 동작을 벌인 참. 눌린 것처럼 한 번 커졌다 돌아옵니다. */
+        data-press={(picked === key && (phase ?? 0) >= 1) || undefined}
         onClick={() => onPick?.(key)}
         className={`store-dot${at === "center" ? "" : ` store-dot-${at}`}`}
       >

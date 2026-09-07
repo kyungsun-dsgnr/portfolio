@@ -9320,11 +9320,9 @@
     transition: opacity 260ms ease;
   }
 
-  /* 고른 것만 또렷하게 서고 검은 테를 두릅니다. */
+  /* 고른 것만 또렷하게 섭니다 — 테는 두르지 않고 밝기로만 가립니다. */
   .nudc-track-item[data-on] {
     opacity: 1;
-    outline: calc(2 * var(--s)) solid #191919;
-    outline-offset: calc(-2 * var(--s));
   }
 
   /* ── 결제 시트 ────────────────────────────
@@ -9607,6 +9605,12 @@
 
   .nudc-card-shot img {
     object-position: 50% 30%;
+  }
+
+  /* 상세 화면에서 온 그림은 주인공이 한가운데라, 뒷장의 띠에서도
+     가운데를 기준으로 잘라 넣습니다. */
+  .nudc-card-shot[data-art] img {
+    object-position: 50% 50%;
   }
 
   /* 카드 안쪽 — 18장 표지 카드와 같은 짜임입니다. */

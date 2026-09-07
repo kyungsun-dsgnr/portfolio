@@ -31,6 +31,14 @@ type Step =
   | "done"
   | "gift";
 
+/* 엽서에 앉는 그림. 낱개 티(bag-…)는 nudake.com/kr/menu 의 `티` 화면에
+   제 그림이 따로 있어, 상자 사진 대신 그 그림을 엽서에 씁니다.
+   세트(컬렉션·아카이브·테이스터·루스 리프)는 그 화면에 없어 상자 사진 그대로입니다. */
+const face = (img: string) =>
+  img.startsWith("bag-")
+    ? `/images/nudake-tea/${img}.webp`
+    : `/images/nudake-gift/${img}.webp`;
+
 /** 도면 좌표(가로 333)를 화면 크기로 */
 const mk = (value: number) => `calc(${value} * var(--s))`;
 
@@ -770,10 +778,11 @@ export function NudakeMockCompose({
               뒷장으로 넘어갈 때 이 자리에서 띠로 올라섭니다. */}
             <span
               className="nudc-card-shot"
+              data-art={picked.img.startsWith("bag-") || undefined}
               style={box(written ? CARD_BAND : CARD_SHOT)}
             >
               <Image
-                src={`/images/nudake-gift/${picked.img}.webp`}
+                src={face(picked.img)}
                 alt=""
                 fill
                 sizes="20vw"
@@ -1129,9 +1138,13 @@ export function NudakeMockCompose({
             />
           </span>
 
-          <span className="nudc-card-shot" style={box(CARD_BAND)}>
+          <span
+            className="nudc-card-shot"
+            data-art={picked.img.startsWith("bag-") || undefined}
+            style={box(CARD_BAND)}
+          >
             <Image
-              src={`/images/nudake-gift/${picked.img}.webp`}
+              src={face(picked.img)}
               alt=""
               fill
               sizes="20vw"

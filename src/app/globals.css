@@ -4714,7 +4714,7 @@
   /* 재생 중이 아닌 화면은 물러납니다 — 17장 `One Gift…` 의 값과 같습니다.
      글판은 읽혀야 하므로 화면만 옅게 둡니다. */
   [data-live] .nud-cap-card:not([data-on]) .nud-mock {
-    opacity: 0.5;
+    opacity: 0.62;
     filter: saturate(0.35);
   }
 
@@ -4724,7 +4724,7 @@
   }
 
   [data-live] .nud-cap-card:not([data-on]) .nud-cap > :not(.step) {
-    opacity: 0.18;
+    opacity: 0.3;
   }
 
   .nud-cap-card .nud-mock {
@@ -5242,6 +5242,14 @@
     font-size: calc(12 * var(--u));
     letter-spacing: 0.06em;
     font-weight: 600;
+  }
+
+  /* 눈썹 글은 본문에서 한 겹 더 물러납니다. 판 색을 조금 섞어
+     어두운 장에서도 같은 만큼만 옅어집니다. */
+  .card-index,
+  .steps-no,
+  .nud-eyebrow {
+    color: color-mix(in srgb, var(--fg-soft) 88%, var(--bg));
   }
 
   /* 인트로 두 장은 원래 결을 지킵니다. */
@@ -6836,6 +6844,18 @@
 
   .merge-shot[data-gone] > * {
     opacity: 0;
+  }
+
+  /* 붙기 전에 먼저 물러납니다. 화면 자체를 투명하게 하면 넉 장이
+     서로 비쳐 어지러워, 흰 판을 덮어 안의 것만 옅게 만듭니다.
+     바탕은 그대로 불투명해 포개진 것이 한 덩이로 읽힙니다. */
+  .merge-shot[data-fade] .steps-frame:after {
+    opacity: 0.72;
+  }
+
+  .merge-shot[data-fade] .tall-cap {
+    opacity: 0.3;
+    transition-duration: 260ms;
   }
 
   /* 한 번 더 굴리면 걸음 표시가 걷힙니다. */

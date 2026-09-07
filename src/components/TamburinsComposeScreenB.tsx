@@ -810,10 +810,10 @@ export function TamburinsComposeScreenB({
         {/* 고르는 층. 하나를 고르면 그 층이 접히고 다음 층이 그 위를 덮습니다. */}
         <div className="cmpb-stack">
           {LAYERS.map((title, n) => {
-            /* 손에 쥔 화면에서는 세트가 정해져야 향을 고를 수 있으니,
-               고르기 전에는 층 자체를 두지 않습니다.
-               판 위 목업은 걸음 넷을 한눈에 보여야 해서 처음부터 다 섭니다. */
-            if (stepped && n > 0 && set === null) return null;
+            /* 향 두 층은 세트를 고르기 전에도 서 있습니다 — 무엇을 더 고르게
+               되는지가 먼저 보여야 합니다. 안은 세트가 정해진 뒤에 찹니다.
+               마지막 보기 층만 고르기 전에는 두지 않습니다. */
+            if (stepped && n > 2 && set === null) return null;
 
             return (
               <section

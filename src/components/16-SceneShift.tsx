@@ -63,10 +63,13 @@ const ONE = { screen: "Compose", step: "한 화면에서 고르고 그대로 담
 const MERGE_AT = 1400;
 /** 한 장씩 붙는 박자. 뒤에서부터 한 장씩 와서 앞장이 맨 나중에 얹힙니다. */
 const BEAT = 150;
-const beatOf = (i: number) => (SHOTS.length - 1 - i) * BEAT;
+/* 넉 장이 먼저 옅어지고, 그 옅어진 채로 미끄러져 붙습니다.
+   진한 채로 움직이면 네 화면이 각자 도드라져 한 덩이로 읽히지 않습니다. */
+const FADE = 260;
+const beatOf = (i: number) => FADE + (SHOTS.length - 1 - i) * BEAT;
 
 /* 마지막 장이 얹히고 한 박자 더 둔 뒤에 흐려집니다. */
-const SETTLE_AT = (SHOTS.length - 1) * BEAT + 420 + 380;
+const SETTLE_AT = FADE + (SHOTS.length - 1) * BEAT + 420 + 380;
 
 /* 모였을 때 쌓이는 모양. 반듯하게 포개지 않고 조금씩 어긋나게 두어야
    넉 장이 겹친 것으로 읽힙니다. 맨 앞장만 반듯합니다. */
@@ -120,6 +123,8 @@ export function SceneShift() {
           <div
             key={`${shot.screen}-${i}`}
             className="steps-shot tall-shot merge-shot rise"
+            /* 합쳐지는 동안에는 옅게 물러나 있고, 다 모인 뒤에 걷힙니다. */
+            data-fade={(one && !settled) || undefined}
             data-gone={settled || undefined}
             style={
               {
@@ -136,9 +141,9 @@ export function SceneShift() {
           >
             <div
               className="steps-cap tall-cap"
-              /* 모이는 동안에는 어느 마디도 붙지 않습니다.
-                 다 모인 뒤 첫 칸에만 한 걸음으로 다시 붙습니다. */
-              data-gone={one || undefined}
+              /* 모이는 동안 마디도 화면과 같이 옅어졌다가, 다 모인 뒤에 걷힙니다.
+                 그 자리에는 첫 칸에만 한 걸음으로 다시 붙습니다. */
+              data-gone={settled || undefined}
               style={{
                 transitionDelay: one ? `${beatOf(i)}ms` : "0ms",
                 height: px(CAP_H),

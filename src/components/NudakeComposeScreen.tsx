@@ -379,11 +379,16 @@ export function NudakeMockCompose({
     if (run || editing) return;
     kept.current = note;
     setEditing(true);
-    /* 고쳐 쓰라고 연 자리이니 비워 둡니다 — 안내말이 대신 섭니다. */
-    setNote("");
+    /* 미리 적혀 있던 기본 글은 제안일 뿐이라 비웁니다 — 안내말이 대신 섭니다.
+       손으로 쓴 글이 있으면 그대로 두고 그 뒤에서 이어 씁니다. */
+    if (note === NOTE) setNote("");
     /* 누른 그 손짓 안에서 focus 해야 자판이 올라옵니다.
        다음 틱으로 미루면 기기가 사용자의 뜻으로 보지 않습니다. */
-    pen.current?.focus();
+    const at = pen.current;
+    at?.focus();
+    /* 커서는 쓰던 글 끝에 섭니다. */
+    const end = at?.value.length ?? 0;
+    at?.setSelectionRange(end, end);
   };
 
   /* 다 썼으면 자판을 내리고 잠급니다. */
@@ -854,16 +859,6 @@ export function NudakeMockCompose({
               sizes="30vw"
               className="object-fill"
             />
-
-            <i style={box({ width: 66, height: 12.7 })}>
-              <Image
-                src="/images/nudake-mock-logo2.png"
-                alt=""
-                fill
-                sizes="6vw"
-                className="object-contain"
-              />
-            </i>
           </span>
 
           {/* 고른 칸. 고르고 난 뒤에만 서서, 목록 자리에서 엽서 자리로

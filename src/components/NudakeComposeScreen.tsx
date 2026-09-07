@@ -421,7 +421,9 @@ export function NudakeMockCompose({
       data-edit={editing || undefined}
       data-send={at === "sent" ? send : undefined}
       data-fill={fill || undefined}
-      style={box({ width: 333, height })}
+      /* 손에 쥔 화면에서는 폭을 꽉 채우고 키는 기기 높이를 그대로 씁니다 —
+         정해진 키를 곱하면 폭이 남거나 아래가 잘립니다. */
+      style={{ ...box({ width: 333 }), height: fill ? "100dvh" : mk(height) }}
     >
       {/* 머리 — As-is 목업과 같은 바입니다. */}
       <div className="nud-mock-bar" style={box({ height: 49 })}>

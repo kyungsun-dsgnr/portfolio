@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playwrite_NZ_Basic } from "next/font/google";
+import { Inter, Nanum_Pen_Script, Playwrite_NZ_Basic } from "next/font/google";
 import { GridOverlay } from "@/components/GridOverlay";
 import "./globals.css";
 
@@ -13,6 +13,16 @@ const inter = Inter({
    이 집안은 subsets 가 비어 있어 지정하지 않습니다. */
 const script = Playwrite_NZ_Basic({
   variable: "--font-script",
+});
+
+/* 누데이크 엽서에 손으로 적는 한글. 라틴 손글씨 서체는 한글 자소가 없어
+   그대로 두면 고딕으로 떨어집니다. */
+const scriptKo = Nanum_Pen_Script({
+  variable: "--font-script-ko",
+  /* 이 집안은 next/font 가 latin 만 서브셋으로 잡지만, 파일에는 한글이
+     들어 있어 그대로 쓸 수 있습니다. */
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -32,7 +42,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ko"
-      className={`${inter.variable} ${script.variable} antialiased`}
+      className={`${inter.variable} ${script.variable} ${scriptKo.variable} antialiased`}
     >
       <head>
         {/* SUIT Variable 은 Google Fonts에 없어 CDN에서 불러옵니다.

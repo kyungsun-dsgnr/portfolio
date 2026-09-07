@@ -21,20 +21,20 @@ const NOTES = [
     eyebrow: "Experience Gap",
     title: "Found in NUDAKE",
     body: "사용자는 누데이크 안에서 Tea Gift를 발견하고 제품을 확인합니다. 하지만 Gift를 발견한 이후의 경험은 브랜드 안에서 이어지지 않습니다.",
-    place: "col-start-1 col-span-2 row-start-4 row-span-2",
+    place: "col-start-1 col-span-2 row-start-3 row-span-2",
   },
   {
     eyebrow: "Current Journey",
     title: "The experience leaves the brand.",
     body: "제품 상세 이후 사용자는 외부 선물 서비스로 이동합니다. 선물을 고르고, 메시지를 만들고, 전달하는 핵심 경험은 누데이크 밖에서 진행됩니다.",
-    place: "col-start-7 col-span-2 row-start-2 row-span-2",
+    place: "col-start-1 col-span-2 row-start-5 row-span-2",
   },
   {
     eyebrow: "Break Point",
     title: "거래는 이어지지만, 누데이크의 경험은 여기서 멈춥니다.",
     body: "Gift를 단순 구매 경로가 아니라, 브랜드 안에서 직접 구성하고 완성하는 경험으로 확장할 필요가 있습니다.",
     chain: ["TEA GIFT", "PRODUCT DETAIL", "KAKAO GIFT ↗"],
-    place: "self-end col-start-7 col-span-2 row-start-5 row-span-2",
+    place: "col-start-7 col-span-2 row-start-3 row-span-3",
   },
 ];
 
@@ -43,10 +43,8 @@ export function SceneNudakeGap5() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1 row-span-2">
-        Found Here,
-        <br />
-        Experienced Elsewhere
+      <h2 className="type-lead capitalize rise col-start-1 col-span-6 row-start-1">
+        Found Here, Experienced Elsewhere
       </h2>
 
       {/* 화면은 가운데 넉 단의 한가운데에 섭니다. 남는 좌우는 덩이가 걸칠 자리입니다. */}
@@ -55,7 +53,7 @@ export function SceneNudakeGap5() {
         style={{ "--delay": "0.1s" } as CSSProperties}
         aria-hidden
       >
-        <NudakeMockList />
+        <NudakeMockList gift />
       </div>
 
       {NOTES.map((note, i) => (

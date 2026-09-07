@@ -108,20 +108,41 @@ const KINDS = [
   { name: "디저트", img: "/images/nudake-tea/kind-dessert.webp" },
 ];
 
+/** 선물 갈래를 고른 목록. 2026-09-08 nudake.com/kr/menu (티 기프트) 그대로입니다 —
+ *  앞의 셋이 세트고, 그 뒤로 티백 에디션이 이어집니다. */
+const GIFTS = [
+  { name: "누데이크 티 컬렉션", img: "nudake-gift/collection" },
+  { name: "누데이크 티 아카이브", img: "nudake-gift/archive" },
+  { name: "누데이크 티 테이스터", img: "nudake-gift/taster" },
+  { name: "루스 리프 에디션", img: "nudake-gift/looseleaf" },
+  { name: "티백 에디션 - 블루 몽크", img: "nudake-gift/bag-bluemonk" },
+  { name: "티백 에디션 - 레더 부츠", img: "nudake-gift/bag-leatherboots" },
+  { name: "티백 에디션 - 더 마피아", img: "nudake-gift/bag-themafia" },
+  { name: "티백 에디션 - 샤토 누아르", img: "nudake-gift/bag-chateaunoir" },
+  { name: "티백 에디션 - 넘버88", img: "nudake-gift/bag-no88" },
+  { name: "티백 에디션 - 블랙 캐러멜", img: "nudake-gift/bag-blackcaramel" },
+  { name: "티백 에디션 - 화이트 선셋", img: "nudake-gift/bag-whitesunset" },
+  { name: "티백 에디션 - 피치 로지", img: "nudake-gift/bag-peachrosy" },
+  { name: "티백 에디션 - 맨티스", img: "nudake-gift/bag-mantis" },
+  { name: "티백 에디션 - 루이", img: "nudake-gift/bag-louis" },
+  { name: "티백 에디션 - 캐모 필로우", img: "nudake-gift/bag-camopillow" },
+  { name: "티백 에디션 - 기문", img: "nudake-gift/bag-keemun" },
+];
+
 /** 목록에 깔리는 티 열두 종. 그림은 같은 자리에서 받았습니다. */
 const TEAS = [
-  { name: "블루 몽크", img: "bluemonk" },
-  { name: "레더 부츠", img: "leatherboots" },
-  { name: "더 마피아", img: "themafia" },
-  { name: "샤토 누아르", img: "chateaunoir" },
-  { name: "블랙 캐러멜", img: "blackcaramel" },
-  { name: "넘버 88", img: "no88" },
-  { name: "화이트 선셋", img: "whitesunset" },
-  { name: "피치 로지", img: "peachrosy" },
-  { name: "맨티스", img: "mantis" },
-  { name: "루이", img: "louis" },
-  { name: "캐모 필로우", img: "camopillow" },
-  { name: "기문", img: "keemun" },
+  { name: "블루 몽크", img: "nudake-tea/bluemonk" },
+  { name: "레더 부츠", img: "nudake-tea/leatherboots" },
+  { name: "더 마피아", img: "nudake-tea/themafia" },
+  { name: "샤토 누아르", img: "nudake-tea/chateaunoir" },
+  { name: "블랙 캐러멜", img: "nudake-tea/blackcaramel" },
+  { name: "넘버 88", img: "nudake-tea/no88" },
+  { name: "화이트 선셋", img: "nudake-tea/whitesunset" },
+  { name: "피치 로지", img: "nudake-tea/peachrosy" },
+  { name: "맨티스", img: "nudake-tea/mantis" },
+  { name: "루이", img: "nudake-tea/louis" },
+  { name: "캐모 필로우", img: "nudake-tea/camopillow" },
+  { name: "기문", img: "nudake-tea/keemun" },
 ];
 
 /** 어느 화면에나 떠 있는 상단 바 */
@@ -338,7 +359,15 @@ export function NudakeMockMenu({
  * 위에서부터 갈래 셋 · 종류 동그라미 셋 · 거른 수와 필터 · 티 열두 종입니다.
  * 가운데 동그라미가 '티 기프트' — 여기서 처음 선물이라는 분류가 보입니다.
  */
-export function NudakeMockList({ tap }: { tap?: "teagift" } = {}) {
+export function NudakeMockList({
+  tap,
+  gift = false,
+}: {
+  tap?: "teagift";
+  /** 선물 갈래를 고른 뒤의 목록. 거른 수와 깔리는 것이 함께 바뀝니다. */
+  gift?: boolean;
+} = {}) {
+  const list = gift ? GIFTS : TEAS;
   return (
     <div className="nud-mock" style={box({ width: 333, height: 1517 })}>
       <div className="nud-mock-page" style={{ paddingTop: mk(49) }}>
@@ -373,7 +402,12 @@ export function NudakeMockList({ tap }: { tap?: "teagift" } = {}) {
               }
               style={{ maxWidth: mk(59), gap: mk(6) }}
             >
-              <i style={box({ width: 54, height: 54 })}>
+              {/* 선물 갈래를 고른 화면에서만 그 동그라미에 테를 둘립니다.
+                  As-is 걸음의 티 목록은 테 없이 두기로 한 자리입니다. */}
+              <i
+                data-ring={(gift && kind.name === "티 기프트") || undefined}
+                style={box({ width: 54, height: 54 })}
+              >
                 <Image
                   src={kind.img}
                   alt=""
@@ -391,7 +425,7 @@ export function NudakeMockList({ tap }: { tap?: "teagift" } = {}) {
           className="nud-mock-filter"
           style={{ padding: `${mk(10)} ${mk(20)}` }}
         >
-          <b style={type(13, 24)}>티(12)</b>
+          <b style={type(13, 24)}>{gift ? "티 기프트(16)" : "티(12)"}</b>
           <span style={{ gap: mk(5) }}>
             <i style={box({ width: 12, height: 12 })} />
             <b style={type(12, 24)}>필터</b>
@@ -399,7 +433,7 @@ export function NudakeMockList({ tap }: { tap?: "teagift" } = {}) {
         </div>
 
         <div className="nud-mock-grid">
-          {TEAS.map((tea, i) => (
+          {list.map((tea, i) => (
             <span
               key={tea.name}
               data-edge={i % 2 === 0 || undefined}
@@ -408,7 +442,7 @@ export function NudakeMockList({ tap }: { tap?: "teagift" } = {}) {
               {/* 그림이 칸을 통째로 씁니다. 이름은 그 위 아래쪽에 얹힙니다. */}
               <i>
                 <Image
-                  src={`/images/nudake-tea/${tea.img}.webp`}
+                  src={`/images/${tea.img}.webp`}
                   alt=""
                   fill
                   sizes="15vw"
@@ -418,8 +452,9 @@ export function NudakeMockList({ tap }: { tap?: "teagift" } = {}) {
 
               <b
                 style={{
-                  ...box({ left: 10.75, width: 144 }),
+                  ...box({ left: 0, width: 166.5 }),
                   bottom: mk(18),
+                  textAlign: "center",
                   ...type(13, 16),
                 }}
               >

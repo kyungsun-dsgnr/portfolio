@@ -12,7 +12,7 @@
 
 import { useState, type CSSProperties } from "react";
 
-import { NudakeMockList } from "@/components/NudakeScreens";
+import { NudakeMockCompose } from "@/components/NudakeComposeScreen";
 import { useInView } from "@/components/useInView";
 
 /* 손이 닿는 걸음은 채워서 세웁니다 — 여기가 이 흐름의 몫입니다. */
@@ -95,12 +95,12 @@ export function SceneNudakeGap4() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      {/* 새 화면이 나오면 이 안의 것만 갈아 끼우면 됩니다. 지금은 앞 장과 같은 화면입니다. */}
+      {/* 이 흐름이 가리키는 그 화면. 장에 들어서면 엽서를 쓰고 상자에 담습니다. */}
       <div
-        className="nud-stage col-start-1 col-span-4 row-start-2 row-span-6"
+        className="nud-stage col-start-1 col-span-4 row-start-2 row-span-5"
         aria-hidden
       >
-        <NudakeMockList />
+        <NudakeMockCompose run={inView} />
       </div>
 
       <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1 row-span-2">

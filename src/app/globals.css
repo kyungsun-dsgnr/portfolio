@@ -25,6 +25,9 @@
   /* next/font 가 --font-script 에 Playwrite NZ Basic 을 실어 줍니다. */
   --font-hand:
     "Brittany Signature", var(--font-script), "Snell Roundhand", cursive;
+  /* 엽서에 손으로 적는 글. 한글 손글씨가 앞에 서고, 라틴은 뒤를 잇습니다. */
+  --font-note:
+    var(--font-script-ko), "Brittany Signature", var(--font-script), cursive;
 }
 
 :root {
@@ -5079,6 +5082,12 @@
     flex: none;
   }
 
+  /* 고른 갈래는 동그란 테로 표시합니다 — 실제 화면 그대로입니다. */
+  .nud-mock-kinds i[data-ring] {
+    outline: 1px solid #000;
+    outline-offset: -1px;
+  }
+
   .nud-mock-filter {
     border-bottom: 1px solid #000;
     justify-content: space-between;
@@ -8900,5 +8909,1091 @@
     text-decoration: underline;
     text-underline-offset: calc(3 * var(--u));
     width: fit-content;
+  }
+}
+
+@layer components {
+  /* ── 누데이크 개선 화면 ─────────────────────
+     목록에서 고른 카드가 그대로 엽서가 되는 자리입니다.
+     자리·크기는 컴포넌트가 333 도면에서 그대로 적어 옵니다. */
+  .nudc {
+    color: #191919;
+  }
+
+  /* 이전으로 — 머리 왼쪽 꺾쇠 */
+  .nudc-back-tap {
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .nudc-back {
+    border-left: 2px solid #191919;
+    border-bottom: 2px solid #191919;
+    rotate: 45deg;
+  }
+
+  /* 거른 수 줄 — 목록에서만 섭니다. 상세로 넘어가면 걷힙니다. */
+  .nudc:not([data-at="list"]) .nudc-filter {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .nudc-filter {
+    transition: opacity 300ms ease;
+    position: absolute;
+    inset: auto 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #000;
+    background: #fff;
+  }
+
+  .nudc-filter span {
+    display: flex;
+    align-items: center;
+  }
+
+  .nudc-filter svg {
+    width: calc(12 * var(--s));
+    height: calc(12 * var(--s));
+    flex: none;
+  }
+
+  .nudc-filter svg path {
+    fill: none;
+    stroke-width: 1;
+  }
+
+  /* ── 목록 ────────────────────────────────
+     고른 뒤에는 나머지 칸이 물러납니다. */
+  .nudc-list {
+    position: absolute;
+    inset: 0;
+    transition:
+      opacity 460ms ease,
+      translate 640ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* 손에 쥔 화면에서는 굴려서 아래 제품까지 봅니다.
+     판 위 목업은 위에서부터 들여다보는 자리라 굴리지 않습니다. */
+  .nudc[data-fill] .nudc-list {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+  }
+
+  .nudc-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 머리는 늘 맨 위에 섭니다 — 펼쳐진 메뉴 위에서도 닫을 수 있어야 합니다. */
+  .nudc .nud-mock-bar {
+    z-index: 8;
+  }
+
+  .nudc:not([data-at="list"]) .nudc-list {
+    opacity: 0;
+    translate: 0 calc(18 * var(--s));
+  }
+
+  .nudc-cell,
+  .nudc-pick {
+    position: absolute;
+  }
+
+  /* 칸 바탕은 실제 화면처럼 옅은 회색이고, 칸을 가르는 선은 그 사이로
+     드러나는 흰 줄입니다. */
+  .nudc-cell {
+    background: #f2f2f2;
+  }
+
+  /* 손으로 고르는 자리에서만 눌립니다. */
+  .nudc-cell {
+    padding: 0;
+    text-align: left;
+    cursor: default;
+  }
+
+  .nudc-cell[data-pickable] {
+    cursor: pointer;
+  }
+
+  .nudc-cell[data-pickable]:active i {
+    scale: 0.96;
+  }
+
+  .nudc-cell i {
+    transition: scale 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* 칸을 가르는 선. 모든 칸이 같은 선을 지니고, 오른쪽 끝 칸만
+     바깥 선을 두지 않습니다. */
+  .nudc-cell {
+    border-right: 1px solid #191919;
+    border-bottom: 1px solid #191919;
+  }
+
+  .nudc-cell[data-edge] {
+    border-right: 0;
+  }
+
+  .nudc-cell i,
+  .nudc-pick i {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* 원본은 제품 아래 여백이 위보다 넓습니다. 띠로 잘릴 때 위를 살리고
+     아래를 더 잘라야 제품이 가운데로 옵니다. */
+  .nudc-pick img {
+    object-position: 50% 30%;
+  }
+
+  .nudc-cell b,
+  .nudc-pick b {
+    position: absolute;
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+
+  /* ── 고른 칸 ──────────────────────────────
+     같은 요소가 목록 자리에서 엽서 자리로 옮겨 갑니다. */
+  .nudc-pick {
+    z-index: 4;
+    background: none;
+    /* 칸과 같은 자리를 차지하되 선은 비워 둡니다 — 그림이 칸의 경계선을
+       덮으면 고른 칸 자리만 선이 끊겨 보입니다. */
+    border-right: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    transition:
+      left 760ms cubic-bezier(0.5, 0, 0.15, 1),
+      top 760ms cubic-bezier(0.5, 0, 0.15, 1),
+      width 760ms cubic-bezier(0.5, 0, 0.15, 1),
+      height 760ms cubic-bezier(0.5, 0, 0.15, 1);
+  }
+
+  /* 이름은 목록에 있을 때만 그림 위에 얹힙니다. */
+  .nudc-pick b {
+    transition: opacity 260ms ease;
+  }
+
+  .nudc:not([data-at="list"]) .nudc-pick b {
+    opacity: 0;
+  }
+
+  /* 눌리는 순간. As-is 목업의 손끝 표시와 같은 결입니다. */
+  .nudc-pick[data-press] {
+    animation: nudc-tap 760ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes nudc-tap {
+    0%,
+    100% {
+      scale: 1;
+    }
+
+    38% {
+      scale: 0.955;
+    }
+  }
+
+  /* ── 엽서 ────────────────────────────────
+     그림이 자리를 옮겨 앉은 뒤, 그 둘레로 종이가 깔립니다. */
+  .nudc-card {
+    position: absolute;
+    z-index: 2;
+    /* 엽서가 선 걸음에서만 손이 닿습니다. */
+    pointer-events: none;
+    background: #fff;
+    box-shadow: 0 calc(10 * var(--s)) calc(26 * var(--s)) rgb(25 25 25 / 0.14);
+    opacity: 0;
+    translate: 0 calc(10 * var(--s));
+    transition:
+      opacity 460ms ease,
+      translate 640ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nudc[data-at="card"] .nudc-card,
+  .nudc[data-at="note"] .nudc-card,
+  .nudc[data-at="pay"] .nudc-card,
+  .nudc[data-at="sent"] .nudc-card {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  /* 앞장과 뒷장. 18장 표지처럼 앞장이 흐려지며 뒷장이 드러납니다 —
+     종이를 뒤집는 것이 아니라 넘어간 것으로 읽힙니다. */
+  /* 엽서 하단의 편집 단추와 받는 사람 자리.
+     뒷장이 열린 뒤에만 섭니다. */
+  .nudc-edit,
+  .nudc-to {
+    position: absolute;
+    z-index: 7;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 420ms ease;
+  }
+
+  .nudc[data-at="note"] .nudc-edit,
+  .nudc[data-at="note"] .nudc-to {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .nudc-edit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #b4b4b4;
+    border-radius: calc(8 * var(--s));
+    background: #fff;
+    color: #5f5f5f;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+  }
+
+  .nudc-edit svg {
+    width: calc(11 * var(--s));
+    height: calc(11 * var(--s));
+    margin-right: calc(5 * var(--s));
+    flex: none;
+  }
+
+  .nudc-edit[data-on] {
+    background: #191919;
+    color: #fff;
+  }
+
+  .nudc-to {
+    inset-inline: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nudc-to label {
+    display: flex;
+    flex-direction: column;
+    gap: calc(4 * var(--s));
+    color: #767676;
+  }
+
+  .nudc-to input {
+    border: 1px solid #dcdcdc;
+    padding: 0 calc(10 * var(--s));
+    background: #fff;
+    color: #191919;
+    font-family: inherit;
+    outline: none;
+  }
+
+  .nudc-to input:focus {
+    border-color: #191919;
+  }
+
+  .nudc-to input::placeholder {
+    color: #b4b4b4;
+  }
+
+  /* 판 아래 묶음 — 설명이 길어도 여기서 굴려 끝까지 읽습니다. */
+  .nudc-under {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 7;
+    /* 글 쓰는 걸음에서만 섭니다. 늘 깔아 두면 목록 아래쪽을 덮어
+       그 자리에서 굴려도 목록이 움직이지 않습니다. */
+    pointer-events: none;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+    /* 떠 있는 단추에 가리지 않게 아래를 비웁니다. */
+    padding-bottom: calc(96 * var(--s));
+  }
+
+  .nudc-under::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 트랙 위의 고른 것 · 아래의 이름과 값 · 설명 */
+  .nudc-track-pick,
+  .nudc-track-name,
+  .nudc-track-desc {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 420ms ease;
+  }
+
+  .nudc[data-at="note"] .nudc-under {
+    pointer-events: auto;
+  }
+
+  .nudc[data-at="note"] .nudc-track-pick,
+  .nudc[data-at="note"] .nudc-track-name,
+  .nudc[data-at="note"] .nudc-track-desc {
+    opacity: 1;
+  }
+
+  .nudc-track-pick {
+    color: #a4a4a4;
+    letter-spacing: 0.01em;
+  }
+
+  .nudc-track-name {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: calc(10 * var(--s));
+    color: #191919;
+  }
+
+  .nudc-track-name b {
+    color: #111;
+    font-weight: 700;
+  }
+
+  .nudc-track-name em {
+    flex: none;
+    color: #111;
+    font-style: normal;
+    font-size: calc(14 * var(--s));
+    font-weight: 700;
+  }
+
+  .nudc-track-desc {
+    color: #767676;
+    white-space: pre-line;
+  }
+
+  /* ── 제품 줄 ──────────────────────────────
+     봉투 아래에서 다른 제품으로 바꿔 담습니다. */
+  .nudc-track {
+    display: flex;
+    align-items: stretch;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 420ms ease;
+  }
+
+  .nudc-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nudc[data-at="note"] .nudc-track {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* 원본은 제품이 판 위쪽에 치우쳐 있습니다. 조금 키워 아래로 내려야
+     썸네일 가운데에 옵니다. */
+  .nudc-track-item img {
+    scale: 1.12;
+    translate: 0 6%;
+  }
+
+  .nudc-track-item {
+    position: relative;
+    flex: none;
+    overflow: hidden;
+    background: #f2f2f2;
+    /* 고르지 않은 것은 물러나 있습니다. */
+    opacity: 0.45;
+    cursor: pointer;
+    transition: opacity 260ms ease;
+  }
+
+  /* 고른 것만 또렷하게 서고 검은 테를 두릅니다. */
+  .nudc-track-item[data-on] {
+    opacity: 1;
+    outline: calc(2 * var(--s)) solid #191919;
+    outline-offset: calc(-2 * var(--s));
+  }
+
+  /* ── 결제 시트 ────────────────────────────
+     `선물 보내기` 를 누르면 아래에서 올라옵니다. */
+  .nudc-sheet-veil {
+    position: absolute;
+    inset: 0;
+    z-index: 8;
+    background: rgb(25 25 25 / 0.36);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 320ms ease;
+  }
+
+  .nudc[data-at="pay"] .nudc-sheet-veil {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .nudc-sheet {
+    position: absolute;
+    inset: auto 0 0;
+    z-index: 9;
+    display: flex;
+    flex-direction: column;
+    gap: calc(8 * var(--s));
+    /* 화면 바닥에 붙되, 홈 인디케이터 자리만 비웁니다 — 단추가 잘리지
+       않게 시트가 그만큼 위로 올라섭니다. */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: #fff;
+    border-radius: calc(16 * var(--s)) calc(16 * var(--s)) 0 0;
+    box-shadow: 0 calc(-8 * var(--s)) calc(30 * var(--s)) rgb(25 25 25 / 0.16);
+    translate: 0 100%;
+    transition: translate 460ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nudc[data-at="pay"] .nudc-sheet {
+    translate: 0 0;
+  }
+
+  .nudc-sheet-grip {
+    width: calc(44 * var(--s));
+    height: calc(4 * var(--s));
+    margin: calc(10 * var(--s)) auto calc(6 * var(--s));
+    border-radius: 999px;
+    background: #dcdcdc;
+  }
+
+  .nudc-sheet h5 {
+    margin-top: calc(10 * var(--s));
+    font-weight: 600;
+  }
+
+  .nudc-sheet input {
+    width: 100%;
+    border: 1px solid #dcdcdc;
+    border-radius: calc(8 * var(--s));
+    padding: 0 calc(12 * var(--s));
+    background: #fff;
+    color: #191919;
+    font-family: inherit;
+    outline: none;
+  }
+
+  .nudc-sheet input:focus {
+    border-color: #191919;
+  }
+
+  .nudc-sheet input::placeholder {
+    color: #b4b4b4;
+  }
+
+  /* 결제 수단 한 줄 — 오른쪽 동그라미가 고른 표시입니다. */
+  .nudc-pay-way {
+    display: flex;
+    align-items: center;
+    gap: calc(10 * var(--s));
+    border: 1px solid #ededed;
+    border-radius: calc(10 * var(--s));
+    padding: 0 calc(14 * var(--s));
+    background: #fff;
+    color: #191919;
+    cursor: pointer;
+  }
+
+  .nudc-pay-way b {
+    width: calc(18 * var(--s));
+    height: calc(18 * var(--s));
+    margin-left: auto;
+    border: 1px solid #cfcfcf;
+    border-radius: 50%;
+  }
+
+  .nudc-pay-way[data-on] {
+    border-color: #191919;
+  }
+
+  .nudc-pay-way[data-on] b {
+    border-color: #191919;
+    box-shadow: inset 0 0 0 calc(4 * var(--s)) #fff;
+    background: #191919;
+  }
+
+  .nudc-pay-card {
+    width: calc(20 * var(--s));
+    height: calc(14 * var(--s));
+    border-radius: calc(3 * var(--s));
+    background: #767676;
+    box-shadow: inset 0 calc(4 * var(--s)) 0 #ffffff59;
+  }
+
+  /* 결제 정보 */
+  .nudc-pay-sum {
+    display: flex;
+    flex-direction: column;
+    gap: calc(6 * var(--s));
+  }
+
+  .nudc-pay-sum div {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+  }
+
+  .nudc-pay-sum div[data-sub] {
+    color: #a4a4a4;
+    font-weight: 400;
+  }
+
+  .nudc-pay-sum div[data-total] {
+    margin-top: calc(8 * var(--s));
+    border-top: 1px solid #ededed;
+    padding-top: calc(10 * var(--s));
+  }
+
+  /* 시트의 좌우 여백을 밀어내고 화면 너비를 꽉 채웁니다. */
+  .nudc-pay-do {
+    margin: calc(14 * var(--s)) calc(-20 * var(--s)) 0;
+    background: #191919;
+    color: #fff;
+    text-align: center;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+  }
+
+  /* 닫힌 봉투. 다 담긴 뒤에 열린 봉투와 바꿔 서고, 이어서 날아갑니다. */
+  .nudc-env-shut {
+    position: absolute;
+    z-index: 7;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 380ms ease,
+      translate 700ms cubic-bezier(0.5, 0, 0.2, 1),
+      scale 700ms cubic-bezier(0.5, 0, 0.2, 1),
+      rotate 700ms cubic-bezier(0.5, 0, 0.2, 1);
+  }
+
+  .nudc[data-send="1"] .nudc-env-shut,
+  .nudc[data-send="2"] .nudc-env-shut {
+    opacity: 1;
+  }
+
+  /* 슝 — 위로 솟아 작아지며 사라집니다. */
+  .nudc[data-send="2"] .nudc-env-shut {
+    opacity: 0;
+    translate: calc(40 * var(--s)) calc(-560 * var(--s));
+    scale: 0.42;
+    rotate: -14deg;
+  }
+
+  /* 보내면 편지지가 봉투 안으로 미끄러져 내려갑니다 — 앞 날개 뒤로
+     들어가 윗동만 남습니다. */
+  .nudc[data-at="sent"] .nudc-card {
+    /* 손에 쥔 화면(390 폭)에서 32px 덜 내려갑니다. */
+    translate: 0 calc(122.5 * var(--s));
+    transition:
+      opacity 460ms ease,
+      translate 900ms cubic-bezier(0.5, 0, 0.15, 1);
+  }
+
+  .nudc-card-face,
+  .nudc-card-back {
+    position: absolute;
+    inset: 0;
+    transition: opacity 620ms cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  .nudc-card-back {
+    opacity: 0;
+    pointer-events: none;
+    translate: 0 calc(8 * var(--s));
+    transition:
+      opacity 520ms ease 180ms,
+      translate 620ms cubic-bezier(0.22, 1, 0.36, 1) 180ms;
+  }
+
+  .nudc[data-at="note"] .nudc-card-face,
+  .nudc[data-at="pay"] .nudc-card-face,
+  .nudc[data-at="sent"] .nudc-card-face {
+    opacity: 0;
+  }
+
+  .nudc[data-at="note"] .nudc-card {
+    pointer-events: auto;
+  }
+
+  .nudc[data-at="note"] .nudc-card-back,
+  .nudc[data-at="pay"] .nudc-card-back,
+  .nudc[data-at="sent"] .nudc-card-back {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  /* 그림도 앞장과 함께 물러납니다. */
+  /* 그림은 뒷장에서도 남아, 위쪽 띠 자리로 자연스럽게 올라섭니다.
+     자리와 크기는 컴포넌트가 넘겨 주고, 여기서는 결만 잡습니다. */
+  .nudc[data-at="sent"] .nudc-pick {
+    transition:
+      left 760ms cubic-bezier(0.5, 0, 0.15, 1),
+      top 900ms cubic-bezier(0.5, 0, 0.15, 1),
+      width 760ms cubic-bezier(0.5, 0, 0.15, 1),
+      height 760ms cubic-bezier(0.5, 0, 0.15, 1);
+  }
+
+  /* 뒷장에 놓이는 글. 한 글자씩 놓이고 그 끝에서 막대가 깜박입니다. */
+  .nudc-note {
+    position: absolute;
+    z-index: 1;
+    white-space: pre-wrap;
+    letter-spacing: -0.01em;
+    color: #191919;
+  }
+
+  .nudc-note i[data-caret] {
+    display: inline-block;
+    width: 1px;
+    height: 1em;
+    margin-left: calc(1 * var(--s));
+    translate: 0 calc(2 * var(--s));
+    background: #191919;
+    animation: nudc-caret 1s steps(1, end) infinite;
+  }
+
+  @keyframes nudc-caret {
+    0%,
+    50% {
+      opacity: 1;
+    }
+
+    51%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  /* 카드 안쪽 — 18장 표지 카드와 같은 짜임입니다. */
+  .nudc-card-logo,
+  .nudc-card-foot,
+  .nudc-card-mark {
+    position: absolute;
+  }
+
+  .nudc-card-foot {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    color: #191919d9;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .nudc-card-foot em {
+    font-style: normal;
+  }
+
+  .nudc-card-foot em:last-child {
+    color: #19191980;
+    letter-spacing: 0.16em;
+  }
+
+  .nudc-card-mark {
+    color: #19191961;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    text-indent: 0.24em;
+    font-weight: 600;
+  }
+
+  /* ── 바닥 단추 ────────────────────────────
+     고르기 전에는 테두리만, 엽서가 된 뒤에는 검은 판이 됩니다. */
+  .nudc-bar {
+    position: absolute;
+    inset: auto 0 0;
+    /* 아래 묶음 위에 떠 있습니다. */
+    z-index: 8;
+    display: flex;
+    align-items: flex-end;
+    padding: 0;
+    /* 글이 단추 뒤로 흘러들어도 읽히게, 아래로 갈수록 짙어지는 판을 깝니다. */
+    background: linear-gradient(
+      to bottom,
+      #ffffff00 0%,
+      #ffffffe0 34%,
+      #ffffff 62%
+    );
+    pointer-events: none;
+  }
+
+  .nudc-bar > * {
+    pointer-events: auto;
+  }
+
+  .nudc-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    border: 1px solid #191919;
+    color: #191919;
+    letter-spacing: 0.01em;
+    transition:
+      background 460ms ease,
+      color 460ms ease;
+  }
+
+  .nudc-btn[data-on] {
+    background: #191919;
+    color: #fff;
+  }
+}
+
+@layer components {
+  /* 손에 쥔 화면. 333 도면이 기기 폭에 꼭 맞고, 세로도 다 들어오게 둘 중
+     작은 몫을 씁니다 — 화면 하나가 통째로 보여야 하는 자리입니다. */
+  .nudc-page {
+    background: #fff;
+    align-items: center;
+  }
+
+  .nudc-page .nudc {
+    --s: min(100vw / 333, 100dvh / 726);
+  }
+
+}
+
+@layer components {
+  /* ── 편지봉투 ──────────────────────────────
+     종이 세 겹으로 접습니다 — 열린 뚜껑(카드 뒤) · 몸통 · 앞면(카드 앞).
+     카드 아래쪽이 앞면에 가려져야 봉투에 든 것으로 읽힙니다. */
+  .nudc-env-back,
+  .nudc-env-front {
+    position: absolute;
+    opacity: 0;
+    /* 보여 주기만 하는 겹입니다. 손은 그 아래 목록에 닿아야 합니다 —
+       투명해도 자리를 차지하면 칸이 눌리지 않습니다. */
+    pointer-events: none;
+    translate: 0 calc(14 * var(--s));
+    transition:
+      opacity 520ms ease,
+      translate 720ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nudc[data-at="card"] .nudc-env-back,
+  .nudc[data-at="card"] .nudc-env-front,
+  .nudc[data-at="note"] .nudc-env-back,
+  .nudc[data-at="note"] .nudc-env-front,
+  .nudc[data-at="pay"] .nudc-env-back,
+  .nudc[data-at="pay"] .nudc-env-front,
+  .nudc[data-at="sent"] .nudc-env-back,
+  .nudc[data-at="sent"] .nudc-env-front {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  /* 엽서와 봉투가 놓이는 판 */
+  .nudc-stage {
+    position: absolute;
+    inset-inline: 0;
+    z-index: 0;
+    /* 바탕일 뿐입니다 — 손은 그 아래 목록에 닿아야 합니다. */
+    pointer-events: none;
+    background: #f3f4f2;
+    opacity: 0;
+    transition: opacity 460ms ease;
+  }
+
+  .nudc[data-at="card"] .nudc-stage,
+  .nudc[data-at="note"] .nudc-stage,
+  .nudc[data-at="pay"] .nudc-stage,
+  .nudc[data-at="sent"] .nudc-stage {
+    opacity: 1;
+  }
+
+  /* 뒷면 — 열린 뚜껑까지 한 장입니다. 카드 뒤에 섭니다. */
+  .nudc-env-back {
+    z-index: 1;
+  }
+
+  /* 앞면 — 날개와 아래 접힘. 카드 앞을 덮어, 카드가 봉투에 든 것으로 읽힙니다. */
+  .nudc-env-front {
+    z-index: 6;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: calc(20 * var(--s));
+  }
+
+  .nudc-env-front i {
+    position: relative;
+    display: block;
+    opacity: 0.5;
+  }
+}
+
+@layer components {
+  /* ── 펼쳐진 메뉴 ──────────────────────────
+     머리의 햄버거를 누르면 화면을 덮으며 내려옵니다. */
+  .nudc-menu {
+    position: absolute;
+    inset: 0;
+    z-index: 7;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+    translate: 0 calc(-10 * var(--s));
+    transition:
+      opacity 320ms ease,
+      translate 460ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nudc-menu[data-open] {
+    opacity: 1;
+    pointer-events: auto;
+    translate: 0 0;
+  }
+
+  .nudc-menu ul {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nudc-menu button {
+    color: #acacac;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+  }
+
+  /* 지금 보고 있는 갈래만 검게 남습니다. */
+  .nudc-menu button[data-on] {
+    color: #191919;
+  }
+
+  .nudc-menu-lang {
+    position: absolute;
+    color: #191919;
+  }
+
+  /* ── 상세 화면 ────────────────────────────
+     목록에서 하나를 고르면 그 제품의 상세가 섭니다 —
+     그림 · 이름 · 값 · 갈래 · 설명, 실제 화면과 같은 차례입니다. */
+  .nudc-detail {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+    translate: 0 calc(12 * var(--s));
+    transition:
+      opacity 420ms ease,
+      translate 560ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nudc[data-at="detail"] .nudc-detail {
+    opacity: 1;
+    pointer-events: auto;
+    translate: 0 0;
+  }
+
+  /* 손에 쥔 화면에서는 굴려서 설명 끝까지 읽습니다. */
+  .nudc[data-fill] .nudc-detail {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+  }
+
+  .nudc-detail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nudc-detail-shot {
+    position: absolute;
+    inset-inline: 0;
+    overflow: hidden;
+    background: #f2f2f2;
+  }
+
+  /* 원본은 제품이 가운데보다 위에 있습니다. 아래를 더 잘라야
+     잘린 판 안에서 제품이 가운데로 옵니다. */
+  .nudc-detail-shot img {
+    object-position: 50% 34%;
+  }
+
+  /* 그림 아래 이전·다음 제품 줄 — 실제 화면과 같은 짜임입니다. */
+  .nudc-turns {
+    position: absolute;
+    inset-inline: 0;
+    display: flex;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    background: #fff;
+  }
+
+  .nudc-turns button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(10 * var(--s));
+    color: #000;
+    cursor: pointer;
+  }
+
+  .nudc-turns button:first-child {
+    border-right: 1px solid #000;
+  }
+
+  .nudc-turns svg {
+    width: calc(11 * var(--s));
+    height: calc(11 * var(--s));
+    flex: none;
+  }
+
+  .nudc-detail-text {
+    position: absolute;
+    inset-inline: 0;
+    display: flex;
+    flex-direction: column;
+    gap: calc(6 * var(--s));
+  }
+
+  /* 제품명과 값의 두께는 편지 쓰는 화면의 그 줄과 같습니다. */
+  .nudc-detail-text h4,
+  .nudc-detail-text b {
+    color: #111;
+    font-weight: 700;
+  }
+
+  .nudc-detail-text em {
+    color: #767676;
+    font-style: normal;
+    letter-spacing: 0.02em;
+  }
+
+  .nudc-detail-text p {
+    margin-top: calc(14 * var(--s));
+    color: #4a4a4a;
+    white-space: pre-wrap;
+  }
+
+  /* 엽서 뒷면 어디를 눌러도 고쳐 쓰기가 켜집니다. 글자리는 그 위에 섭니다. */
+  .nudc-card-hit {
+    position: absolute;
+    inset: 0;
+    cursor: text;
+  }
+
+  /* 뒷장의 글자리. 손에 쥔 화면에서는 여기에 바로 씁니다. */
+  .nudc-note {
+    position: absolute;
+    border: 0;
+    padding: 0;
+    resize: none;
+    outline: none;
+    /* 글이 앉는 옅은 줄. 줄 높이(19)마다 한 줄씩 그어 둡니다. */
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(19 * var(--s) - 1px),
+      #f0f0f0 calc(19 * var(--s) - 1px),
+      #f0f0f0 calc(19 * var(--s))
+    );
+    color: #5a5a5a;
+    font-family: inherit;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .nudc-note::placeholder {
+    color: #b4b4b4;
+  }
+}
+
+@layer components {
+  /* 봉투가 닫히면 열린 겹과 편지지는 그 아래로 숨습니다.
+     걸음별로 세워 두는 규칙(.nudc[data-at=…])보다 뒤에 와야 이깁니다. */
+  .nudc[data-send="1"] .nudc-env-front,
+  .nudc[data-send="2"] .nudc-env-front,
+  .nudc[data-send="1"] .nudc-env-back,
+  .nudc[data-send="2"] .nudc-env-back,
+  .nudc[data-send="1"] .nudc-card,
+  .nudc[data-send="2"] .nudc-card {
+    opacity: 0;
+  }
+}
+
+@layer components {
+  /* 고쳐 쓰는 동안의 딤드. 엽서만 그 위에 남습니다. */
+  .nudc-veil {
+    position: absolute;
+    inset: 0;
+    z-index: 9;
+    background: rgb(25 25 25 / 0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 320ms ease;
+  }
+
+  .nudc[data-edit] .nudc-veil {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* 엽서와 그 위의 그림은 딤드 위로 올라서고, 함께 커지며 조금 내려옵니다.
+     둘은 서로 다른 요소라 같은 점(엽서 한가운데)을 축으로 삼아야
+     어긋나지 않습니다 — 그림 쪽은 제 판에서 그 점의 자리를 적어 둡니다. */
+  .nudc[data-edit] .nudc-card {
+    z-index: 10;
+    /* 자판이 화면 아래 절반을 덮으니, 엽서는 그 위(≈388)까지만 내려옵니다. */
+    scale: 1.24;
+    translate: 0 calc(48 * var(--s));
+  }
+
+  .nudc[data-edit] .nudc-pick {
+    z-index: 11;
+    scale: 1.24;
+    translate: 0 calc(48 * var(--s));
+    transform-origin: calc(75 * var(--s)) calc(79 * var(--s));
+  }
+
+  .nudc-card,
+  .nudc-pick {
+    transition-property: opacity, translate, scale, left, top, width, height;
+    transition-duration: 520ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* 위쪽의 취소·확인 */
+  .nudc-edit-top {
+    position: absolute;
+    inset-inline: 0;
+    z-index: 12;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 320ms ease;
+  }
+
+  .nudc[data-edit] .nudc-edit-top {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .nudc-edit-top button {
+    color: #ffffffb8;
+    cursor: pointer;
+  }
+
+  .nudc-edit-top button[data-on] {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  /* 고쳐 쓰는 동안에는 아래 편집 단추를 두지 않습니다 — 위의 확인이 그 몫입니다. */
+  .nudc[data-edit] .nudc-edit {
+    opacity: 0;
+    pointer-events: none;
   }
 }

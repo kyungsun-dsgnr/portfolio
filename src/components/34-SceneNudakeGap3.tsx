@@ -46,10 +46,10 @@ export function SceneNudakeGap3() {
           바닥색 없이 페이지 바탕 위에 바로 서고,
           화면이 판보다 길어 위에서부터 들여다보는 만큼만 보입니다. */}
       <div
-        className="nud-stage col-start-1 col-span-4 row-start-2 row-span-6"
+        className="nud-stage col-start-1 col-span-4 row-start-2 row-span-5"
         aria-hidden
       >
-        <NudakeMockList />
+        <NudakeMockList gift />
       </div>
 
       <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1 row-span-2">
@@ -59,7 +59,7 @@ export function SceneNudakeGap3() {
       </h2>
 
       <div
-        className="nud-notes col-start-5 col-span-4 row-start-2 row-span-6"
+        className="nud-notes col-start-5 col-span-4 row-start-2 row-span-5"
         data-spread
       >
         {NOTES.map((note, i) => (

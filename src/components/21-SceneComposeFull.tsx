@@ -48,7 +48,7 @@ const FIXED = [
 const GAP = 16;
 
 /** 휴대폰에서 열리는 자리. 저장소 하위에 배포되는 경우까지 함께 셈합니다. */
-const PHONE_PATH = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/m/compose/`;
+const PHONE_PATH = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/m/compose`;
 
 export function SceneComposeFull() {
   const [ref, inView] = useInView<HTMLDivElement>(0.4);

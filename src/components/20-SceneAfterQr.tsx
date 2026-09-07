@@ -16,7 +16,7 @@ import { StoreGlobeMock } from "@/components/StoreGlobeMock";
 import { useInView } from "@/components/useInView";
 
 /** 휴대폰에서 열리는 자리. 저장소 하위에 배포되는 경우까지 함께 셈합니다. */
-const PHONE_PATH = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/m/globe/`;
+const PHONE_PATH = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/m/globe`;
 
 export function SceneAfterQr() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);

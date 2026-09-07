@@ -906,7 +906,7 @@ export function NudakeMockCompose({
             onMouseDown={(event) => event.preventDefault()}
             onClick={editing ? done : edit}
             style={{
-              ...box({ left: 122, top: 363, width: 89, height: 27 }),
+              ...box({ left: 122, top: 367, width: 89, height: 27 }),
               ...type(10, 22),
             }}
           >
@@ -1076,11 +1076,11 @@ export function NudakeMockCompose({
             className="object-fill"
           />
         </span>
-        <b style={type(15, 24)}>선물을 보냈습니다</b>
-        <em style={type(11, 18)}>
-          {picked.name}
-          {to ? ` · ${to}님께` : ""}
-        </em>
+        {/* 받는 사람을 적었으면 그 이름으로 알립니다. */}
+        <b style={type(15, 24)}>
+          {to ? `‘${to}’님에게 선물을 보냈습니다` : "선물을 보냈습니다"}
+        </b>
+        <em style={type(11, 18)}>{picked.name}</em>
         <button
           type="button"
           className="nudc-done-back"
@@ -1095,7 +1095,9 @@ export function NudakeMockCompose({
       {/* 바닥 — 고르고 난 뒤에야 다음 걸음이 열립니다.
           고르기 전에는 단추 자리도 두지 않습니다. */}
       <div
-        hidden={at === "list" || at === "done"}
+        /* 결제를 마친 뒤에는 둘 자리가 없습니다 — 봉투가 날아가고
+           완료 화면이 그 몫을 합니다. */
+        hidden={at === "list" || at === "sent" || at === "done"}
         className="nudc-bar"
         style={{ padding: 0, height: mk(BAR) }}
       >
@@ -1107,11 +1109,7 @@ export function NudakeMockCompose({
           onClick={gift}
           style={{ ...box({ height: 52 }), ...type(13, 52) }}
         >
-          {at === "sent"
-            ? "선물을 보냈습니다"
-            : at === "note" || at === "pay"
-              ? "선물 보내기"
-              : "선물하기"}
+          {at === "note" || at === "pay" ? "선물 보내기" : "선물하기"}
         </button>
       </div>
     </div>

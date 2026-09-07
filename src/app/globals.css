@@ -9741,7 +9741,9 @@
     pointer-events: none;
     background: #f3f4f2;
     opacity: 0;
-    transition: opacity 460ms ease;
+    transition:
+      opacity 460ms ease,
+      background 520ms ease;
   }
 
   .nudc[data-at="card"] .nudc-stage,
@@ -9749,6 +9751,11 @@
   .nudc[data-at="pay"] .nudc-stage,
   .nudc[data-at="sent"] .nudc-stage {
     opacity: 1;
+  }
+
+  /* 보내고 나면 판이 화면 바탕과 같아집니다 — 날아가는 봉투만 남습니다. */
+  .nudc[data-at="sent"] .nudc-stage {
+    background: #fff;
   }
 
   /* 뒷면 — 열린 뚜껑까지 한 장입니다. 카드 뒤에 섭니다. */

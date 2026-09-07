@@ -18,8 +18,9 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
-/** 걸음 — 목록 · 상세 · 옮겨 가는 중 · 엽서 · 뒷장(메시지) · 보냄 */
-type Step = "list" | "detail" | "fly" | "card" | "note" | "pay" | "sent";
+/** 걸음 — 목록 · 상세 · 옮겨 가는 중 · 엽서 · 뒷장(메시지) · 결제 · 보냄 · 완료 */
+type Step =
+  "list" | "detail" | "fly" | "card" | "note" | "pay" | "sent" | "done";
 
 /** 도면 좌표(가로 333)를 화면 크기로 */
 const mk = (value: number) => `calc(${value} * var(--s))`;
@@ -161,7 +162,8 @@ const cellAt = (i: number): Box => ({
  *  카드 아래쪽은 봉투에 들어가도 읽을 것이 가려지지 않습니다. */
 const CARD: Box = { left: 78, top: 78, width: 177, height: 252 };
 /** 카드 안쪽 자리는 카드 판(201 × 286)을 기준으로 잽니다. */
-const LOGO: Box = { left: 71.5, top: 11, width: 34, height: 29 };
+/* 워드마크는 83 × 19 판입니다. 그 비율 그대로 카드 가운데에 놓습니다. */
+const LOGO: Box = { left: 60.5, top: 16, width: 56, height: 12.8 };
 /** 고른 칸이 그대로 자라 앉는 자리 — 카드의 그림 칸.
  *  그림이 정사각이라 자리도 정사각입니다. */
 const SHOT: Box = { left: 91.5, top: 124, width: 150, height: 150 };
@@ -202,6 +204,19 @@ const BACK: Box = {
  *  실제 화면의 갈래에 `티 기프트` 를 한 줄 더했습니다 —
  *  선물이 메뉴 안에서 제 이름으로 서는 자리입니다. */
 const MENU = ["스토어", "메뉴", "티 기프트", "프로젝트", "SNS"];
+
+/** 한 걸음 앞의 자리. 꺾쇠와 기기의 뒤로가기가 함께 씁니다 —
+ *  뒷장 → 엽서 → 상세 → 목록 차례이고, 글을 쓰던 중이라도 상세로 갑니다. */
+const PREV: Record<Step, Step> = {
+  list: "list",
+  detail: "list",
+  fly: "detail",
+  card: "detail",
+  note: "detail",
+  pay: "note",
+  sent: "list",
+  done: "list",
+};
 
 /** 스스로 훑을 때 고르는 칸 */
 const PICK = 0;
@@ -257,18 +272,30 @@ export function NudakeMockCompose({
      자리 옮김이 이어져 보입니다. */
   const [flying, setFlying] = useState(false);
 
-  /* 머리의 꺾쇠 — 한 걸음 앞으로 되돌아갑니다.
-     뒷장 → 엽서 → 상세 → 목록 차례입니다. */
-  const PREV: Record<Step, Step> = {
-    list: "list",
-    detail: "list",
-    fly: "detail",
-    card: "detail",
-    /* 글을 쓰던 중이라도 꺾쇠는 제품 상세로 돌려보냅니다. */
-    note: "detail",
-    pay: "note",
-    sent: "detail",
+  /* 손에 쥔 화면에서는 기기의 뒤로가기도 한 걸음씩 되돌아옵니다.
+     걸음마다 자리를 하나 쌓아 두고, 되돌아올 때 그만큼 물러납니다. */
+  const atNow = useRef(at);
+  useEffect(() => {
+    atNow.current = at;
+  }, [at]);
+
+  const push = () => {
+    if (fill) window.history.pushState({ nudc: 1 }, "");
   };
+
+  useEffect(() => {
+    if (!fill) return;
+    const pop = () => {
+      const now = atNow.current;
+      /* 목록에서는 그대로 화면 밖으로 나갑니다. */
+      if (now === "list") return;
+      window.history.pushState({ nudc: 1 }, "");
+      setAt(PREV[now]);
+    };
+    window.addEventListener("popstate", pop);
+    return () => window.removeEventListener("popstate", pop);
+  }, [fill]);
+
   const back = () => setAt((now) => PREV[now]);
 
   /* 목록에서 하나를 누르면 그 제품의 상세로 갑니다. */
@@ -276,6 +303,7 @@ export function NudakeMockCompose({
     if (run || at !== "list") return;
     setChosen(i);
     setTap(true);
+    push();
     setAt("detail");
   };
 
@@ -286,18 +314,21 @@ export function NudakeMockCompose({
   /* 바닥 단추 — 상세에서는 엽서를 만들고, 뒷장에서는 봉투에 넣어 보냅니다. */
   const gift = () => {
     if (at === "detail") {
+      push();
       setAt("fly");
       return;
     }
     if (at === "note") {
       pen.current?.blur();
       setEditing(false);
+      push();
       setAt("pay");
     }
   };
 
   /* 결제까지 마치면 편지가 담겨 날아갑니다. */
   const payNow = () => {
+    push();
     setSend(0);
     setAt("sent");
   };
@@ -311,6 +342,7 @@ export function NudakeMockCompose({
     const clock = [
       window.setTimeout(() => setSend(1), 1000),
       window.setTimeout(() => setSend(2), 1700),
+      window.setTimeout(() => setAt("done"), 2500),
     ];
     return () => clock.forEach(clearTimeout);
   }, [at]);
@@ -349,7 +381,9 @@ export function NudakeMockCompose({
     setEditing(true);
     /* 고쳐 쓰라고 연 자리이니 비워 둡니다 — 안내말이 대신 섭니다. */
     setNote("");
-    window.setTimeout(() => pen.current?.focus(), 0);
+    /* 누른 그 손짓 안에서 focus 해야 자판이 올라옵니다.
+       다음 틱으로 미루면 기기가 사용자의 뜻으로 보지 않습니다. */
+    pen.current?.focus();
   };
 
   /* 다 썼으면 자판을 내리고 잠급니다. */
@@ -673,7 +707,7 @@ export function NudakeMockCompose({
         <span className="nudc-card-face" aria-hidden={at === "note"}>
           <span className="nudc-card-logo" style={box(LOGO)}>
             <Image
-              src="/images/nudake-card-logo.png"
+              src="/images/nudake-mock-logo.png"
               alt=""
               fill
               sizes="10vw"
@@ -718,7 +752,7 @@ export function NudakeMockCompose({
           {/* 뒷면 워드마크. 앞면과 같은 자리라 장이 넘어가도 흔들리지 않습니다. */}
           <span className="nudc-card-logo" style={box(LOGO)}>
             <Image
-              src="/images/nudake-card-logo.png"
+              src="/images/nudake-mock-logo.png"
               alt=""
               fill
               sizes="10vw"
@@ -730,7 +764,7 @@ export function NudakeMockCompose({
             ref={pen}
             className="nudc-note"
             value={note}
-            readOnly={run || !editing}
+            readOnly={run}
             rows={4}
             /* 글자리를 눌러도 바로 고쳐 쓸 수 있습니다. */
             onClick={edit}
@@ -952,9 +986,9 @@ export function NudakeMockCompose({
           className="object-fill"
         />
 
-        <i style={box({ width: 52, height: 44 })}>
+        <i style={box({ width: 66, height: 15.1 })}>
           <Image
-            src="/images/nudake-card-logo.png"
+            src="/images/nudake-mock-logo.png"
             alt=""
             fill
             sizes="6vw"
@@ -998,10 +1032,41 @@ export function NudakeMockCompose({
         </span>
       ) : null}
 
+      {/* 완료 — 봉투가 날아간 자리에 남는 화면입니다. */}
+      <div className="nudc-done">
+        {/* 체크 대신 닫힌 봉투가 섭니다 — 방금 보낸 그 봉투입니다. */}
+        <span
+          className="nudc-done-shut"
+          style={box({ width: 168, height: (168 * 514) / 760 })}
+        >
+          <Image
+            src="/images/nudake-env-shut.webp"
+            alt=""
+            fill
+            sizes="30vw"
+            className="object-fill"
+          />
+        </span>
+        <b style={type(15, 24)}>선물을 보냈습니다</b>
+        <em style={type(11, 18)}>
+          {picked.name}
+          {to ? ` · ${to}님께` : ""}
+        </em>
+        <button
+          type="button"
+          className="nudc-done-back"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => setAt("list")}
+          style={{ ...box({ height: 44 }), ...type(12, 44) }}
+        >
+          티 기프트로 돌아가기
+        </button>
+      </div>
+
       {/* 바닥 — 고르고 난 뒤에야 다음 걸음이 열립니다.
           고르기 전에는 단추 자리도 두지 않습니다. */}
       <div
-        hidden={at === "list"}
+        hidden={at === "list" || at === "done"}
         className="nudc-bar"
         style={{ padding: 0, height: mk(BAR) }}
       >

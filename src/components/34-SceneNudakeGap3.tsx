@@ -4,7 +4,7 @@
  * 누데이크 04 — 단절 (변주 2)
  *
  * 32장과 같은 글을 다른 판에 올립니다 — 제목이 왼쪽 넉 단을 크게 차지하고,
- * 덩이 셋은 오른쪽 넉 단에 위에서 아래로 나란히 쌓입니다.
+ * 그 아래에 목록 화면 하나, 덩이 셋은 오른쪽 넉 단에 나란히 쌓입니다.
  *
  * 33장과 같되, 셋을 여섯 행 위아래 끝에 붙이고 사이를 고르게 벌립니다.
  * 덩이마다 위에 가르는 선이 그어집니다.
@@ -12,6 +12,7 @@
 
 import type { CSSProperties } from "react";
 
+import { NudakeMockList } from "@/components/NudakeScreens";
 import { useInView } from "@/components/useInView";
 
 /* 띠는 아래로 갈수록 한 걸음씩 길어집니다. 브랜드 밖으로 나가는 걸음만 채웁니다. */
@@ -41,11 +42,15 @@ export function SceneNudakeGap3() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      {/* 왼쪽 넉 단을 2행부터 흰 바닥으로 깝니다. */}
-      <span
-        className="nud-field col-start-1 col-span-4 row-start-2 row-span-6"
+      {/* 왼쪽 넉 단에 화면 하나. 선물이 '여기서' 보이는 그 목록입니다.
+          바닥색 없이 페이지 바탕 위에 바로 서고,
+          화면이 판보다 길어 위에서부터 들여다보는 만큼만 보입니다. */}
+      <div
+        className="nud-stage col-start-1 col-span-4 row-start-2 row-span-6"
         aria-hidden
-      />
+      >
+        <NudakeMockList />
+      </div>
 
       <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1 row-span-2">
         Found Here,

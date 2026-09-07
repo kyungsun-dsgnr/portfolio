@@ -24,10 +24,11 @@ import {
   NUDAKE_TURN,
   SceneNudakePlan,
 } from "@/components/30-SceneNudakePlan";
-import { SceneNudakeGap } from "@/components/32-SceneNudakeGap";
+// import { SceneNudakeGap } from "@/components/32-SceneNudakeGap";
 // import { SceneNudakeGap2 } from "@/components/33-SceneNudakeGap2";
 import { SceneNudakeGap3 } from "@/components/34-SceneNudakeGap3";
 import { SceneNudakeGap4 } from "@/components/35-SceneNudakeGap4";
+import { SceneNudakeGap5 } from "@/components/36-SceneNudakeGap5";
 // import { SceneNudakeContext3 } from "@/components/31-SceneNudakeContext3";
 // import { SceneNudakeCurrent } from "@/components/25-SceneNudakeCurrent";
 // import { SceneNudakeProblem } from "@/components/26-SceneNudakeProblem";
@@ -267,12 +268,15 @@ export default function Home() {
           node: <SceneNudakeSigns />,
         },
         /* 아래 셋은 아직 무엇을 넣을지만 적어 둔 자리입니다. */
+        /* 덩이 셋을 3–5단·6–8단에 흩어 놓았던 첫 판. 다시 잡을 때 이 묶음만 풀면 됩니다.
+           컴포넌트 파일(32)은 지우지 않고 그대로 두었습니다.
         {
           id: "nudake-gap",
           index: "03 — Nudake",
           label: "nudake-4",
           node: <SceneNudakeGap />,
         },
+        */
         /* 20 간격으로 아래에 붙였던 판. 다시 잡을 때 이 묶음만 풀면 됩니다.
            컴포넌트 파일(33)은 지우지 않고 그대로 두었습니다.
         {
@@ -284,9 +288,15 @@ export default function Home() {
         */
         {
           id: "nudake-gap-3",
+          index: "03 — Nudake",
+          label: "nudake-4",
+          node: <SceneNudakeGap3 />,
+        },
+        {
+          id: "nudake-gap-5",
           index: "04 — Nudake",
           label: "nudake-5",
-          node: <SceneNudakeGap3 />,
+          node: <SceneNudakeGap5 />,
         },
         {
           id: "nudake-gap-4",

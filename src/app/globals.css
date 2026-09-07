@@ -176,10 +176,11 @@
     background: #fafafa;
   }
 
-  /* 단절 장은 반대로 — 바탕이 희고 왼쪽 바닥만 페이지 색으로 앉습니다. */
+  /* 두 장 모두 바탕은 페이지 색이고, 왼쪽에는 바닥 없이 화면만 세웁니다. */
   #nudake-gap-3,
-  #nudake-gap-4 {
-    background: #fff;
+  #nudake-gap-4,
+  #nudake-gap-5 {
+    background: #fafafa;
   }
 
   /* 제안 장은 어둡게 둡니다. 밝기 기준을 뒤집어 두면 글과 선이 함께 따라옵니다.
@@ -2727,10 +2728,99 @@
     pointer-events: none;
   }
 
+  /* 바닥 위에 화면 하나를 가운데 세웁니다. 바닥은 2행 머리부터지만
+     화면은 그 행의 한가운데(반 행 = 55)에서 시작합니다. 넘치는 아래는 잘립니다. */
+  .nud-stage {
+    padding-top: calc(55 * var(--u));
+    justify-content: center;
+    align-items: flex-start;
+    overflow: hidden;
+    display: flex;
+  }
+
   /* 사이를 고르게 벌려 위아래 끝에 붙이는 판 */
   .nud-notes[data-spread] {
     justify-content: space-between;
     gap: 0;
+  }
+
+  /* 카드 오른쪽 끝의 꺾쇠. 누르면 앞 장의 같은 자리 글이 아래로 열립니다. */
+  .nud-open {
+    position: absolute;
+    top: calc(18 * var(--u));
+    right: 0;
+    width: calc(28 * var(--u));
+    height: calc(28 * var(--u));
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    place-items: center;
+    display: grid;
+  }
+
+  .nud-open i {
+    width: calc(8 * var(--u));
+    height: calc(8 * var(--u));
+    border-bottom: calc(1.4 * var(--u)) solid var(--fg-soft);
+    border-right: calc(1.4 * var(--u)) solid var(--fg-soft);
+    rotate: 45deg;
+    translate: 0 calc(-2 * var(--u));
+    transition:
+      rotate 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      translate 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .note[data-open] .nud-open i {
+    rotate: 225deg;
+    translate: 0 calc(2 * var(--u));
+  }
+
+  /* 접힌 자리. 행 높이를 0fr → 1fr 로 열어 높이를 재지 않고도 펼칩니다. */
+  .nud-was {
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    display: grid;
+  }
+
+  .note[data-open] .nud-was {
+    grid-template-rows: 1fr;
+  }
+
+  .nud-was-in {
+    padding-bottom: calc(20 * var(--u));
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .nud-was-in > * {
+    opacity: 0;
+    transition: opacity 260ms ease;
+  }
+
+  .note[data-open] .nud-was-in > * {
+    opacity: 0.62;
+    transition-delay: 140ms;
+  }
+
+  .nud-was-in .nud-eyebrow {
+    margin-top: calc(18 * var(--u));
+    padding-top: calc(16 * var(--u));
+    border-top: 1px dashed #19191933;
+  }
+
+  /* .note > .type-body 의 여백은 여기까지 닿지 않아 따로 줍니다.
+     한 단 더 좁혀 잡아야 뒤에 오는 .page-grid .type-body 의 시각 보정을
+     넘어섭니다. 값은 위 글과 같은 22 입니다. */
+  .note .nud-was-in .type-body {
+    margin-top: calc(22 * var(--u));
+  }
+
+  /* 하나를 펼치면 나머지 카드는 머리말과 제목만 남깁니다 —
+     그만큼 자리를 내어 주어 무리가 판 밖으로 넘치지 않습니다. */
+  .nud-notes:has(.note[data-open]) .note:not([data-open]) > .type-body,
+  .nud-notes:has(.note[data-open]) .note:not([data-open]) > .nud-chain {
+    display: none;
   }
 
   /* 덩이를 서로 가르는 실선. 글 바로 위에 그어집니다. */
@@ -2738,6 +2828,8 @@
     border-top: 1px solid #19191924;
     /* 선은 단 너비를 그대로 가로지르고, 글만 안으로 들여씁니다. */
     padding: calc(20 * var(--u)) 0 0 calc(20 * var(--u));
+    /* 꺾쇠가 오른쪽 끝에 앉을 자리 */
+    position: relative;
   }
 
   /* 아래로 쌓는 띠. 화살표도 같이 눕습니다. */

@@ -9202,6 +9202,8 @@
   .nudc-scroll {
     position: absolute;
     inset: 0;
+    /* 머리 아래에서 시작합니다. */
+    padding-top: calc(49 * var(--s));
     /* 다른 걸음에서는 아래 목록·상세가 손을 받아야 합니다. */
     pointer-events: none;
     overscroll-behavior-y: contain;
@@ -9218,8 +9220,7 @@
   }
 
   .nudc-under {
-    position: absolute;
-    inset-inline: 0;
+    position: relative;
     z-index: 7;
     pointer-events: none;
     /* 떠 있는 단추에 가리지 않게 아래를 비웁니다. */
@@ -9590,6 +9591,21 @@
     }
   }
 
+  /* 카드 안의 그림. 앞장의 정사각에서 뒷장의 띠로 자리를 옮깁니다. */
+  .nudc-card-shot {
+    position: absolute;
+    z-index: 1;
+    overflow: hidden;
+    background: #f2f2f2;
+    transition:
+      top 640ms cubic-bezier(0.5, 0, 0.15, 1),
+      height 640ms cubic-bezier(0.5, 0, 0.15, 1);
+  }
+
+  .nudc-card-shot img {
+    object-position: 50% 30%;
+  }
+
   /* 카드 안쪽 — 18장 표지 카드와 같은 짜임입니다. */
   .nudc-card-logo,
   .nudc-card-foot,
@@ -9711,10 +9727,15 @@
     translate: 0 0;
   }
 
-  /* 엽서와 봉투가 놓이는 판 */
+  /* 편지 자리 한 판 — 엽서 · 봉투 · 그림 · 편집 단추가 이 안에 삽니다. */
+  .nudc-letter {
+    position: relative;
+  }
+
+  /* 그 판의 바탕 */
   .nudc-stage {
     position: absolute;
-    inset-inline: 0;
+    inset: 0;
     z-index: 0;
     /* 바탕일 뿐입니다 — 손은 그 아래 목록에 닿아야 합니다. */
     pointer-events: none;

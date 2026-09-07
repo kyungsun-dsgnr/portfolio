@@ -786,6 +786,19 @@ export function NudakeMockCompose({
                 /* 글자리를 눌러도 바로 고쳐 쓸 수 있습니다. */
                 onClick={edit}
                 placeholder="메시지를 입력하세요"
+                /* 자판의 확인 자리를 `완료` 로 띄웁니다. */
+                enterKeyHint="done"
+                /* 그 확인을 누르면 쓴 그대로 반영하고 편집을 닫습니다.
+                   한글을 조합하는 중의 엔터는 글자를 맺는 것이라 흘려보냅니다. */
+                onKeyDown={(event) => {
+                  if (event.nativeEvent.isComposing) return;
+                  if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    done();
+                  }
+                }}
+                /* 자판이 내려가면 쓰던 그대로 닫힙니다. */
+                onBlur={() => setEditing(false)}
                 onChange={(event) => setNote(event.target.value)}
                 style={{
                   ...box({ left: 18, top: 154, width: 140, height: 57 }),

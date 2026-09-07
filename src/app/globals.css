@@ -9994,13 +9994,13 @@
     z-index: 10;
     /* 자판이 화면 아래 절반을 덮으니, 엽서는 그 위(≈388)까지만 내려옵니다. */
     scale: 1.24;
-    translate: 0 calc(48 * var(--s));
+    translate: 0 calc(88 * var(--s));
   }
 
   .nudc[data-edit] .nudc-pick {
     z-index: 11;
     scale: 1.24;
-    translate: 0 calc(48 * var(--s));
+    translate: 0 calc(88 * var(--s));
     transform-origin: calc(75 * var(--s)) calc(79 * var(--s));
   }
 

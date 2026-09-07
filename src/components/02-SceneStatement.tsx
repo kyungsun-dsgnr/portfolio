@@ -43,7 +43,9 @@ export function SceneStatement({ lines, cue = false, dark = false }: Props) {
       <h2 className="type-display statement-text">
         {lines.map((line, lineIndex) => {
           // 앞 줄에 있던 단어 수만큼 순번을 밀어 줄이 바뀌어도 차례가 이어집니다.
-          const offset = lines.slice(0, lineIndex).reduce((total, l) => total + l.length, 0);
+          const offset = lines
+            .slice(0, lineIndex)
+            .reduce((total, l) => total + l.length, 0);
 
           return (
             <span key={lineIndex} className="statement-line">
@@ -52,7 +54,9 @@ export function SceneStatement({ lines, cue = false, dark = false }: Props) {
                   key={word}
                   className="word"
                   style={
-                    { "--delay": `${LEAD_IN + (offset + index) * STAGGER}s` } as CSSProperties
+                    {
+                      "--delay": `${LEAD_IN + (offset + index) * STAGGER}s`,
+                    } as CSSProperties
                   }
                 >
                   {word}

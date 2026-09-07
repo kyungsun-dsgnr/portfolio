@@ -19,6 +19,7 @@ import { TamburinsGiftScreen } from "@/components/TamburinsGiftScreen";
 import { TamburinsProductScreen } from "@/components/TamburinsProductScreen";
 import { TamburinsBagScreen } from "@/components/TamburinsBagScreen";
 import { TamburinsScentScreen } from "@/components/TamburinsScentScreen";
+import { useCopy } from "@/components/copy";
 import { useInView } from "@/components/useInView";
 
 const COL = 158.5;
@@ -100,6 +101,7 @@ export function SceneScreensTall({
   merge?: boolean;
 } = {}) {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
+  const { c } = useCopy();
   const [scentStep, setScentStep] = useState<1 | 2>(1);
   const onStep = useCallback((step: 1 | 2) => setScentStep(step), []);
 
@@ -155,7 +157,7 @@ export function SceneScreensTall({
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-lead capitalize rise col-start-1 col-span-6 row-start-1">
-        {title ?? "One gift, across multiple screens."}
+        {title ?? c("One gift, across multiple screens.")}
       </h2>
 
       <div className="steps col-start-1 col-span-8 row-start-3 row-span-4">

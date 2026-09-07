@@ -5,11 +5,13 @@
 import type { CSSProperties } from "react";
 
 import { GlobeDots } from "@/components/GlobeDots";
+import { useCopy } from "@/components/copy";
 import { useInView } from "@/components/useInView";
 
 /** 설명 없이 지구본만 놓고 직접 돌려 보게 하는 장 */
 export function SceneExplore() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
+  const { c } = useCopy();
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
@@ -26,7 +28,7 @@ export function SceneExplore() {
       />
 
       <h2 className="type-lead rise relative z-10 col-start-1 col-span-3 row-start-1 row-span-2">
-        Turn the World,
+        {c("Turn the World,")}
         <br />
         Find a City
       </h2>

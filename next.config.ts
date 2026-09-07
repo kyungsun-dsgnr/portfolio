@@ -14,7 +14,9 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.*.*", "10.*.*.*", "172.16.*.*"],
   output: "export",
   basePath,
-  trailingSlash: true,
+  // 주소 끝에 / 를 붙이지 않습니다. 내보낼 때 `intro/01.html` 로 나가고
+  // 깃허브 페이지가 확장자 없는 주소를 그 파일로 이어 줍니다.
+  trailingSlash: false,
   images: {
     // 정적 내보내기에서는 Next.js 이미지 최적화 서버를 쓸 수 없습니다.
     // 기본 로더는 경로를 그대로 돌려주며 basePath 를 붙이지 않아,

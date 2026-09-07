@@ -10,6 +10,7 @@ import {
   type CSSProperties,
 } from "react";
 
+import { useCopy } from "@/components/copy";
 import { useInView } from "@/components/useInView";
 import { StoreListMock } from "@/components/StoreListMock";
 
@@ -30,18 +31,21 @@ const POINTS = [
     index: "01",
     title: "Functional Search",
     body: "현재 위치와 선택한 지역을 기준으로 가까운 매장을 빠르게 찾을 수 있습니다.",
+    pain: "Local First",
     place: "col-start-1 col-span-2 row-start-4 row-span-2",
   },
   {
     index: "02",
     title: "Local Context",
     body: "탐색은 접속 국가와 현재 위치를 중심으로 시작되어, 가까운 지역의 매장 정보에 집중됩니다.",
+    pain: "Store List Only",
     place: "col-start-7 col-span-2 row-start-3 row-span-2",
   },
   {
     index: "03",
     title: "Limited Global View",
     body: "각 매장은 개별 정보로 확인되지만, 전 세계 여러 도시와 연결된 브랜드의 확장감은 한눈에 드러나지 않습니다.",
+    pain: "No Global Overview",
     place: "col-start-7 col-span-2 row-start-5 row-span-2 issue-low",
   },
 ];
@@ -49,6 +53,7 @@ const POINTS = [
 /** 지금 화면을 짚고 방향을 제안하는 장 */
 export function SceneProblem() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
+  const { c, polished } = useCopy();
   /** 목업 위의 점과 아래 항목은 번호로 짝지어져 있습니다.
       picked 가 null 이면 아무것도 고르지 않은 채 셋이 다 켜져 있습니다.
       phase 0 은 칸에 막 들어선 참, 1 은 이어지는 동작이 벌어진 뒤입니다. */
@@ -197,7 +202,7 @@ export function SceneProblem() {
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-lead rise col-start-1 col-span-4 row-start-1 row-span-2">
-        Beyond Finding
+        {c("Beyond Finding")}
         <br />
         Toward Global Awareness
       </h2>
@@ -293,7 +298,11 @@ export function SceneProblem() {
           onClick={() => pick(point.index)}
           style={{ "--delay": `${0.18 + i * 0.08}s` } as CSSProperties}
         >
-          <span className="card-index">{point.index}</span>
+          <span className="card-index">
+            {point.index}
+            {/* 화면만 훑어도 문제가 보이도록, 번호 옆에 짧게 답니다. */}
+            {polished ? <em className="pain-tag">{point.pain}</em> : null}
+          </span>
           <h3 className="type-title">{point.title}</h3>
           <p className="type-body">{point.body}</p>
         </button>

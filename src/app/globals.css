@@ -4683,6 +4683,33 @@
     overflow: hidden;
   }
 
+  /* ── 손본 판(/) 에서만 걸리는 것들 ─────────────────────
+     2026-09-07 제안서: 배치는 그대로 두고 라벨과 흐림 정도만 손봅니다. */
+
+  /* 번호 옆에 붙는 짧은 아픈 자리 */
+  .pain-tag {
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(9.5 * var(--u));
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-left: calc(8 * var(--u));
+  }
+
+  /* 흐려 두는 것들의 정도를 하나로 맞춥니다 — 장마다 달라 보이지 않게. */
+  .polished .link[data-dim] {
+    opacity: 0.32;
+  }
+
+  .polished .nud-mock-tabs b[data-off] {
+    opacity: 0.32;
+  }
+
+  .polished .nud-shot:not([data-on])::after {
+    opacity: 0.68;
+  }
+
   /* 채울 그림이 아직 정해지지 않은 자리 */
   .nud-empty {
     background: var(--placeholder);

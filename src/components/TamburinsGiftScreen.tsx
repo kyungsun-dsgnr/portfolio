@@ -21,7 +21,10 @@ const NOTES = [
    같은 세트가 앞뒤 장에서 다른 얼굴로 나오면 같은 것으로 읽히지 않습니다. */
 const RELATED = [
   { name: "에그 퍼퓸 & 립밤 세트", shot: "/images/tam/set-egg-lip.png" },
-  { name: "룸 스프레이 & 핸드워시 세트", shot: "/images/tam/set-room-wash.png" },
+  {
+    name: "룸 스프레이 & 핸드워시 세트",
+    shot: "/images/tam/set-room-wash.png",
+  },
   { name: "쉘 퍼퓸 핸드 & 립밤 세트", shot: "/images/tam/set-hand-lip.png" },
   { name: "에그 퍼퓸 & 퍼퓸 밤 세트", shot: "/images/tam/set-egg-balm.png" },
   { name: "캔들 & 룸 스프레이 세트", shot: "/images/tam/set-candle-room.png" },

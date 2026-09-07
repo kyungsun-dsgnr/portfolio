@@ -65,8 +65,8 @@ export function GridOverlay() {
         ))}
       </div>
       <p className="fixed right-2 bottom-2 font-mono text-[10px] text-sky-500">
-        {spec.canvas} · {spec.cols}×{spec.rows} · gap {spec.gap} · margin {spec.margin} —
-        press G
+        {spec.canvas} · {spec.cols}×{spec.rows} · gap {spec.gap} · margin{" "}
+        {spec.margin} — press G
       </p>
     </div>
   );

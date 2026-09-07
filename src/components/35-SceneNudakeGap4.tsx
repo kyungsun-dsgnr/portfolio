@@ -138,7 +138,9 @@ export function SceneNudakeGap4() {
             {/* 앞 장의 같은 자리 글. 접혀 있다가 꺾쇠를 누르면 열립니다. */}
             <div className="nud-was">
               <div className="nud-was-in">
-                <p className="nud-eyebrow">Before &middot; {BEFORE[i].eyebrow}</p>
+                <p className="nud-eyebrow">
+                  Before &middot; {BEFORE[i].eyebrow}
+                </p>
                 <h4 className="type-title">{BEFORE[i].title}</h4>
                 <p className="type-body">{BEFORE[i].body}</p>
                 <Chain steps={BEFORE[i].chain} />

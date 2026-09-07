@@ -11,6 +11,7 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 
+import { useCopy } from "@/components/copy";
 import { useInView } from "@/components/useInView";
 
 /* 자리는 682×740 판을 기준으로 한 도면 좌표이고, --u 를 곱해 화면 크기로 옮깁니다. */
@@ -53,6 +54,7 @@ const BLOBS = [
 /** 세 번째 케이스의 첫 장 */
 export function SceneNudakeCover() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
+  const { c } = useCopy();
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
@@ -174,7 +176,6 @@ export function SceneNudakeCover() {
         </div>
       </div>
 
-
       <h2 className="type-display rise col-start-1 col-span-4 row-start-1 row-span-2">
         Gift the
         <br />
@@ -185,7 +186,7 @@ export function SceneNudakeCover() {
         className="type-title rise self-start col-start-1 col-span-4 row-start-4"
         style={{ "--delay": "0.14s" } as CSSProperties}
       >
-        누데이크의 경험을, 장소 밖으로 확장하다
+        {c("누데이크의 경험을, 장소 밖으로 확장하다")}
       </h3>
 
       <p

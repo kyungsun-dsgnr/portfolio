@@ -6,6 +6,7 @@ import type { CSSProperties } from "react";
 
 import { GlobeDots } from "@/components/GlobeDots";
 import { StoreListMock } from "@/components/StoreListMock";
+import { useCopy } from "@/components/copy";
 import { useInView } from "@/components/useInView";
 
 /** 마지막 칸 지구본은 멈춘 채 서울만 이름표를 답니다. */
@@ -34,11 +35,12 @@ const REASONS = [
 /** 시작점을 왜 옮기는지 짚는 장 */
 export function SceneWhy() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
+  const { c } = useCopy();
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-lead rise col-start-1 col-span-4 row-start-1 row-span-2">
-        Why Add Another
+        {c("Why Add Another")}
         <br />
         Starting Point?
       </h2>

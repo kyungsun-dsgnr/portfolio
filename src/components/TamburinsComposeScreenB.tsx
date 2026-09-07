@@ -728,14 +728,11 @@ export function TamburinsComposeScreenB({
 
   /* 세트를 다시 고르면 담긴 제품도 고른 향도 처음으로 돌아갑니다.
      앞 세트에서 고른 향이 새 세트의 제품에 그대로 붙으면 엉뚱한 짝이 됩니다. */
-  const chooseSet = useCallback(
-    (i: number) => {
-      setSet(i);
-      setOne(null);
-      setTwo(null);
-    },
-    [],
-  );
+  const chooseSet = useCallback((i: number) => {
+    setSet(i);
+    setOne(null);
+    setTwo(null);
+  }, []);
 
   return (
     <div className="cmpb-screen">
@@ -903,9 +900,7 @@ export function TamburinsComposeScreenB({
                         ref={(el) => dotRef?.(no, el)}
                         data-on={focus === no || undefined}
                         aria-label={`${titleOf(n, title)} 자리만 보기`}
-                        onClick={() =>
-                          look(no)
-                        }
+                        onClick={() => look(no)}
                       >
                         <span>{no}</span>
                       </button>

@@ -18,6 +18,7 @@ import {
 import QRCode from "qrcode";
 
 import { TamburinsComposeScreenB } from "@/components/TamburinsComposeScreenB";
+import { useCopy } from "@/components/copy";
 import { useInView } from "@/components/useInView";
 
 /** 앞장에서 짚은 네 가지 불편과, 이 화면이 그것을 어떻게 닫는지.
@@ -51,6 +52,7 @@ const PHONE_PATH = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/m/compose/`;
 
 export function SceneComposeFull() {
   const [ref, inView] = useInView<HTMLDivElement>(0.4);
+  const { c } = useCopy();
 
   /* 앞장 화면 높이에서 이 장 높이까지 자란 정도(px) */
   const [tall, setTall] = useState<number | null>(null);
@@ -333,7 +335,7 @@ export function SceneComposeFull() {
           style={{ "--delay": `${0.3 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">{one.index}</span>
-          <h3 className="type-title">{one.title}</h3>
+          <h3 className="type-title">{c(one.title)}</h3>
           <p className="type-body">{one.body}</p>
         </div>
       ))}

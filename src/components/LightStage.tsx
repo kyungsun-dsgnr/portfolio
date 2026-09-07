@@ -43,7 +43,15 @@ export type Section = {
   index?: string;
 };
 
-export function LightStage({ sections }: { sections: Section[] }) {
+export function LightStage({
+  sections,
+  slugs,
+}: {
+  sections: Section[];
+  /** 장 id → 주소(`gentle-monster/01`). 주면 굴릴 때마다 주소창이 따라 바뀌고,
+   *  그 주소로 들어오면 그 장에서 시작합니다. */
+  slugs?: Record<string, string>;
+}) {
   const [level, setLevel] = useState(0);
   /** 노브를 다 돌렸을 때 내려갈 곳 — 두 번째 섹션 */
   const nextRef = useRef<HTMLElement>(null);
@@ -60,6 +68,35 @@ export function LightStage({ sections }: { sections: Section[] }) {
   }
 
   useEffect(() => clearTimers, []);
+
+  /* 주소로 바로 들어온 경우, 첫 그림 전에 그 장으로 옮겨 둡니다. */
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || !slugs) return;
+
+    const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+    const path = window.location.pathname
+      .slice(base.length)
+      .replace(/^\/|\/$/g, "");
+    const to = sections.findIndex((one) => slugs[one.id] === path);
+    if (to <= 0) return;
+    root.scrollTo({ top: to * root.clientHeight, behavior: "auto" });
+    /* 처음 한 번만. 그 뒤로는 굴리는 대로 따라갑니다. */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* 지금 보고 있는 장의 주소를 주소창에 적어 둡니다.
+     한 장짜리 스크롤이라 실제로 옮겨 가지는 않고 주소만 갈아 끼웁니다. */
+  useEffect(() => {
+    if (!slugs) return;
+    const slug = slugs[sections[at]?.id ?? ""];
+    if (!slug) return;
+    const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+    const next = `${base}/${slug}`;
+    if (window.location.pathname !== next) {
+      window.history.replaceState(null, "", next + window.location.hash);
+    }
+  }, [at, sections, slugs]);
 
   /* 지금 몇 번째 장인지 따라갑니다. 한 프레임에 한 번으로 묶습니다. */
   useEffect(() => {

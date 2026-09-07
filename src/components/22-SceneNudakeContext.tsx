@@ -108,9 +108,7 @@ export function SceneNudakeContext() {
           onPointerLeave={() => setHeld(null)}
           style={{ "--delay": `${0.2 + i * 0.08}s` } as CSSProperties}
         >
-          <p className="nud-eyebrow">
-            Store {store.no} - Korea &middot; Seoul
-          </p>
+          <p className="nud-eyebrow">Store {store.no} - Korea &middot; Seoul</p>
           <h3 className="nud-store-name">{store.name}</h3>
           <p className="type-body">{store.where}</p>
         </div>

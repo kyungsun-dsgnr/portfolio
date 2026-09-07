@@ -11,6 +11,7 @@ import {
   type PointerEvent,
 } from "react";
 
+import { useCopy } from "@/components/copy";
 import { useInView } from "@/components/useInView";
 
 /** 카드 셋은 3칼럼부터 두 칼럼씩 차지하고 3~6행에 놓입니다.
@@ -45,6 +46,7 @@ const WORKS = [
 /** 6섹션 — 세 가지 실험 */
 export function SceneWork() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
+  const { c } = useCopy();
 
   /* 카드 위에서는 기본 커서를 감추고 원형 "VIEW" 를 따라다니게 합니다.
      위치는 매 움직임마다 리렌더하지 않도록 ref 로 직접 갱신합니다. */
@@ -93,8 +95,9 @@ export function SceneWork() {
       >
         하나의 UX 관점에서 출발한 세 가지 실험입니다.
         <br />
-        익숙한 감각과 행동의 기억을 각각 탐색, 선택, 구성의 디지털 경험으로
-        확장했습니다.
+        {c(
+          "익숙한 감각과 행동의 기억을 각각 탐색, 선택, 구성의 디지털 경험으로 확장했습니다.",
+        )}
       </p>
 
       {WORKS.map((work, i) => {
@@ -105,8 +108,8 @@ export function SceneWork() {
           <>
             <div className="work-head">
               <span className="card-index">{work.index}</span>
-              <h3 className="type-title">{work.title}</h3>
-              <p className="type-body">{work.body}</p>
+              <h3 className="type-title">{c(work.title)}</h3>
+              <p className="type-body">{c(work.body)}</p>
             </div>
 
             <div className="work-visual">

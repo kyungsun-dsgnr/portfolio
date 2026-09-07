@@ -47,7 +47,11 @@ export function Globe() {
       }>;
       setLand({
         land: feature(topo, topo.objects.land) as unknown as FeatureCollection,
-        borders: mesh(topo, topo.objects.countries, (a, b) => a !== b) as MultiLineString,
+        borders: mesh(
+          topo,
+          topo.objects.countries,
+          (a, b) => a !== b,
+        ) as MultiLineString,
       });
     });
     return () => {
@@ -138,7 +142,10 @@ export function Globe() {
       ctx!.stroke();
 
       // 매장 — 뒤편으로 넘어간 것은 그리지 않습니다.
-      const center: [number, number] = [-rotation.current[0], -rotation.current[1]];
+      const center: [number, number] = [
+        -rotation.current[0],
+        -rotation.current[1],
+      ];
       const visible: { i: number; x: number; y: number }[] = [];
 
       STORES.forEach((store, i) => {

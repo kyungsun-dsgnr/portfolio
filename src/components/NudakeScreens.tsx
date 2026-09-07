@@ -35,7 +35,11 @@ const box = (b: {
 };
 
 /* 내보내기에서 네모로 눌려 나온 벡터들. 굵기를 하나로 맞춰 다시 그립니다. */
-const STROKE = { fill: "none", stroke: "currentColor", strokeWidth: 1.5 } as const;
+const STROKE = {
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.5,
+} as const;
 
 function IconSearch() {
   return (
@@ -57,7 +61,13 @@ function IconMenu() {
 /** 하위가 더 있다는 표시. 꺾쇠만이 아니라 선이 붙은 화살표입니다. */
 function IconArrow() {
   return (
-    <svg viewBox="0 0 16 16" aria-hidden {...STROKE} strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      viewBox="0 0 16 16"
+      aria-hidden
+      {...STROKE}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M1.8 8 H13.4 M9.4 4.2 L13.6 8 L9.4 11.8" />
     </svg>
   );
@@ -200,7 +210,10 @@ export function NudakeMockMenu({ open = false }: { open?: boolean }) {
             >
               <b style={type(16, 24)}>{item.label}</b>
               {item.caret ? (
-                <i className="nud-mock-icon" style={box({ width: 14, height: 14 })}>
+                <i
+                  className="nud-mock-icon"
+                  style={box({ width: 14, height: 14 })}
+                >
                   <IconArrow />
                 </i>
               ) : null}
@@ -265,11 +278,18 @@ export function NudakeMockList() {
 
         <div
           className="nud-mock-kinds"
-          style={{ ...box({ height: 124 }), padding: `${mk(21)} 0`, gap: mk(14) }}
+          style={{
+            ...box({ height: 124 }),
+            padding: `${mk(21)} 0`,
+            gap: mk(14),
+          }}
         >
           {KINDS.map((kind, i) => (
             <span key={kind} style={{ maxWidth: mk(59), gap: mk(6) }}>
-              <i data-ring={i === 0 || undefined} style={box({ width: 54, height: 54 })} />
+              <i
+                data-ring={i === 0 || undefined}
+                style={box({ width: 54, height: 54 })}
+              />
               <b style={type(12, 14.4)}>{kind}</b>
             </span>
           ))}

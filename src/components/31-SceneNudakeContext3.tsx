@@ -168,7 +168,6 @@ export function SceneNudakeContext3() {
           <p className="type-body">{STORES[picked].where}</p>
         </div>
       </div>
-
     </div>
   );
 }

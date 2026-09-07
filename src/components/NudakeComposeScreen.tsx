@@ -754,6 +754,18 @@ export function NudakeMockCompose({
           {/* 엽서 종이 — 그림이 자리를 옮겨 앉은 뒤 그 둘레로 깔립니다.
             로고 · 그림 · 이름줄 · 주소, 18장 표지 카드와 같은 짜임입니다. */}
           <div className="nudc-card" style={box(CARD)}>
+            {/* 워드마크. 앞장·뒷장 어느 쪽에도 들지 않아,
+              장이 넘어가는 동안에도 흐려지지 않고 제자리에 남습니다. */}
+            <span className="nudc-card-logo" style={box(LOGO)}>
+              <Image
+                src="/images/nudake-mock-logo2.png"
+                alt=""
+                fill
+                sizes="10vw"
+                className="object-contain"
+              />
+            </span>
+
             {/* 고른 제품의 그림. 카드 안에 있어 카드와 늘 한 몸으로 움직이고,
               뒷장으로 넘어갈 때 이 자리에서 띠로 올라섭니다. */}
             <span
@@ -771,16 +783,6 @@ export function NudakeMockCompose({
 
             {/* 앞장 — 뒷장으로 넘어가면 통째로 물러납니다. */}
             <span className="nudc-card-face" aria-hidden={at === "note"}>
-              <span className="nudc-card-logo" style={box(LOGO)}>
-                <Image
-                  src="/images/nudake-mock-logo2.png"
-                  alt=""
-                  fill
-                  sizes="10vw"
-                  className="object-contain"
-                />
-              </span>
-
               <p
                 className="nudc-card-foot"
                 style={{
@@ -814,17 +816,6 @@ export function NudakeMockCompose({
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={edit}
               />
-
-              {/* 뒷면 워드마크. 앞면과 같은 자리라 장이 넘어가도 흔들리지 않습니다. */}
-              <span className="nudc-card-logo" style={box(LOGO)}>
-                <Image
-                  src="/images/nudake-mock-logo2.png"
-                  alt=""
-                  fill
-                  sizes="10vw"
-                  className="object-contain"
-                />
-              </span>
 
               <textarea
                 ref={pen}

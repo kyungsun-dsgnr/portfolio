@@ -18,9 +18,18 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
-/** 걸음 — 목록 · 상세 · 옮겨 가는 중 · 엽서 · 뒷장(메시지) · 결제 · 보냄 · 완료 */
+/** 걸음 — 목록 · 상세 · 옮겨 가는 중 · 엽서 · 뒷장(메시지) · 결제 ·
+ *  보냄 · 완료 · 받는 사람 화면 */
 type Step =
-  "list" | "detail" | "fly" | "card" | "note" | "pay" | "sent" | "done";
+  | "list"
+  | "detail"
+  | "fly"
+  | "card"
+  | "note"
+  | "pay"
+  | "sent"
+  | "done"
+  | "gift";
 
 /** 도면 좌표(가로 333)를 화면 크기로 */
 const mk = (value: number) => `calc(${value} * var(--s))`;
@@ -216,7 +225,29 @@ const PREV: Record<Step, Step> = {
   pay: "note",
   sent: "list",
   done: "list",
+  gift: "done",
 };
+
+/** 받는 사람 화면의 자리. 봉투는 아래에 서고, 엽서가 그 위로 나옵니다. */
+const GIFT_ENV: Box = {
+  left: 58.5,
+  top: 294,
+  width: ENV_W,
+  height: (ENV_W * 538) / 760,
+};
+const GIFT_BACK: Box = {
+  left: 58.5,
+  top: GIFT_ENV.top + GIFT_ENV.height - (ENV_W * 899) / 760,
+  width: ENV_W,
+  height: (ENV_W * 899) / 760,
+};
+const GIFT_SHUT: Box = {
+  left: 58.5,
+  top: GIFT_ENV.top + GIFT_ENV.height - (ENV_W * 514) / 760,
+  width: ENV_W,
+  height: (ENV_W * 514) / 760,
+};
+const GIFT_CARD: Box = { left: 78, top: 120, width: 177, height: 252 };
 
 /** 스스로 훑을 때 고르는 칸 */
 const PICK = 0;
@@ -264,6 +295,8 @@ export function NudakeMockCompose({
   const kept = useRef(NOTE);
   /** 고른 칸. 스스로 훑을 때는 첫 칸, 손으로 고를 때는 누른 칸입니다. */
   const [chosen, setChosen] = useState(PICK);
+  /** 받는 사람 화면에서 봉투가 열렸는지 */
+  const [opened, setOpened] = useState(false);
   /** 머리의 메뉴가 펼쳐져 있는지 */
   const [menu, setMenu] = useState(false);
   /** 보내는 걸음 — 0 담기는 중 · 1 봉투가 닫힘 · 2 날아감 */
@@ -306,6 +339,16 @@ export function NudakeMockCompose({
     push();
     setAt("detail");
   };
+
+  /* 받는 사람 화면 — 닫힌 봉투가 열리며 엽서가 나옵니다. */
+  useEffect(() => {
+    if (at !== "gift") {
+      const shut = window.setTimeout(() => setOpened(false), 0);
+      return () => clearTimeout(shut);
+    }
+    const open = window.setTimeout(() => setOpened(true), 700);
+    return () => clearTimeout(open);
+  }, [at]);
 
   /* 상세에서 이전·다음 제품으로 넘깁니다. 끝에서는 처음으로 돌아옵니다. */
   const step = (way: number) =>
@@ -459,6 +502,7 @@ export function NudakeMockCompose({
       className="nud-mock nudc"
       data-at={at}
       data-edit={editing || undefined}
+      data-menu={menu || undefined}
       data-send={at === "sent" ? send : undefined}
       data-fill={fill || undefined}
       /* 손에 쥔 화면에서는 폭을 꽉 채우고 키는 기기 높이를 그대로 씁니다 —
@@ -1061,6 +1105,99 @@ export function NudakeMockCompose({
         </button>
       </section>
 
+      {/* 받는 사람 화면 — 닫힌 봉투가 열리고 엽서가 나옵니다.
+          아래에는 매장에서 내미는 바코드가 붙습니다. */}
+      <div className="nudc-gift" data-open={opened || undefined}>
+        <p
+          className="nudc-gift-top"
+          style={{ ...box({ top: 74 }), ...type(11, 18) }}
+        >
+          {to ? `${to}님에게 도착한 선물` : "도착한 선물"}
+        </p>
+
+        {/* 열린 봉투 두 겹 */}
+        <span className="nudc-gift-back" style={box(GIFT_BACK)}>
+          <Image
+            src="/images/nudake-env-back4.webp"
+            alt=""
+            fill
+            sizes="30vw"
+            className="object-fill"
+          />
+        </span>
+
+        {/* 나온 엽서 */}
+        <div className="nudc-gift-card" style={box(GIFT_CARD)}>
+          <span className="nudc-card-logo" style={box(LOGO)}>
+            <Image
+              src="/images/nudake-mock-logo2.png"
+              alt=""
+              fill
+              sizes="10vw"
+              className="object-contain"
+            />
+          </span>
+
+          <span className="nudc-card-shot" style={box(CARD_BAND)}>
+            <Image
+              src={`/images/nudake-gift/${picked.img}.webp`}
+              alt=""
+              fill
+              sizes="20vw"
+              className="object-cover"
+            />
+          </span>
+
+          <p
+            className="nudc-gift-note"
+            style={{
+              ...box({ left: 18, top: 154, width: 140 }),
+              ...type(12, 19),
+            }}
+          >
+            {note}
+          </p>
+        </div>
+
+        <span className="nudc-gift-front" style={box(GIFT_ENV)}>
+          <Image
+            src="/images/nudake-env-front4.webp"
+            alt=""
+            fill
+            sizes="30vw"
+            className="object-fill"
+          />
+        </span>
+
+        {/* 닫힌 봉투 — 열리기 전의 모습입니다. */}
+        <span className="nudc-gift-shut" style={box(GIFT_SHUT)}>
+          <Image
+            src="/images/nudake-env-shut.webp"
+            alt=""
+            fill
+            sizes="30vw"
+            className="object-fill"
+          />
+        </span>
+
+        {/* 매장에서 내미는 바코드 */}
+        <div className="nudc-gift-code" style={box({ top: 500 })}>
+          <i style={box({ width: 200, height: 56 })} aria-hidden />
+          <b style={type(11, 18)}>9 3120 4471 0088</b>
+          <em style={type(10, 16)}>{picked.name}</em>
+        </div>
+
+        <button
+          type="button"
+          className="nudc-gift-close"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => setAt("done")}
+          style={{ ...box({ width: 176, height: 44 }), ...type(12, 44) }}
+        >
+          닫기
+        </button>
+      </div>
+
       {/* 완료 — 봉투가 날아간 자리에 남는 화면입니다. */}
       <div className="nudc-done">
         {/* 체크 대신 닫힌 봉투가 섭니다 — 방금 보낸 그 봉투입니다. */}
@@ -1081,15 +1218,18 @@ export function NudakeMockCompose({
           {to ? `‘${to}’님에게 선물을 보냈습니다` : "선물을 보냈습니다"}
         </b>
         <em style={type(11, 18)}>{picked.name}</em>
-        <button
-          type="button"
-          className="nudc-done-back"
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={() => setAt("list")}
-          style={{ ...box({ height: 44 }), ...type(12, 44) }}
-        >
-          티 기프트로 돌아가기
-        </button>
+        {/* 보낸 선물을 다시 보는 자리와 목록으로 돌아가는 자리.
+            둘은 같은 폭·같은 키로 나란히 섭니다. */}
+        <span className="nudc-done-acts">
+          <button
+            type="button"
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => setAt("list")}
+            style={{ ...box({ width: 176, height: 44 }), ...type(12, 44) }}
+          >
+            티 기프트로 돌아가기
+          </button>
+        </span>
       </div>
 
       {/* 바닥 — 고르고 난 뒤에야 다음 걸음이 열립니다.

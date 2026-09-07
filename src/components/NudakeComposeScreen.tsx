@@ -682,214 +682,253 @@ export function NudakeMockCompose({
         </div>
       </div>
 
-      {/* 엽서와 봉투가 놓이는 판. 화면 바탕과 갈리는 옅은 회색입니다. */}
-      <span
-        className="nudc-stage"
-        style={box({ top: 49, height: 411 })}
-        aria-hidden
-      />
-
-      {/* 편지봉투 뒷면 — 열린 뚜껑까지 한 장입니다. 편지지 뒤에 깔립니다. */}
-      <span className="nudc-env-back" style={box(BACK)}>
-        <Image
-          src="/images/nudake-env-back4.webp"
-          alt=""
-          fill
-          sizes="30vw"
-          className="object-fill"
+      {/* 편지지 · 봉투 · 제품 줄이 한 판에 담겨 함께 굴러갑니다 —
+          아래만 따로 굴리면 위 그림이 붙박이로 남습니다. */}
+      <div className="nudc-scroll">
+        {/* 엽서와 봉투가 놓이는 판. 화면 바탕과 갈리는 옅은 회색입니다. */}
+        <span
+          className="nudc-stage"
+          style={box({ top: 49, height: 411 })}
+          aria-hidden
         />
-      </span>
 
-      {/* 엽서 종이 — 그림이 자리를 옮겨 앉은 뒤 그 둘레로 깔립니다.
-          로고 · 그림 · 이름줄 · 주소, 18장 표지 카드와 같은 짜임입니다. */}
-      <div className="nudc-card" style={box(CARD)}>
-        {/* 앞장 — 뒷장으로 넘어가면 통째로 물러납니다. */}
-        <span className="nudc-card-face" aria-hidden={at === "note"}>
-          <span className="nudc-card-logo" style={box(LOGO)}>
-            <Image
-              src="/images/nudake-mock-logo.png"
-              alt=""
-              fill
-              sizes="10vw"
-              className="object-contain"
-            />
-          </span>
-
-          <p
-            className="nudc-card-foot"
-            style={{
-              ...box({ left: 13, top: 206, width: 150 }),
-              ...type(9, 12),
-            }}
-          >
-            <em>{picked.name}</em>
-            <em>Tea</em>
-          </p>
-
-          <span
-            className="nudc-card-mark"
-            style={{
-              ...box({ left: 0, width: 177 }),
-              bottom: mk(9),
-              ...type(5, 8),
-            }}
-          >
-            nudake.com
-          </span>
+        {/* 편지봉투 뒷면 — 열린 뚜껑까지 한 장입니다. 편지지 뒤에 깔립니다. */}
+        <span className="nudc-env-back" style={box(BACK)}>
+          <Image
+            src="/images/nudake-env-back4.webp"
+            alt=""
+            fill
+            sizes="30vw"
+            className="object-fill"
+          />
         </span>
 
-        {/* 뒷장 — 넘어가고 나면 이 자리에 글이 놓입니다. */}
-        <div className="nudc-card-back">
-          {/* 글자리 바깥을 눌러도 고쳐 쓰기가 켜집니다. */}
-          <button
-            type="button"
-            className="nudc-card-hit"
-            aria-label="메시지 고쳐 쓰기"
-            onMouseDown={(event) => event.preventDefault()}
-            onClick={edit}
-          />
-
-          {/* 뒷면 워드마크. 앞면과 같은 자리라 장이 넘어가도 흔들리지 않습니다. */}
-          <span className="nudc-card-logo" style={box(LOGO)}>
-            <Image
-              src="/images/nudake-mock-logo.png"
-              alt=""
-              fill
-              sizes="10vw"
-              className="object-contain"
-            />
-          </span>
-
-          <textarea
-            ref={pen}
-            className="nudc-note"
-            value={note}
-            readOnly={run}
-            rows={4}
-            /* 글자리를 눌러도 바로 고쳐 쓸 수 있습니다. */
-            onClick={edit}
-            placeholder="메시지를 입력하세요"
-            onChange={(event) => setNote(event.target.value)}
-            style={{
-              ...box({ left: 18, top: 168, width: 140, height: 57 }),
-              ...type(12, 19),
-            }}
-          />
-        </div>
-      </div>
-
-      {/* 고쳐 쓰는 동안 엽서만 남기고 나머지는 어둡게 물러납니다. */}
-      <span className="nudc-veil" onClick={done} aria-hidden />
-
-      <div
-        className="nudc-edit-top"
-        style={{ ...box({ top: 49, height: 44 }), padding: `0 ${mk(20)}` }}
-      >
-        <button
-          type="button"
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={undo}
-          style={type(12, 20)}
-        >
-          취소
-        </button>
-        <button
-          type="button"
-          data-on
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={done}
-          style={type(12, 20)}
-        >
-          확인
-        </button>
-      </div>
-
-      {/* 엽서 하단의 편집 단추. 누르면 그 자리에서 고쳐 쓸 수 있습니다. */}
-      <button
-        type="button"
-        className="nudc-edit"
-        data-on={editing || undefined}
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={editing ? done : edit}
-        style={{
-          ...box({ left: 122, top: 414, width: 89, height: 23 }),
-          ...type(10, 22),
-        }}
-      >
-        {/* 글을 고친다는 표시 — 활자의 T 입니다. */}
-        <svg viewBox="0 0 12 12" aria-hidden>
-          <path
-            d="M2 2.7 H10 M6 2.7 V9.4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.3}
-            strokeLinecap="round"
-          />
-        </svg>
-        {editing ? "메시지 완료" : "메시지 편집"}
-      </button>
-
-      {/* 판 아래 묶음. 설명이 길어도 여기서 굴려 끝까지 읽습니다. */}
-      <div className="nudc-under" style={box({ top: 466 })}>
-        {/* 트랙 위의 작은 글 — 지금 고른 것이 무엇인지 한 줄로 알립니다. */}
-        <p
-          className="nudc-track-pick"
-          style={{ padding: `${mk(10)} ${mk(20)} 0`, ...type(10, 14) }}
-        >
-          선택 - {picked.name} (
-          {picked.desc.split("\n")[0].replace(/[()]/g, " ").trim()})
-        </p>
-
-        {/* 봉투 아래 제품 줄 — 여기서 다른 제품으로 바꿔 담을 수 있습니다.
-          고른 것은 검은 테로 표시하고, 옆으로 굴려 나머지를 봅니다. */}
-        <div
-          className="nudc-track"
-          style={{
-            height: mk(62),
-            margin: `${mk(12)} 0 0`,
-            padding: `0 0 0 ${mk(20)}`,
-            gap: mk(6),
-          }}
-        >
-          {GIFTS.map((item, i) => (
-            <button
-              key={item.name}
-              type="button"
-              className="nudc-track-item"
-              data-on={i === chosen || undefined}
-              aria-label={item.name}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => setChosen(i)}
-              style={box({ width: 62, height: 62 })}
-            >
+        {/* 엽서 종이 — 그림이 자리를 옮겨 앉은 뒤 그 둘레로 깔립니다.
+            로고 · 그림 · 이름줄 · 주소, 18장 표지 카드와 같은 짜임입니다. */}
+        <div className="nudc-card" style={box(CARD)}>
+          {/* 앞장 — 뒷장으로 넘어가면 통째로 물러납니다. */}
+          <span className="nudc-card-face" aria-hidden={at === "note"}>
+            <span className="nudc-card-logo" style={box(LOGO)}>
               <Image
-                src={`/images/nudake-gift/${item.img}.webp`}
+                src="/images/nudake-mock-logo.png"
                 alt=""
                 fill
                 sizes="10vw"
-                className="object-cover"
+                className="object-contain"
               />
-            </button>
-          ))}
+            </span>
+
+            <p
+              className="nudc-card-foot"
+              style={{
+                ...box({ left: 13, top: 206, width: 150 }),
+                ...type(9, 12),
+              }}
+            >
+              <em>{picked.name}</em>
+              <em>Tea</em>
+            </p>
+
+            <span
+              className="nudc-card-mark"
+              style={{
+                ...box({ left: 0, width: 177 }),
+                bottom: mk(9),
+                ...type(5, 8),
+              }}
+            >
+              nudake.com
+            </span>
+          </span>
+
+          {/* 뒷장 — 넘어가고 나면 이 자리에 글이 놓입니다. */}
+          <div className="nudc-card-back">
+            {/* 글자리 바깥을 눌러도 고쳐 쓰기가 켜집니다. */}
+            <button
+              type="button"
+              className="nudc-card-hit"
+              aria-label="메시지 고쳐 쓰기"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={edit}
+            />
+
+            {/* 뒷면 워드마크. 앞면과 같은 자리라 장이 넘어가도 흔들리지 않습니다. */}
+            <span className="nudc-card-logo" style={box(LOGO)}>
+              <Image
+                src="/images/nudake-mock-logo.png"
+                alt=""
+                fill
+                sizes="10vw"
+                className="object-contain"
+              />
+            </span>
+
+            <textarea
+              ref={pen}
+              className="nudc-note"
+              value={note}
+              readOnly={run}
+              rows={4}
+              /* 글자리를 눌러도 바로 고쳐 쓸 수 있습니다. */
+              onClick={edit}
+              placeholder="메시지를 입력하세요"
+              onChange={(event) => setNote(event.target.value)}
+              style={{
+                ...box({ left: 18, top: 168, width: 140, height: 57 }),
+                ...type(12, 19),
+              }}
+            />
+          </div>
         </div>
 
-        {/* 트랙 아래에 고른 제품의 이름과 값 — 상세 화면에 적힌 그대로입니다. */}
-        <p
-          className="nudc-track-name"
-          style={{ padding: `${mk(12)} ${mk(20)} 0`, ...type(12, 20) }}
-        >
-          <b>{picked.name}</b>
-          <em>{picked.price}</em>
-        </p>
+        {/* 고쳐 쓰는 동안 엽서만 남기고 나머지는 어둡게 물러납니다. */}
+        <span className="nudc-veil" onClick={done} aria-hidden />
 
-        {/* 그 아래에는 설명. 앞머리의 구성 줄은 빼고
-          맛과 향을 적은 대목만 세 줄까지 보입니다. */}
-        <p
-          className="nudc-track-desc"
-          style={{ padding: `${mk(8)} ${mk(20)} 0`, ...type(10, 15) }}
+        <div
+          className="nudc-edit-top"
+          style={{ ...box({ top: 49, height: 44 }), padding: `0 ${mk(20)}` }}
         >
-          {picked.desc.split("\n\n").slice(1).join(" ").replace(/\n/g, " ")}
-        </p>
+          <button
+            type="button"
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={undo}
+            style={type(12, 20)}
+          >
+            취소
+          </button>
+          <button
+            type="button"
+            data-on
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={done}
+            style={type(12, 20)}
+          >
+            확인
+          </button>
+        </div>
+
+        {/* 고른 칸. 고르고 난 뒤에만 서서, 목록 자리에서 엽서 자리로
+            그대로 옮겨 갑니다. 목록에 있는 동안에는 칸이 제 그림을 지닙니다. */}
+        {away ? (
+          <span
+            className="nudc-pick"
+            /* `data-tap` 은 As-is 목업의 손끝 표시가 이미 쓰는 이름입니다.
+             그 규칙이 position: relative 를 얹어 자리를 잃게 하므로 따로 씁니다. */
+            data-press={tap || undefined}
+            style={box(shot)}
+          >
+            <i>
+              <Image
+                src={`/images/nudake-gift/${picked.img}.webp`}
+                alt=""
+                fill
+                sizes="20vw"
+                /* 목록에서는 칸을 덮고, 엽서 자리는 그림과 같은 정사각이라
+                 그대로 꼭 맞습니다. */
+                className="object-cover"
+              />
+            </i>
+
+            {/* 목록에 있을 때만 이름이 그림 위에 얹힙니다. */}
+            <b
+              style={{
+                ...box({ left: 0, width: CELL.width }),
+                bottom: mk(18),
+                ...type(13, 16),
+              }}
+            >
+              {picked.name}
+            </b>
+          </span>
+        ) : null}
+
+        {/* 엽서 하단의 편집 단추. 누르면 그 자리에서 고쳐 쓸 수 있습니다. */}
+        <button
+          type="button"
+          className="nudc-edit"
+          data-on={editing || undefined}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={editing ? done : edit}
+          style={{
+            ...box({ left: 122, top: 412, width: 89, height: 27 }),
+            ...type(10, 22),
+          }}
+        >
+          {/* 글을 고친다는 표시 — 활자의 T 입니다. */}
+          <svg viewBox="0 0 12 12" aria-hidden>
+            <path
+              d="M2 2.7 H10 M6 2.7 V9.4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.3}
+              strokeLinecap="round"
+            />
+          </svg>
+          {editing ? "메시지 완료" : "메시지 편집"}
+        </button>
+
+        {/* 판 아래 묶음. 설명이 길어도 여기서 굴려 끝까지 읽습니다. */}
+        <div className="nudc-under" style={box({ top: 466 })}>
+          {/* 트랙 위의 작은 글 — 지금 고른 것이 무엇인지 한 줄로 알립니다. */}
+          <p
+            className="nudc-track-pick"
+            style={{ padding: `${mk(10)} ${mk(20)} 0`, ...type(10, 14) }}
+          >
+            선택 - {picked.name} (
+            {picked.desc.split("\n")[0].replace(/[()]/g, " ").trim()})
+          </p>
+
+          {/* 봉투 아래 제품 줄 — 여기서 다른 제품으로 바꿔 담을 수 있습니다.
+            고른 것은 검은 테로 표시하고, 옆으로 굴려 나머지를 봅니다. */}
+          <div
+            className="nudc-track"
+            style={{
+              height: mk(62),
+              margin: `${mk(12)} 0 0`,
+              padding: `0 0 0 ${mk(20)}`,
+              gap: mk(6),
+            }}
+          >
+            {GIFTS.map((item, i) => (
+              <button
+                key={item.name}
+                type="button"
+                className="nudc-track-item"
+                data-on={i === chosen || undefined}
+                aria-label={item.name}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => setChosen(i)}
+                style={box({ width: 62, height: 62 })}
+              >
+                <Image
+                  src={`/images/nudake-gift/${item.img}.webp`}
+                  alt=""
+                  fill
+                  sizes="10vw"
+                  className="object-cover"
+                />
+              </button>
+            ))}
+          </div>
+
+          {/* 트랙 아래에 고른 제품의 이름과 값 — 상세 화면에 적힌 그대로입니다. */}
+          <p
+            className="nudc-track-name"
+            style={{ padding: `${mk(12)} ${mk(20)} 0`, ...type(12, 20) }}
+          >
+            <b>{picked.name}</b>
+            <em>{picked.price}</em>
+          </p>
+
+          {/* 그 아래에는 설명. 앞머리의 구성 줄은 빼고
+            맛과 향을 적은 대목만 세 줄까지 보입니다. */}
+          <p
+            className="nudc-track-desc"
+            style={{ padding: `${mk(8)} ${mk(20)} 0`, ...type(10, 15) }}
+          >
+            {picked.desc.split("\n\n").slice(1).join(" ").replace(/\n/g, " ")}
+          </p>
+        </div>
       </div>
 
       {/* 결제 시트 — `선물 보내기` 를 누르면 아래에서 올라옵니다.
@@ -996,41 +1035,6 @@ export function NudakeMockCompose({
           />
         </i>
       </span>
-
-      {/* 고른 칸. 고르고 난 뒤에만 서서, 목록 자리에서 엽서 자리로
-          그대로 옮겨 갑니다. 목록에 있는 동안에는 칸이 제 그림을 지닙니다. */}
-      {away ? (
-        <span
-          className="nudc-pick"
-          /* `data-tap` 은 As-is 목업의 손끝 표시가 이미 쓰는 이름입니다.
-           그 규칙이 position: relative 를 얹어 자리를 잃게 하므로 따로 씁니다. */
-          data-press={tap || undefined}
-          style={box(shot)}
-        >
-          <i>
-            <Image
-              src={`/images/nudake-gift/${picked.img}.webp`}
-              alt=""
-              fill
-              sizes="20vw"
-              /* 목록에서는 칸을 덮고, 엽서 자리는 그림과 같은 정사각이라
-               그대로 꼭 맞습니다. */
-              className="object-cover"
-            />
-          </i>
-
-          {/* 목록에 있을 때만 이름이 그림 위에 얹힙니다. */}
-          <b
-            style={{
-              ...box({ left: 0, width: CELL.width }),
-              bottom: mk(18),
-              ...type(13, 16),
-            }}
-          >
-            {picked.name}
-          </b>
-        </span>
-      ) : null}
 
       {/* 완료 — 봉투가 날아간 자리에 남는 화면입니다. */}
       <div className="nudc-done">

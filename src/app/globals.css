@@ -9198,23 +9198,32 @@
   }
 
   /* 판 아래 묶음 — 설명이 길어도 여기서 굴려 끝까지 읽습니다. */
+  /* 편지지 · 봉투 · 제품 줄이 한 판에 담겨 함께 굴러갑니다. */
+  .nudc-scroll {
+    position: absolute;
+    inset: 0;
+    /* 다른 걸음에서는 아래 목록·상세가 손을 받아야 합니다. */
+    pointer-events: none;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+  }
+
+  .nudc-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nudc[data-at="note"] .nudc-scroll {
+    pointer-events: auto;
+    overflow-y: auto;
+  }
+
   .nudc-under {
     position: absolute;
     inset-inline: 0;
-    bottom: 0;
     z-index: 7;
-    /* 글 쓰는 걸음에서만 섭니다. 늘 깔아 두면 목록 아래쪽을 덮어
-       그 자리에서 굴려도 목록이 움직이지 않습니다. */
     pointer-events: none;
-    overflow-y: auto;
-    overscroll-behavior-y: contain;
-    scrollbar-width: none;
     /* 떠 있는 단추에 가리지 않게 아래를 비웁니다. */
     padding-bottom: calc(96 * var(--s));
-  }
-
-  .nudc-under::-webkit-scrollbar {
-    display: none;
   }
 
   /* 트랙 위의 고른 것 · 아래의 이름과 값 · 설명 */
@@ -9501,6 +9510,12 @@
     transition: opacity 620ms cubic-bezier(0.33, 1, 0.68, 1);
   }
 
+  /* 앞장은 보여 주기만 합니다 — 흐려진 뒤에도 자리를 지키고 있어
+     그대로 두면 뒷장의 글자리를 눌러도 앞장이 먼저 받습니다. */
+  .nudc-card-face {
+    pointer-events: none;
+  }
+
   .nudc-card-back {
     opacity: 0;
     pointer-events: none;
@@ -9525,6 +9540,11 @@
   .nudc[data-at="sent"] .nudc-card-back {
     opacity: 1;
     translate: 0 0;
+  }
+
+  /* 뒷장이 서면 그 위의 글자리가 손을 받습니다. */
+  .nudc[data-at="note"] .nudc-card-back {
+    pointer-events: auto;
   }
 
   /* 보낼 때 그림은 편지지와 한 몸으로 내려가야 합니다 —

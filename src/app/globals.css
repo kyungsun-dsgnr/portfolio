@@ -3976,7 +3976,8 @@
     font-family: var(--font-display);
     font-size: calc(12 * var(--u));
     letter-spacing: 0.06em;
-    font-weight: 500;
+    /* 케이스 장의 눈썹 글(.card-index)과 같은 두께입니다. */
+    font-weight: 600;
   }
 
   .steps-step {

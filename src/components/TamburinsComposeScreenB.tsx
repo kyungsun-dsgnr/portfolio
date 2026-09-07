@@ -532,6 +532,17 @@ export function TamburinsComposeScreenB({
     const open = window.setTimeout(() => setReady(inView), inView ? 900 : 0);
     return () => clearTimeout(open);
   }, [inView]);
+
+  /* 상자가 다 차오르기까지는 제품이 기다렸다 내려앉습니다 — 열리는 도중에
+     떨어지면 아직 비치는 앞면 너머로 제품이 겹쳐 보입니다. 한 번 다 찬 뒤
+     세트를 고쳐 고를 때는 기다리지 않고 바로 담깁니다. */
+  const [filled, setFilled] = useState(false);
+
+  useEffect(() => {
+    /* 상자 1700ms + 첫 낙하 1900ms + 둘째 것 340ms */
+    const done = window.setTimeout(() => setFilled(ready), ready ? 3940 : 0);
+    return () => clearTimeout(done);
+  }, [ready]);
   /* 지금 열려 있는 층. 고른다고 바로 넘어가지 않고, 굴려 올리면 다음 층이 열립니다. */
   const [step, setStep] = useState(0);
   const view = useRef<HTMLDivElement>(null);
@@ -744,7 +755,13 @@ export function TamburinsComposeScreenB({
             </button>
           )}
 
-          <figure className="cmpb-box" data-open={ready || undefined}>
+          <figure
+            className="cmpb-box"
+            data-open={ready || undefined}
+            style={
+              { "--drop-wait": filled ? "0ms" : "1700ms" } as CSSProperties
+            }
+          >
             {/* 상자는 닫힌 채로 놓여 있습니다. 세트를 고르면 뚜껑이 열리고
                 제품이 하나씩 내려앉습니다. 12장 표지와 같은 겹·같은 동작입니다. */}
             <span className="cmpb-base">

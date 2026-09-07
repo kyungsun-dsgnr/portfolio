@@ -2330,7 +2330,7 @@
 
   [data-visible] .tam-shade {
     animation: 0.6s both shade-in;
-    animation-delay: calc(var(--delay, 0s) + 0.95s);
+    animation-delay: calc(var(--delay, 0s) + 0.5s);
   }
 
   @keyframes shade-in {
@@ -2593,8 +2593,10 @@
     transform-origin: bottom;
   }
 
+  /* 위에서 떨어지지 않습니다 — 제자리에서 떠오른 뒤 한 번 들렸다 내려앉습니다.
+     `/m/compose` 상자 안 제품(gift-rise)과 같은 결입니다. */
   [data-visible] .tam-drop {
-    animation: 2.1s both drop-in;
+    animation: 1.7s cubic-bezier(0.33, 1, 0.68, 1) both rise-in;
     animation-delay: var(--delay, 0s);
   }
 
@@ -2621,38 +2623,27 @@
     }
   }
 
-  @keyframes drop-in {
+  @keyframes rise-in {
     0% {
-      translate: 0 calc(-1 * var(--fall, 620) * var(--u));
-      rotate: var(--tilt, -10deg);
       opacity: 0;
-      animation-timing-function: cubic-bezier(0.32, 0, 0.24, 1);
-      scale: 1.02;
-    }
-
-    8% {
-      opacity: 1;
-    }
-
-    58% {
-      translate: 0 calc(-0.19 * var(--fall, 620) * var(--u));
-      rotate: calc(var(--tilt, -10deg) * 0.3);
-      animation-timing-function: cubic-bezier(0.33, 0, 0.12, 1);
-      scale: 1;
-    }
-
-    88% {
-      animation-timing-function: ease-out;
-      translate: 0;
-      rotate: none;
+      translate: 0 5%;
       scale: 0.95;
     }
 
-    94% {
-      scale: 0.97;
+    34% {
+      opacity: 1;
+      translate: 0;
+      scale: 0.95;
+      animation-timing-function: cubic-bezier(0.4, 0, 0.4, 1);
+    }
+
+    66% {
+      translate: 0 -7%;
     }
 
     100% {
+      opacity: 1;
+      translate: 0;
       scale: 0.95;
     }
   }
@@ -6853,10 +6844,6 @@
     opacity: 0.72;
   }
 
-  .merge-shot[data-fade] .tall-cap {
-    opacity: 0.3;
-    transition-duration: 260ms;
-  }
 
   /* 한 번 더 굴리면 걸음 표시가 걷힙니다. */
   .tall-cap[data-gone] {
@@ -8115,11 +8102,34 @@
     object-position: bottom;
   }
 
-  /* 상자 사진이 다 차오른 뒤에 내려앉습니다 — 열리는 도중에 떨어지면
-     아직 비치는 상자 위로 제품이 겹쳐 보입니다. (바닥·앞면 1700ms) */
+  /* 상자 사진이 다 차오른 뒤에 나타납니다 — 차오르는 도중이면
+     아직 비치는 상자 위로 제품이 겹쳐 보입니다. (바닥·앞면 1700ms)
+     위에서 떨어지지 않고 제자리에서 떠오른 뒤 한 번 오르내립니다. */
   .cmpb-box[data-open] .cmpb-item {
-    animation: 1.9s cubic-bezier(0.22, 1, 0.36, 1) both gift-drop;
-    animation-delay: calc(1700ms + var(--delay, 0s));
+    animation: 1.6s cubic-bezier(0.33, 1, 0.68, 1) both gift-rise;
+    animation-delay: calc(var(--drop-wait, 1700ms) + var(--delay, 0s));
+  }
+
+  @keyframes gift-rise {
+    0% {
+      opacity: 0;
+      translate: 0 5%;
+    }
+
+    32% {
+      opacity: 1;
+      translate: 0 0;
+      animation-timing-function: cubic-bezier(0.4, 0, 0.4, 1);
+    }
+
+    64% {
+      translate: 0 -7%;
+    }
+
+    100% {
+      opacity: 1;
+      translate: 0 0;
+    }
   }
 
   .cmpb-in[data-at="left"] {
@@ -8800,10 +8810,21 @@
     height: 42%;
   }
 
-  /* 마지막 걸음에서는 담긴 목록과 금액이 다 보여야 합니다.
-     상자를 그만큼 줄여 목록에 자리를 내줍니다. */
+  /* 마지막 걸음에서는 담긴 목록과 금액이 통째로 보여야 합니다.
+     걸음들이 제 키를 그대로 쓰고 상자가 남는 자리만 가져가면,
+     기기가 짧아도 목록이 안에서 굴러가거나 총 금액이 잘리지 않습니다. */
   .phone-page .cmpb-stage[data-mid] {
-    height: 51%;
+    height: auto;
+    flex: 1 1 0;
+    /* 상자가 이보다 더 눌리면 담긴 것이 보이지 않습니다. */
+    min-height: 30%;
+  }
+
+  .phone-page .cmpb-body:has(.cmpb-stage[data-mid]) .cmpb-stack,
+  .phone-page
+    .cmpb-body:has(.cmpb-stage[data-mid])
+    .cmpb-layer[data-open] {
+    flex: none;
   }
 
   /* 100dvh 는 이미 주소 막대를 뺀 높이입니다. 브라우저로 볼 때는 그 막대가

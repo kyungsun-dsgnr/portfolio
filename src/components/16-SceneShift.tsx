@@ -141,9 +141,10 @@ export function SceneShift() {
           >
             <div
               className="steps-cap tall-cap"
-              /* 모이는 동안 마디도 화면과 같이 옅어졌다가, 다 모인 뒤에 걷힙니다.
-                 그 자리에는 첫 칸에만 한 걸음으로 다시 붙습니다. */
-              data-gone={settled || undefined}
+              /* 붙기 시작하면 마디부터 걷힙니다 — 넉 장의 글이 겹친 채로
+                 끌려오면 읽을 수 없는 덩이가 됩니다.
+                 그 자리에는 다 모인 뒤 첫 칸에만 한 걸음으로 다시 붙습니다. */
+              data-gone={one || undefined}
               style={{
                 transitionDelay: one ? `${beatOf(i)}ms` : "0ms",
                 height: px(CAP_H),

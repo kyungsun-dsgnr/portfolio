@@ -32,16 +32,15 @@ import { SceneNudakeCover } from "@/components/18-SceneNudakeCover";
 import { SceneNudakeContext2 } from "@/components/23-SceneNudakeContext2";
 // import { SceneNudakeSigns } from "@/components/24-SceneNudakeSigns";
 import { SceneNudakeSigns2 } from "@/components/37-SceneNudakeSigns2";
-import {
-  NUDAKE_COMPOSE,
-  NUDAKE_TURN,
-  SceneNudakePlan,
-} from "@/components/30-SceneNudakePlan";
+/* 내려 둔 계획 두 장에서 씁니다:
+   import { NUDAKE_COMPOSE, NUDAKE_TURN, SceneNudakePlan } from "@/components/30-SceneNudakePlan"; */
 // import { SceneNudakeGap } from "@/components/32-SceneNudakeGap";
 // import { SceneNudakeGap2 } from "@/components/33-SceneNudakeGap2";
 import { SceneNudakeGap3 } from "@/components/34-SceneNudakeGap3";
 import { SceneNudakeGap4 } from "@/components/35-SceneNudakeGap4";
-import { SceneNudakeGap5 } from "@/components/36-SceneNudakeGap5";
+import { SceneNudakeFlow } from "@/components/38-SceneNudakeFlow";
+import { SceneNudakeFlow2 } from "@/components/39-SceneNudakeFlow2";
+// import { SceneNudakeGap5 } from "@/components/36-SceneNudakeGap5";
 // import { SceneNudakeContext3 } from "@/components/31-SceneNudakeContext3";
 // import { SceneNudakeCurrent } from "@/components/25-SceneNudakeCurrent";
 // import { SceneNudakeProblem } from "@/components/26-SceneNudakeProblem";
@@ -55,12 +54,19 @@ import { SceneStatement } from "@/components/02-SceneStatement";
 import { SceneWhy } from "@/components/09-SceneWhy";
 import { SceneWork } from "@/components/06-SceneWork";
 
-export function Deck() {
+export function Deck({ under }: { under?: string } = {}) {
   const { c } = useCopy();
+
+  /* 갈래(`/v2`) 아래에 선 덱은 주소도 그 아래로 적습니다. */
+  const slugs = under
+    ? Object.fromEntries(
+        Object.entries(SLUGS).map(([id, slug]) => [id, `${under}/${slug}`]),
+      )
+    : SLUGS;
 
   return (
     <LightStage
-      slugs={SLUGS}
+      slugs={slugs}
       sections={[
         /* 스위치 장과 제목이 같아 접어 둡니다. 되살릴 때 이 줄만 풀면 됩니다.
         { id: "intro", label: "Intro", node: <SceneIntro /> }, */
@@ -318,30 +324,48 @@ export function Deck() {
           label: "nudake-4",
           node: <SceneNudakeGap3 />,
         },
+        /* `Found Here, Experienced Elsewhere` 의 둘째 판. 다시 잡을 때
+           이 묶음만 풀면 됩니다. 컴포넌트 파일(36)은 그대로 두었습니다.
         {
           id: "nudake-gap-5",
           index: "04 — Nudake",
           label: "nudake-5",
           node: <SceneNudakeGap5 />,
         },
+        */
         {
           id: "nudake-gap-4",
-          index: "05 — Nudake",
-          label: "nudake-6",
+          index: "04 — Nudake",
+          label: "nudake-5",
           node: <SceneNudakeGap4 />,
         },
         {
-          id: "nudake-turn",
+          id: "nudake-flow",
+          index: "05 — Nudake",
+          label: "nudake-6",
+          node: <SceneNudakeFlow />,
+        },
+        {
+          id: "nudake-flow-2",
           index: "06 — Nudake",
           label: "nudake-7",
+          node: <SceneNudakeFlow2 />,
+        },
+        /* 계획만 적어 두었던 두 장. 다시 잡을 때 이 묶음만 풀면 됩니다.
+           NUDAKE_TURN · NUDAKE_COMPOSE 는 copy.ts 에 그대로 두었습니다.
+        {
+          id: "nudake-turn",
+          index: "05 — Nudake",
+          label: "nudake-6",
           node: <SceneNudakePlan plan={NUDAKE_TURN} />,
         },
         {
           id: "nudake-compose",
-          index: "07 — Nudake",
-          label: "nudake-8",
+          index: "06 — Nudake",
+          label: "nudake-7",
           node: <SceneNudakePlan plan={NUDAKE_COMPOSE} />,
         },
+        */
         /* Already There 뒤의 다섯 장을 내려 둡니다. 다시 잡을 때 이 묶음만 풀면 됩니다.
            컴포넌트 파일(25~29)은 지우지 않고 그대로 두었습니다.
         {

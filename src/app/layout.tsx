@@ -1,10 +1,22 @@
 import type { Metadata } from "next";
-import { Inter, Nanum_Pen_Script, Playwrite_NZ_Basic } from "next/font/google";
+import {
+  Inter,
+  Nanum_Pen_Script,
+  Playwrite_NZ_Basic,
+  Work_Sans,
+} from "next/font/google";
 import { GridOverlay } from "@/components/GridOverlay";
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+/* 두 번째 판(`/v2`)의 라틴 글자. 한글 자소가 없어 한글은 뒤의 후보로 떨어지고,
+   영문만 이 그로테스크로 섭니다. */
+const grotesk = Work_Sans({
+  variable: "--font-grotesk",
   subsets: ["latin"],
 });
 
@@ -42,7 +54,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ko"
-      className={`${inter.variable} ${script.variable} ${scriptKo.variable} antialiased`}
+      className={`${inter.variable} ${grotesk.variable} ${script.variable} ${scriptKo.variable} antialiased`}
     >
       <head>
         {/* SUIT Variable 은 Google Fonts에 없어 CDN에서 불러옵니다.

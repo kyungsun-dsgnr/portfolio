@@ -266,7 +266,7 @@ const PICK_AT = 1900;
 const CARD_AT = 3100;
 
 /** 엽서 뒷장에 미리 적혀 있는 글. 편집을 켜면 고쳐 쓸 수 있습니다. */
-const NOTE = "항상 행복하세요.\n감사합니다!";
+const NOTE = "생일 축하해.\n오늘도 행복한 하루 보내.";
 
 /**
  * @param run 차례가 되면 스스로 고릅니다. 주지 않으면 목록에 멈춰 있습니다.
@@ -278,14 +278,17 @@ export function NudakeMockCompose({
   run = false,
   fill = false,
   height = 726,
+  step: opening = "list",
   onDone,
 }: {
   run?: boolean;
   fill?: boolean;
   height?: number;
+  /** 처음 서는 걸음. 판 위에 한 장면만 세워 둘 때 씁니다. */
+  step?: Step;
   onDone?: () => void;
 } = {}) {
-  const [at, setAt] = useState<Step>("list");
+  const [at, setAt] = useState<Step>(opening);
   /** 손끝이 닿는 순간 */
   const [tap, setTap] = useState(false);
   /** 뒷장에 적힌 글. 스스로 훑을 때는 한 글자씩 차고,
@@ -454,7 +457,13 @@ export function NudakeMockCompose({
     done();
   };
 
+  /* 판 위에 한 장면만 세워 둔 목업은 그 걸음에 머뭅니다 —
+     스스로 훑지도, 목록으로 돌아가지도 않습니다. */
+  const frozen = opening !== "list";
+
   useEffect(() => {
+    if (frozen) return;
+
     if (!run) {
       const still = window.setTimeout(() => {
         setAt("list");
@@ -479,9 +488,9 @@ export function NudakeMockCompose({
       }, CARD_AT),
     ];
     return () => clock.forEach(clearTimeout);
-    /* 순서를 다시 돌릴 일은 없어 run 만 봅니다. */
+    /* 순서를 다시 돌릴 일은 없어 run 과 세워 둔 장면만 봅니다. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [run]);
+  }, [run, frozen]);
 
   /* 열여섯 종이 그대로 깔립니다. 화면 밖으로 넘치는 것은 잘려 —
      실제 화면처럼 굴려 내려야 나오는 자리로 남습니다. */
@@ -851,7 +860,7 @@ export function NudakeMockCompose({
                 onChange={(event) => setNote(event.target.value)}
                 style={{
                   ...box({ left: 18, top: 154, width: 140, height: 57 }),
-                  ...type(12, 19),
+                  ...type(11, 19),
                 }}
               />
             </div>
@@ -1156,7 +1165,7 @@ export function NudakeMockCompose({
             className="nudc-gift-note"
             style={{
               ...box({ left: 18, top: 154, width: 140 }),
-              ...type(12, 19),
+              ...type(11, 19),
             }}
           >
             {note}

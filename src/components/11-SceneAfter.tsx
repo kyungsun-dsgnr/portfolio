@@ -22,7 +22,7 @@ const GAP = 16;
 const ENTER = 1500;
 
 /** 휴대폰에서 열리는 자리. 저장소 하위에 배포되는 경우까지 함께 셈합니다. */
-const PHONE_PATH = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/m/globe`;
+const PHONE_PATH = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/m/gentle-monster`;
 
 /** 새 화면이 하는 일 둘 */
 const POINTS = [

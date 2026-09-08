@@ -36,10 +36,9 @@ export const SLUGS: Record<string, string> = {
   "nudake-context-2": "nudake/01",
   "nudake-signs-2": "nudake/02",
   "nudake-gap-3": "nudake/03",
-  "nudake-gap-5": "nudake/04",
-  "nudake-gap-4": "nudake/05",
-  "nudake-turn": "nudake/06",
-  "nudake-compose": "nudake/07",
+  "nudake-gap-4": "nudake/04",
+  "nudake-flow": "nudake/05",
+  "nudake-flow-2": "nudake/06",
 };
 
 /** 주소 → 장 id. 들어온 주소로 어디서 시작할지 찾을 때 씁니다. */

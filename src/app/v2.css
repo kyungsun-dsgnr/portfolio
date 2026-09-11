@@ -207,6 +207,8 @@
 /* 고치기 전 넉 장은 색을 뺍니다 — 하나로 합쳐지는 새 화면만 색을 지닙니다. */
 .v2 #tamburins-shift .merge-shot .merge-before {
   filter: grayscale(1);
+  /* 처음부터 조금 물러나 있습니다 — 합쳐질 새 화면이 주인공입니다. */
+  opacity: 0.6;
 }
 
 /* 합쳐진 화면. 바닥은 그대로 두고 위로 자라야 넉 장이 있던 자리에서
@@ -246,8 +248,7 @@
    100% 는 제 키라, 제 키에서 판 키를 뺀 만큼입니다. 판보다 작으면 두지 않습니다. */
 .v2 #nudake-gap-3 .nud-detail[data-down],
 .v2 #nudake-gap-4 .nud-detail[data-down] {
-  translate: 0
-    min(0px, calc(5 * var(--row-size) + 4 * var(--grid-gap) - 100%));
+  translate: 0 min(0px, calc(5 * var(--row-size) + 4 * var(--grid-gap) - 100%));
 }
 
 /* 물러난 화면은 두 행(110 + 16 씩) 내려앉습니다 — 4행부터 서고,
@@ -346,6 +347,15 @@
 /* 갈래 표(AS-IS · TO-BE)는 머리말과 같은 글씨로, 머리말 바로 위에 섭니다. */
 .v2 #nudake-gap-4 .nud-side {
   margin-bottom: calc(6 * var(--u));
+}
+
+/* AS-IS 아래에는 제목이 없으니 본문이 머리말 바로 아래(14) 붙습니다. */
+.v2 #nudake-gap-4 .nud-was-in .nud-side {
+  margin-bottom: calc(14 * var(--u));
+}
+
+.v2 #nudake-gap-4 .nud-was-in .type-body {
+  margin-top: 0;
 }
 
 /* 펼치고 나면 둘 다 제 빛으로 — 도는 쪽이 진하고 다른 쪽이 물러납니다. */
@@ -512,13 +522,6 @@
   white-space: pre-line;
 }
 
-
-/* 맺음 장 — 카드 머리는 글과 그림 사이를 좁혀 둡니다. */
-.v2 .close .work-head {
-  height: auto;
-  padding-bottom: calc(16 * var(--u));
-}
-
 /* `The Experience Is Still Bound to Place` — 지도 위 점을 누르면 뜨는 이름표를
    한 단 키웁니다: 판 여백 14 × 18, 머리말 12, 이름 15, 자리 12. */
 .v2 #nudake-context-2 .nud-pin-card {
@@ -538,6 +541,44 @@
   font-size: calc(12 * var(--u));
 }
 
+/* 맺음 장 — 머리엔 번호와 제목만, 설명은 화면 위 유리 판에.
+   머리는 글에 맞추고, 카드는 제 넉 행(3–6행)을 다 채웁니다. */
+.v2 .close .work-head {
+  height: auto;
+  padding-bottom: calc(20 * var(--u));
+}
+
+.v2 .close .nud-cap-card {
+  height: auto;
+  align-self: stretch;
+}
+
+.v2 .close .nud-cap .type-body {
+  font-size: calc(13 * var(--u));
+  line-height: 1.55;
+}
+
+/* 유리 판과 설명은 손이 얹히거나(hover) 골라졌을 때(focus)만 떠오릅니다. */
+.v2 .close .nud-cap {
+  opacity: 0;
+  translate: 0 calc(8 * var(--u));
+  transition:
+    opacity 320ms ease,
+    translate 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.v2 .close .work:hover .nud-cap,
+.v2 .close .work:focus-visible .nud-cap,
+.v2 .close .work:active .nud-cap {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* 6장(세 갈래) — 그림은 제 칸 세로 한가운데에서 24 위로 올라앉습니다. */
+.v2 #work .work-visual img {
+  object-position: center calc(50% - 24 * var(--u));
+}
+
 /* 맺음 장 — 카드 안 화면은 실제 화면이라 밝기 기준을 도로 세우고,
    손은 카드(건너뛰기)가 받습니다. */
 .v2 .close .close-shot {
@@ -549,7 +590,7 @@
   pointer-events: none;
 }
 
-.v2 .close .close-shot > * {
+.v2 .close .close-shot > :not(.nud-cap) {
   width: 100%;
   height: 100%;
 }

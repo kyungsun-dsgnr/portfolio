@@ -51,17 +51,52 @@ export function SceneAfter() {
     Record<string, { d: string; len: number }>
   >({});
 
-  const dotRef = useCallback((key: string, el: HTMLButtonElement | null) => {
-    /* 다시 그릴 때 잠깐 null 이 됩니다. 그때 지우면 선이 끊깁니다. */
-    if (el) dots.current[key] = el;
-  }, []);
-
-  /* 점을 누르면 그 자리가 켜집니다. 03 을 누르면 아래 매장 목록으로 굴러갑니다. */
+  /* 점을 누르면 그 자리가 켜집니다. 03 을 누르면 아래 매장 목록으로 굴러갑니다.
+     누르면 붙잡힙니다 — 붙잡힌 자리는 손이 오가도 바뀌지 않고, 한 번 더 누르면 놓입니다.
+     손을 얹기만 해도 그 자리가 켜지고, 떼면 꺼집니다. */
   const [picked, setPicked] = useState<string | null>(null);
+  const [held, setHeld] = useState(false);
+  const heldNow = useRef(false);
+  const pickedNow = useRef<string | null>(null);
+  useEffect(() => {
+    heldNow.current = held;
+  }, [held]);
+  useEffect(() => {
+    pickedNow.current = picked;
+  }, [picked]);
 
   const pick = useCallback((key: string) => {
-    setPicked((now) => (now === key ? null : key));
+    if (heldNow.current && pickedNow.current === key) {
+      setHeld(false);
+      setPicked(null);
+      return;
+    }
+    setHeld(true);
+    setPicked(key);
   }, []);
+
+  const hoverIn = useCallback((key: string) => {
+    if (heldNow.current) return;
+    setPicked(key);
+  }, []);
+  const hoverOut = useCallback(() => {
+    if (heldNow.current) return;
+    setPicked(null);
+  }, []);
+
+  const dotRef = useCallback(
+    (key: string, el: HTMLButtonElement | null) => {
+      /* 다시 그릴 때 잠깐 null 이 됩니다. 그때 지우면 선이 끊깁니다. */
+      if (!el || dots.current[key] === el) return;
+      dots.current[key] = el;
+      /* 점도 손이 얹히면 켜지고 떠나면 꺼집니다. 누르는 것은 화면이 pick 으로 알립니다. */
+      el.addEventListener("pointerenter", (event) => {
+        if (event.pointerType === "mouse") hoverIn(key);
+      });
+      el.addEventListener("pointerleave", hoverOut);
+    },
+    [hoverIn, hoverOut],
+  );
 
   useEffect(() => {
     if (!picked) return;
@@ -266,6 +301,10 @@ export function SceneAfter() {
           /* 카드를 눌러도 그 자리가 켜집니다 — 목업이 그 대목으로 굴러가고,
              점과 잇는 선이 그어지며, 나머지는 물러납니다. */
           onClick={() => pick(point.index)}
+          onPointerEnter={(event) => {
+            if (event.pointerType === "mouse") hoverIn(point.index);
+          }}
+          onPointerLeave={hoverOut}
           style={{ "--delay": `${0.18 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">{point.index}</span>

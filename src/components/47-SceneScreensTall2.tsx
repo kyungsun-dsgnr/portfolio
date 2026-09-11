@@ -163,6 +163,26 @@ export function SceneScreensTall2({
     setPlays((seen) => seen.map((n, i) => (i === to ? n + 1 : n)));
   }, []);
 
+  /* 손을 얹기만 해도 그 화면이 돕니다. 누르면(solo) 붙잡혀 손이 오가도 바뀌지 않고,
+     붙잡은 것이 없을 때 손을 떼면 처음 화면으로 돌아갑니다. */
+  const [over, setOver] = useState<number | null>(null);
+  const hoverIn = useCallback(
+    (to: number) => {
+      if (still || playing || solo !== null) return;
+      setOver(to);
+      at.current = to;
+      setActive(to);
+      if (to === 2) setScentStep(1);
+      setPlays((seen) => seen.map((n, i) => (i === to ? n + 1 : n)));
+    },
+    [still, playing, solo],
+  );
+  const hoverOut = useCallback(() => {
+    setOver(null);
+    if (solo === null && !playing) rewind();
+  }, [solo, playing, rewind]);
+  const seen = solo ?? over;
+
   useEffect(() => {
     if (inView) return;
     const back = window.setTimeout(() => {
@@ -198,7 +218,7 @@ export function SceneScreensTall2({
   useEffect(() => () => window.clearTimeout(holdTimer.current), []);
 
   /* 물러난 판에서는 어느 칸도 차례를 갖지 않습니다. */
-  const live = still ? -1 : playing ? active : (solo ?? -1);
+  const live = still ? -1 : playing ? active : (seen ?? -1);
 
   /* 넷이 한 자리로 모입니다. 장에 들어서고 한 박자 뒤에 움직입니다. */
   const [merged, setMerged] = useState(false);
@@ -248,11 +268,15 @@ export function SceneScreensTall2({
             className="steps-shot tall-shot rise"
             /* 재생 전에는 넷 다 또렷하게 둡니다. */
             data-idle={
-              ((still || playing || solo !== null) && live !== i) || undefined
+              ((still || playing || seen !== null) && live !== i) || undefined
             }
             role="button"
             tabIndex={0}
             onClick={still ? undefined : () => pick(i)}
+            onPointerEnter={(event) => {
+              if (event.pointerType === "mouse") hoverIn(i);
+            }}
+            onPointerLeave={hoverOut}
             onKeyDown={(event) => {
               if (still) return;
               if (event.key === "Enter" || event.key === " ") {
@@ -328,7 +352,7 @@ export function SceneScreensTall2({
                       data-gone={
                         (playing
                           ? !still && active > i
-                          : solo === null || solo !== i) || undefined
+                          : seen === null || seen !== i) || undefined
                       }
                       style={{ "--fill-ms": `${shot.span}ms` } as CSSProperties}
                       aria-hidden

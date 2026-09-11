@@ -145,6 +145,10 @@ export function SceneFlow() {
   const byId = new Map(NODES.map((node) => [node.id, node]));
   /** 지금 열려 있는 걸리는 지점. 번호에 손을 올린 동안만 열립니다. */
   const [open, setOpen] = useState<string | null>(null);
+  /* 누르면 붙잡힙니다 — 붙잡힌 카드는 손이 떠나도 열려 있고, 한 번 더 누르면 놓입니다. */
+  const [held, setHeld] = useState<string | null>(null);
+  const shown = held ?? open;
+  const press = (id: string) => setHeld((now) => (now === id ? null : id));
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
@@ -192,10 +196,18 @@ export function SceneFlow() {
               <em
                 className="flow-pain"
                 tabIndex={0}
+                data-held={held === node.id || undefined}
                 onMouseEnter={() => setOpen(node.id)}
                 onMouseLeave={() => setOpen(null)}
                 onFocus={() => setOpen(node.id)}
                 onBlur={() => setOpen(null)}
+                onClick={() => press(node.id)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    press(node.id);
+                  }
+                }}
               >
                 {node.pain.no}
               </em>
@@ -209,7 +221,7 @@ export function SceneFlow() {
           <div
             key={`${node.id}-note`}
             className="flow-note"
-            data-open={open === node.id || undefined}
+            data-open={shown === node.id || undefined}
             style={
               {
                 left: px(place(node).x),

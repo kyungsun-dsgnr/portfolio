@@ -26,18 +26,24 @@ const WORKS = [
   {
     index: "01",
     title: "Explore — Gentle Monster",
+    project:
+      "익숙한 지구본 탐색 방식을 활용해, 가까운 매장을 찾는 경험을 전 세계의 브랜드 공간을 탐색하는 경험으로 확장했습니다.",
     place: "col-start-3 col-span-2",
     target: "gentle-monster-paper",
   },
   {
     index: "02",
     title: "Compose — Tamburins",
+    project:
+      "여러 화면에 나뉘어 있던 제품과 향 선택을 하나의 화면에 모아, 옵션을 고르는 과정에서 선물을 직접 구성하는 경험으로 전환했습니다.",
     place: "col-start-5 col-span-2",
     target: "tamburins",
   },
   {
     index: "03",
     title: "Give — Nudake",
+    project:
+      "외부 서비스로 이어지던 선물 구매 과정을 브랜드 안에서 직접 고르고, 메시지를 작성하고, 완성해 전달하는 경험으로 확장했습니다.",
     place: "col-start-7 col-span-2",
     target: "nudake",
   },
@@ -107,7 +113,7 @@ export function SceneClose() {
           key={work.index}
           href={`#${work.target}`}
           data-linked
-          className={`work rise row-start-3 row-span-4 ${work.place}`}
+          className={`work nud-cap-card rise row-start-3 row-span-4 ${work.place}`}
           style={{ "--delay": `${0.2 + i * 0.08}s` } as CSSProperties}
           onClick={(event) => open(event, work.target)}
           onPointerEnter={enter}
@@ -126,6 +132,12 @@ export function SceneClose() {
             {work.index === "03" && (
               <NudakeMockCompose step="note" written height={726} />
             )}
+
+            {/* 설명은 화면 아래쪽 흰 유리 판 위에 얹힙니다 —
+                `Already There, Just Not Visible` 의 글판과 같은 결입니다. */}
+            <div className="nud-cap">
+              <p className="type-body">{work.project}</p>
+            </div>
           </div>
         </a>
       ))}

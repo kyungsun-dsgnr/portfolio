@@ -62,8 +62,19 @@ export function SceneComposeFull() {
   /* 손에 쥔 기기에서 이 화면을 직접 굴려 보는 자리 */
   const [mark, setMark] = useState<string | null>(null);
 
-  /* 목업에서 어느 번호를 보고 있는지. 하나를 고르면 나머지 설명은 물러납니다. */
+  /* 목업에서 어느 번호를 보고 있는지. 하나를 고르면 나머지 설명은 물러납니다.
+     누르면 붙잡힙니다 — 붙잡힌 자리는 손이 오가도 바뀌지 않고, 한 번 더 누르면 놓입니다.
+     손을 얹기만 해도 그 자리가 켜집니다. 점은 화면 안의 것이라 판이 누르는 흉내로 켜고 끕니다. */
   const [focus, setFocus] = useState<string | null>(null);
+  const [held, setHeld] = useState(false);
+  const heldNow = useRef(false);
+  const focusNow = useRef<string | null>(null);
+  useEffect(() => {
+    heldNow.current = held;
+  }, [held]);
+  useEffect(() => {
+    focusNow.current = focus;
+  }, [focus]);
 
   useEffect(() => {
     const to = `${window.location.origin}${PHONE_PATH}`;
@@ -106,7 +117,35 @@ export function SceneComposeFull() {
   /* 점을 적어 두는 손. 다시 그리는 사이 null 이 들어와도 앞서 잡은 것을 지키고,
      참조가 매번 새로 만들어지지 않게 한 번만 만듭니다. */
   const keepDot = useCallback((key: string, el: HTMLElement | null) => {
-    if (el) dots.current[key] = el;
+    if (!el || dots.current[key] === el) return;
+    dots.current[key] = el;
+    /* 점 위에 손이 얹히면 켜지고 떠나면 꺼집니다 — 붙잡힌 동안은 그대로.
+       점을 직접 누르면 붙잡거나 놓습니다. 얹혀서 이미 켜진 점을 누르면
+       화면이 도로 끄려 하므로 그 누름은 막고 붙잡기만 합니다. */
+    el.addEventListener("pointerenter", (event) => {
+      if (event.pointerType !== "mouse" || heldNow.current) return;
+      if (focusNow.current !== key) el.click();
+    });
+    el.addEventListener("pointerleave", () => {
+      if (heldNow.current) return;
+      if (focusNow.current === key) el.click();
+    });
+    el.addEventListener(
+      "click",
+      (event) => {
+        if (!event.isTrusted) return;
+        if (heldNow.current && focusNow.current === key) {
+          setHeld(false);
+          return;
+        }
+        setHeld(true);
+        if (focusNow.current === key) {
+          event.stopPropagation();
+          event.preventDefault();
+        }
+      },
+      true,
+    );
   }, []);
   const lifted = useRef(0);
   /* 되돌림 없이 잰 제자리 값. 한 번만 재면 되는 상수입니다. */
@@ -338,7 +377,24 @@ export function SceneComposeFull() {
           data-dim={focus && focus !== one.index ? true : undefined}
           /* 글을 눌러도 같은 자리가 켜집니다 — 보고 있는 곳은 목업이 쥐고 있으니
              그 자리의 번호 점을 대신 눌러 줍니다. */
-          onClick={() => dots.current[one.index]?.click()}
+          onClick={() => {
+            const dot = dots.current[one.index];
+            if (held && focus === one.index) {
+              setHeld(false);
+              dot?.click();
+            } else {
+              setHeld(true);
+              if (focus !== one.index) dot?.click();
+            }
+          }}
+          onPointerEnter={(event) => {
+            if (event.pointerType !== "mouse" || held) return;
+            if (focus !== one.index) dots.current[one.index]?.click();
+          }}
+          onPointerLeave={() => {
+            if (held) return;
+            if (focus === one.index) dots.current[one.index]?.click();
+          }}
           style={{ "--delay": `${0.3 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">{one.index}</span>

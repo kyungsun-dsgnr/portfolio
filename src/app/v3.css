@@ -32,6 +32,9 @@
 .v3 .page-grid {
   padding-top: var(--page-margin-y);
   padding-bottom: var(--page-margin-y);
+  /* 행은 안의 것이 커져도 늘어나지 않습니다 — 1fr 은 안 크기를 최소로 삼아,
+     넉 행짜리 카드가 자라면 위 행들이 좁아지며 글이 오르내렸습니다. */
+  grid-template-rows: repeat(var(--grid-rows), minmax(0, 1fr));
 }
 
 /* ── 위아래 띠 ─────────────────────────────────
@@ -235,4 +238,51 @@
 .v3 .view-cursor-core[data-on] {
   opacity: 1;
   scale: 1;
+}
+
+/* `One screen, one gift` · `Made Here, Given Anywhere` — QR 판은 제 칸 머리에서 32 내려 섭니다. */
+.v3 #tamburins-one .qr-card,
+.v3 #nudake-flow-full .qr-card {
+  align-self: start;
+  margin-top: calc(32 * var(--u));
+}
+
+/* 진행 막대는 조금 더 얇게 — 2 에서 1.5 로. */
+.v3 .nud-cap .step,
+.v3 .tall-cap-over .steps-no i,
+.v3 #nudake-gap-4 .nud-bar {
+  height: calc(1.5 * var(--u));
+}
+
+/* 손이 다른 카드로 옮겨 가며 화면이 새로 서는 자리들 — 뚝 바뀌지 않고 스르르 떠오릅니다.
+   (화면은 걸음마다 새로 세워지므로 서는 순간에 짧게 한 번만 겁니다.) */
+.v3 #tamburins-screens .steps-frame > :not(.steps-cap),
+.v3 #nudake-gap-3 .nud-stage > .nud-mock,
+.v3 #nudake-gap-4 .nud-stage > .nud-mock,
+.v3 #nudake-signs-2 .work-visual > .nud-mock,
+.v3 #nudake-flow-full .compose-full-frame > .nud-mock {
+  animation: soft-in 360ms ease both;
+}
+
+/* `One screen, one gift` — 한 자리를 볼 때 나머지가 흐려지는 정도를 줄입니다(3 → 1.5). */
+.v3 .cmpb-stage[data-dim] .cmpb-box,
+.v3 .cmpb-layer[data-dim] .cmpb-layer-head,
+.v3 .cmpb-layer[data-dim] .cmpb-layer-body {
+  filter: blur(calc(1.5 * var(--u)));
+  opacity: 0.6;
+}
+
+/* `Gift the Nudake Experience` — 오른쪽 장면 안의 것들을 한 덩이로 1.1 배 키우고 75 올립니다. */
+.v3 #nudake .nud-scene-in {
+  position: absolute;
+  inset: 0;
+  translate: 0 calc(-75 * var(--u));
+  scale: 1.1;
+  transform-origin: 50% 50%;
+}
+
+/* 엽서의 손글씨 — 1.44 배(30 → 43), 24 위로. */
+.v3 #nudake .nud-card-hand {
+  font-size: calc(43 * var(--u));
+  translate: 0 calc(-24 * var(--u));
 }

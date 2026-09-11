@@ -63,10 +63,49 @@ export function SceneNudakeFlowFull() {
 
   /* 화면 위 번호 점 하나를 고르면, 그 글과 점을 선으로 잇고 나머지 글은 물러납니다. */
   const [focus, setFocus] = useState<string | null>(null);
+  /* 누르면 붙잡힙니다 — 붙잡힌 자리는 손이 오가도 바뀌지 않고, 한 번 더 누르면 놓입니다.
+     손을 얹기만 해도 그 자리가 켜집니다. 점은 화면 안의 것이라 판이 누르는 흉내로 켜고 끕니다. */
+  const [held, setHeld] = useState(false);
+  const heldNow = useRef(false);
+  const focusNow = useRef<string | null>(null);
+  useEffect(() => {
+    heldNow.current = held;
+  }, [held]);
+  useEffect(() => {
+    focusNow.current = focus;
+  }, [focus]);
   const cards = useRef<Record<string, HTMLElement | null>>({});
   const dots = useRef<Record<string, HTMLElement | null>>({});
   const keepDot = useCallback((key: string, el: HTMLElement | null) => {
-    if (el) dots.current[key] = el;
+    if (!el || dots.current[key] === el) return;
+    dots.current[key] = el;
+    /* 점 위에 손이 얹히면 켜지고 떠나면 꺼집니다 — 붙잡힌 동안은 그대로.
+       점을 직접 누르면 붙잡거나 놓습니다. 얹혀서 이미 켜진 점을 누르면
+       화면이 도로 끄려 하므로 그 누름은 막고 붙잡기만 합니다. */
+    el.addEventListener("pointerenter", (event) => {
+      if (event.pointerType !== "mouse" || heldNow.current) return;
+      if (focusNow.current !== key) el.click();
+    });
+    el.addEventListener("pointerleave", () => {
+      if (heldNow.current) return;
+      if (focusNow.current === key) el.click();
+    });
+    el.addEventListener(
+      "click",
+      (event) => {
+        if (!event.isTrusted) return;
+        if (heldNow.current && focusNow.current === key) {
+          setHeld(false);
+          return;
+        }
+        setHeld(true);
+        if (focusNow.current === key) {
+          event.stopPropagation();
+          event.preventDefault();
+        }
+      },
+      true,
+    );
   }, []);
   const [links, setLinks] = useState<
     Record<string, { d: string; len: number }>
@@ -227,7 +266,24 @@ export function SceneNudakeFlowFull() {
           }}
           className={`issue rise ${one.place}`}
           data-dim={focus && focus !== one.index ? true : undefined}
-          onClick={() => dots.current[one.index]?.click()}
+          onClick={() => {
+            const dot = dots.current[one.index];
+            if (held && focus === one.index) {
+              setHeld(false);
+              dot?.click();
+            } else {
+              setHeld(true);
+              if (focus !== one.index) dot?.click();
+            }
+          }}
+          onPointerEnter={(event) => {
+            if (event.pointerType !== "mouse" || held) return;
+            if (focus !== one.index) dots.current[one.index]?.click();
+          }}
+          onPointerLeave={() => {
+            if (held) return;
+            if (focus === one.index) dots.current[one.index]?.click();
+          }}
           style={{ "--delay": `${0.3 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">{one.index}</span>

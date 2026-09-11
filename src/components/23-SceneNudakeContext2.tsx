@@ -17,7 +17,12 @@
  */
 
 import Image from "next/image";
-import { useEffect, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useState,
+  type CSSProperties,
+  type PointerEvent,
+} from "react";
 
 import { useInView } from "@/components/useInView";
 
@@ -60,19 +65,30 @@ export function SceneNudakeContext2() {
   /* 저절로 넘어가는 차례와, 손으로 붙잡아 둔 것. 붙잡은 쪽이 우선입니다. */
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState<number | null>(null);
-  const picked = held ?? at;
+  /** 손이 얹혀 있는 것. 붙잡은 것이 없을 때만 셈합니다. */
+  const [over, setOver] = useState<number | null>(null);
+  const picked = held ?? over ?? at;
 
   useEffect(() => {
-    if (!inView || held !== null) return;
+    if (!inView || held !== null || over !== null) return;
     const id = window.setInterval(
       () => setAt((n) => (n + 1) % STORES.length),
       SWAP,
     );
     return () => clearInterval(id);
-  }, [inView, held]);
+  }, [inView, held, over]);
 
-  /** 누르면 그 매장에서 멈추고, 한 번 더 누르면 다시 번갈아 갑니다. */
+  /** 손을 얹으면 그 매장이 서고, 누르면 붙잡아 둡니다 — 붙잡힌 뒤에는 손이
+      오가도 바뀌지 않고, 한 번 더 누르면 놓아 다시 번갈아 갑니다. */
   const look = (i: number) => setHeld((now) => (now === i ? null : i));
+  const hover = (i: number | null) => setOver(i);
+  const handle = (i: number) => ({
+    onClick: () => look(i),
+    onPointerEnter: (event: PointerEvent<HTMLElement>) => {
+      if (event.pointerType === "mouse") hover(i);
+    },
+    onPointerLeave: () => hover(null),
+  });
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
@@ -122,7 +138,7 @@ export function SceneNudakeContext2() {
             className="nud-pin"
             data-on={picked === i || undefined}
             aria-pressed={picked === i}
-            onClick={() => look(i)}
+            {...handle(i)}
             style={{ left: store.left, top: store.top }}
           >
             <span className="nud-pin-dot" aria-hidden>
@@ -149,7 +165,7 @@ export function SceneNudakeContext2() {
           data-on={picked === i || undefined}
           aria-label={store.name}
           aria-pressed={picked === i}
-          onClick={() => look(i)}
+          {...handle(i)}
           style={{ "--delay": `${0.2 + i * 0.08}s` } as CSSProperties}
         >
           <Image

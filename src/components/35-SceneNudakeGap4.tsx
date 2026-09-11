@@ -139,6 +139,8 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
 
   /** 펼쳐 둔 카드. 한 번에 하나만 열립니다. 열리면 그 카드의 장면이 돕니다. */
   const [open, setOpen] = useState<number | null>(null);
+  /* 누르면 붙잡힙니다 — 붙잡힌 카드는 손이 오가도 바뀌지 않고, 한 번 더 누르면 놓입니다. */
+  const [held, setHeld] = useState(false);
   /** 재생 단추로 셋을 차례로 훑는 중인지 */
   const [auto, setAuto] = useState(false);
   /** 카드를 열 때마다 하나씩 올립니다 — 막대가 처음부터 다시 차오르게. */
@@ -266,6 +268,7 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
       setAuto(false);
       setOpen(null);
       setSolo(null);
+      setHeld(false);
     }, 0);
     return () => clearTimeout(back);
   }, [inView]);
@@ -275,7 +278,23 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
     window.clearTimeout(chain.current);
     setAuto(false);
     setSolo(null);
-    show(open === i ? null : i);
+    if (held && open === i) {
+      setHeld(false);
+      show(null);
+    } else {
+      setHeld(true);
+      show(i);
+    }
+  };
+
+  /* 손을 얹기만 해도 그 카드가 돕니다 — 붙잡은 것이 없고 훑는 중이 아닐 때. */
+  const hoverIn = (i: number) => {
+    if (held || auto || solo !== null) return;
+    show(i);
+  };
+  const hoverOut = () => {
+    if (held || auto) return;
+    show(null);
   };
 
   return (
@@ -416,6 +435,10 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
             aria-expanded={open === i}
             aria-label={`${note.eyebrow} — 앞 장의 글과 견주어 보기`}
             onClick={() => toggle(i)}
+            onPointerEnter={(event) => {
+              if (event.pointerType === "mouse") hoverIn(i);
+            }}
+            onPointerLeave={hoverOut}
             style={{ "--delay": `${0.12 + i * 0.1}s` } as CSSProperties}
           >
             {/* 도는 카드의 위 보더에 막대가 그 길이만큼 차오릅니다. */}
@@ -438,8 +461,6 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
               <div className="nud-was-in">
                 {/* 갈래 표 — 덱 전체가 쓰는 머리말(.nud-eyebrow)과 같은 글씨입니다. */}
                 <p className="nud-eyebrow nud-side">AS-IS</p>
-                <p className="nud-eyebrow">{BEFORE[i].eyebrow}</p>
-                <h4 className="type-title">{BEFORE[i].title}</h4>
                 <p className="type-body">{BEFORE[i].body}</p>
                 <Chain steps={BEFORE[i].chain} />
               </div>

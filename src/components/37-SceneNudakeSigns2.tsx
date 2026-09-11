@@ -18,7 +18,12 @@
  * 그림 자리는 아직 비어 있어, 채울 것이 정해지면 넣습니다.
  */
 
-import { useEffect, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useState,
+  type CSSProperties,
+  type PointerEvent,
+} from "react";
 
 import { NudakeMockList, NudakeMockMenu } from "@/components/NudakeScreens";
 import { useInView } from "@/components/useInView";
@@ -78,7 +83,10 @@ export function SceneNudakeSigns2() {
   const [at, setAt] = useState(0);
   /** 손으로 하나만 골라 둔 것. 재생과 따로 놉니다. */
   const [solo, setSolo] = useState<number | null>(null);
-  const live = playing ? at : (solo ?? -1);
+  /** 손이 얹힌 카드. 붙잡은 것(solo)이 없을 때만 셈합니다. */
+  const [over, setOver] = useState<number | null>(null);
+  const seen = solo ?? over;
+  const live = playing ? at : (seen ?? -1);
 
   const play = () => {
     setPlaying(true);
@@ -92,11 +100,19 @@ export function SceneNudakeSigns2() {
     setAt(0);
   };
 
-  /* 카드를 누르면 처음부터 다시 돌지 않고 그 걸음만 섭니다. */
+  /* 카드를 누르면 처음부터 다시 돌지 않고 그 걸음만 섭니다.
+     손을 얹기만 해도 그 걸음이 서고, 누르면 붙잡혀 손이 오가도 바뀌지 않습니다. */
   const pick = (i: number) => {
     setPlaying(false);
     setSolo((now) => (now === i ? null : i));
   };
+  const handle = (i: number) => ({
+    onClick: () => pick(i),
+    onPointerEnter: (event: PointerEvent<HTMLElement>) => {
+      if (event.pointerType === "mouse" && !playing) setOver(i);
+    },
+    onPointerLeave: () => setOver(null),
+  });
 
   /* 막대가 다 차면 다음 걸음으로. 마지막까지 가면 멈추고 처음으로 돌아갑니다. */
   useEffect(() => {
@@ -190,7 +206,7 @@ export function SceneNudakeSigns2() {
           className={`work nud-cap-card rise self-end row-start-3 row-span-4 ${sign.place}`}
           data-on={i === live || undefined}
           aria-label={`${sign.title} 만 보기`}
-          onClick={() => pick(i)}
+          {...handle(i)}
           style={
             {
               "--delay": `${0.2 + i * 0.08}s`,
@@ -233,7 +249,7 @@ export function SceneNudakeSigns2() {
                       : i === at
                         ? "now"
                         : undefined
-                    : solo === i
+                    : seen === i
                       ? "now"
                       : undefined
                 }

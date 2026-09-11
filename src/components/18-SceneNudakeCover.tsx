@@ -37,7 +37,7 @@ const FULL = { left: 0, top: 0, width: 682, height: 740 };
 const CARD = { left: 272, top: 212, width: 268, height: 381 };
 
 /* 카드에 손으로 쓰이는 말. 한 줄로 한 글자씩 그어집니다. */
-const HAND = ["Thank you !"];
+const HAND = ["Happy", "Birthday"];
 
 /* 잔에 담기는 티백 한 장(끈과 라벨이 함께 그려져 있습니다). */
 const TEA = { left: 112, top: 356, width: 240, height: 253 };
@@ -59,120 +59,123 @@ export function SceneNudakeCover() {
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <div className="nud-scene rise col-start-5 col-span-4 row-start-1 row-span-6">
-        <div className="absolute" style={put(FULL)}>
-          <Image
-            src="/images/nudake-bg.png"
-            alt=""
-            fill
-            sizes="50vw"
-            priority
-            className="object-cover"
-          />
-        </div>
+        {/* 안의 것(바탕 · 엽서 · 잔 · 김 · 티백)을 한 덩이로 조금 키웁니다. */}
+        <div className="nud-scene-in">
+          <div className="absolute" style={put(FULL)}>
+            <Image
+              src="/images/nudake-bg.png"
+              alt=""
+              fill
+              sizes="50vw"
+              priority
+              className="object-cover"
+            />
+          </div>
 
-        <div className="nud-card absolute" style={put(CARD)}>
-          {/* 처음에는 제품 카드가 서 있다가, 서서히 감사 카드로 바뀝니다. */}
-          <span className="nud-card-front" aria-hidden>
-            <span className="nud-front-logo">
+          <div className="nud-card absolute" style={put(CARD)}>
+            {/* 처음에는 제품 카드가 서 있다가, 서서히 감사 카드로 바뀝니다. */}
+            <span className="nud-card-front" aria-hidden>
+              <span className="nud-front-logo">
+                <Image
+                  src="/images/nudake-card-logo.png"
+                  alt=""
+                  fill
+                  sizes="10vw"
+                  className="object-contain"
+                />
+              </span>
+
+              <span className="nud-front-art">
+                <Image
+                  src="/images/nudake-bluemonk.png"
+                  alt=""
+                  fill
+                  sizes="20vw"
+                  className="object-cover"
+                />
+              </span>
+
+              <span className="nud-front-foot">
+                <em>Blue Monk</em>
+                <em>Tea</em>
+              </span>
+
+              <span className="nud-front-mark">nudake.com</span>
+            </span>
+
+            <span className="nud-card-logo">
               <Image
                 src="/images/nudake-card-logo.png"
-                alt=""
+                alt="Nudake"
                 fill
                 sizes="10vw"
                 className="object-contain"
               />
             </span>
 
-            <span className="nud-front-art">
-              <Image
-                src="/images/nudake-bluemonk.png"
-                alt=""
-                fill
-                sizes="20vw"
-                className="object-cover"
-              />
-            </span>
+            <p className="nud-card-hand" aria-label={HAND.join(" ")}>
+              {HAND.map((line, row) => (
+                <span className="nud-card-line" key={line} aria-hidden>
+                  {[...line].map((letter, i) => (
+                    <span
+                      key={`${letter}-${i}`}
+                      style={
+                        {
+                          /* 줄이 바뀌어도 쓰는 차례가 이어집니다. */
+                          "--i": HAND.slice(0, row).join("").length + i,
+                        } as CSSProperties
+                      }
+                    >
+                      {letter}
+                    </span>
+                  ))}
+                </span>
+              ))}
+            </p>
 
-            <span className="nud-front-foot">
-              <em>Blue Monk</em>
-              <em>Tea</em>
-            </span>
+            <span className="nud-card-date">28 June 2026</span>
+          </div>
 
-            <span className="nud-front-mark">nudake.com</span>
-          </span>
-
-          <span className="nud-card-logo">
+          {/* 컵은 카드보다 앞에 섭니다. */}
+          <div className="absolute" style={put(FULL)}>
             <Image
-              src="/images/nudake-card-logo.png"
-              alt="Nudake"
+              src="/images/nudake-cup.png"
+              alt=""
               fill
-              sizes="10vw"
+              sizes="50vw"
+              className="object-cover"
+            />
+          </div>
+
+          {/* 티백이 잔에 내려앉고, 그 자리에서 차가 우러나 번집니다. */}
+          <div className="nud-brew absolute" style={put(BREW)} aria-hidden>
+            {BLOBS.map((blob, i) => (
+              <span
+                key={i}
+                className="nud-brew-blob"
+                style={
+                  {
+                    left: `${blob.x}%`,
+                    top: `${blob.y}%`,
+                    width: `${blob.w}%`,
+                    height: `${blob.h}%`,
+                    "--delay": `${blob.delay}s`,
+                    "--spin": `${blob.spin}deg`,
+                  } as CSSProperties
+                }
+              />
+            ))}
+          </div>
+
+          <div className="nud-tea absolute" style={put(TEA)} aria-hidden>
+            <Image
+              src="/images/nudake-teabag.png"
+              alt=""
+              fill
+              sizes="30vw"
               className="object-contain"
             />
-          </span>
-
-          <p className="nud-card-hand" aria-label={HAND.join(" ")}>
-            {HAND.map((line, row) => (
-              <span className="nud-card-line" key={line} aria-hidden>
-                {[...line].map((letter, i) => (
-                  <span
-                    key={`${letter}-${i}`}
-                    style={
-                      {
-                        /* 줄이 바뀌어도 쓰는 차례가 이어집니다. */
-                        "--i": row * HAND[0].length + i,
-                      } as CSSProperties
-                    }
-                  >
-                    {letter}
-                  </span>
-                ))}
-              </span>
-            ))}
-          </p>
-
-          <span className="nud-card-date">28 June 2026</span>
-        </div>
-
-        {/* 컵은 카드보다 앞에 섭니다. */}
-        <div className="absolute" style={put(FULL)}>
-          <Image
-            src="/images/nudake-cup.png"
-            alt=""
-            fill
-            sizes="50vw"
-            className="object-cover"
-          />
-        </div>
-
-        {/* 티백이 잔에 내려앉고, 그 자리에서 차가 우러나 번집니다. */}
-        <div className="nud-brew absolute" style={put(BREW)} aria-hidden>
-          {BLOBS.map((blob, i) => (
-            <span
-              key={i}
-              className="nud-brew-blob"
-              style={
-                {
-                  left: `${blob.x}%`,
-                  top: `${blob.y}%`,
-                  width: `${blob.w}%`,
-                  height: `${blob.h}%`,
-                  "--delay": `${blob.delay}s`,
-                  "--spin": `${blob.spin}deg`,
-                } as CSSProperties
-              }
-            />
-          ))}
-        </div>
-
-        <div className="nud-tea absolute" style={put(TEA)} aria-hidden>
-          <Image
-            src="/images/nudake-teabag.png"
-            alt=""
-            fill
-            sizes="30vw"
-            className="object-contain"
-          />
+          </div>
         </div>
       </div>
 

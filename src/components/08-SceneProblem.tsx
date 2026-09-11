@@ -78,16 +78,45 @@ export function SceneProblem() {
     setStage({ picked: null, phase: 0 });
   }, []);
 
-  /* 사람이 직접 고르면 자동 재생은 자리를 내줍니다. */
+  /* 사람이 직접 고르면 자동 재생은 자리를 내줍니다.
+     누르면 붙잡힙니다 — 붙잡힌 자리는 손이 오가도 바뀌지 않고, 한 번 더 누르면 놓입니다.
+     손을 얹기만 해도 그 자리가 켜지고, 떼면 꺼집니다. */
+  const [held, setHeld] = useState(false);
+  const heldNow = useRef(false);
+  const pickedNow = useRef<string | null>(null);
+  useEffect(() => {
+    heldNow.current = held;
+  }, [held]);
+  useEffect(() => {
+    pickedNow.current = picked;
+  }, [picked]);
+
   const pick = useCallback((key: string) => {
     setPlaying(false);
+    if (heldNow.current && pickedNow.current === key) {
+      setHeld(false);
+      setStage({ picked: null, phase: 0 });
+      return;
+    }
+    setHeld(true);
     setStage({ picked: key, phase: 0 });
+  }, []);
+
+  const hoverIn = useCallback((key: string) => {
+    if (heldNow.current) return;
+    setPlaying(false);
+    setStage({ picked: key, phase: 0 });
+  }, []);
+  const hoverOut = useCallback(() => {
+    if (heldNow.current) return;
+    setStage({ picked: null, phase: 0 });
   }, []);
 
   useEffect(() => {
     if (!inView) {
       const id = setTimeout(() => {
         setPlaying(false);
+        setHeld(false);
         setStage({ picked: null, phase: 0 });
       }, 0);
       return () => clearTimeout(id);
@@ -119,10 +148,19 @@ export function SceneProblem() {
     Record<string, { d: string; len: number }>
   >({});
 
-  const dotRef = useCallback((key: string, el: HTMLButtonElement | null) => {
-    /* 다시 그릴 때 잠깐 null 이 됩니다. 그때 지우면 선이 끊깁니다. */
-    if (el) dots.current[key] = el;
-  }, []);
+  const dotRef = useCallback(
+    (key: string, el: HTMLButtonElement | null) => {
+      /* 다시 그릴 때 잠깐 null 이 됩니다. 그때 지우면 선이 끊깁니다. */
+      if (!el || dots.current[key] === el) return;
+      dots.current[key] = el;
+      /* 점도 손이 얹히면 켜지고 떠나면 꺼집니다. 누르는 것은 화면이 pick 으로 알립니다. */
+      el.addEventListener("pointerenter", (event) => {
+        if (event.pointerType === "mouse") hoverIn(key);
+      });
+      el.addEventListener("pointerleave", hoverOut);
+    },
+    [hoverIn, hoverOut],
+  );
 
   /* 요소가 떠오르는 동안 재면 선이 어긋납니다. 다 자리 잡은 뒤부터 긋습니다. */
   const [ready, setReady] = useState(false);
@@ -317,6 +355,10 @@ export function SceneProblem() {
           className={`issue rise ${point.place}`}
           data-dim={picked && picked !== point.index ? true : undefined}
           onClick={() => pick(point.index)}
+          onPointerEnter={(event) => {
+            if (event.pointerType === "mouse") hoverIn(point.index);
+          }}
+          onPointerLeave={hoverOut}
           style={{ "--delay": `${0.18 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">

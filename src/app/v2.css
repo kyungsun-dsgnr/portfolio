@@ -499,3 +499,8 @@
   box-sizing: border-box;
   border: 1px solid #ececec;
 }
+
+/* `Made Here, Given Anywhere.` — 마디 글의 줄바꿈은 글에 적힌 대로 섭니다. */
+.v2 #nudake-flow-full .issue .type-body {
+  white-space: pre-line;
+}

@@ -284,6 +284,7 @@ export function NudakeMockCompose({
   height = 726,
   step: opening = "list",
   pick = PICK,
+  written: writtenAtFirst = false,
   swapTo = null,
   onDone,
 }: {
@@ -294,6 +295,8 @@ export function NudakeMockCompose({
   step?: Step;
   /** 스스로 훑을 때 고르는 칸. 기본은 둘째 칸(티 아카이브)입니다. */
   pick?: number;
+  /** 엽서에 글이 이미 적힌 채로 세웁니다 — 뒷장이 열려 있습니다. */
+  written?: boolean;
   /** 세워 둔 엽서 화면에서, 아래 제품 줄의 이 칸을 눌러 바꿔 담습니다.
       비우면 처음 고른 칸으로 되돌아갑니다. */
   swapTo?: number | null;
@@ -307,7 +310,10 @@ export function NudakeMockCompose({
   const [note, setNote] = useState(NOTE);
   /** 글을 한 번이라도 넣기 시작했는지 — 그 전까지 엽서는 앞장을 보입니다. */
   const [wrote, setWrote] = useState(
-    opening === "pay" || opening === "sent" || opening === "done",
+    writtenAtFirst ||
+      opening === "pay" ||
+      opening === "sent" ||
+      opening === "done",
   );
   /** 글을 고쳐 쓰는 중인지 */
   const [editing, setEditing] = useState(false);

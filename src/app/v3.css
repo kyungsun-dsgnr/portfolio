@@ -90,14 +90,6 @@
   justify-content: flex-end;
 }
 
-/* 아래 왼쪽 한 마디는 두 줄로 섭니다. */
-.v3 .band-lines {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: calc(2 * var(--u));
-  line-height: 1.5;
-}
-
 /* 이름과 하는 일 사이의 세로 선, 연락처 앞의 가로 선 */
 .v3 .band-rule {
   width: 1px;

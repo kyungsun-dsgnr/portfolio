@@ -96,9 +96,9 @@ export function ScenePrinciples() {
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       <h2 className="type-lead capitalize rise col-span-6 row-start-1 row-span-3">
-        UX begins before the screen —
+        UX begins before the screen
         <br />
-        in the behaviors, senses, and expectations
+        — in the behaviors, senses, and expectations
         <br />
         we already understand.
       </h2>

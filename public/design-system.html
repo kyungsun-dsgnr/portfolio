@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Design System — What We Already Know</title>
+    <meta name="description" content="이 덱이 쓰는 글씨·색·판 한 벌." />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300..700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css"
+    />
+
+    <style>
+      /* 이 문서는 덱과 따로 서지만 값은 같은 것을 씁니다 —
+         globals.css 의 토큰과 v2.css 의 갈아 끼운 값을 그대로 옮겨 적었습니다.
+         덱에서는 이 수들에 --u(1440 도면의 1px)를 곱하고, 여기서는 1px 로 봅니다. */
+      :root {
+        --display: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+        --body:
+          "Pretendard Variable", Pretendard, ui-sans-serif, system-ui,
+          sans-serif;
+        --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+        --bg: #fafafa;
+        --fg: #191919;
+        --fg-soft: rgb(25 25 25 / 0.8);
+        --mute: #8a8a8f;
+        --line: rgb(25 25 25 / 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--body);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      main {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 96px 40px 140px;
+      }
+
+      /* ── 머리 ─────────────────────────── */
+      header {
+        display: flex;
+        max-width: 640px;
+        flex-direction: column;
+        gap: 16px;
+        padding-bottom: 56px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      h1 {
+        margin: 0;
+        font-family: var(--display);
+        font-size: 48px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        line-height: 1.06;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--fg-soft);
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.55;
+      }
+
+      code {
+        font-family: var(--mono);
+        font-size: 0.92em;
+      }
+
+      /* ── 묶음 ─────────────────────────── */
+      section {
+        padding-top: 56px;
+      }
+
+      h2 {
+        margin: 0 0 4px;
+        color: var(--mute);
+        font-family: var(--display);
+        font-size: 12px;
+        font-weight: 400;
+        letter-spacing: 0;
+      }
+
+      .note {
+        max-width: 620px;
+        margin: 0 0 20px;
+        color: var(--mute);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .row {
+        display: grid;
+        align-items: start;
+        gap: 40px;
+        grid-template-columns: 220px 1fr;
+        padding: 28px 0;
+        border-top: 1px solid rgb(25 25 25 / 0.08);
+      }
+
+      .meta {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .name {
+        margin: 0;
+        font-family: var(--mono);
+        font-size: 13px;
+      }
+
+      .spec,
+      .use {
+        margin: 0;
+        color: var(--mute);
+        font-family: var(--display);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .sample > * {
+        margin: 0;
+      }
+
+      /* ── 덱이 쓰는 단 ───────────────────
+         이름과 값은 globals.css · v2.css 의 것과 같습니다. */
+      .type-display {
+        font-family: var(--display);
+        font-size: 64px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        line-height: 1.06;
+        text-transform: uppercase;
+      }
+
+      .type-lead {
+        font-family: var(--display);
+        font-size: 48px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        line-height: 1.06;
+      }
+
+      .type-title {
+        font-family: var(--display);
+        font-size: 18px;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+        line-height: 1.1;
+      }
+
+      .type-body {
+        font-family: var(--body);
+        font-size: 16px;
+        font-weight: 400;
+        letter-spacing: 0.01em;
+        line-height: 1.55;
+        color: var(--fg-soft);
+      }
+
+      /* 세 라벨은 한 단입니다 — 이름만 다르고 값은 같습니다. */
+      .card-index,
+      .eyebrow,
+      .steps-no {
+        font-family: var(--display);
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0;
+        color: var(--mute);
+      }
+
+      .steps-step {
+        font-family: var(--display);
+        font-size: 18px;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+      }
+
+      .steps-kind {
+        font-family: var(--display);
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--mute);
+      }
+
+      /* ── 표 ───────────────────────────── */
+      .marks {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .pill {
+        display: inline-flex;
+        height: 30px;
+        align-items: center;
+        padding: 0 14px;
+        border: 1px solid rgb(25 25 25 / 0.35);
+        border-radius: 999px;
+        background: #fff;
+        font-family: var(--display);
+        font-size: 12.22px;
+        font-weight: 400;
+        white-space: nowrap;
+      }
+
+      .pill[data-tone="start"] {
+        border-color: #191919;
+        background: #191919;
+        color: #fff;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: var(--fg);
+        color: var(--bg);
+        font-family: var(--display);
+        font-size: 11px;
+        font-weight: 500;
+      }
+
+      .counts {
+        display: flex;
+        gap: 26px;
+      }
+
+      .counts span {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .counts b {
+        font-family: var(--display);
+        font-size: 30px;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+
+      .counts em {
+        color: var(--mute);
+        font-family: var(--display);
+        font-size: 11px;
+        font-style: normal;
+      }
+
+      /* ── 색 ───────────────────────────── */
+      .swatches {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        padding-top: 8px;
+      }
+
+      .swatch {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .chip {
+        height: 72px;
+        border: 1px solid var(--line);
+      }
+
+      .swatch p {
+        margin: 0;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--mute);
+      }
+
+      .swatch p b {
+        display: block;
+        color: var(--fg);
+        font-family: var(--display);
+        font-weight: 400;
+      }
+
+      /* ── 판 ───────────────────────────── */
+      .grid-note {
+        display: grid;
+        gap: 12px 40px;
+        grid-template-columns: 220px 1fr;
+        padding-top: 8px;
+      }
+
+      .grid-note dt {
+        font-family: var(--mono);
+        font-size: 13px;
+      }
+
+      .grid-note dd {
+        margin: 0;
+        color: var(--fg-soft);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      @media (max-width: 720px) {
+        main {
+          padding: 56px 20px 96px;
+        }
+
+        .row,
+        .grid-note {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <header>
+        <h1>Design System</h1>
+        <p>
+          이 덱이 쓰는 글씨·색·판 한 벌입니다. 수는 1440 × 800 도면의 px 이고,
+          화면에서는 <code>--u</code> 를 곱해 함께 자랍니다. 영문은 Work Sans,
+          한글 본문은 Pretendard 로 섭니다.
+        </p>
+      </header>
+
+      <section>
+        <h2>글</h2>
+        <p class="note">
+          제목은 가늘고 크게, 자간을 조여 섭니다. 본문만 한글 서체(Pretendard)를
+          쓰고 나머지는 영문 서체를 그대로 씁니다.
+        </p>
+
+        <article class="row">
+          <div class="meta">
+            <p class="name">.type-display</p>
+            <p class="spec">64 · 600 · −0.02em</p>
+            <p class="use">케이스 표지의 제목. 대문자로 섭니다.</p>
+          </div>
+          <div class="sample">
+            <p class="type-display">Gift the Nudake Experience</p>
+          </div>
+        </article>
+
+        <article class="row">
+          <div class="meta">
+            <p class="name">.type-lead</p>
+            <p class="spec">48 · 600 · −0.02em</p>
+            <p class="use">장의 제목. 덱에서 가장 자주 쓰는 큰 글입니다.</p>
+          </div>
+          <div class="sample">
+            <p class="type-lead">Found Here, Experienced Elsewhere</p>
+          </div>
+        </article>
+
+        <article class="row">
+          <div class="meta">
+            <p class="name">.type-title</p>
+            <p class="spec">18 · 500 · −0.01em</p>
+            <p class="use">카드 제목 · 표지의 부제.</p>
+          </div>
+          <div class="sample">
+            <p class="type-title">Designing Digital Experiences</p>
+          </div>
+        </article>
+
+        <article class="row">
+          <div class="meta">
+            <p class="name">.type-body</p>
+            <p class="spec">16 · 400 · 1.55</p>
+            <p class="use">본문. 한글은 Pretendard 로 섭니다.</p>
+          </div>
+          <div class="sample">
+            <p class="type-body">
+              이미 익숙한 감각과 행동의 기억을 디지털 경험의 시작점으로
+              삼습니다.
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <section>
+        <h2>라벨</h2>
+        <p class="note">
+          작은 글은 대문자와 넓은 자간을 걷고 회색으로 눕습니다 — 읽는 글이
+          아니라 자리를 알려 주는 표시이기 때문입니다.
+        </p>
+
+        <article class="row">
+          <div class="meta">
+            <p class="name">.card-index</p>
+            <p class="spec">12 · 500 · 회색</p>
+            <p class="use">카드 위의 번호.</p>
+          </div>
+          <div class="sample"><p class="card-index">01</p></div>
+        </article>
+
+        <article class="row">
+          <div class="meta">
+            <p class="name">.nud-eyebrow</p>
+            <p class="spec">12 · 500 · 회색</p>
+            <p class="use">덩이 위의 갈래 이름.</p>
+          </div>
+          <div class="sample"><p class="eyebrow">Experience Gap</p></div>
+        </article>
+
+        <article class="row">
+          <div class="meta">
+            <p class="name">.steps-no</p>
+            <p class="spec">12 · 500 · 회색</p>
+            <p class="use">걸음의 번호.</p>
+          </div>
+          <div class="sample"><p class="steps-no">STEP 01</p></div>
+        </article>
+
+        <article class="row">
+          <div class="meta">
+            <p class="name">.steps-step</p>
+            <p class="spec">18 · 500 · −0.01em</p>
+            <p class="use">걸음의 이름.</p>
+          </div>
+          <div class="sample"><p class="steps-step">Choose Tea</p></div>
+        </article>
+
+        <article class="row">
+          <div class="meta">
+            <p class="name">.steps-kind</p>
+            <p class="spec">13 · 400 · 회색</p>
+            <p class="use">걸음 아래 한 줄.</p>
+          </div>
+          <div class="sample">
+            <p class="steps-kind">티 기프트 상품을 선택하는 화면</p>
+          </div>
+        </article>
+      </section>
+
+      <section>
+        <h2>표</h2>
+        <p class="note">
+          흐름의 한 칸과 이름표. 채운 것은 그 흐름의 끝이거나 지금 보고 있는
+          자리입니다.
+        </p>
+
+        <article class="row">
+          <div class="meta">
+            <p class="name">.flow-pill</p>
+            <p class="spec">12.22 · 400 · 30 높이</p>
+            <p class="use">흐름의 한 칸.</p>
+          </div>
+          <div class="sample marks">
+            <span class="pill">TEA GIFT</span>
+            <span class="pill" data-tone="start">KAKAO GIFT ↗</span>
+          </div>
+        </article>
+
+        <article class="row">
+          <div class="meta">
+            <p class="name">.globe-badge</p>
+            <p class="spec">11 · 500 · 검은 알약</p>
+            <p class="use">지구본 위의 이름표.</p>
+          </div>
+          <div class="sample marks">
+            <span class="badge">South Korea <span>|</span> Seoul</span>
+          </div>
+        </article>
+
+        <article class="row">
+          <div class="meta">
+            <p class="name">.nud-counts</p>
+            <p class="spec">30 / 11</p>
+            <p class="use">세어 둔 수와 그 아래 라벨.</p>
+          </div>
+          <div class="sample">
+            <p class="counts">
+              <span><b>6</b><em>clicks</em></span>
+              <span><b>4</b><em>steps</em></span>
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <section>
+        <h2>색</h2>
+        <p class="note">
+          바탕과 글, 그리고 라벨의 회색. 목업 안의 색은 각 브랜드의 실제
+          화면에서 그대로 가져오므로 이 표에 넣지 않습니다.
+        </p>
+
+        <div class="swatches">
+          <div class="swatch">
+            <span class="chip" style="background: #fafafa"></span>
+            <p><b>--bg</b>#fafafa</p>
+          </div>
+          <div class="swatch">
+            <span class="chip" style="background: #191919"></span>
+            <p><b>--fg</b>#191919</p>
+          </div>
+          <div class="swatch">
+            <span class="chip" style="background: rgb(25 25 25 / 0.8)"></span>
+            <p><b>--fg-soft</b>#191919 · 80%</p>
+          </div>
+          <div class="swatch">
+            <span class="chip" style="background: #8a8a8f"></span>
+            <p><b>--v2-mute</b>#8a8a8f</p>
+          </div>
+          <div class="swatch">
+            <span class="chip" style="background: #d9d9d9"></span>
+            <p><b>--placeholder</b>#d9d9d9</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>판</h2>
+        <p class="note">
+          장 하나는 1440 × 800 도면 위에 섭니다. 화면 크기에 맞춰 통째로 줄어들
+          뿐, 짜임은 바뀌지 않습니다.
+        </p>
+
+        <dl class="grid-note">
+          <dt>--u</dt>
+          <dd>
+            도면의 1px 이 화면에서 차지하는 크기.
+            <code>min(가로/1440, 세로/800)</code> 이라 판이 잘리지 않습니다.
+          </dd>
+
+          <dt>--page-margin</dt>
+          <dd>30 — 판 네 변의 여백.</dd>
+
+          <dt>--grid-cols / --grid-rows</dt>
+          <dd>8 × 6 — 모든 장이 이 격자 위에 놓입니다.</dd>
+
+          <dt>--grid-gap</dt>
+          <dd>16 — 단과 행 사이.</dd>
+
+          <dt>--col-size / --row-size</dt>
+          <dd>158.5 × 110 — 칸 하나. 격자에 얹지 않은 것을 맞출 때 씁니다.</dd>
+        </dl>
+      </section>
+    </main>
+  </body>
+</html>

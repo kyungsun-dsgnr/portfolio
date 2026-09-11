@@ -128,8 +128,10 @@ function trace(from: Node, to: Node) {
 function Brief({ title, children }: { title: string; children: string }) {
   return (
     <div>
-      <h3 className="flow-brief-title">{title}</h3>
-      <p>{children}</p>
+      {/* 다른 장의 카드와 같은 단을 그대로 씁니다 — 판마다 글씨가 갈릴 때
+          이 자리만 남지 않도록. */}
+      <h3 className="type-title">{title}</h3>
+      <p className="type-body">{children}</p>
     </div>
   );
 }

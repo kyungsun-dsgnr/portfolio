@@ -207,8 +207,9 @@ export function SceneAfter() {
         />
       </div>
 
+      {/* 선은 고른 항목 하나에만 그어집니다 — 처음에는 아무 선도 없습니다. */}
       {ready &&
-        POINTS.map((point) => {
+        POINTS.filter((point) => point.index === picked).map((point) => {
           const link = links[point.index];
           if (!link) return null;
           return (
@@ -262,6 +263,9 @@ export function SceneAfter() {
           className={`issue rise ${point.place}`}
           /* 하나를 고르면 나머지는 물러납니다. 8장과 같은 결입니다. */
           data-dim={picked && picked !== point.index ? true : undefined}
+          /* 카드를 눌러도 그 자리가 켜집니다 — 목업이 그 대목으로 굴러가고,
+             점과 잇는 선이 그어지며, 나머지는 물러납니다. */
+          onClick={() => pick(point.index)}
           style={{ "--delay": `${0.18 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">{point.index}</span>

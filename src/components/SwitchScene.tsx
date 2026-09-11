@@ -12,7 +12,11 @@ const GLOW_SIZE = "137.8%";
 const SIZES = "62vw";
 
 /** 스위치를 올리고 조명이 제 밝기에 이르기까지 */
-const RISE_MS = 1500;
+const RISE_MS = 2600;
+
+/* 곧게 차오르면 단번에 켜진 것처럼 읽힙니다. 처음과 끝을 눅여
+   실제 백열등이 달아오르듯 스르르 밝아지게 합니다. */
+const ease = (t: number) => t * t * (3 - 2 * t);
 /** 다 밝아지고 다음 장으로 넘어가기까지 두는 사이 */
 const ADVANCE_DELAY = 400;
 
@@ -41,7 +45,8 @@ export function SwitchScene() {
     const tick = window.setInterval(() => {
       const gone =
         span > 0 ? Math.min(1, (performance.now() - began) / span) : 1;
-      const next = from + (to - from) * gone;
+      /* 켤 때만 눅입니다 — 끌 때는 곧게 떨어지는 편이 자연스럽습니다. */
+      const next = from + (to - from) * (on ? ease(gone) : gone);
       levelRef.current = next;
       setLevel(next);
       if (gone >= 1) window.clearInterval(tick);

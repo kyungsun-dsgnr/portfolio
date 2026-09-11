@@ -276,8 +276,9 @@ export function SceneProblem() {
         )}
       </div>
 
+      {/* 선은 고른 항목 하나에만 그어집니다 — 처음에는 아무 선도 없습니다. */}
       {ready &&
-        (picked ? [picked] : POINTS.map((point) => point.index)).map((key) => {
+        (picked ? [picked] : []).map((key) => {
           const link = links[key];
           if (!link) return null;
           return (

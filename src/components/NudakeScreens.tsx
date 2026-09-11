@@ -50,6 +50,30 @@ function IconSearch() {
   );
 }
 
+/* 카카오 선물하기 머리의 장바구니와 닫기. 그 화면은 선이 조금 굵습니다. */
+function IconBag() {
+  return (
+    <svg viewBox="0 0 20 20" aria-hidden {...STROKE} strokeWidth={1.6}>
+      <path d="M3.4 6.6 H16.6 V17.2 H3.4 Z" strokeLinejoin="round" />
+      <path d="M7 8.4 V5.6 a3 3 0 0 1 6 0 V8.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function IconClose() {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      aria-hidden
+      {...STROKE}
+      strokeWidth={1.6}
+      strokeLinecap="round"
+    >
+      <path d="M4.6 4.6 L15.4 15.4 M15.4 4.6 L4.6 15.4" />
+    </svg>
+  );
+}
+
 function IconMenu() {
   return (
     <svg viewBox="0 0 16 16" aria-hidden {...STROKE} strokeLinecap="round">
@@ -359,13 +383,272 @@ export function NudakeMockMenu({
  * 위에서부터 갈래 셋 · 종류 동그라미 셋 · 거른 수와 필터 · 티 열두 종입니다.
  * 가운데 동그라미가 '티 기프트' — 여기서 처음 선물이라는 분류가 보입니다.
  */
+/**
+ * 04 — 제품 상세 화면
+ *
+ * 2026-09-08 nudake.com/kr/menu 의 `누데이크 티 컬렉션` 상세를 그대로 옮긴 판입니다 —
+ * 이름·값 줄, 그림 셋이 옆으로 넘어가는 자리(점 셋), 설명, 카카오톡 선물하기,
+ * 그리고 바닥의 이전·다음 제품. 목록에서 하나를 고르면 이 화면으로 넘어갑니다.
+ */
+export function NudakeMockDetail({
+  tap = false,
+  down = false,
+}: {
+  /** 선물하기 단추에 손끝이 닿는 순간 */
+  tap?: boolean;
+  /** 단추가 보이도록 화면을 조금 내린 상태 */
+  down?: boolean;
+} = {}) {
+  return (
+    /* 키는 안에 든 것이 정합니다 — 아래 단추까지 한 화면에 들어와야 합니다. */
+    <div
+      className="nud-mock nud-detail"
+      data-down={down || undefined}
+      style={box({ width: 333 })}
+    >
+      <div className="nud-mock-page" style={{ paddingTop: mk(49) }}>
+        {/* 이름과 값, 그 아래 갈래 한 줄 */}
+        <div
+          className="nud-detail-head"
+          style={{ padding: `${mk(10)} ${mk(24)} ${mk(12)}` }}
+        >
+          <div className="nud-detail-name">
+            <b style={type(16, 16)}>누데이크 티 컬렉션</b>
+            <em style={type(16, 16)}>53,000원</em>
+          </div>
+          <p style={{ ...type(13, 13), paddingTop: mk(5) }}>
+            누데이크 티 하우스
+          </p>
+        </div>
+
+        {/* 그림 셋이 옆으로 넘어가는 자리. 지금은 첫 장이 서 있습니다. */}
+        <div className="nud-detail-shots" style={box({ height: 363 })}>
+          <div className="nud-detail-track">
+            {[0, 1, 2].map((n) => (
+              <span key={n} style={box({ width: 333, height: 363 })}>
+                <Image
+                  src="/images/nudake-gift/collection.webp"
+                  alt=""
+                  fill
+                  sizes="30vw"
+                  className="object-contain"
+                />
+              </span>
+            ))}
+          </div>
+
+          <span className="nud-detail-dots" style={{ gap: mk(10) }}>
+            {[0, 1, 2].map((n) => (
+              <i
+                key={n}
+                data-on={n === 0 || undefined}
+                style={box({ width: 6, height: 6 })}
+              />
+            ))}
+          </span>
+        </div>
+
+        {/* 설명과 선물 단추 */}
+        <div
+          className="nud-detail-body"
+          style={{ padding: `${mk(16)} ${mk(20)} ${mk(12)}` }}
+        >
+          <p style={{ ...type(13, 19.5), width: mk(293) }}>
+            티백(18개입)
+            <br />
+            블루 몽크(2개입), 레더 부츠(2개입), 블랙 캐러멜(2개입),
+            <br />
+            화이트 선셋(2개입), 피치 로지(2개입), 맨티스(2개입),
+            <br />
+            더 마피아, 샤토 누아르, 넘버 88, 루이, 캐모 필로우, 기문
+            <br />
+            <br />
+            Caffeine-Free: 맨티스 · 루이 · 캐모 필로우
+          </p>
+
+          <span
+            className="nud-detail-cta"
+            /* 스스로 밟아 보여 줄 때, 이 단추에 손끝이 닿습니다. */
+            data-tap={tap || undefined}
+            style={
+              {
+                ...box({ width: 293, height: 36 }),
+                "--tap-wait": "0s",
+              } as CSSProperties
+            }
+          >
+            <b style={type(13, 13)}>카카오톡 선물하기</b>
+          </span>
+        </div>
+
+        {/* 바닥 — 이전·다음 제품. 첫 제품이라 이전은 꺼져 있습니다. */}
+        <div className="nud-detail-feet" style={box({ height: 48 })}>
+          <span data-off style={{ gap: mk(10) }}>
+            <i className="nud-detail-arrow" data-back aria-hidden />
+            <b style={type(13, 19.5)}>이전 제품</b>
+          </span>
+          <span style={{ gap: mk(10) }}>
+            <b style={type(13, 19.5)}>다음 제품</b>
+            <i className="nud-detail-arrow" aria-hidden />
+          </span>
+        </div>
+      </div>
+
+      <TopBar />
+    </div>
+  );
+}
+
+/**
+ * 05 — 카카오 선물하기 화면
+ *
+ * 상세에서 `카카오톡 선물하기` 를 누르면 브랜드 밖으로 나가 여기에 섭니다.
+ * 판은 보내 주신 마크업 그대로입니다 — 44 짜리 머리, 정사각 그림과 `1 / 4`,
+ * 판매자 줄, 긴 이름, 값, 배송정보, 그리고 바닥의 `나에게 선물` · `선물하기`.
+ *
+ * 이 장이 말하는 단절이 눈에 보이는 자리라, 남의 화면인 티가 나야 합니다 —
+ * 글꼴도 누데이크의 것이 아니라 시스템 고딕(Inter)입니다.
+ */
+export function NudakeMockKakao() {
+  return (
+    <div className="nud-mock nud-kakao" style={box({ width: 333 })}>
+      <div className="nud-mock-page" style={{ paddingTop: mk(44) }}>
+        {/* 그림과 그 위에 얹히는 두 표 */}
+        <div className="nud-kakao-shot" style={box({ height: 333 })}>
+          <Image
+            src="/images/nudake-gift/collection.webp"
+            alt=""
+            fill
+            sizes="30vw"
+            className="object-cover"
+          />
+
+          <span
+            className="nud-kakao-only"
+            style={{
+              ...box({ left: 279.6, top: 10, height: 30 }),
+              ...type(14, 30),
+            }}
+          >
+            단독
+          </span>
+
+          <span
+            className="nud-kakao-count"
+            style={{
+              ...box({ left: 289.2, top: 299 }),
+              padding: `${mk(5)} ${mk(8)}`,
+              ...type(12, 14),
+            }}
+          >
+            <b>1</b> / 4
+          </span>
+        </div>
+
+        {/* 판매자 · 이름 · 값 */}
+        <div
+          className="nud-kakao-info"
+          style={{ padding: `${mk(16)} ${mk(16)} ${mk(20)}` }}
+        >
+          <span className="nud-kakao-seller" style={{ gap: mk(8) }}>
+            <i style={box({ width: 30, height: 30 })}>
+              <Image
+                src="/images/nudake-mock-logo.png"
+                alt=""
+                fill
+                sizes="8vw"
+                className="object-contain"
+              />
+            </i>
+            <b style={type(15, 18)}>누데이크</b>
+          </span>
+
+          <p
+            className="nud-kakao-name"
+            style={{ ...type(18, 24), paddingTop: mk(6) }}
+          >
+            BEST 티백 틴케이스 세트 / 프리미엄 TEA 기프트 ‘티 컬렉션’
+          </p>
+
+          <p
+            className="nud-kakao-name"
+            style={{ ...type(18, 24), paddingTop: mk(6) }}
+          >
+            원산지 : 상세설명에 표시
+          </p>
+
+          <p
+            className="nud-kakao-reviews"
+            style={{ ...type(13, 20), paddingTop: mk(6) }}
+          >
+            13건의 선물후기
+          </p>
+
+          <p className="nud-kakao-price" style={{ paddingTop: mk(12) }}>
+            <b style={type(20, 22)}>53,000</b>
+            <em style={type(19, 22)}>원</em>
+          </p>
+        </div>
+
+        {/* 띠 하나. 내보내기에서도 그림 자리로만 있던 곳입니다. */}
+        <span
+          className="nud-kakao-band"
+          style={box({ left: 16, width: 301, height: 42 })}
+        />
+
+        {/* 배송정보 */}
+        <div
+          className="nud-kakao-ship"
+          style={{ padding: `${mk(20)} ${mk(16)} ${mk(30)}`, gap: mk(8) }}
+        >
+          <b style={{ ...type(14, 20), width: mk(60) }}>배송정보</b>
+          <span>
+            <b style={type(14, 20)}>배송비 무료</b>
+            <em style={type(14, 20)}>제주, 도서산간지역 배송불가</em>
+          </span>
+        </div>
+
+        {/* 바닥 단추 둘 */}
+        <div
+          className="nud-kakao-feet"
+          style={{ padding: `${mk(12)}`, gap: mk(8) }}
+        >
+          <b style={{ ...box({ height: 48 }), ...type(15, 48) }}>나에게 선물</b>
+          <em style={{ ...box({ height: 48 }), ...type(15, 48) }}>선물하기</em>
+        </div>
+      </div>
+
+      {/* 머리 — 누데이크의 것이 아닙니다. 장바구니 · 선물하기 · 찾기 · 닫기. */}
+      <div className="nud-kakao-bar" style={box({ height: 44 })}>
+        <i style={box({ width: 24, height: 24 })}>
+          <IconBag />
+        </i>
+
+        <b style={type(16, 44)}>선물하기</b>
+
+        <span style={{ gap: mk(10) }}>
+          <i style={box({ width: 22, height: 22 })}>
+            <IconSearch />
+          </i>
+          <i style={box({ width: 22, height: 22 })}>
+            <IconClose />
+          </i>
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export function NudakeMockList({
   tap,
   gift = false,
+  pick = false,
 }: {
   tap?: "teagift";
   /** 선물 갈래를 고른 뒤의 목록. 거른 수와 깔리는 것이 함께 바뀝니다. */
   gift?: boolean;
+  /** 첫 칸(누데이크 티 컬렉션)에 손끝이 닿는 순간 */
+  pick?: boolean;
 } = {}) {
   const list = gift ? GIFTS : TEAS;
   return (
@@ -437,7 +720,14 @@ export function NudakeMockList({
             <span
               key={tea.name}
               data-edge={i % 2 === 0 || undefined}
-              style={box({ height: 207.78 })}
+              /* 스스로 밟아 보여 줄 때, 첫 칸에 손끝이 닿습니다. */
+              data-tap={(pick && i === 0) || undefined}
+              style={
+                {
+                  ...box({ height: 207.78 }),
+                  "--tap-wait": "0s",
+                } as CSSProperties
+              }
             >
               {/* 그림이 칸을 통째로 씁니다. 이름은 그 위 아래쪽에 얹힙니다. */}
               <i>

@@ -12,6 +12,10 @@ import type { CopyMap } from "@/components/copy";
 
 export const V2_COPY: CopyMap = {
   ...POLISHED,
-  /* 쉼표에서 한 번 끊어 두 줄로 세웁니다. */
-  "One gift, across multiple screens": "One Gift,\nAcross Multiple Screens",
+  /* 한 줄로 세웁니다. */
+  "One gift, across multiple screens": "One Gift, Across Multiple Screens",
+
+  /* 이 제목도 한 줄로 세웁니다. */
+  "From Buying a Gift\nto Making One": "From Buying a Gift to Making One",
+  "Found Here,\nExperienced Elsewhere": "Found Here, Experienced Elsewhere",
 };

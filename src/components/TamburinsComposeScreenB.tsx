@@ -663,15 +663,22 @@ export function TamburinsComposeScreenB({
     });
   }, []);
 
-  /* 누른 번호를 켜거나 끕니다. 판에도 같은 값을 알립니다. */
+  /* 지금 보고 있는 번호. 갱신 함수 밖에서도 알아야 켜고 끌 수 있습니다. */
+  const seeing = useRef<string | null>(null);
+  useEffect(() => {
+    seeing.current = focus;
+  }, [focus]);
+
+  /* 누른 번호를 켜거나 끕니다. 판에도 같은 값을 알리고,
+     그 번호가 가리키는 층을 함께 펼쳐 그 대목을 실제로 보여 줍니다. */
   const look = useCallback((key: string) => {
-    setFocus((now) => {
-      const next = now === key ? null : key;
-      /* 갱신 함수 안에서 부모를 바로 건드리면 그리는 중에 상태가 바뀝니다.
-         한 박자 뒤로 미뤄 그리기가 끝난 다음에 알립니다. */
-      window.setTimeout(() => told.current?.(next), 0);
-      return next;
-    });
+    const next = seeing.current === key ? null : key;
+    setFocus(next);
+    /* 그리는 중에 부모를 건드리지 않도록 한 박자 뒤로 미룹니다. */
+    window.setTimeout(() => told.current?.(next), 0);
+
+    const at = next ? DOT_AT[next]?.[0] : undefined;
+    if (typeof at === "number") setStep(at);
   }, []);
 
   /* 판 위 목업처럼 손이 닿지 않는 자리에서는, 뚜껑이 열린 뒤

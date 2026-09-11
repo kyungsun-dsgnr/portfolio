@@ -10,10 +10,24 @@
  * 덩이마다 위에 가르는 선이 그어집니다.
  */
 
-import type { CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
-import { NudakeMockList } from "@/components/NudakeScreens";
+import {
+  NudakeMockDetail,
+  NudakeMockKakao,
+  NudakeMockList,
+} from "@/components/NudakeScreens";
+import { useCopy } from "@/components/copy";
 import { useInView } from "@/components/useInView";
+
+/* 스스로 밟아 보여 주는 차례 —
+   칸에 손끝이 닿고 · 상세로 넘어가고 · 단추가 보이게 화면을 내리고 ·
+   그 단추를 누르면 · 브랜드 밖 화면이 섭니다. */
+const TAP_AT = 1200;
+const TURN_AT = 2100;
+const DOWN_AT = 3100;
+const PUSH_AT = 4100;
+const AWAY_AT = 4900;
 
 /* 띠는 아래로 갈수록 한 걸음씩 길어집니다. 브랜드 밖으로 나가는 걸음만 채웁니다. */
 const NOTES = [
@@ -37,8 +51,30 @@ const NOTES = [
   },
 ];
 
-export function SceneNudakeGap3() {
+export function SceneNudakeGap3({ play = false }: { play?: boolean } = {}) {
   const [ref, inView] = useInView<HTMLDivElement>(0.4);
+  const { c } = useCopy();
+
+  /** 0 목록 · 1 손끝이 닿음 · 2 상세 · 3 화면을 내림 · 4 단추를 누름 · 5 밖으로 */
+  const [at, setAt] = useState(0);
+
+  /* 장에 들어서면 스스로 한 번 밟아 보여 줍니다 — 티 컬렉션을 고르고,
+     그 제품의 상세로 넘어갑니다. 장을 벗어나면 목록으로 되돌아옵니다. */
+  useEffect(() => {
+    if (!play) return;
+    if (!inView) {
+      const back = window.setTimeout(() => setAt(0), 0);
+      return () => clearTimeout(back);
+    }
+    const clock = [
+      window.setTimeout(() => setAt(1), TAP_AT),
+      window.setTimeout(() => setAt(2), TURN_AT),
+      window.setTimeout(() => setAt(3), DOWN_AT),
+      window.setTimeout(() => setAt(4), PUSH_AT),
+      window.setTimeout(() => setAt(5), AWAY_AT),
+    ];
+    return () => clock.forEach(clearTimeout);
+  }, [play, inView]);
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
@@ -49,13 +85,18 @@ export function SceneNudakeGap3() {
         className="nud-stage col-start-1 col-span-4 row-start-2 row-span-5"
         aria-hidden
       >
-        <NudakeMockList gift />
+        {at >= 5 ? (
+          <NudakeMockKakao />
+        ) : at >= 2 ? (
+          <NudakeMockDetail down={at >= 3} tap={at === 4} />
+        ) : (
+          <NudakeMockList gift pick={at === 1 || undefined} />
+        )}
       </div>
 
+      {/* 줄바꿈은 문구표를 지나갑니다 — 판마다 한 줄로도, 두 줄로도 섭니다. */}
       <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1 row-span-2">
-        Found Here,
-        <br />
-        Experienced Elsewhere
+        {c("Found Here,\nExperienced Elsewhere")}
       </h2>
 
       <div

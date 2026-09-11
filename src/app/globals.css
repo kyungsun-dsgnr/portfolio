@@ -2953,26 +2953,14 @@
     display: flex;
   }
 
+  /* 글씨는 .type-title / .type-body 를 그대로 쓰고, 사이도 다른 장의
+     카드(.issue)와 같은 8 로 둡니다 — 여백은 칸이 주고, 글의 윗 공백은
+     .page-grid 의 다듬기가 걷어 냅니다. */
   .flow-brief > div {
+    display: flex;
     flex: 1 1 0;
-  }
-
-  /* 다른 장의 카드 제목(.type-title)과 같은 크기로 둡니다. */
-  .flow-brief-title {
-    font-family: var(--font-display);
-    font-size: var(--type-title);
-    letter-spacing: 0.01em;
-    font-weight: 700;
-    line-height: 1.1;
-  }
-
-  .flow-brief p {
-    margin-top: calc(22 * var(--u));
-    font-family: var(--font-body);
-    font-size: calc(16 * var(--u));
-    letter-spacing: 0.01em;
-    font-weight: 500;
-    line-height: 1.4;
+    flex-direction: column;
+    gap: calc(8 * var(--u));
   }
 
   .steps {
@@ -4194,6 +4182,8 @@
   }
 
   .type-lead {
+    /* 문구표에 적어 둔 줄바꿈(`\n`)을 실제 줄로 세웁니다. */
+    white-space: pre-line;
     font-family: var(--font-display);
     font-size: var(--type-lead);
     letter-spacing: 0.01em;
@@ -4722,6 +4712,9 @@
   }
 
   .nud-cap-card .nud-mock {
+    /* 화면 안의 겹(바닥 시트·딤드·메뉴)은 화면 안에서만 다투게 가둡니다.
+       가두지 않으면 그 z 값이 글판(z 2)까지 넘어와 글을 덮습니다. */
+    isolation: isolate;
     transition:
       opacity 460ms ease,
       filter 460ms ease;
@@ -6124,12 +6117,15 @@
     height: calc(44 * var(--u));
     border-radius: 50%;
     border: 1px solid rgb(25 25 25 / 0.32);
+    /* 안의 표도 이 테두리와 같은 색입니다. */
+    color: rgb(25 25 25 / 0.32);
     background: rgb(255 255 255 / 0.92);
     transition:
       background 200ms ease,
       color 200ms ease;
   }
 
+  /* 표는 테두리와 같은 색으로 채웁니다 — 원과 그 안의 것이 한 몸으로 읽힙니다. */
   .store-play-key svg {
     width: calc(18 * var(--u));
     height: calc(18 * var(--u));
@@ -10344,5 +10340,434 @@
     .nudc-page {
       background: #e6e6e3;
     }
+  }
+}
+
+@layer components {
+  /* ── 누데이크 제품 상세(As-is) ─────────────
+     목록에서 하나를 고르면 서는 화면입니다. 실제 화면과 같이
+     이름·값 줄과 그림 자리 위아래로 검은 1px 선이 지납니다. */
+  /* 아래 `카카오톡 선물하기` 는 화면을 조금 내려야 나옵니다 —
+     크기는 목록 화면과 같이 두고, 실제로 굴리듯 위로 밀어 올립니다. */
+  .nud-detail {
+    transition: translate 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nud-detail[data-down] {
+    translate: 0 calc(-190 * var(--s));
+  }
+
+  .nud-detail-head {
+    border-bottom: 1px solid #000;
+  }
+
+  .nud-detail-name {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nud-detail-name em {
+    font-style: normal;
+  }
+
+  .nud-detail-head p {
+    color: #000;
+  }
+
+  .nud-detail-shots {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nud-detail-track {
+    display: flex;
+    height: 100%;
+  }
+
+  .nud-detail-track span {
+    position: relative;
+    flex: none;
+    background: #f2f4f1;
+  }
+
+  /* 그림 위에 얹히는 점 셋. 지금 보고 있는 장만 또렷합니다. */
+  .nud-detail-dots {
+    position: absolute;
+    inset: auto 0 calc(32 * var(--s));
+    display: flex;
+    justify-content: center;
+  }
+
+  .nud-detail-dots i {
+    display: block;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 0 calc(4 * var(--s)) rgb(0 0 0 / 0.25);
+    opacity: 0.4;
+  }
+
+  .nud-detail-dots i[data-on] {
+    opacity: 1;
+  }
+
+  .nud-detail-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-top: 1px solid #000;
+    text-align: center;
+  }
+
+  /* 선물하기 단추 — 검은 알약입니다. */
+  .nud-detail-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: calc(16 * var(--s));
+    border-radius: 999px;
+    background: #000;
+    color: #fff;
+  }
+
+  .nud-detail-cta i {
+    display: block;
+    background: #fff;
+    /* 카카오 선물 아이콘 자리 — 내보내기에서 네모로 눌려 나온 그대로입니다. */
+    clip-path: polygon(0 22%, 100% 22%, 100% 100%, 0 100%);
+  }
+
+  /* 바닥의 이전·다음 제품 */
+  .nud-detail-feet {
+    display: flex;
+    border-top: 1px solid #000;
+  }
+
+  .nud-detail-feet span {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+  }
+
+  .nud-detail-feet span + span {
+    border-left: 1px solid #000;
+  }
+
+  .nud-detail-feet span[data-off] {
+    color: #acacac;
+  }
+
+  /* 좌우 꺾쇠 — 같은 삼각을 뒤집어 씁니다. */
+  .nud-detail-arrow {
+    display: block;
+    width: calc(9 * var(--s));
+    height: calc(9 * var(--s));
+    border-top: 1px solid currentColor;
+    border-right: 1px solid currentColor;
+    rotate: 45deg;
+  }
+
+  .nud-detail-arrow[data-back] {
+    rotate: -135deg;
+  }
+}
+
+@layer components {
+  /* ── 카카오 선물하기(브랜드 밖 화면) ────────
+     남의 화면인 티가 나야 하는 자리입니다 — 글꼴도 누데이크의 것이 아니라
+     시스템 고딕이고, 선과 색도 그 서비스의 것입니다. */
+  .nud-kakao {
+    font-family: var(--font-display);
+    color: #191919;
+  }
+
+  /* 화면이 보이는 자리를 그대로 채웁니다 — 그래야 바닥 단추가 그 아래 끝에
+     떠 있고, 넘치는 위쪽은 실제 화면처럼 잘립니다. */
+  .nud-stage .nud-kakao {
+    align-self: stretch;
+  }
+
+  .nud-kakao-bar {
+    position: absolute;
+    inset: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 calc(10 * var(--s));
+    background: #fff;
+  }
+
+  /* 가운데 이름은 바의 한가운데에 놓입니다 — 양옆 표의 수가 달라도
+     흔들리지 않게 자리를 따로 잡습니다. */
+  .nud-kakao-bar b {
+    position: absolute;
+    inset: 0;
+    color: #191919;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .nud-kakao-bar span {
+    display: flex;
+    align-items: center;
+  }
+
+  .nud-kakao-bar i {
+    display: block;
+    color: #191919;
+  }
+
+  .nud-kakao-bar svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .nud-kakao-shot {
+    position: relative;
+    overflow: hidden;
+    background: #f2f4f1;
+  }
+
+  /* 그림 위 왼쪽의 `단독` 표 */
+  .nud-kakao-only {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    padding: 0 calc(8 * var(--s));
+    border-radius: calc(4 * var(--s));
+    background: #000;
+    color: #ffe700;
+    font-weight: 500;
+  }
+
+  /* 오른쪽 아래 `1 / 4` */
+  .nud-kakao-count {
+    position: absolute;
+    display: flex;
+    gap: calc(2 * var(--s));
+    border-radius: 999px;
+    background: rgb(0 0 0 / 0.53);
+    color: #fff;
+  }
+
+  .nud-kakao-count b {
+    font-weight: 700;
+  }
+
+  .nud-kakao-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nud-kakao-seller {
+    display: flex;
+    align-items: center;
+  }
+
+  .nud-kakao-seller i {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border: 0.5px solid rgb(0 0 0 / 0.1);
+    border-radius: 999px;
+    background: #fff;
+  }
+
+  .nud-kakao-seller b {
+    font-weight: 700;
+  }
+
+  .nud-kakao-name {
+    color: #191919;
+  }
+
+  .nud-kakao-reviews {
+    color: #767676;
+  }
+
+  .nud-kakao-price {
+    display: flex;
+    align-items: baseline;
+  }
+
+  .nud-kakao-price b,
+  .nud-kakao-price em {
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  /* 값 아래 띠 하나 */
+  .nud-kakao-band {
+    position: relative;
+    display: block;
+    border-radius: calc(6 * var(--s));
+    background: #faebd9;
+  }
+
+  .nud-kakao-ship {
+    display: flex;
+    margin-top: calc(20 * var(--s));
+    border-top: 1px solid rgb(0 0 0 / 0.04);
+  }
+
+  .nud-kakao-ship > b {
+    flex: none;
+    color: #767676;
+    font-weight: 400;
+  }
+
+  .nud-kakao-ship span {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nud-kakao-ship span b {
+    font-weight: 500;
+  }
+
+  .nud-kakao-ship span em {
+    color: #767676;
+    font-style: normal;
+  }
+
+  /* 바닥 단추 둘 — 하나는 검은 판, 하나는 카카오의 노랑입니다.
+     화면이 길어 잘리므로, 보이는 자리 맨 아래에 떠 있게 둡니다. */
+  .nud-kakao-feet {
+    position: absolute;
+    inset: auto 0 0;
+    z-index: 2;
+    display: flex;
+    border-top: 1px solid rgb(0 0 0 / 0.06);
+    background: #fff;
+  }
+
+  .nud-kakao-feet b,
+  .nud-kakao-feet em {
+    flex: 1;
+    border-radius: calc(6 * var(--s));
+    font-style: normal;
+    text-align: center;
+  }
+
+  .nud-kakao-feet b {
+    background: #191919;
+    color: #fff;
+  }
+
+  .nud-kakao-feet em {
+    background: #fee500;
+    color: #111;
+  }
+}
+
+@layer components {
+  /* ── 세 걸음 (누데이크 06) ─────────────────
+     화면 옆에 낮게 깔리는 글 셋. 덩이마다 위에 가르는 선이 지나고,
+     남는 자리를 고르게 나눠 가집니다 — 33장 `nud-notes[data-spread]` 와 같은 결. */
+  .nud-beats {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .nud-beat {
+    display: flex;
+    flex-direction: column;
+    gap: calc(4 * var(--u));
+  }
+
+  .nud-beat .steps-no {
+    margin-bottom: calc(2 * var(--u));
+  }
+}
+
+@layer components {
+  /* ── 논리 장 (42-SceneLogic) ───────────────
+     케이스 사이에 서는 아홉 장이 함께 쓰는 한 벌입니다. */
+
+  /* 한 줄로 선 흐름 */
+  .logic-track {
+    display: flex;
+    align-items: center;
+    gap: calc(8 * var(--u));
+  }
+
+  .logic-track .flow-pill {
+    position: relative;
+    flex: 1;
+    height: calc(38 * var(--u));
+    padding: 0 calc(10 * var(--u));
+    font-size: calc(12.22 * var(--u));
+  }
+
+  .logic-track i {
+    flex: none;
+    color: var(--fg-soft);
+    font-size: calc(12 * var(--u));
+    font-style: normal;
+  }
+
+  /* 나란히 놓이는 덩이 */
+  .logic-point {
+    display: flex;
+    flex-direction: column;
+    gap: calc(6 * var(--u));
+    padding-right: calc(24 * var(--u));
+  }
+
+  .logic-point .steps-step {
+    text-wrap: balance;
+  }
+
+  /* 지난 판과 지금 판 */
+  .logic-sides {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: calc(20 * var(--u));
+  }
+
+  .logic-side-head,
+  .logic-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: calc(2 * var(--grid-gap));
+  }
+
+  .logic-side {
+    padding-top: calc(16 * var(--u));
+  }
+
+  .logic-side p {
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(18 * var(--u));
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+  }
+
+  /* 지금 판만 또렷하게 남습니다. */
+  .logic-side p[data-on],
+  .logic-side-head .steps-no[data-on] {
+    color: var(--fg);
+  }
+}
+
+@layer components {
+  /* 논리 장 맨 아래에 조용히 남는 한 문장 */
+  .logic-line {
+    color: var(--fg-soft);
+    font-family: var(--font-display);
+    font-size: calc(15 * var(--u));
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.5;
+    text-wrap: balance;
   }
 }

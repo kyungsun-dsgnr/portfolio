@@ -1,6 +1,8 @@
-import { POLISHED } from "@/app/copy";
+import "@/app/v2.css";
+
 import { Deck } from "@/app/deck";
 import { SLUG_LIST } from "@/app/slugs";
+import { V2_COPY } from "@/app/v2-copy";
 import { CopyProvider } from "@/components/copy";
 
 /**
@@ -19,9 +21,9 @@ export function generateStaticParams() {
 
 export default function Page() {
   return (
-    <CopyProvider value={POLISHED}>
-      <div className="polished">
-        <Deck />
+    <CopyProvider value={V2_COPY}>
+      <div className="polished v2">
+        <Deck next />
       </div>
     </CopyProvider>
   );

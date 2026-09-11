@@ -96,7 +96,7 @@ export function SceneComposeFull() {
   }, [inView]);
 
   /* 항목과 화면 위 번호 점을 잇는 점선 */
-  const cards = useRef<Record<string, HTMLDivElement | null>>({});
+  const cards = useRef<Record<string, HTMLElement | null>>({});
   const dots = useRef<Record<string, HTMLElement | null>>({});
   const [links, setLinks] = useState<
     Record<string, { d: string; len: number }>
@@ -295,35 +295,39 @@ export function SceneComposeFull() {
         )}
       </div>
 
+      {/* 선은 고른 자리 하나에만 그어집니다 — 처음에는 아무 선도 없습니다. */}
       {inView &&
         tied &&
-        Object.entries(links).map(([key, link]) => (
-          <svg
-            className="link"
-            key={`${key}-${play}`}
-            data-dim={focus && focus !== key ? true : undefined}
-            aria-hidden
-          >
-            <defs>
-              <mask id={`fixed-${key}-${play}`} maskUnits="userSpaceOnUse">
-                <path
-                  className="link-reveal"
-                  d={link.d}
-                  style={{ "--len": link.len } as CSSProperties}
-                />
-              </mask>
-            </defs>
-            <path
-              className="link-dash"
-              d={link.d}
-              mask={`url(#fixed-${key}-${play})`}
-            />
-          </svg>
-        ))}
+        Object.entries(links)
+          .filter(([key]) => key === focus)
+          .map(([key, link]) => (
+            <svg
+              className="link"
+              key={`${key}-${play}`}
+              data-dim={focus && focus !== key ? true : undefined}
+              aria-hidden
+            >
+              <defs>
+                <mask id={`fixed-${key}-${play}`} maskUnits="userSpaceOnUse">
+                  <path
+                    className="link-reveal"
+                    d={link.d}
+                    style={{ "--len": link.len } as CSSProperties}
+                  />
+                </mask>
+              </defs>
+              <path
+                className="link-dash"
+                d={link.d}
+                mask={`url(#fixed-${key}-${play})`}
+              />
+            </svg>
+          ))}
 
       {/* 닫힌 불편 넷. 목업 좌우로 갈라 세웁니다. */}
       {FIXED.map((one, i) => (
-        <div
+        <button
+          type="button"
           key={one.index}
           ref={(el) => {
             /* 다시 그릴 때 잠깐 null 이 됩니다. 그때 지우면 선이 끊깁니다. */
@@ -332,12 +336,15 @@ export function SceneComposeFull() {
           className={`issue rise ${one.place}`}
           /* 목업에서 한 자리를 고르면 나머지 설명은 물러납니다. 8·11장과 같은 결입니다. */
           data-dim={focus && focus !== one.index ? true : undefined}
+          /* 글을 눌러도 같은 자리가 켜집니다 — 보고 있는 곳은 목업이 쥐고 있으니
+             그 자리의 번호 점을 대신 눌러 줍니다. */
+          onClick={() => dots.current[one.index]?.click()}
           style={{ "--delay": `${0.3 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">{one.index}</span>
           <h3 className="type-title">{c(one.title)}</h3>
           <p className="type-body">{one.body}</p>
-        </div>
+        </button>
       ))}
 
       {/* 앞장에서 보던 그 화면. 자리는 그대로 두고 키만 자랍니다. */}

@@ -38,8 +38,12 @@ export const SLUGS: Record<string, string> = {
   "nudake-gap-3": "nudake/03",
   "nudake-gap-4": "nudake/04",
   "nudake-flow": "nudake/05",
-  "nudake-flow-2": "nudake/06",
+  "nudake-send": "nudake/06",
 };
+
+/* 내려 둔 논리 장들의 주소입니다. 그 장을 다시 세울 때 이 줄도 함께 풉니다.
+   "gm-limit": "gentle-monster/…", "gm-logic": …, "tam-map": …, "tam-reframe": …,
+   "tam-after": …, "nud-place": …, "nud-logic": …, takeaway: "takeaway" */
 
 /** 주소 → 장 id. 들어온 주소로 어디서 시작할지 찾을 때 씁니다. */
 export const BY_SLUG: Record<string, string> = Object.fromEntries(

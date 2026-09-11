@@ -10,9 +10,16 @@
  * 아래로 펼쳐집니다 — 무엇이 달라졌는지 나란히 놓고 볼 수 있습니다.
  */
 
-import { useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 import { NudakeMockCompose } from "@/components/NudakeComposeScreen";
+import {
+  NudakeMockDetail,
+  NudakeMockKakao,
+  NudakeMockList,
+} from "@/components/NudakeScreens";
+import { useCopy } from "@/components/copy";
+import { IconArrowRight } from "@/components/Icons";
 import { useInView } from "@/components/useInView";
 
 /* 손이 닿는 걸음은 채워서 세웁니다 — 여기가 이 흐름의 몫입니다. */
@@ -85,50 +92,106 @@ function Chain({ steps }: { steps: string[] }) {
   );
 }
 
-export function SceneNudakeGap4() {
+/* 왼쪽(고치기 전) 화면이 스스로 밟는 차례 —
+   목록에서 하나를 고르고 · 상세로 넘어가고 · 단추가 보이게 내려서 · 누르면
+   브랜드 밖 화면이 섭니다. 34장과 같은 박자입니다. */
+const TAP_AT = 1200;
+const TURN_AT = 2100;
+const DOWN_AT = 3100;
+const PUSH_AT = 4100;
+const AWAY_AT = 4900;
+
+export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
   const [ref, inView] = useInView<HTMLDivElement>(0.4);
+  const { c } = useCopy();
 
   /** 펼쳐 둔 카드. 한 번에 하나만 열립니다. */
   const [open, setOpen] = useState<number | null>(null);
+
+  /** 왼쪽 화면의 걸음 — 0 목록 · 1 손끝 · 2 상세 · 3 내림 · 4 누름 · 5 밖으로 */
+  const [was, setWas] = useState(0);
+
+  useEffect(() => {
+    if (!pair) return;
+    if (!inView) {
+      const back = window.setTimeout(() => setWas(0), 0);
+      return () => clearTimeout(back);
+    }
+    const clock = [
+      window.setTimeout(() => setWas(1), TAP_AT),
+      window.setTimeout(() => setWas(2), TURN_AT),
+      window.setTimeout(() => setWas(3), DOWN_AT),
+      window.setTimeout(() => setWas(4), PUSH_AT),
+      window.setTimeout(() => setWas(5), AWAY_AT),
+    ];
+    return () => clock.forEach(clearTimeout);
+  }, [pair, inView]);
 
   const toggle = (i: number) => setOpen((now) => (now === i ? null : i));
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      {/* 이 흐름이 가리키는 그 화면. 장에 들어서면 엽서를 쓰고 상자에 담습니다. */}
+      {/* 왼쪽은 고치기 전의 화면 — 여기서는 카카오로 나가는 것으로 끝납니다.
+          두 화면을 나란히 두면 무엇이 달라졌는지 눈으로 견줄 수 있습니다.
+          한 장만 세우는 판(첫 판)에서는 이 자리에 개선 화면이 섭니다. */}
       <div
         className="nud-stage col-start-1 col-span-4 row-start-2 row-span-5"
         aria-hidden
       >
-        <NudakeMockCompose run={inView} />
+        {pair ? (
+          was >= 5 ? (
+            <NudakeMockKakao />
+          ) : was >= 2 ? (
+            <NudakeMockDetail down={was >= 3} tap={was === 4} />
+          ) : (
+            <NudakeMockList gift pick={was === 1 || undefined} />
+          )
+        ) : (
+          <NudakeMockCompose run={inView} />
+        )}
       </div>
 
+      {/* 오른쪽은 고친 뒤의 화면. 장에 들어서면 엽서를 쓰고 봉투에 담습니다.
+          자리는 CSS 가 잡습니다 — 판마다 서는 단이 다릅니다. */}
+      {pair && (
+        <div className="nud-stage nud-stage-pair" aria-hidden>
+          <NudakeMockCompose run={inView} />
+        </div>
+      )}
+
+      {/* 두 화면 사이의 화살표. 전과 후를 잇는 표시입니다. */}
+      {pair && (
+        <span className="nud-turn rise" aria-hidden>
+          <IconArrowRight />
+        </span>
+      )}
+
+      {/* 줄바꿈은 문구표를 지나갑니다 — 판마다 한 줄로도, 두 줄로도 섭니다. */}
       <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1 row-span-2">
-        From Buying a Gift
-        <br />
-        to Making One
+        {c("From Buying a Gift\nto Making One")}
       </h2>
 
       <div
         className="nud-notes col-start-5 col-span-4 row-start-2 row-span-5"
         data-spread
       >
+        {/* 카드 전체가 손잡이입니다 — 꺾쇠만이 아니라 어디를 눌러도
+            앞 장의 글이 열립니다. 안에는 누를 것이 따로 없어
+            단추 안에 단추가 생기지 않습니다. */}
         {NOTES.map((note, i) => (
-          <div
+          <button
+            type="button"
             key={note.eyebrow}
             className="note nud-ruled rise"
             data-open={open === i || undefined}
+            aria-expanded={open === i}
+            aria-label={`${note.eyebrow} — 앞 장의 글과 견주어 보기`}
+            onClick={() => toggle(i)}
             style={{ "--delay": `${0.12 + i * 0.1}s` } as CSSProperties}
           >
-            <button
-              type="button"
-              className="nud-open"
-              aria-expanded={open === i}
-              aria-label={`${note.eyebrow} — 앞 장의 글과 견주어 보기`}
-              onClick={() => toggle(i)}
-            >
-              <i aria-hidden />
-            </button>
+            <span className="nud-open" aria-hidden>
+              <i />
+            </span>
 
             <p className="nud-eyebrow">{note.eyebrow}</p>
             <h3 className="type-title">{note.title}</h3>
@@ -146,7 +209,7 @@ export function SceneNudakeGap4() {
                 <Chain steps={BEFORE[i].chain} />
               </div>
             </div>
-          </div>
+          </button>
         ))}
       </div>
     </div>

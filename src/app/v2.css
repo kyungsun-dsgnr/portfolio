@@ -33,7 +33,7 @@
     ui-sans-serif, system-ui, sans-serif;
 
   /* 제목은 한 단계 줄이고, 대신 가늘게 세웁니다. */
-  --type-lead: calc(46 * var(--u));
+  --type-lead: calc(48 * var(--u));
   --type-title: calc(18 * var(--u));
   --type-body: calc(16 * var(--u));
 }
@@ -43,8 +43,8 @@
 .v2 .type-display,
 .v2 .type-headline,
 .v2 .type-lead {
-  /* Work Sans 는 100–900 을 잇는 가변 서체라, 520 처럼 사이 값도 그대로 섭니다. */
-  font-weight: 520;
+  /* Work Sans 는 100–900 을 잇는 가변 서체라, 사이 값도 그대로 섭니다. */
+  font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.06;
   /* 문구표에 적어 둔 줄바꿈(`\n`)을 실제 줄로 세웁니다. */
@@ -75,7 +75,7 @@
 .v2 .card-index {
   color: var(--v2-mute);
   font-size: calc(12 * var(--u));
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
 }
@@ -128,4 +128,180 @@
   font-weight: 400;
   letter-spacing: 0;
   text-transform: none;
+}
+
+/* 누데이크 표지 제목은 세 줄로 섭니다 — `Nudake` 뒤에서 한 번 더 끊기게,
+   두 단 폭을 넘지 않도록 잡아 둡니다. 장 안의 글은 그대로입니다. */
+.v2 #nudake .type-display {
+  /* 세 단이면 `EXPERIENCE`(399) 는 온전히 들어가고
+     `NUDAKE EXPERIENCE`(683) 는 넘쳐 한 줄 더 내려갑니다. */
+  max-width: calc(3 * var(--col-size) + 2 * var(--grid-gap));
+}
+
+/* ── 손끝이 닿는 결 ──────────────────────
+   커지는 대신 살짝 눌립니다 — 실제로 화면을 누를 때의 느낌입니다. */
+@keyframes v2-press {
+  0%,
+  100% {
+    scale: 1;
+  }
+
+  46% {
+    scale: 0.96;
+  }
+}
+
+.v2 .nud-mock [data-tap] {
+  animation-name: v2-press;
+}
+
+/* 그림 칸과 알약 단추는 가운데를 축으로 눌려야 네 변이 고르게 들어갑니다.
+   (글은 왼쪽 끝을 잡아야 줄이 밀리지 않아 그대로 둡니다.) */
+.v2 .nud-mock-grid [data-tap],
+.v2 .nud-detail-cta[data-tap] {
+  transform-origin: center;
+}
+
+/* ── One Gift, Across Multiple Screens (변주) ──
+   마디가 화면 옆이 아니라 그림 아래쪽에 옅은 판으로 얹힙니다 —
+   `Already There, Just Not Visible` 의 글판(.nud-cap)과 같은 결입니다. */
+.v2 .tall-cap-over {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  padding: calc(16 * var(--u));
+  pointer-events: none;
+}
+
+/* `From Selection to Composition` 의 마디도 화면 위로 옮깁니다.
+   자리는 장 안에서 inline 으로 잡혀 있어 여기서만 !important 로 되잡습니다. */
+.v2 #tamburins-shift .tall-cap {
+  top: auto !important;
+  bottom: 0;
+  height: auto !important;
+  z-index: 2;
+  padding: calc(16 * var(--u));
+  pointer-events: none;
+}
+
+/* 세 장의 글판은 회끄무레한 판이 아니라 흰 판입니다.
+   그림이 비쳐 글이 흐려지지 않게 한 단 더 덮고, 판 뒤는 흐려 둡니다 —
+   유리 한 장을 얹은 결입니다. (blur 는 calc 를 물리는 판이 있어 고정값입니다.) */
+.v2 .tall-cap-over,
+.v2 #tamburins-shift .tall-cap,
+.v2 .nud-cap {
+  background: rgb(255 255 255 / 0.92);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* `From Selection to Composition` —
+   넉 장은 3행부터 네 행을 채우고, 합쳐진 화면은 그 자리에서 한 행 위로 자랍니다.
+   장 안의 키는 inline 이라 여기서만 되잡습니다. (네 행 488 · 다섯 행 614) */
+.v2 #tamburins-shift .steps-shot .steps-frame {
+  height: calc(488 * var(--u)) !important;
+}
+
+/* 합쳐진 화면. 바닥은 그대로 두고 위로 자라야 넉 장이 있던 자리에서
+   한 행이 더 열린 것으로 읽힙니다. */
+.v2 #tamburins-shift .merge-new {
+  top: auto !important;
+  bottom: 0;
+  height: calc(488 * var(--u)) !important;
+  transition: height 720ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.v2 #tamburins-shift .merge-new[data-in] {
+  height: calc(614 * var(--u)) !important;
+}
+
+/* 판이 높아지면 상자가 무대의 키를 그대로 받아 폭이 화면 밖으로 자랍니다 —
+   상자는 키에서 폭을 얻기 때문입니다. 무대의 폭까지 함께 보고
+   둘 중 작은 몫을 쓰게 합니다. (손에 쥔 화면에 쓴 것과 같은 방법입니다.) */
+.v2 .cmpb-stage {
+  container-type: size;
+}
+
+.v2 .cmpb-box {
+  height: min(100cqh, calc(100cqw * 740 / 683));
+}
+
+/* `From Buying a Gift to Making One` —
+   화면 둘이 왼쪽에 나란히 서고(1단·3단부터), 글 셋이 오른쪽 넉 단에 섭니다.
+   화면 위에 두던 판은 걷어 2행 첫머리부터 그대로 채웁니다. */
+.v2 #nudake-gap-4 .nud-stage {
+  grid-column: 1 / span 2;
+  padding-top: 0;
+}
+
+.v2 #nudake-gap-4 .nud-stage-pair {
+  grid-column: 3 / span 2;
+  grid-row: 2 / span 5;
+  padding-top: 0;
+}
+
+.v2 #nudake-gap-4 .nud-notes {
+  grid-column: 5 / span 4;
+}
+
+/* `Found Here, Experienced Elsewhere` 의 화면도 위에 두던 판을 걷고
+   2행 첫머리부터 그대로 채웁니다. */
+.v2 #nudake-gap-3 .nud-stage {
+  padding-top: 0;
+}
+
+/* 전 · 후 두 화면 사이에 놓이는 화살표. 두 판의 이음매 한가운데에 섭니다. */
+.v2 #nudake-gap-4 .nud-turn {
+  grid-column: 2 / span 2;
+  grid-row: 2 / span 5;
+  z-index: 2;
+  place-self: center;
+  display: flex;
+  width: calc(46 * var(--u));
+  height: calc(46 * var(--u));
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  /* 판 바탕과 같은 색이라, 두 화면 사이가 뚫린 것처럼 보입니다. */
+  background: var(--bg);
+  color: var(--fg);
+  pointer-events: none;
+}
+
+.v2 #nudake-gap-4 .nud-turn svg {
+  width: calc(20 * var(--u));
+  height: calc(20 * var(--u));
+}
+
+/* 제목은 한 줄로 서고, 판의 너비를 그대로 씁니다 —
+   1행 안에서만 자리를 잡아 아래 화면과 겹치지 않습니다. */
+.v2 #nudake-gap-4 h2 {
+  grid-column: 1 / span 8;
+  grid-row: 1 / span 1;
+  align-self: start;
+}
+
+/* 이 제목도 한 줄로 서고 판의 너비를 그대로 씁니다. */
+.v2 #nudake-gap-3 h2 {
+  grid-column: 1 / span 8;
+  grid-row: 1 / span 1;
+  align-self: start;
+}
+
+/* 아코디언의 꺾쇠는 그 줄을 가르는 선과 같은 색입니다 —
+   글이 아니라 선의 식구로 읽힙니다. */
+.v2 #nudake-gap-4 .nud-open i {
+  border-bottom-color: #19191924;
+  border-right-color: #19191924;
+}
+
+/* 카드가 통째로 손잡이가 되면서 단추의 기본 꼴이 따라옵니다 — 걷어 냅니다. */
+.v2 #nudake-gap-4 .note {
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }

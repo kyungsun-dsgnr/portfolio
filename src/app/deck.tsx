@@ -184,7 +184,7 @@ export function Deck({
               title="Gentle Monster Explore"
               subtitle={c("매장 찾기를, 세계를 둘러보는 경험으로 넓히다")}
               logo={{
-                src: "/images/gentle-monster-logo.png",
+                src: "/images/gentle-monster-logo-3.png",
                 alt: "Gentle Monster",
               }}
               body={

@@ -77,12 +77,14 @@ export function SceneCase({
           className="rise relative col-span-2 row-start-5"
           style={{ "--delay": "0.1s" } as CSSProperties}
         >
+          {/* 칸이 그림보다 넓적하면 그림은 왼쪽 끝에 붙습니다 —
+              가운데에 두면 왼쪽에 빈 띠가 생깁니다. */}
           <Image
             src={logo.src}
             alt={logo.alt}
             fill
             sizes="24vw"
-            className="object-contain"
+            className="object-contain object-left"
           />
         </div>
       )}

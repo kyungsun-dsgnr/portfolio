@@ -504,6 +504,7 @@
 .v2 #gentle-monster-problem .site-bar-gm {
   box-sizing: border-box;
   border: 1px solid #ececec;
+  border-bottom: 0;
 }
 
 /* `Made Here, Given Anywhere.` — 마디 글의 줄바꿈은 글에 적힌 대로 섭니다. */

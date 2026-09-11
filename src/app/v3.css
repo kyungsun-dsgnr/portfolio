@@ -39,33 +39,35 @@
    좌우는 판과 같은 여덟 단 위에 놓여 글이 단 머리에 맞춰 섭니다. */
 .v3 .band {
   position: absolute;
-  right: var(--page-margin);
-  left: var(--page-margin);
+  /* 판 좌우 여백에서 3 씩 더 안으로 */
+  right: calc(var(--page-margin) + 3 * var(--u));
+  left: calc(var(--page-margin) + 3 * var(--u));
   z-index: 5;
   display: grid;
   height: var(--page-margin-y);
   grid-template-columns: repeat(var(--grid-cols), 1fr);
   gap: var(--grid-gap);
   align-items: center;
-  color: var(--v2-mute);
+  /* 회색이 아니라 글과 같은 먹빛으로 — 더 진하게. */
+  color: var(--fg-soft);
   font-family: var(--font-display);
-  font-size: calc(11 * var(--u));
+  font-size: calc(11.5 * var(--u));
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  /* 머리·바닥은 물러나 있습니다 — 장의 글보다 존재감이 덜하게. */
-  opacity: 0.55;
+  /* 먹빛 그대로 조금만 물러납니다 — 회색이던 때보다는 진하게. */
+  opacity: 0.6;
   pointer-events: none;
 }
 
 /* 머리는 조금 더 또렷하게, 바닥은 더 물러나 있습니다. */
+/* 머리는 9 위로, 바닥은 9 아래로 — 여백 한가운데보다 바깥쪽에 붙습니다. */
 .v3 .band-top {
-  top: 0;
-  opacity: 0.85;
+  top: calc(-9 * var(--u));
 }
 
 .v3 .band-bottom {
-  bottom: 0;
+  bottom: calc(-9 * var(--u));
 }
 
 /* 표지 넷 · 세 갈래(work) · 맺음 장에는 띠가 없습니다. */
@@ -90,10 +92,15 @@
   justify-content: flex-end;
 }
 
+/* 갈래 이름은 4–5단을 걸쳐 한가운데 — 판의 정중앙입니다. */
+.v3 .band-center {
+  justify-content: center;
+}
+
 /* 이름과 하는 일 사이의 세로 선, 연락처 앞의 가로 선 */
 .v3 .band-rule {
   width: 1px;
-  height: calc(12 * var(--u));
+  height: calc(10 * var(--u));
   background: currentColor;
   opacity: 0.5;
 }
@@ -111,6 +118,22 @@
 }
 
 .v3 .band svg {
-  width: calc(11 * var(--u));
-  height: calc(11 * var(--u));
+  width: calc(11.5 * var(--u));
+  height: calc(11.5 * var(--u));
+}
+
+/* `One screen, one gift.` · `Made Here, Given Anywhere.` 의 한가운데 화면 —
+   위아래 여백이 60 으로 늘었으니 1행 머리에서 6행 끝까지(680)로 다시 잡습니다. */
+.v3 .compose-full-frame {
+  top: var(--page-margin-y);
+  height: var(--tall, calc(var(--canvas-h) - 2 * var(--page-margin-y)));
+}
+
+.v3 #nudake-flow-full .nudc {
+  height: 100% !important;
+}
+
+/* 바닥의 목차(손잡이를 당기면 올라오는 장 목록)는 이 판에서 두지 않습니다. */
+.v3 .pager {
+  display: none;
 }

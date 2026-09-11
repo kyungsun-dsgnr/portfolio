@@ -31,15 +31,9 @@ const GAP = 16;
 const SHOT_W = 2 * COL + GAP;
 /** 한 걸음 옮길 때마다 오른쪽으로 두 단 */
 const STEP_X = 2 * (COL + GAP);
-const ROW = 110;
-/** 2행부터 6행 끝까지가 이 판입니다 — 원본보다 한 행 위에서 시작합니다. */
-const BAND_H = 5 * ROW + 4 * GAP;
-/* 이 판에서는 마디가 화면 위에 얹히므로 따로 자리를 잡지 않습니다. */
-const SHOT_H = BAND_H;
 /* 도는 화면은 다섯 행. 물러났을 때 몇 행을 남길지는 화면마다 따로 정합니다.
    바닥은 어느 쪽이든 마지막 행 끝에 맞춥니다. */
 const FULL_ROWS = 5;
-const drop = (rows: number) => (FULL_ROWS - rows) * (ROW + GAP);
 
 /* 한 화면이 제 과정을 마친 뒤 다음으로 넘어가기까지 더 두는 사이.
    과정이 끝나자마자 넘어가면 결과를 볼 틈이 없습니다. */

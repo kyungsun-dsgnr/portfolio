@@ -1439,8 +1439,8 @@ export function NudakeMockCompose({
       {/* 번호 점 — 바닥의 `선물 보내기`. */}
       {dot(
         "03",
-        /* 점은 제 키의 반만큼 올라앉으니, 단추 세로 가운데(26)에 맞춰 9 를 뺍니다. */
-        { ...box({ left: 305 }), bottom: mk(17), top: "auto" },
+        /* 단추 세로 가운데에 맞춘 값입니다 — 재어 보고 9 더 내렸습니다. */
+        { ...box({ left: 305 }), bottom: mk(8), top: "auto" },
         "nudc-dot-top nudc-dot-light",
       )}
 

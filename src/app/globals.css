@@ -8248,6 +8248,26 @@
 
   /* 판 위 설명과 잇는 번호 점.
      제목줄에서는 오른쪽 끝 꺾쇠를 가리지 않게 그 왼쪽에 섭니다. */
+  /* 누데이크 엽서 화면의 번호 점. 편지 자리의 둘(01 · 02)은 결제 시트(z 9)
+     아래에 남고, 바닥 단추의 셋째만 그 위에 섭니다. */
+  .nudc-dot {
+    z-index: 8;
+  }
+
+  .nudc-dot-top {
+    z-index: 60;
+  }
+
+  /* 검은 단추 위에 서는 점은 밝은 쪽으로 뒤집습니다. */
+  .nudc-dot-light {
+    background: #fff;
+    color: #191919;
+  }
+
+  .nudc-dot-light::after {
+    background: #fff;
+  }
+
   .cmpb-dot {
     left: auto;
     right: calc(24 * var(--u));

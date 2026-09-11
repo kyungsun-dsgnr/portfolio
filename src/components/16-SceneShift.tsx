@@ -81,6 +81,9 @@ const PILE = [
 ];
 
 const px = (value: number) => `calc(${value} * var(--u))`;
+/** 행 몇 개의 키 — 판마다 행 키가 달라 값이 아니라 판의 --row-size 로 잽니다. */
+const rows = (n: number) =>
+  `calc(${n} * var(--row-size) + ${n - 1} * var(--grid-gap))`;
 
 export function SceneShift() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
@@ -162,7 +165,7 @@ export function SceneShift() {
               className="steps-frame"
               style={{
                 transitionDelay: one ? `${beatOf(i)}ms` : "0ms",
-                height: px(BAND_H - IDLE_DROP),
+                height: rows(4),
                 marginTop: px(IDLE_DROP),
               }}
             >

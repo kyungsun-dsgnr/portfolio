@@ -45,6 +45,8 @@ import { SceneNudakeGap4 } from "@/components/35-SceneNudakeGap4";
 import { SceneNudakeFlow } from "@/components/38-SceneNudakeFlow";
 import { SceneNudakeFlowFull } from "@/components/50-SceneNudakeFlowFull";
 import { SceneNudakeSend } from "@/components/41-SceneNudakeSend";
+import { SceneClose } from "@/components/51-SceneClose";
+import { Bands } from "@/components/Bands";
 // import { SceneNudakeGap5 } from "@/components/36-SceneNudakeGap5";
 // import { SceneNudakeContext3 } from "@/components/31-SceneNudakeContext3";
 // import { SceneNudakeCurrent } from "@/components/25-SceneNudakeCurrent";
@@ -101,6 +103,7 @@ export function Deck({
   return (
     <LightStage
       slugs={slugs}
+      chrome={third ? (at) => <Bands {...at} /> : undefined}
       sections={[
         /* 스위치 장과 제목이 같아 접어 둡니다. 되살릴 때 이 줄만 풀면 됩니다.
         { id: "intro", label: "Intro", node: <SceneIntro /> }, */
@@ -440,17 +443,19 @@ export function Deck({
                 node: <SceneNudakeFlow />,
               },
             ]),
-        /* 마지막 세 걸음. 두 번째 판에서 먼저 세워 봅니다. */
-        ...(next
-          ? [
-              {
-                id: "nudake-send",
-                index: "06 — Nudake",
-                label: "nudake-7",
-                node: <SceneNudakeSend />,
-              },
-            ]
-          : []),
+        /* 마지막 세 걸음(둘째 판) — 셋째 판에서는 그 자리에 맺음 장이 섭니다. */
+        ...(third
+          ? [{ id: "close", label: "outro-1", node: <SceneClose /> }]
+          : next
+            ? [
+                {
+                  id: "nudake-send",
+                  index: "06 — Nudake",
+                  label: "nudake-7",
+                  node: <SceneNudakeSend />,
+                },
+              ]
+            : []),
         /* 계획만 적어 두었던 두 장. 다시 잡을 때 이 묶음만 풀면 됩니다.
            NUDAKE_TURN · NUDAKE_COMPOSE 는 copy.ts 에 그대로 두었습니다.
         {

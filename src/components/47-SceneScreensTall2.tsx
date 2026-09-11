@@ -87,6 +87,13 @@ const SHOTS: {
 ];
 
 const px = (value: number) => `calc(${value} * var(--u))`;
+/** 행 몇 개의 키 — 판마다 행 키가 달라서(세 번째 판은 위아래 1/4 행이 더 있어
+    행이 조금 낮습니다) 값이 아니라 판의 --row-size 로 잽니다. */
+const rows = (n: number) =>
+  `calc(${n} * var(--row-size) + ${n - 1} * var(--grid-gap))`;
+/** 행 n 개만큼 내려앉는 거리 */
+const dropRows = (n: number) =>
+  `calc(${n} * (var(--row-size) + var(--grid-gap)))`;
 
 /* 세 번째 판의 화면 이름 — 무엇을 하는 화면인지 한 낱말 더 붙입니다. */
 const FULL_NAMES: Record<string, string> = {
@@ -275,8 +282,8 @@ export function SceneScreensTall2({
             <div
               className="steps-frame"
               style={{
-                height: px(live === i ? SHOT_H : SHOT_H - drop(shot.idleRows)),
-                marginTop: px(live === i ? 0 : drop(shot.idleRows)),
+                height: rows(live === i ? FULL_ROWS : shot.idleRows),
+                marginTop: live === i ? 0 : dropRows(FULL_ROWS - shot.idleRows),
               }}
             >
               {shot.real === "gift" && (

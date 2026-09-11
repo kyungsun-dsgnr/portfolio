@@ -201,7 +201,7 @@
    넉 장은 3행부터 네 행을 채우고, 합쳐진 화면은 그 자리에서 한 행 위로 자랍니다.
    장 안의 키는 inline 이라 여기서만 되잡습니다. (네 행 488 · 다섯 행 614) */
 .v2 #tamburins-shift .steps-shot .steps-frame {
-  height: calc(488 * var(--u)) !important;
+  height: calc(4 * var(--row-size) + 3 * var(--grid-gap)) !important;
 }
 
 /* 고치기 전 넉 장은 색을 뺍니다 — 하나로 합쳐지는 새 화면만 색을 지닙니다. */
@@ -214,12 +214,12 @@
 .v2 #tamburins-shift .merge-new {
   top: auto !important;
   bottom: 0;
-  height: calc(488 * var(--u)) !important;
+  height: calc(4 * var(--row-size) + 3 * var(--grid-gap)) !important;
   transition: height 720ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .v2 #tamburins-shift .merge-new[data-in] {
-  height: calc(614 * var(--u)) !important;
+  height: calc(5 * var(--row-size) + 4 * var(--grid-gap)) !important;
 }
 
 /* 판이 높아지면 상자가 무대의 키를 그대로 받아 폭이 화면 밖으로 자랍니다 —
@@ -246,7 +246,8 @@
    100% 는 제 키라, 제 키에서 판 키를 뺀 만큼입니다. 판보다 작으면 두지 않습니다. */
 .v2 #nudake-gap-3 .nud-detail[data-down],
 .v2 #nudake-gap-4 .nud-detail[data-down] {
-  translate: 0 min(0px, calc(614 * var(--u) - 100%));
+  translate: 0
+    min(0px, calc(5 * var(--row-size) + 4 * var(--grid-gap) - 100%));
 }
 
 /* 물러난 화면은 두 행(110 + 16 씩) 내려앉습니다 — 4행부터 서고,
@@ -256,8 +257,13 @@
 }
 
 .v2 #nudake-gap-4 .nud-stage[data-sunk] {
-  /* 두 행(110 + 16 씩) 내려앉습니다 — 4행부터 섭니다. */
-  margin-top: calc(252 * var(--u));
+  /* 두 행(행 + 사이 씩) 내려앉습니다 — 4행부터 섭니다. */
+  margin-top: calc(2 * (var(--row-size) + var(--grid-gap)));
+}
+
+/* 오른쪽 화면의 키 — 2행 머리부터 6행 끝까지. 바닥 단추까지 다 보입니다. */
+.v2 #nudake-gap-4 .nud-stage-pair .nudc {
+  height: calc(5 * var(--row-size) + 4 * var(--grid-gap)) !important;
 }
 
 /* 물러난 쪽 화면 위에 깔리는 흰 유리 — 글판과 같은 결입니다.
@@ -503,4 +509,71 @@
 /* `Made Here, Given Anywhere.` — 마디 글의 줄바꿈은 글에 적힌 대로 섭니다. */
 .v2 #nudake-flow-full .issue .type-body {
   white-space: pre-line;
+}
+
+
+/* 맺음 장 — 카드 머리는 글과 그림 사이를 좁혀 둡니다. */
+.v2 .close .work-head {
+  height: auto;
+  padding-bottom: calc(16 * var(--u));
+}
+
+/* `The Experience Is Still Bound to Place` — 지도 위 점을 누르면 뜨는 이름표를
+   한 단 키웁니다: 판 여백 14 × 18, 머리말 12, 이름 15, 자리 12. */
+.v2 #nudake-context-2 .nud-pin-card {
+  gap: calc(4 * var(--u));
+  padding: calc(14 * var(--u)) calc(18 * var(--u));
+}
+
+.v2 #nudake-context-2 .nud-pin-card .nud-eyebrow {
+  font-size: calc(12 * var(--u));
+}
+
+.v2 #nudake-context-2 .nud-pin-name {
+  font-size: calc(15 * var(--u));
+}
+
+.v2 #nudake-context-2 .nud-pin-where {
+  font-size: calc(12 * var(--u));
+}
+
+/* 맺음 장 — 카드 안 화면은 실제 화면이라 밝기 기준을 도로 세우고,
+   손은 카드(건너뛰기)가 받습니다. */
+.v2 .close .close-shot {
+  --fg: #191919;
+  --bg: #ffffff;
+  --fg-soft: rgb(25 25 25 / 0.72);
+  color: #191919;
+  background: #fff;
+  pointer-events: none;
+}
+
+.v2 .close .close-shot > * {
+  width: 100%;
+  height: 100%;
+}
+
+/* 맺음 장의 화면들은 머리 없이 — 사이트 머리도, 누데이크 머리띠도 걷고
+   그만큼 위로 당겨 첫 줄부터 보이게 합니다. */
+.v2 .close .close-shot .site-bar,
+.v2 .close .close-shot .nud-mock-bar {
+  display: none;
+}
+
+.v2 .close .close-shot .nudc {
+  translate: 0 calc(-49 * var(--s));
+  height: calc(100% + 49 * var(--s)) !important;
+}
+
+/* 맺음 장의 화면들은 움직이지 않습니다 — 걸음은 그대로 밟되 그 사이의
+   움직임(애니메이션 · 전환)만 걷어 끝난 모습으로 바로 섭니다. */
+.v2 .close .close-shot *,
+.v2 .close .close-shot *::before,
+.v2 .close .close-shot *::after {
+  /* 없애지 않고 0초로 — 끝에 머무는(forwards) 움직임은 끝 모습으로 바로 섭니다. */
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
 }

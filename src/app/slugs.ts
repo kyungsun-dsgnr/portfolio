@@ -41,6 +41,8 @@ export const SLUGS: Record<string, string> = {
   /* 세 번째 판에만 서는 장. 뒤 장의 번호는 건드리지 않습니다. */
   "nudake-flow-full": "nudake/05b",
   "nudake-send": "nudake/06",
+  /* 맺음 — 세 번째 판에만 섭니다. */
+  close: "outro/01",
 };
 
 /* 내려 둔 논리 장들의 주소입니다. 그 장을 다시 세울 때 이 줄도 함께 풉니다.

@@ -262,6 +262,10 @@ const GIFT_CARD: Box = { left: 78, top: 120, width: 177, height: 252 };
 /** 스스로 훑을 때 고르는 칸 — 둘째 칸, 누데이크 티 아카이브. As-is 목업과 같은 제품입니다. */
 const PICK = 1;
 
+/** 스스로 훑을 때 적는 받는 사람과 번호 */
+const WHO = "김민지";
+const TEL = "010-2345-6789";
+
 /* 이 화면이 스스로 지나가는 박자 */
 const TAP_AT = 1100;
 const PICK_AT = 1900;
@@ -285,6 +289,9 @@ export function NudakeMockCompose({
   step: opening = "list",
   pick = PICK,
   written: writtenAtFirst = false,
+  dots = false,
+  dotRef,
+  onFocus,
   swapTo = null,
   onDone,
 }: {
@@ -297,6 +304,12 @@ export function NudakeMockCompose({
   pick?: number;
   /** 엽서에 글이 이미 적힌 채로 세웁니다 — 뒷장이 열려 있습니다. */
   written?: boolean;
+  /** 번호 점 셋 — 그림 자리(01) · 메시지 단추(02) · 선물 보내기(03).
+      판 위에서 글과 잇는 데 씁니다. */
+  dots?: boolean;
+  dotRef?: (key: string, el: HTMLElement | null) => void;
+  /** 번호 점을 켜고 끌 때 판에 알립니다. */
+  onFocus?: (key: string | null) => void;
   /** 세워 둔 엽서 화면에서, 아래 제품 줄의 이 칸을 눌러 바꿔 담습니다.
       비우면 처음 고른 칸으로 되돌아갑니다. */
   swapTo?: number | null;
@@ -388,6 +401,38 @@ export function NudakeMockCompose({
   }, [fill]);
 
   const back = () => setAt((now) => PREV[now]);
+
+  /* 번호 점. 누르면 그 자리만 남기고, 셋째(선물 보내기)는 그 화면까지 엽니다. */
+  const [spot, setSpot] = useState<string | null>(null);
+  const told = useRef(onFocus);
+  useEffect(() => {
+    told.current = onFocus;
+  }, [onFocus]);
+
+  const look = (key: string) => {
+    const next = spot === key ? null : key;
+    setSpot(next);
+    /* 그리는 중에 부모를 건드리지 않도록 한 박자 뒤로 미룹니다. */
+    window.setTimeout(() => told.current?.(next), 0);
+    if (next === "03") setAt("pay");
+    else if (at === "pay") setAt("note");
+  };
+
+  const dot = (id: string, style: CSSProperties, tone?: string) =>
+    dots ? (
+      <button
+        type="button"
+        className={`store-dot nudc-dot${tone ? ` ${tone}` : ""}`}
+        ref={(el) => dotRef?.(id, el)}
+        data-on={spot === id || undefined}
+        aria-label={`${id} 자리만 보기`}
+        onMouseDown={(event) => event.preventDefault()}
+        onClick={() => look(id)}
+        style={style}
+      >
+        <span>{id}</span>
+      </button>
+    ) : null;
 
   /* 목록에서 하나를 누르면 그 제품의 상세로 갑니다. */
   const choose = (i: number) => {
@@ -578,17 +623,41 @@ export function NudakeMockCompose({
     return () => clock.forEach(clearTimeout);
   }, [run, at]);
 
-  /* 스스로 훑을 때는 결제 시트가 선 뒤 `결제하기` 를 눌러 편지를 보냅니다. */
+  /* 스스로 훑을 때는 결제 시트가 선 뒤 받는 사람과 번호를 한 글자씩 적고,
+     `결제하기` 를 눌러 편지를 보냅니다. */
   useEffect(() => {
     if (!run || at !== "pay") return;
-    const clock = [
-      window.setTimeout(() => setPayHit(true), 1400),
+    const clock: number[] = [];
+    /* 이름은 400 부터 한 글자 140 씩, 번호는 이름 뒤 300 쉬고 한 글자 70 씩. */
+    const NAME_AT = 400;
+    const NAME_MS = 140;
+    [...WHO].forEach((_, i) =>
+      clock.push(
+        window.setTimeout(
+          () => setTo(WHO.slice(0, i + 1)),
+          NAME_AT + (i + 1) * NAME_MS,
+        ),
+      ),
+    );
+    const TEL_AT = NAME_AT + WHO.length * NAME_MS + 300;
+    const TEL_MS = 70;
+    [...TEL].forEach((_, i) =>
+      clock.push(
+        window.setTimeout(
+          () => setTel(TEL.slice(0, i + 1)),
+          TEL_AT + (i + 1) * TEL_MS,
+        ),
+      ),
+    );
+    const PAY_AT = TEL_AT + TEL.length * TEL_MS + 600;
+    clock.push(
+      window.setTimeout(() => setPayHit(true), PAY_AT),
       window.setTimeout(() => {
         setPayHit(false);
         setSend(0);
         setAt("sent");
-      }, 1800),
-    ];
+      }, PAY_AT + 400),
+    );
     return () => clock.forEach(clearTimeout);
   }, [run, at]);
 
@@ -1049,6 +1118,10 @@ export function NudakeMockCompose({
             </span>
           ) : null}
 
+          {/* 번호 점 — 엽서 왼쪽 가장자리(그림 높이)와 메시지 단추 오른쪽 끝. */}
+          {dot("01", box({ left: 78, top: 125 }))}
+          {dot("02", box({ left: 215, top: 380.5 }))}
+
           {/* 엽서 하단의 편집 단추. 누르면 그 자리에서 고쳐 쓸 수 있습니다. */}
           <button
             type="button"
@@ -1362,6 +1435,14 @@ export function NudakeMockCompose({
           </button>
         </span>
       </div>
+
+      {/* 번호 점 — 바닥의 `선물 보내기`. */}
+      {dot(
+        "03",
+        /* 점은 제 키의 반만큼 올라앉으니, 단추 세로 가운데(26)에 맞춰 9 를 뺍니다. */
+        { ...box({ left: 305 }), bottom: mk(17), top: "auto" },
+        "nudc-dot-top nudc-dot-light",
+      )}
 
       {/* 바닥 — 고르고 난 뒤에야 다음 걸음이 열립니다.
           고르기 전에는 단추 자리도 두지 않습니다. */}

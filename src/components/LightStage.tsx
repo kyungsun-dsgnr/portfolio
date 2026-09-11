@@ -46,11 +46,15 @@ export type Section = {
 export function LightStage({
   sections,
   slugs,
+  chrome,
 }: {
   sections: Section[];
   /** 장 id → 주소(`gentle-monster/01`). 주면 굴릴 때마다 주소창이 따라 바뀌고,
    *  그 주소로 들어오면 그 장에서 시작합니다. */
   slugs?: Record<string, string>;
+  /** 장마다 판 위에 같이 얹는 것 — 세 번째 판의 위아래 띠.
+      몇 장째인지 함께 건네 바닥에 쪽번호를 적습니다. */
+  chrome?: (at: { index: number; total: number }) => ReactNode;
 }) {
   const [level, setLevel] = useState(0);
   /** 노브를 다 돌렸을 때 내려갈 곳 — 두 번째 섹션 */
@@ -263,6 +267,7 @@ export function LightStage({
                 </p>
               )}
               {section.node}
+              {chrome?.({ index, total: sections.length })}
             </div>
           </section>
         ))}

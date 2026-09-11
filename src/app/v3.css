@@ -1,8 +1,8 @@
 /**
- * 세 번째 판 — 갈래 `/v3` 의 디자인
+ * 세 번째 판 — 지금 기본(`/`)의 디자인
  *
- * 지금 쓰는 판(v2.css)을 그대로 깔고 그 위에 덧입힙니다. 여기 적은 것만
- * `/v3` 에서 달라지고, `/` 와 `/v1` 에는 닿지 않습니다.
+ * 두 번째 판(v2.css)을 그대로 깔고 그 위에 덧입힙니다. 여기 적은 것만
+ * `/` 에서 달라지고, `/v1` 과 `/v2` 에는 닿지 않습니다.
  *
  * 규칙 둘 — v2.css 와 같습니다.
  *   1) 모든 줄은 `.v3` 아래에 씁니다.
@@ -13,4 +13,112 @@
 .v3 {
   /* 이 판이 세 번째라는 표시. 이 줄이 살아 있으면 v3.css 가 붙은 것입니다. */
   --fork: 3;
+}
+
+/* ── 위아래 여백 ──────────────────────────────
+   세 번째 판은 위아래 여백을 두 배(60)로 둡니다 — 좌우는 그대로 30.
+   행 키는 그만큼 줄어드니 판의 --row-size 도 함께 다시 잽니다. */
+.v3 .section {
+  --page-margin-y: calc(2 * var(--page-margin));
+  --row-size: calc(
+    (
+        var(--canvas-h) - 2 * var(--page-margin-y) - (var(--grid-rows) - 1) *
+          var(--grid-gap)
+      ) /
+      var(--grid-rows)
+  );
+}
+
+.v3 .page-grid {
+  padding-top: var(--page-margin-y);
+  padding-bottom: var(--page-margin-y);
+}
+
+/* ── 위아래 띠 ─────────────────────────────────
+   판의 위아래 여백(60) 안에 앉는 잔글씨 — 그리드 행을 쓰지 않습니다.
+   좌우는 판과 같은 여덟 단 위에 놓여 글이 단 머리에 맞춰 섭니다. */
+.v3 .band {
+  position: absolute;
+  right: var(--page-margin);
+  left: var(--page-margin);
+  z-index: 5;
+  display: grid;
+  height: var(--page-margin-y);
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  gap: var(--grid-gap);
+  align-items: center;
+  color: var(--v2-mute);
+  font-family: var(--font-display);
+  font-size: calc(11 * var(--u));
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  /* 머리·바닥은 물러나 있습니다 — 장의 글보다 존재감이 덜하게. */
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* 머리는 조금 더 또렷하게, 바닥은 더 물러나 있습니다. */
+.v3 .band-top {
+  top: 0;
+  opacity: 0.85;
+}
+
+.v3 .band-bottom {
+  bottom: 0;
+}
+
+/* 표지 넷 · 세 갈래(work) · 맺음 장에는 띠가 없습니다. */
+.v3 #switch .band,
+.v3 #work .band,
+.v3 #statement .band,
+.v3 #principles .band,
+.v3 #closing .band,
+.v3 #close .band {
+  display: none;
+}
+
+.v3 .band-cell {
+  display: flex;
+  align-items: center;
+  gap: calc(16 * var(--u));
+  margin: 0;
+  white-space: nowrap;
+}
+
+.v3 .band-right {
+  justify-content: flex-end;
+}
+
+/* 아래 왼쪽 한 마디는 두 줄로 섭니다. */
+.v3 .band-lines {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(2 * var(--u));
+  line-height: 1.5;
+}
+
+/* 이름과 하는 일 사이의 세로 선, 연락처 앞의 가로 선 */
+.v3 .band-rule {
+  width: 1px;
+  height: calc(12 * var(--u));
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.v3 .band-dash {
+  width: calc(44 * var(--u));
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.v3 .band-mail {
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.v3 .band svg {
+  width: calc(11 * var(--u));
+  height: calc(11 * var(--u));
 }

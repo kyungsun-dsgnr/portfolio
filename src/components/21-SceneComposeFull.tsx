@@ -276,7 +276,7 @@ export function SceneComposeFull() {
       <h2 className="type-lead capitalize rise col-start-1 col-span-3 row-start-1">
         One screen,
         <br />
-        one gift.
+        one gift
       </h2>
 
       {/* 판 위 목업은 결국 그림입니다. QR 로 제 손의 기기에서 굴려 보게 합니다. */}

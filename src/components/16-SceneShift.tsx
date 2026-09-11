@@ -71,13 +71,13 @@ const beatOf = (i: number) => FADE + (SHOTS.length - 1 - i) * BEAT;
 /* 마지막 장이 얹히고 한 박자 더 둔 뒤에 흐려집니다. */
 const SETTLE_AT = FADE + (SHOTS.length - 1) * BEAT + 420 + 380;
 
-/* 모였을 때 쌓이는 모양. 반듯하게 포개지 않고 조금씩 어긋나게 두어야
-   넉 장이 겹친 것으로 읽힙니다. 맨 앞장만 반듯합니다. */
+/* 모였을 때 쌓이는 모양. 기울이지 않고 한 방향으로 같은 걸음(10)씩 물러나
+   가지런히 포개집니다 — 뒤로 갈수록 오른쪽 위로. 맨 앞장이 제자리입니다. */
 const PILE = [
   { x: 0, y: 0, turn: 0 },
-  { x: -14, y: -10, turn: -3.2 },
-  { x: 16, y: -16, turn: 2.6 },
-  { x: 6, y: 12, turn: 5.4 },
+  { x: 10, y: -10, turn: 0 },
+  { x: 20, y: -20, turn: 0 },
+  { x: 30, y: -30, turn: 0 },
 ];
 
 const px = (value: number) => `calc(${value} * var(--u))`;

@@ -51,13 +51,17 @@ export function SceneWork() {
   /* 카드 위에서는 기본 커서를 감추고 원형 "VIEW" 를 따라다니게 합니다.
      위치는 매 움직임마다 리렌더하지 않도록 ref 로 직접 갱신합니다. */
   const cursorRef = useRef<HTMLDivElement>(null);
+  const coreRef = useRef<HTMLDivElement>(null);
   const [showCursor, setShowCursor] = useState(false);
 
   function moveCursor(event: PointerEvent<HTMLElement>) {
     const el = cursorRef.current;
     if (!el) return;
     // 퍼센트는 요소 자기 크기 기준이라, 이 한 줄로 커서 중심에 맞춰집니다.
-    el.style.translate = `calc(${event.clientX}px - 50%) calc(${event.clientY}px - 50%)`;
+    const at = `calc(${event.clientX}px - 50%) calc(${event.clientY}px - 50%)`;
+    el.style.translate = at;
+    /* 글이 앉는 가운데 원도 같은 자리로 — 섞지 않으려 따로 세운 것입니다. */
+    if (coreRef.current) coreRef.current.style.translate = at;
   }
 
   function enter(event: PointerEvent<HTMLElement>) {
@@ -150,9 +154,16 @@ export function SceneWork() {
         );
       })}
 
+      {/* 바깥 원은 아래 색을 뒤집고, 글이 앉는 가운데 원은 따로 서서 섞이지 않습니다. */}
       <div
         ref={cursorRef}
         className="view-cursor"
+        data-on={showCursor || undefined}
+        aria-hidden
+      />
+      <div
+        ref={coreRef}
+        className="view-cursor-core"
         data-on={showCursor || undefined}
         aria-hidden
       >

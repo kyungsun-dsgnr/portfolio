@@ -20,7 +20,7 @@ const CARDS: {
   {
     index: "01",
     title: "Behavioral Memory",
-    body: "익숙한 행동 기억은 새로운 화면에서도 다음에 벌어질 일을 자연스럽게 예측 가능하게 합니다.",
+    body: "반복된 경험은 특정 행동과 결과의 관계를 기억하게 합니다.",
     // 같은 원이 겹겹이 쌓이며 짙어집니다 — 반복이 남긴 자국
     art: (
       <>
@@ -42,7 +42,7 @@ const CARDS: {
   {
     index: "02",
     title: "Sensory Understanding",
-    body: "우리는 보고, 느끼고, 들리는 것과 같은 감각을 통해 인터페이스를 직관적으로 이해하게 합니다.",
+    body: "우리는 보고, 듣고, 느끼는 감각을 통해 대상과 주변의 관계를 자연스럽게 이해합니다.",
     // 서로 맞물린 원들 — 따로 배우지 않아도 이어지는 동작
     art: (
       <>
@@ -57,7 +57,7 @@ const CARDS: {
   {
     index: "03",
     title: "Natural Expectation",
-    body: "손에 익은 조작은 새로운 경험에서도 다음에 무엇이 일어날지 예상할 수 있는 단서가 됩니다.",
+    body: "이미 형성된 이해는 새로운 경험에서도 다음 결과를 예상할 수 있는 단서가 됩니다.",
     // 고른 격자 속에서 두 칸만 채워집니다 — 눈에 걸리는 신호
     art: (
       <>
@@ -100,7 +100,7 @@ export function ScenePrinciples() {
         <br />
         — in the behaviors, senses, and expectations
         <br />
-        we already understand.
+        we already understand
       </h2>
 
       {/* <p

@@ -46,6 +46,7 @@ import { SceneNudakeFlow } from "@/components/38-SceneNudakeFlow";
 import { SceneNudakeFlowFull } from "@/components/50-SceneNudakeFlowFull";
 import { SceneNudakeSend } from "@/components/41-SceneNudakeSend";
 import { SceneClose } from "@/components/51-SceneClose";
+import { SceneThanks } from "@/components/52-SceneThanks";
 import { Bands } from "@/components/Bands";
 // import { SceneNudakeGap5 } from "@/components/36-SceneNudakeGap5";
 // import { SceneNudakeContext3 } from "@/components/31-SceneNudakeContext3";
@@ -445,7 +446,10 @@ export function Deck({
             ]),
         /* 마지막 세 걸음(둘째 판) — 셋째 판에서는 그 자리에 맺음 장이 섭니다. */
         ...(third
-          ? [{ id: "close", label: "outro-1", node: <SceneClose /> }]
+          ? [
+              { id: "close", label: "outro-1", node: <SceneClose /> },
+              { id: "thanks", label: "outro-2", node: <SceneThanks /> },
+            ]
           : next
             ? [
                 {

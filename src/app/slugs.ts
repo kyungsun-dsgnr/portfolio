@@ -20,29 +20,32 @@ export const SLUGS: Record<string, string> = {
   closing: "intro/03",
   work: "work",
 
-  "gentle-monster-paper": "gentle-monster",
+  /* 갈래마다 첫 장은 cover, 마지막 장은 outcome 입니다. */
+  "gentle-monster-paper": "gentle-monster/cover",
   "gentle-monster-problem": "gentle-monster/01",
   "gentle-monster-why": "gentle-monster/02",
   "gentle-monster-explore": "gentle-monster/03",
-  "gentle-monster-after": "gentle-monster/04",
+  "gentle-monster-after": "gentle-monster/outcome",
 
-  tamburins: "tamburins",
-  "tamburins-flow": "tamburins/01",
-  "tamburins-screens": "tamburins/02",
+  tamburins: "tamburins/cover",
+  /* 번호는 기본 판의 장 순서입니다 — 화면 넷이 먼저, 흐름이 다음. */
+  "tamburins-screens": "tamburins/01",
+  "tamburins-flow": "tamburins/02",
   "tamburins-shift": "tamburins/03",
-  "tamburins-one": "tamburins/04",
+  "tamburins-one": "tamburins/outcome",
 
-  nudake: "nudake",
+  nudake: "nudake/cover",
   "nudake-context-2": "nudake/01",
   "nudake-signs-2": "nudake/02",
   "nudake-gap-3": "nudake/03",
   "nudake-gap-4": "nudake/04",
   "nudake-flow": "nudake/05",
   /* 세 번째 판에만 서는 장. 뒤 장의 번호는 건드리지 않습니다. */
-  "nudake-flow-full": "nudake/05b",
+  "nudake-flow-full": "nudake/outcome",
   "nudake-send": "nudake/06",
   /* 맺음 — 세 번째 판에만 섭니다. */
   close: "outro/01",
+  thanks: "outro/02",
 };
 
 /* 내려 둔 논리 장들의 주소입니다. 그 장을 다시 세울 때 이 줄도 함께 풉니다.

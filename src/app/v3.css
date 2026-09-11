@@ -70,13 +70,18 @@
   bottom: calc(-9 * var(--u));
 }
 
-/* 표지 넷 · 세 갈래(work) · 맺음 장에는 띠가 없습니다. */
+/* 표지 넷 · 세 갈래(work) · 갈래 표지 셋 · 맺음 장에는 띠가 없습니다. */
 .v3 #switch .band,
 .v3 #work .band,
 .v3 #statement .band,
 .v3 #principles .band,
 .v3 #closing .band,
-.v3 #close .band {
+.v3 #close .band,
+/* 갈래마다의 표지(hero)에도 두지 않습니다 — 크게 보여야 하는 장입니다. */
+.v3 #gentle-monster-paper .band,
+.v3 #tamburins .band,
+.v3 #nudake .band,
+.v3 #thanks .band {
   display: none;
 }
 
@@ -92,29 +97,12 @@
   justify-content: flex-end;
 }
 
-/* 갈래 이름은 4–5단을 걸쳐 한가운데 — 판의 정중앙입니다. */
-.v3 .band-center {
-  justify-content: center;
-}
-
-/* 이름과 하는 일 사이의 세로 선, 연락처 앞의 가로 선 */
+/* 이름과 하는 일 사이의 세로 선 */
 .v3 .band-rule {
   width: 1px;
   height: calc(10 * var(--u));
   background: currentColor;
   opacity: 0.5;
-}
-
-.v3 .band-dash {
-  width: calc(44 * var(--u));
-  height: 1px;
-  background: currentColor;
-  opacity: 0.5;
-}
-
-.v3 .band-mail {
-  letter-spacing: 0.02em;
-  text-transform: none;
 }
 
 .v3 .band svg {
@@ -136,4 +124,115 @@
 /* 바닥의 목차(손잡이를 당기면 올라오는 장 목록)는 이 판에서 두지 않습니다. */
 .v3 .pager {
   display: none;
+}
+
+/* 어두운 장에서는 띠가 더 물러납니다 — 밝은 글이 검은 판 위에서 더 도드라지므로. */
+.v3 .section:has(.compose-full) .band,
+.v3 .section:has(.page-grid[data-past]) .band,
+.v3 .section:has(.after-frame) .band,
+.v3 .section:has(.statement-dark) .band {
+  opacity: 0.4;
+}
+
+/* ── 맺음 둘(Thank you) ──────────────────────
+   어두운 장. 21장(One screen)과 같은 판 색입니다. */
+.v3 .section:has(.thanks) {
+  --bg: #202020;
+  --fg: #fafafa;
+  --fg-soft: rgb(250 250 250 / 0.72);
+  background: #202020;
+  color: #fafafa;
+}
+
+/* 문장은 1행 머리에서 시작하고, 인사는 그 아래 40 띄워 반 크기로 섭니다. */
+.v3 .thanks-lead {
+  display: flex;
+  flex-direction: column;
+  gap: calc(40 * var(--u));
+  align-self: start;
+}
+
+.v3 .thanks-note {
+  font-family: var(--font-display);
+  font-size: calc(22 * var(--u));
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--fg-soft);
+}
+
+/* 바닥 한 줄 — 라벨과 내용 사이 16. 다 바닥선에 맞춥니다. */
+.v3 .thanks-cell {
+  display: flex;
+  flex-direction: column;
+  gap: calc(16 * var(--u));
+  align-self: end;
+}
+
+.v3 .thanks-cell a {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.v3 .thanks-cell a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* 어두운 판에서 머리말은 조금 밝게 */
+.v3 .thanks .nud-eyebrow {
+  color: rgb(250 250 250 / 0.5);
+}
+
+/* `Local Search, Global Discovery` 의 화면 — 2행이 아니라 1행 머리부터 온 키로 섭니다. */
+.v3 #gentle-monster-after .after-frame {
+  grid-row: 1 / span 6;
+  padding-top: 0;
+}
+
+/* 메일 주소 위에서는 기본 커서 대신 둥근 COPY 가 따라다닙니다. */
+.v3 .thanks-mail {
+  cursor: none;
+}
+
+/* VIEW · COPY 커서 — 바깥 원은 아래 색을 뒤집고(difference), 글이 앉는 가운데
+   원은 따로 서서 섞지 않고 늘 어두운 판에 밝은 글입니다.
+   (fixed 인 요소는 제 겹을 만들어 안의 것이 바깥과 섞이지 않아 둘로 나눕니다.) */
+.v3 .view-cursor {
+  width: calc(60 * var(--u));
+  height: calc(60 * var(--u));
+  background: #fff;
+  color: transparent;
+  mix-blend-mode: difference;
+}
+
+.v3 .view-cursor-core {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 41;
+  display: grid;
+  place-items: center;
+  width: calc(40 * var(--u));
+  height: calc(40 * var(--u));
+  border-radius: 50%;
+  background: #191919;
+  color: #fafafa;
+  font-family: var(--font-display);
+  font-size: calc(8 * var(--u));
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-indent: 0.1em;
+  text-transform: uppercase;
+  pointer-events: none;
+  opacity: 0;
+  scale: 0.6;
+  transition:
+    scale 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.18s linear;
+}
+
+.v3 .view-cursor-core[data-on] {
+  opacity: 1;
+  scale: 1;
 }

@@ -18,6 +18,8 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
+import { IconSearch } from "@/components/NudakeScreens";
+
 /** 걸음 — 목록 · 상세 · 옮겨 가는 중 · 엽서 · 뒷장(메시지) · 결제 ·
  *  보냄 · 완료 · 받는 사람 화면 */
 type Step =
@@ -257,13 +259,15 @@ const GIFT_SHUT: Box = {
 };
 const GIFT_CARD: Box = { left: 78, top: 120, width: 177, height: 252 };
 
-/** 스스로 훑을 때 고르는 칸 */
-const PICK = 0;
+/** 스스로 훑을 때 고르는 칸 — 둘째 칸, 누데이크 티 아카이브. As-is 목업과 같은 제품입니다. */
+const PICK = 1;
 
 /* 이 화면이 스스로 지나가는 박자 */
 const TAP_AT = 1100;
 const PICK_AT = 1900;
-const CARD_AT = 3100;
+/* 상세에 잠시 머물다 바닥의 `선물하기` 를 누르고, 그제야 엽서로 갑니다. */
+const GIFT_AT = 3500;
+const CARD_AT = 3900;
 
 /** 엽서 뒷장에 미리 적혀 있는 글. 편집을 켜면 고쳐 쓸 수 있습니다. */
 const NOTE = "생일 축하해.\n오늘도 행복한 하루 보내.";
@@ -279,6 +283,8 @@ export function NudakeMockCompose({
   fill = false,
   height = 726,
   step: opening = "list",
+  pick = PICK,
+  swapTo = null,
   onDone,
 }: {
   run?: boolean;
@@ -286,6 +292,11 @@ export function NudakeMockCompose({
   height?: number;
   /** 처음 서는 걸음. 판 위에 한 장면만 세워 둘 때 씁니다. */
   step?: Step;
+  /** 스스로 훑을 때 고르는 칸. 기본은 둘째 칸(티 아카이브)입니다. */
+  pick?: number;
+  /** 세워 둔 엽서 화면에서, 아래 제품 줄의 이 칸을 눌러 바꿔 담습니다.
+      비우면 처음 고른 칸으로 되돌아갑니다. */
+  swapTo?: number | null;
   onDone?: () => void;
 } = {}) {
   const [at, setAt] = useState<Step>(opening);
@@ -294,6 +305,10 @@ export function NudakeMockCompose({
   /** 뒷장에 적힌 글. 스스로 훑을 때는 한 글자씩 차고,
       손에 쥔 화면에서는 손으로 씁니다. */
   const [note, setNote] = useState(NOTE);
+  /** 글을 한 번이라도 넣기 시작했는지 — 그 전까지 엽서는 앞장을 보입니다. */
+  const [wrote, setWrote] = useState(
+    opening === "pay" || opening === "sent" || opening === "done",
+  );
   /** 글을 고쳐 쓰는 중인지 */
   const [editing, setEditing] = useState(false);
   /** 받는 사람 */
@@ -304,8 +319,34 @@ export function NudakeMockCompose({
   const pen = useRef<HTMLTextAreaElement>(null);
   /** 고치기 전의 글. 취소하면 이 자리로 되돌립니다. */
   const kept = useRef(NOTE);
-  /** 고른 칸. 스스로 훑을 때는 첫 칸, 손으로 고를 때는 누른 칸입니다. */
-  const [chosen, setChosen] = useState(PICK);
+  /** 고른 칸. 스스로 훑을 때는 `pick`, 손으로 고를 때는 누른 칸입니다. */
+  const [chosen, setChosen] = useState(pick);
+  /** 제품 줄에서 손끝이 닿는 칸 */
+  const [press, setPress] = useState<number | null>(null);
+  /** 바닥 단추(`선물하기` · `선물 보내기`)에 손끝이 닿는 순간 */
+  const [hit, setHit] = useState(false);
+  /** 엽서 아래 `메시지 입력` 에 손끝이 닿는 순간 */
+  const [penHit, setPenHit] = useState(false);
+  /** 결제 시트의 `결제하기` 에 손끝이 닿는 순간 */
+  const [payHit, setPayHit] = useState(false);
+
+  /* 밖에서 다른 칸을 가리키면 — 손끝이 닿고, 잠시 뒤 그 제품으로 바뀝니다.
+     가리킴을 거두면 처음 칸으로 되돌아갑니다. */
+  useEffect(() => {
+    if (swapTo == null) {
+      const back = window.setTimeout(() => {
+        setPress(null);
+        setChosen(pick);
+      }, 0);
+      return () => clearTimeout(back);
+    }
+    const clock = [
+      window.setTimeout(() => setPress(swapTo), 700),
+      window.setTimeout(() => setChosen(swapTo), 1100),
+      window.setTimeout(() => setPress(null), 1700),
+    ];
+    return () => clock.forEach(clearTimeout);
+  }, [swapTo, pick]);
   /** 받는 사람 화면에서 봉투가 열렸는지 */
   const [opened, setOpened] = useState(false);
   /** 머리의 메뉴가 펼쳐져 있는지 */
@@ -432,6 +473,7 @@ export function NudakeMockCompose({
   const edit = () => {
     if (run || editing) return;
     kept.current = note;
+    setWrote(true);
     setEditing(true);
     /* 미리 적혀 있던 기본 글은 제안일 뿐이라 비웁니다 — 안내말이 대신 섭니다.
        손으로 쓴 글이 있으면 그대로 두고 그 뒤에서 이어 씁니다. */
@@ -475,22 +517,24 @@ export function NudakeMockCompose({
 
     const clock = [
       window.setTimeout(() => {
-        setChosen(PICK);
+        setChosen(pick);
         setTap(true);
       }, TAP_AT),
       window.setTimeout(() => {
         setTap(false);
         setAt("detail");
       }, PICK_AT),
+      window.setTimeout(() => setHit(true), GIFT_AT),
       window.setTimeout(() => {
+        setHit(false);
         setAt("fly");
         onDone?.();
       }, CARD_AT),
     ];
     return () => clock.forEach(clearTimeout);
-    /* 순서를 다시 돌릴 일은 없어 run 과 세워 둔 장면만 봅니다. */
+    /* 순서를 다시 돌릴 일은 없어 run 과 세워 둔 장면, 고를 칸만 봅니다. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [run, frozen]);
+  }, [run, frozen, pick]);
 
   /* 열여섯 종이 그대로 깔립니다. 화면 밖으로 넘치는 것은 잘려 —
      실제 화면처럼 굴려 내려야 나오는 자리로 남습니다. */
@@ -501,6 +545,7 @@ export function NudakeMockCompose({
     const clear = window.setTimeout(() => {
       setNote(NOTE);
       setEditing(false);
+      setWrote(false);
       setTo("");
       setTel("");
       setPay(false);
@@ -508,9 +553,42 @@ export function NudakeMockCompose({
     return () => clearTimeout(clear);
   }, [at]);
 
+  /* 스스로 훑을 때는 엽서가 선 뒤 `메시지 입력` 을 눌러 뒷장에 글을 넣고,
+     그 뒤 바닥의 `선물 보내기` 를 눌러 결제 시트까지 들어갑니다. */
+  useEffect(() => {
+    if (!run || at !== "note") return;
+    const clock = [
+      window.setTimeout(() => setPenHit(true), 700),
+      window.setTimeout(() => {
+        setPenHit(false);
+        setWrote(true);
+      }, 1100),
+      window.setTimeout(() => setHit(true), 2800),
+      window.setTimeout(() => {
+        setHit(false);
+        setAt("pay");
+      }, 3200),
+    ];
+    return () => clock.forEach(clearTimeout);
+  }, [run, at]);
+
+  /* 스스로 훑을 때는 결제 시트가 선 뒤 `결제하기` 를 눌러 편지를 보냅니다. */
+  useEffect(() => {
+    if (!run || at !== "pay") return;
+    const clock = [
+      window.setTimeout(() => setPayHit(true), 1400),
+      window.setTimeout(() => {
+        setPayHit(false);
+        setSend(0);
+        setAt("sent");
+      }, 1800),
+    ];
+    return () => clock.forEach(clearTimeout);
+  }, [run, at]);
+
   const picked = GIFTS[chosen];
-  /* 고른 그림은 목록에서는 제 칸에, 고른 뒤에는 엽서 자리에 섭니다. */
-  const written = at === "note" || at === "pay" || at === "sent";
+  /* 엽서가 뒷장을 보이는지 — 글을 넣기 시작한 뒤부터입니다. */
+  const written = wrote || at === "pay" || at === "sent";
   const from = cellAt(chosen);
   const shot = flying ? SHOT : { ...from, top: from.top - 49 };
 
@@ -518,6 +596,7 @@ export function NudakeMockCompose({
     <div
       className="nud-mock nudc"
       data-at={at}
+      data-back={written || undefined}
       data-edit={editing || undefined}
       data-menu={menu || undefined}
       data-send={at === "sent" ? send : undefined}
@@ -528,16 +607,29 @@ export function NudakeMockCompose({
     >
       {/* 머리 — As-is 목업과 같은 바입니다. */}
       <div className="nud-mock-bar" style={box({ height: 49 })}>
-        <button
-          type="button"
-          className="nud-mock-tap nudc-back-tap"
-          aria-label="이전으로"
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={back}
-          style={box({ left: 0, top: 0, width: 60, height: 48 })}
-        >
-          <i className="nudc-back" style={box({ width: 9, height: 9 })} />
-        </button>
+        {/* 왼쪽 — 목록에서는 nudake.com 그대로 검색이고, 안으로 들어간 뒤에는
+            되돌아올 꺾쇠가 섭니다. */}
+        {at === "list" ? (
+          <span
+            className="nud-mock-tap"
+            style={box({ left: 0, top: 0, width: 60, height: 48 })}
+          >
+            <i className="nud-mock-icon" style={box({ width: 16, height: 16 })}>
+              <IconSearch />
+            </i>
+          </span>
+        ) : (
+          <button
+            type="button"
+            className="nud-mock-tap nudc-back-tap"
+            aria-label="이전으로"
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={back}
+            style={box({ left: 0, top: 0, width: 60, height: 48 })}
+          >
+            <i className="nudc-back" style={box({ width: 9, height: 9 })} />
+          </button>
+        )}
 
         <span
           className="nud-mock-logo"
@@ -800,7 +892,7 @@ export function NudakeMockCompose({
             </span>
 
             {/* 앞장 — 뒷장으로 넘어가면 통째로 물러납니다. */}
-            <span className="nudc-card-face" aria-hidden={at === "note"}>
+            <span className="nudc-card-face" aria-hidden={written}>
               <p
                 className="nudc-card-foot"
                 style={{
@@ -843,7 +935,7 @@ export function NudakeMockCompose({
                 rows={4}
                 /* 글자리를 눌러도 바로 고쳐 쓸 수 있습니다. */
                 onClick={edit}
-                placeholder="메시지를 입력하세요"
+                placeholder="메시지를 입력해주세요"
                 /* 자판의 확인 자리를 `완료` 로 띄웁니다. */
                 enterKeyHint="done"
                 /* 그 확인을 누르면 쓴 그대로 반영하고 편집을 닫습니다.
@@ -956,12 +1048,17 @@ export function NudakeMockCompose({
             type="button"
             className="nudc-edit"
             data-on={editing || undefined}
+            /* 스스로 훑을 때, 뒷장을 열기 전에 여기에 손끝이 닿습니다. */
+            data-tap={penHit || undefined}
             onMouseDown={(event) => event.preventDefault()}
             onClick={editing ? done : edit}
-            style={{
-              ...box({ left: 122, top: 367, width: 89, height: 27 }),
-              ...type(10, 22),
-            }}
+            style={
+              {
+                ...box({ left: 122, top: 367, width: 89, height: 27 }),
+                ...type(10, 22),
+                "--tap-wait": "0s",
+              } as CSSProperties
+            }
           >
             {/* 글을 고친다는 표시 — 활자의 T 입니다. */}
             <svg viewBox="0 0 12 12" aria-hidden>
@@ -973,7 +1070,7 @@ export function NudakeMockCompose({
                 strokeLinecap="round"
               />
             </svg>
-            {editing ? "메시지 완료" : "메시지 편집"}
+            {editing ? "메시지 완료" : wrote ? "메시지 편집" : "메시지 입력"}
           </button>
         </div>
 
@@ -1005,10 +1102,17 @@ export function NudakeMockCompose({
                 type="button"
                 className="nudc-track-item"
                 data-on={i === chosen || undefined}
+                /* 스스로 바꿔 담을 때, 이 칸에 손끝이 닿습니다. */
+                data-tap={press === i || undefined}
                 aria-label={item.name}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => setChosen(i)}
-                style={box({ width: 62, height: 62 })}
+                style={
+                  {
+                    ...box({ width: 62, height: 62 }),
+                    "--tap-wait": "0s",
+                  } as CSSProperties
+                }
               >
                 <Image
                   src={`/images/nudake-gift/${item.img}.webp`}
@@ -1107,8 +1211,16 @@ export function NudakeMockCompose({
         <button
           type="button"
           className="nudc-pay-do"
+          /* 스스로 훑을 때, 마지막으로 여기에 손끝이 닿습니다. */
+          data-tap={payHit || undefined}
           onClick={payNow}
-          style={{ ...box({ height: 52 }), ...type(13, 52) }}
+          style={
+            {
+              ...box({ height: 52 }),
+              ...type(13, 52),
+              "--tap-wait": "0s",
+            } as CSSProperties
+          }
         >
           {picked.price} 결제하기
         </button>
@@ -1258,9 +1370,17 @@ export function NudakeMockCompose({
           type="button"
           className="nudc-btn"
           data-on
+          /* 스스로 훑을 때, 마지막에 이 단추에 손끝이 닿습니다. */
+          data-tap={hit || undefined}
           /* 상세에서 누르면 고른 제품이 엽서가 되고 뒷장이 열립니다. */
           onClick={gift}
-          style={{ ...box({ height: 52 }), ...type(13, 52) }}
+          style={
+            {
+              ...box({ height: 52 }),
+              ...type(13, 52),
+              "--tap-wait": "0s",
+            } as CSSProperties
+          }
         >
           {at === "note" || at === "pay" ? "선물 보내기" : "선물하기"}
         </button>

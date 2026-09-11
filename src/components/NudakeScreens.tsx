@@ -41,7 +41,7 @@ const STROKE = {
   strokeWidth: 1.5,
 } as const;
 
-function IconSearch() {
+export function IconSearch() {
   return (
     <svg viewBox="0 0 16 16" aria-hidden {...STROKE}>
       <circle cx="7" cy="7" r="5.1" />
@@ -187,7 +187,7 @@ function TopBar({ tap }: { tap?: "hamburger" } = {}) {
         style={box({ left: 125, top: 14.5, width: 83, height: 19 })}
       >
         <Image
-          src="/images/nudake-mock-logo.png"
+          src="/images/nudake-mock-logo2.png"
           alt="Nudake"
           fill
           sizes="20vw"
@@ -383,22 +383,59 @@ export function NudakeMockMenu({
  * 위에서부터 갈래 셋 · 종류 동그라미 셋 · 거른 수와 필터 · 티 열두 종입니다.
  * 가운데 동그라미가 '티 기프트' — 여기서 처음 선물이라는 분류가 보입니다.
  */
+/* 상세에 서는 세트 넷. 2026-09-11 nudake.com/kr/menu (티 기프트) 각 상세 그대로 —
+   목록(GIFTS)과 같은 차례라 `이전 제품 · 다음 제품` 이 이 순서로 넘어갑니다. */
+const DETAILS = [
+  {
+    name: "누데이크 티 컬렉션",
+    img: "collection",
+    price: "53,000원",
+    desc: "티백(18개입)\n블루 몽크(2개입), 레더 부츠(2개입), 블랙 캐러멜(2개입),\n화이트 선셋(2개입), 피치 로지(2개입), 맨티스(2개입),\n더 마피아, 샤토 누아르, 넘버 88, 루이, 캐모 필로우, 기문\n\nCaffeine-Free: 맨티스 · 루이 · 캐모 필로우",
+  },
+  {
+    name: "누데이크 티 아카이브",
+    img: "archive",
+    price: "38,900원",
+    desc: "티백(16개입)\n블루 몽크(2개입), 레더 부츠(2개입), 맨티스(2개입), 화이트 선셋(2개입),\n더 마피아, 샤토 누아르, 블랙 캐러멜, 넘버 88, 피치 로지,\n루이, 캐모 필로우, 기문\n\nCaffeine-Free: 맨티스 · 루이 · 캐모 필로우",
+  },
+  {
+    name: "누데이크 티 테이스터",
+    img: "taster",
+    price: "28,500원",
+    desc: "티백(10개입)\n블루 몽크, 레더 부츠, 더 마피아, 넘버 88, 화이트 선셋,\n피치 로지, 맨티스, 루이, 캐모 필로우, 기문\n\nCaffeine-Free: 맨티스 · 루이 · 캐모 필로우",
+  },
+  {
+    name: "루스 리프 에디션",
+    img: "looseleaf",
+    price: "48,000원",
+    desc: "잎차(12종)\n*기문: 56,000원\n\nCaffeine-Free: 맨티스 · 루이 · 캐모 필로우",
+  },
+];
+
 /**
  * 04 — 제품 상세 화면
  *
- * 2026-09-08 nudake.com/kr/menu 의 `누데이크 티 컬렉션` 상세를 그대로 옮긴 판입니다 —
+ * 2026-09-11 nudake.com/kr/menu 의 세트 상세를 그대로 옮긴 판입니다 —
  * 이름·값 줄, 그림 셋이 옆으로 넘어가는 자리(점 셋), 설명, 카카오톡 선물하기,
  * 그리고 바닥의 이전·다음 제품. 목록에서 하나를 고르면 이 화면으로 넘어갑니다.
+ * 기본은 둘째 세트(티 아카이브)고, `item` 으로 다른 세트를 세웁니다.
  */
 export function NudakeMockDetail({
   tap = false,
   down = false,
+  item = 1,
+  next = false,
 }: {
   /** 선물하기 단추에 손끝이 닿는 순간 */
   tap?: boolean;
   /** 단추가 보이도록 화면을 조금 내린 상태 */
   down?: boolean;
+  /** 서 있는 세트 — DETAILS 의 차례 */
+  item?: number;
+  /** 바닥의 `다음 제품` 에 손끝이 닿는 순간 */
+  next?: boolean;
 } = {}) {
+  const one = DETAILS[item] ?? DETAILS[1];
   return (
     /* 키는 안에 든 것이 정합니다 — 아래 단추까지 한 화면에 들어와야 합니다. */
     <div
@@ -413,8 +450,8 @@ export function NudakeMockDetail({
           style={{ padding: `${mk(10)} ${mk(24)} ${mk(12)}` }}
         >
           <div className="nud-detail-name">
-            <b style={type(16, 16)}>누데이크 티 컬렉션</b>
-            <em style={type(16, 16)}>53,000원</em>
+            <b style={type(16, 16)}>{one.name}</b>
+            <em style={type(16, 16)}>{one.price}</em>
           </div>
           <p style={{ ...type(13, 13), paddingTop: mk(5) }}>
             누데이크 티 하우스
@@ -427,7 +464,7 @@ export function NudakeMockDetail({
             {[0, 1, 2].map((n) => (
               <span key={n} style={box({ width: 333, height: 363 })}>
                 <Image
-                  src="/images/nudake-gift/collection.webp"
+                  src={`/images/nudake-gift/${one.img}.webp`}
                   alt=""
                   fill
                   sizes="30vw"
@@ -453,17 +490,14 @@ export function NudakeMockDetail({
           className="nud-detail-body"
           style={{ padding: `${mk(16)} ${mk(20)} ${mk(12)}` }}
         >
-          <p style={{ ...type(13, 19.5), width: mk(293) }}>
-            티백(18개입)
-            <br />
-            블루 몽크(2개입), 레더 부츠(2개입), 블랙 캐러멜(2개입),
-            <br />
-            화이트 선셋(2개입), 피치 로지(2개입), 맨티스(2개입),
-            <br />
-            더 마피아, 샤토 누아르, 넘버 88, 루이, 캐모 필로우, 기문
-            <br />
-            <br />
-            Caffeine-Free: 맨티스 · 루이 · 캐모 필로우
+          <p
+            style={{
+              ...type(13, 19.5),
+              width: mk(293),
+              whiteSpace: "pre-line",
+            }}
+          >
+            {one.desc}
           </p>
 
           <span
@@ -481,13 +515,17 @@ export function NudakeMockDetail({
           </span>
         </div>
 
-        {/* 바닥 — 이전·다음 제품. 첫 제품이라 이전은 꺼져 있습니다. */}
+        {/* 바닥 — 이전·다음 제품. 첫 세트에서만 이전이 꺼집니다.
+            스스로 넘겨 보여 줄 때는 `다음 제품` 에 손끝이 닿습니다. */}
         <div className="nud-detail-feet" style={box({ height: 48 })}>
-          <span data-off style={{ gap: mk(10) }}>
+          <span data-off={item === 0 || undefined} style={{ gap: mk(10) }}>
             <i className="nud-detail-arrow" data-back aria-hidden />
             <b style={type(13, 19.5)}>이전 제품</b>
           </span>
-          <span style={{ gap: mk(10) }}>
+          <span
+            data-tap={next || undefined}
+            style={{ gap: mk(10), "--tap-wait": "0s" } as CSSProperties}
+          >
             <b style={type(13, 19.5)}>다음 제품</b>
             <i className="nud-detail-arrow" aria-hidden />
           </span>
@@ -508,15 +546,36 @@ export function NudakeMockDetail({
  *
  * 이 장이 말하는 단절이 눈에 보이는 자리라, 남의 화면인 티가 나야 합니다 —
  * 글꼴도 누데이크의 것이 아니라 시스템 고딕(Inter)입니다.
+ *
+ * `away` 가 서면 화면이 통째로 흑백이 되고 딤드 위에 한 마디가 뜹니다 —
+ * 경험이 브랜드 밖으로 나갔다는 표시입니다. `quiet` 면 색만 빼고 딤드와 말은
+ * 바깥(판)이 맡습니다.
  */
-export function NudakeMockKakao() {
+export function NudakeMockKakao({
+  away = false,
+  quiet = false,
+}: { away?: boolean; quiet?: boolean } = {}) {
   return (
-    <div className="nud-mock nud-kakao" style={box({ width: 333 })}>
+    <div
+      className="nud-mock nud-kakao"
+      style={box({ width: 333 })}
+      data-away={away || undefined}
+      data-quiet={quiet || undefined}
+    >
+      {/* 밖으로 나간 표시. 색을 빼는 건 아래 판이고, 글은 그 위에 또렷이 섭니다. */}
+      <div className="nud-away" aria-hidden>
+        {/* 오른쪽 글판 마지막 걸음과 같은 채운 알약에 한 마디를 담습니다. */}
+        {quiet ? null : (
+          <span className="flow-pill nud-away-pill" data-tone="start">
+            누데이크 경험 종료
+          </span>
+        )}
+      </div>
       <div className="nud-mock-page" style={{ paddingTop: mk(44) }}>
         {/* 그림과 그 위에 얹히는 두 표 */}
         <div className="nud-kakao-shot" style={box({ height: 333 })}>
           <Image
-            src="/images/nudake-gift/collection.webp"
+            src="/images/nudake-gift/archive.webp"
             alt=""
             fill
             sizes="30vw"
@@ -567,7 +626,7 @@ export function NudakeMockKakao() {
             className="nud-kakao-name"
             style={{ ...type(18, 24), paddingTop: mk(6) }}
           >
-            BEST 티백 틴케이스 세트 / 프리미엄 TEA 기프트 ‘티 컬렉션’
+            BEST 티백 선물 세트 / TEA 기프트 ‘티 아카이브’
           </p>
 
           <p
@@ -581,11 +640,11 @@ export function NudakeMockKakao() {
             className="nud-kakao-reviews"
             style={{ ...type(13, 20), paddingTop: mk(6) }}
           >
-            13건의 선물후기
+            154건의 선물후기
           </p>
 
           <p className="nud-kakao-price" style={{ paddingTop: mk(12) }}>
-            <b style={type(20, 22)}>53,000</b>
+            <b style={type(20, 22)}>38,900</b>
             <em style={type(19, 22)}>원</em>
           </p>
         </div>
@@ -647,7 +706,7 @@ export function NudakeMockList({
   tap?: "teagift";
   /** 선물 갈래를 고른 뒤의 목록. 거른 수와 깔리는 것이 함께 바뀝니다. */
   gift?: boolean;
-  /** 첫 칸(누데이크 티 컬렉션)에 손끝이 닿는 순간 */
+  /** 둘째 칸(누데이크 티 아카이브)에 손끝이 닿는 순간 */
   pick?: boolean;
 } = {}) {
   const list = gift ? GIFTS : TEAS;
@@ -720,8 +779,8 @@ export function NudakeMockList({
             <span
               key={tea.name}
               data-edge={i % 2 === 0 || undefined}
-              /* 스스로 밟아 보여 줄 때, 첫 칸에 손끝이 닿습니다. */
-              data-tap={(pick && i === 0) || undefined}
+              /* 스스로 밟아 보여 줄 때, 둘째 칸(티 아카이브)에 손끝이 닿습니다. */
+              data-tap={(pick && i === 1) || undefined}
               style={
                 {
                   ...box({ height: 207.78 }),

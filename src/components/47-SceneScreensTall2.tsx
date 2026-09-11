@@ -88,10 +88,18 @@ const SHOTS: {
 
 const px = (value: number) => `calc(${value} * var(--u))`;
 
+/* 세 번째 판의 화면 이름 — 무엇을 하는 화면인지 한 낱말 더 붙입니다. */
+const FULL_NAMES: Record<string, string> = {
+  Gift: "Gift List",
+  Product: "Product Detail",
+  Scent: "Scent Selection",
+};
+
 export function SceneScreensTall2({
   title,
   still,
   merge,
+  full = false,
 }: {
   /** 판을 그대로 쓰면서 제목만 바꿔 다는 장이 있습니다. */
   title?: ReactNode;
@@ -99,7 +107,10 @@ export function SceneScreensTall2({
   still?: boolean;
   /** 물러난 넷이 잠시 뒤 첫 자리로 모여 한 장으로 겹칩니다. */
   merge?: boolean;
+  /** 화면 이름을 풀어 씁니다 — Gift List · Product Detail · Scent Selection. */
+  full?: boolean;
 } = {}) {
+  const nameOf = (name: string) => (full ? (FULL_NAMES[name] ?? name) : name);
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
   const { c } = useCopy();
   const [scentStep, setScentStep] = useState<1 | 2>(1);
@@ -297,29 +308,36 @@ export function SceneScreensTall2({
               {/* 마디는 화면 아래쪽에 옅은 판으로 얹힙니다 —
                 `Already There, Just Not Visible` 의 글판과 같은 결입니다. */}
               <div
-                className="steps-cap tall-cap-over"
+                /* `tall-cap` 은 마디 안의 진행 막대를 그리는 이름이라 함께 둡니다.
+                 자리(화면 위)는 `tall-cap-over` 가 잡습니다. */
+                className="steps-cap tall-cap tall-cap-over"
                 /* 재생 전에는 다 또렷하고, 하나가 서면 나머지 글이 물러납니다. */
                 data-dim={(live >= 0 && i !== live) || undefined}
               >
                 <p className="steps-no">
                   {`STEP ${String(i + 1).padStart(2, "0")}`}
-                  {i < SHOTS.length - 1 && (
+                  {/* 마지막 걸음에도 막대가 찹니다 — 네 걸음이 같은 결로 섭니다. */}
+                  {
                     <i
                       /* 다시 볼 때마다 처음부터 차오르도록 새로 답니다. */
                       key={plays[i]}
                       data-run={live === i || undefined}
+                      /* 돌 때는 지난 걸음의 막대가 걷히고, 손으로 하나를
+                         골랐을 때는 그 카드의 막대만 남아 차오릅니다. */
                       data-gone={
-                        !playing || (!still && active > i) || undefined
+                        (playing
+                          ? !still && active > i
+                          : solo === null || solo !== i) || undefined
                       }
                       style={{ "--fill-ms": `${shot.span}ms` } as CSSProperties}
                       aria-hidden
                     />
-                  )}
+                  }
                 </p>
                 <h3 className="steps-step">
                   {shot.real === "scent1"
-                    ? `Scent ${scentStep} / 2`
-                    : shot.screen}
+                    ? `${nameOf("Scent")} ${scentStep} / 2`
+                    : nameOf(shot.screen)}
                 </h3>
                 <p className="steps-kind">{shot.step}</p>
               </div>

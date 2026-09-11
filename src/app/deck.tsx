@@ -43,6 +43,7 @@ import { SceneNudakeSigns2 } from "@/components/37-SceneNudakeSigns2";
 import { SceneNudakeGap3 } from "@/components/34-SceneNudakeGap3";
 import { SceneNudakeGap4 } from "@/components/35-SceneNudakeGap4";
 import { SceneNudakeFlow } from "@/components/38-SceneNudakeFlow";
+import { SceneNudakeFlowFull } from "@/components/50-SceneNudakeFlowFull";
 import { SceneNudakeSend } from "@/components/41-SceneNudakeSend";
 // import { SceneNudakeGap5 } from "@/components/36-SceneNudakeGap5";
 // import { SceneNudakeContext3 } from "@/components/31-SceneNudakeContext3";
@@ -61,15 +62,41 @@ import { SceneWork } from "@/components/06-SceneWork";
 export function Deck({
   under,
   next = false,
-}: { under?: string; next?: boolean } = {}) {
+  third = false,
+}: { under?: string; next?: boolean; third?: boolean } = {}) {
   const { c } = useCopy();
 
   /* 갈래(`/v2`) 아래에 선 덱은 주소도 그 아래로 적습니다. */
+  /* 세 번째 판에서는 `Across Multiple Screens` 가 `Too Many Steps` 앞에 섭니다.
+     장이 자리를 바꾸면 주소도 따라가야 번호가 차례대로 읽힙니다. */
+  const base: Record<string, string> = third
+    ? {
+        ...SLUGS,
+        "tamburins-screens": SLUGS["tamburins-flow"],
+        "tamburins-flow": SLUGS["tamburins-screens"],
+      }
+    : SLUGS;
   const slugs = under
     ? Object.fromEntries(
-        Object.entries(SLUGS).map(([id, slug]) => [id, `${under}/${slug}`]),
+        Object.entries(base).map(([id, slug]) => [id, `${under}/${slug}`]),
       )
-    : SLUGS;
+    : base;
+
+  /* 탬버린즈의 두 장. 판에 따라 차례가 바뀝니다. */
+  const tooManySteps = {
+    id: "tamburins-flow",
+    index: third ? "02 — Tamburins" : "01 — Tamburins",
+    label: third ? "tamburins-3" : "tamburins-2",
+    node: <SceneFlow />,
+  };
+  const acrossScreens = {
+    id: "tamburins-screens",
+    index: third ? "01 — Tamburins" : "02 — Tamburins",
+    label: third ? "tamburins-2" : "tamburins-3",
+    /* 두 판이 같은 자리에 다른 장을 세웁니다 —
+       지금 쓰는 판은 마디가 화면 위에 얹힌 2안, 첫 판은 1안입니다. */
+    node: next ? <SceneScreensTall2 full={third} /> : <SceneScreensTall />,
+  };
 
   return (
     <LightStage
@@ -253,20 +280,9 @@ export function Deck({
           node: <SceneLogic plan={TAM_MAP} />,
         },
         */
-        {
-          id: "tamburins-flow",
-          index: "01 — Tamburins",
-          label: "tamburins-2",
-          node: <SceneFlow />,
-        },
-        {
-          id: "tamburins-screens",
-          index: "02 — Tamburins",
-          label: "tamburins-3",
-          /* 두 판이 같은 자리에 다른 장을 세웁니다 —
-             지금 쓰는 판은 마디가 화면 위에 얹힌 2안, 첫 판은 1안입니다. */
-          node: next ? <SceneScreensTall2 /> : <SceneScreensTall />,
-        },
+        ...(third
+          ? [acrossScreens, tooManySteps]
+          : [tooManySteps, acrossScreens]),
 
         /* 내려 둔 장(고칠 것은 걸음의 수가 아니라 일의 이름이었습니다.). 필요하면 이 묶음만 풀면 됩니다.
         {
@@ -406,12 +422,24 @@ export function Deck({
           label: "nudake-5",
           node: <SceneNudakeGap4 pair={next} />,
         },
-        {
-          id: "nudake-flow",
-          index: "05 — Nudake",
-          label: "nudake-6",
-          node: <SceneNudakeFlow />,
-        },
+        /* 네 걸음 — 세 번째 판에서는 카드 넷 대신 한 화면 판(50장)으로 섭니다. */
+        ...(third
+          ? [
+              {
+                id: "nudake-flow-full",
+                index: "05 — Nudake",
+                label: "nudake-6",
+                node: <SceneNudakeFlowFull />,
+              },
+            ]
+          : [
+              {
+                id: "nudake-flow",
+                index: "05 — Nudake",
+                label: "nudake-6",
+                node: <SceneNudakeFlow />,
+              },
+            ]),
         /* 마지막 세 걸음. 두 번째 판에서 먼저 세워 봅니다. */
         ...(next
           ? [

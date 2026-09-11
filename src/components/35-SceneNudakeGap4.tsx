@@ -10,7 +10,13 @@
  * 아래로 펼쳐집니다 — 무엇이 달라졌는지 나란히 놓고 볼 수 있습니다.
  */
 
-import { useEffect, useState, type CSSProperties } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 
 import { NudakeMockCompose } from "@/components/NudakeComposeScreen";
 import {
@@ -92,28 +98,150 @@ function Chain({ steps }: { steps: string[] }) {
   );
 }
 
-/* 왼쪽(고치기 전) 화면이 스스로 밟는 차례 —
+/* 첫 카드를 누르면 왼쪽(고치기 전) 화면이 밟는 차례 —
    목록에서 하나를 고르고 · 상세로 넘어가고 · 단추가 보이게 내려서 · 누르면
-   브랜드 밖 화면이 섭니다. 34장과 같은 박자입니다. */
+   브랜드 밖 화면이 서고 · 색이 빠지며 끝납니다. 34장과 같은 박자입니다.
+   그 뒤 화면이 한 행 내려앉고, 오른쪽(고친 뒤) 화면이 고르기부터 돕니다. */
 const TAP_AT = 1200;
 const TURN_AT = 2100;
 const DOWN_AT = 3100;
 const PUSH_AT = 4100;
 const AWAY_AT = 4900;
+const GONE_AT = 5900;
+const SINK_AT = 6700;
+const AFTER_AT = 7300;
+
+/* 카드마다 도는 길이(ms) — 위 보더의 막대가 이 시간에 맞춰 차오르고,
+   재생 단추로 훑을 때는 이 시간이 지나면 다음 카드로 넘어갑니다.
+   첫 카드: 왼쪽 7.3초 + 오른쪽이 고르기부터 보내기까지 약 13초.
+   둘째: 왼쪽이 두 번 넘기고 오른쪽이 바꿔 담기까지. 셋째: 글을 넣고 보내기까지. */
+const SPAN = [20600, 5400, 8400];
+
+/* 오른쪽 화면의 키 — 2행 머리부터 6행 끝까지(다섯 행과 사이 넷).
+   바닥 단추까지 다 보이게, 화면을 그 키로 세웁니다. */
+const STAGE_H = 5 * 110 + 4 * 16;
+
+/* 둘째 카드가 바꿔 담는 칸 — 넷째, 루스 리프 에디션. 처음의 아카이브와 다른 제품입니다. */
+const OTHER_PICK = 3;
+
+/* 둘째 카드를 누르면 왼쪽(고치기 전) 상세가 밟는 차례 —
+   아카이브 상세에서 바닥의 `다음 제품` 을 두 번 눌러 루스 리프 에디션까지 가고,
+   그제야 오른쪽이 제품 줄에서 같은 제품으로 바꿔 담습니다. */
+const NEXT1_AT = 900;
+const TURN1_AT = 1300;
+const NEXT2_AT = 2100;
+const TURN2_AT = 2500;
+const SWAP_AT = 3300;
 
 export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
   const [ref, inView] = useInView<HTMLDivElement>(0.4);
   const { c } = useCopy();
 
-  /** 펼쳐 둔 카드. 한 번에 하나만 열립니다. */
+  /** 펼쳐 둔 카드. 한 번에 하나만 열립니다. 열리면 그 카드의 장면이 돕니다. */
   const [open, setOpen] = useState<number | null>(null);
+  /** 재생 단추로 셋을 차례로 훑는 중인지 */
+  const [auto, setAuto] = useState(false);
+  /** 카드를 열 때마다 하나씩 올립니다 — 막대가 처음부터 다시 차오르게. */
+  const [plays, setPlays] = useState<number[]>(() => NOTES.map(() => 0));
+  const chain = useRef(0);
 
-  /** 왼쪽 화면의 걸음 — 0 목록 · 1 손끝 · 2 상세 · 3 내림 · 4 누름 · 5 밖으로 */
-  const [was, setWas] = useState(0);
+  const show = useCallback((i: number | null) => {
+    setOpen(i);
+    if (i !== null) setPlays((n) => n.map((k, j) => (j === i ? k + 1 : k)));
+  }, []);
+
+  /** 화면 하나만 눌러 그 화면의 전체 흐름을 돌리는 중 — 카드와는 따로 놉니다. */
+  const [solo, setSolo] = useState<"before" | "after" | null>(null);
+  /** 화면을 누를 때마다 하나씩 올립니다 — 오른쪽이 처음부터 다시 돌게. */
+  const [soloPlays, setSoloPlays] = useState(0);
+
+  /* 재생 — 첫 카드부터 셋을 이어 돌리고 끝나면 접습니다. */
+  const play = useCallback(() => {
+    window.clearTimeout(chain.current);
+    setSolo(null);
+    setAuto(true);
+    show(0);
+  }, [show]);
+
+  const stop = useCallback(() => {
+    window.clearTimeout(chain.current);
+    setAuto(false);
+    setOpen(null);
+  }, []);
+
+  /* 화면을 누르면 카드는 그대로 두고 그 화면의 흐름만 처음부터 돕니다.
+     도는 중에 다시 누르면 멈춥니다. */
+  const soloPlay = (side: "before" | "after") => {
+    window.clearTimeout(chain.current);
+    setAuto(false);
+    setOpen(null);
+    setSolo((now) => (now === side ? null : side));
+    setSoloPlays((n) => n + 1);
+  };
 
   useEffect(() => {
-    if (!pair) return;
-    if (!inView) {
+    if (!auto || open === null) return;
+    chain.current = window.setTimeout(() => {
+      if (open + 1 >= NOTES.length) {
+        setAuto(false);
+        setOpen(null);
+        return;
+      }
+      show(open + 1);
+    }, SPAN[open]);
+    return () => window.clearTimeout(chain.current);
+  }, [auto, open, show]);
+
+  /** 왼쪽 화면의 걸음 — 0 목록 · 1 손끝 · 2 상세 · 3 내림 · 4 누름 ·
+      5 밖으로 · 6 흑백 · 7 내려앉음 · 8 오른쪽이 돕니다 */
+  const [was, setWas] = useState(0);
+
+  /* 첫 카드가 열려 있는 동안 왼쪽이 돕니다. 닫히거나 장을 벗어나면 처음으로. */
+  const playing = pair && open === 0;
+  /* 왼쪽 화면을 눌러도 같은 흐름이 돕니다 — 다만 넘어가지 않고 흑백에서 멈춥니다. */
+  const runBefore = playing || solo === "before";
+  /* 둘째 카드는 왼쪽 상세가 `다음 제품` 으로 넘어가고, 오른쪽 엽서 화면은
+     아래 제품 줄에서 같은 제품(루스 리프 에디션)으로 바꿔 담는 모습입니다. */
+  const other = pair && open === 1;
+  /* 셋째 카드는 오른쪽 엽서 화면이 `메시지 입력` 으로 글을 넣고
+     `선물 보내기` 까지 가는 모습입니다. 왼쪽은 그대로 둡니다. */
+  const send = pair && open === 2;
+  /* 하나가 도는 동안 나머지 카드는 물러납니다. */
+  const busy = playing || other || send;
+
+  /** 둘째 카드의 걸음 — 0 아카이브 · 1 다음 누름 · 2 테이스터 · 3 다음 누름 ·
+      4 루스 리프 · 5 오른쪽이 바꿔 담음 */
+  const [flip, setFlip] = useState(0);
+
+  useEffect(() => {
+    if (!other || !inView) {
+      const back = window.setTimeout(() => setFlip(0), 0);
+      return () => clearTimeout(back);
+    }
+    const clock = [
+      window.setTimeout(() => setFlip(1), NEXT1_AT),
+      window.setTimeout(() => setFlip(2), TURN1_AT),
+      window.setTimeout(() => setFlip(3), NEXT2_AT),
+      window.setTimeout(() => setFlip(4), TURN2_AT),
+      window.setTimeout(() => setFlip(5), SWAP_AT),
+    ];
+    return () => clock.forEach(clearTimeout);
+  }, [other, inView]);
+
+  /* 도는 동안 돌지 않는 쪽은 한 행 내려앉고 딤드 아래로 물러납니다 —
+     첫 카드는 왼쪽이 도는 사이엔 오른쪽이, 넘어간 뒤엔 왼쪽이.
+     둘째 카드는 왼쪽이 넘기는 사이엔 오른쪽이, 바꿔 담을 땐 왼쪽이.
+     셋째 카드는 내내 왼쪽이. 아무것도 돌지 않을 때는 오른쪽이 물러나 있습니다. */
+  const beforeOff =
+    (playing && was >= 7) || (other && flip >= 5) || send || solo === "after";
+  const afterOff =
+    (!busy && solo !== "after") ||
+    (playing && was < 8) ||
+    (other && flip < 5) ||
+    solo === "before";
+
+  useEffect(() => {
+    if (!runBefore || !inView) {
       const back = window.setTimeout(() => setWas(0), 0);
       return () => clearTimeout(back);
     }
@@ -123,11 +251,32 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
       window.setTimeout(() => setWas(3), DOWN_AT),
       window.setTimeout(() => setWas(4), PUSH_AT),
       window.setTimeout(() => setWas(5), AWAY_AT),
+      window.setTimeout(() => setWas(6), GONE_AT),
+      window.setTimeout(() => setWas(7), SINK_AT),
+      window.setTimeout(() => setWas(8), AFTER_AT),
     ];
     return () => clock.forEach(clearTimeout);
-  }, [pair, inView]);
+  }, [runBefore, inView, soloPlays]);
 
-  const toggle = (i: number) => setOpen((now) => (now === i ? null : i));
+  /* 장을 벗어나면 펼친 것도 접습니다 — 돌아왔을 때 처음부터 다시 누르게. */
+  useEffect(() => {
+    if (inView) return;
+    const back = window.setTimeout(() => {
+      window.clearTimeout(chain.current);
+      setAuto(false);
+      setOpen(null);
+      setSolo(null);
+    }, 0);
+    return () => clearTimeout(back);
+  }, [inView]);
+
+  /* 손으로 누르면 훑기는 멈추고 그 카드만 돕니다. */
+  const toggle = (i: number) => {
+    window.clearTimeout(chain.current);
+    setAuto(false);
+    setSolo(null);
+    show(open === i ? null : i);
+  };
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
@@ -136,11 +285,19 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
           한 장만 세우는 판(첫 판)에서는 이 자리에 개선 화면이 섭니다. */}
       <div
         className="nud-stage col-start-1 col-span-4 row-start-2 row-span-5"
-        aria-hidden
+        data-sunk={beforeOff || undefined}
+        data-dim={beforeOff || undefined}
       >
         {pair ? (
-          was >= 5 ? (
-            <NudakeMockKakao />
+          other ? (
+            /* 둘째 카드 — 상세에서 `다음 제품` 으로 두 번 넘어갑니다. */
+            <NudakeMockDetail
+              down
+              item={flip >= 4 ? 3 : flip >= 2 ? 2 : 1}
+              next={flip === 1 || flip === 3}
+            />
+          ) : was >= 5 ? (
+            <NudakeMockKakao away={was >= 6} quiet />
           ) : was >= 2 ? (
             <NudakeMockDetail down={was >= 3} tap={was === 4} />
           ) : (
@@ -149,13 +306,50 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
         ) : (
           <NudakeMockCompose run={inView} />
         )}
+
+        {/* 화면 어디를 눌러도 이 화면의 전체 흐름이 처음부터 돕니다. */}
+        {pair && (
+          <button
+            type="button"
+            className="nud-stage-hit"
+            aria-label={
+              solo === "before" ? "흐름 멈추기" : "고치기 전 흐름 재생"
+            }
+            onClick={() => soloPlay("before")}
+          />
+        )}
       </div>
 
-      {/* 오른쪽은 고친 뒤의 화면. 장에 들어서면 엽서를 쓰고 봉투에 담습니다.
+      {/* 오른쪽은 고친 뒤의 화면. 처음에는 티 아카이브를 담은 엽서 화면이 서 있고,
+          첫 카드면 왼쪽이 끝난 뒤 고르기부터 다시 돌고(그래서 새로 세웁니다),
+          둘째 카드면 아래 제품 줄에서 다른 제품으로 바꿔 담습니다.
           자리는 CSS 가 잡습니다 — 판마다 서는 단이 다릅니다. */}
       {pair && (
-        <div className="nud-stage nud-stage-pair" aria-hidden>
-          <NudakeMockCompose run={inView} />
+        <div
+          className="nud-stage nud-stage-pair"
+          data-sunk={afterOff || undefined}
+          data-dim={afterOff || undefined}
+        >
+          {was >= 8 || solo === "after" ? (
+            <NudakeMockCompose key={`run-${soloPlays}`} run height={STAGE_H} />
+          ) : send ? (
+            /* 셋째 카드 — 엽서 앞장에서 시작해 글을 넣고 결제 시트까지. */
+            <NudakeMockCompose key="send" step="note" run height={STAGE_H} />
+          ) : (
+            <NudakeMockCompose
+              key="card"
+              step="card"
+              height={STAGE_H}
+              swapTo={flip >= 5 ? OTHER_PICK : null}
+            />
+          )}
+
+          <button
+            type="button"
+            className="nud-stage-hit"
+            aria-label={solo === "after" ? "흐름 멈추기" : "고친 뒤 흐름 재생"}
+            onClick={() => soloPlay("after")}
+          />
         </div>
       )}
 
@@ -169,6 +363,31 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
       {/* 줄바꿈은 문구표를 지나갑니다 — 판마다 한 줄로도, 두 줄로도 섭니다. */}
       <h2 className="type-lead capitalize rise col-start-1 col-span-4 row-start-1 row-span-2">
         {c("From Buying a Gift\nto Making One")}
+
+        {/* 셋을 차례로 훑어 보여 주는 장치. 도는 동안에는 멈춤 단추가 됩니다. */}
+        {pair && (
+          <button
+            type="button"
+            className="store-play store-play-block"
+            data-playing={auto || undefined}
+            aria-label={auto ? "훑기 멈추기" : "카드 훑어 보기"}
+            onClick={auto ? stop : play}
+          >
+            <span className="store-play-key">
+              <svg viewBox="0 0 24 24" aria-hidden>
+                {auto ? (
+                  <rect x="5" y="5" width="14" height="14" />
+                ) : (
+                  <path d="M8 5 19 12 8 19 Z" />
+                )}
+              </svg>
+            </span>
+
+            <span className="store-play-tip" data-side="right" aria-hidden>
+              {auto ? "Stop" : "Play"}
+            </span>
+          </button>
+        )}
       </h2>
 
       <div
@@ -184,30 +403,57 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
             key={note.eyebrow}
             className="note nud-ruled rise"
             data-open={open === i || undefined}
+            /* 한 카드가 도는 동안 나머지는 물러납니다. */
+            data-off={(busy && i !== open) || undefined}
+            /* 어느 화면이 도는지 — 그쪽 글이 진하고 다른 쪽은 물러납니다. */
+            data-side={
+              busy && open === i
+                ? (playing && was < 8) || (other && flip < 5)
+                  ? "before"
+                  : "after"
+                : undefined
+            }
             aria-expanded={open === i}
             aria-label={`${note.eyebrow} — 앞 장의 글과 견주어 보기`}
             onClick={() => toggle(i)}
             style={{ "--delay": `${0.12 + i * 0.1}s` } as CSSProperties}
           >
+            {/* 도는 카드의 위 보더에 막대가 그 길이만큼 차오릅니다. */}
+            {busy && open === i ? (
+              <i
+                key={plays[i]}
+                className="nud-bar"
+                style={{ "--fill-ms": `${SPAN[i]}ms` } as CSSProperties}
+                aria-hidden
+              />
+            ) : null}
+
             <span className="nud-open" aria-hidden>
               <i />
             </span>
 
-            <p className="nud-eyebrow">{note.eyebrow}</p>
-            <h3 className="type-title">{note.title}</h3>
-            {note.body ? <p className="type-body">{note.body}</p> : null}
-            {note.chain ? <Chain steps={note.chain} /> : null}
-
-            {/* 앞 장의 같은 자리 글. 접혀 있다가 꺾쇠를 누르면 열립니다. */}
+            {/* 앞 장의 같은 자리 글. 접혀 있다가 누르면 위에서 열립니다 —
+                고치기 전이 먼저, 고친 뒤가 그 아래에 섭니다. */}
             <div className="nud-was">
               <div className="nud-was-in">
-                <p className="nud-eyebrow">
-                  Before &middot; {BEFORE[i].eyebrow}
-                </p>
+                {/* 갈래 표 — 덱 전체가 쓰는 머리말(.nud-eyebrow)과 같은 글씨입니다. */}
+                <p className="nud-eyebrow nud-side">AS-IS</p>
+                <p className="nud-eyebrow">{BEFORE[i].eyebrow}</p>
                 <h4 className="type-title">{BEFORE[i].title}</h4>
                 <p className="type-body">{BEFORE[i].body}</p>
                 <Chain steps={BEFORE[i].chain} />
               </div>
+            </div>
+
+            <div className="nud-now">
+              {/* 펼치면 이전 글 아래에 서므로 `TO-BE` 표를 앞에 세웁니다. */}
+              {open === i ? (
+                <p className="nud-eyebrow nud-side">TO-BE</p>
+              ) : null}
+              <p className="nud-eyebrow">{note.eyebrow}</p>
+              <h3 className="type-title">{note.title}</h3>
+              {note.body ? <p className="type-body">{note.body}</p> : null}
+              {note.chain ? <Chain steps={note.chain} /> : null}
             </div>
           </button>
         ))}

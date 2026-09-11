@@ -1,5 +1,6 @@
 "use client";
 
+import { GmBar } from "@/components/SiteBars";
 import { useState } from "react";
 
 import { GlobeDots } from "@/components/GlobeDots";
@@ -314,6 +315,8 @@ export function StoreGlobeMock({
   return (
     <div className="globe-mock">
       {/* 매장 수와 필터. 기존 화면과 같은 머리글입니다. */}
+      {/* 사이트의 머리. 실제 gentlemonster.com 과 같습니다. */}
+      <GmBar />
       <div className="store-head" data-blur={blur("head")}>
         <p className="store-count">
           스토어 <span>{stores.length}</span>

@@ -8,6 +8,7 @@
  * 라운드 3·5·알약, 화면 안 버튼 45).
  */
 
+import { TamBar } from "@/components/SiteBars";
 import Image from "next/image";
 import {
   useCallback,
@@ -729,11 +730,8 @@ export function TamburinsComposeScreenB({
   return (
     <div className="cmpb-screen">
       {/* 머리 */}
-      <header className="cmpb-head">
-        <span className="cmpb-back" aria-hidden />
-        <h4>COMPOSE GIFT</h4>
-        <span className="cmpb-bag" aria-hidden />
-      </header>
+      {/* 사이트의 머리. 실제 tamburins.com 과 같습니다. */}
+      <TamBar />
 
       <div className="cmpb-body" ref={view} onPointerDownCapture={letGo}>
         {/* 01 — 담긴 모습. 고르기 전에는 비어 있고, 세트를 고르면 담깁니다. */}

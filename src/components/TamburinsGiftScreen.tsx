@@ -2,6 +2,7 @@
 
 /** 탬버린즈 커스텀 기프트 상세 화면. 15장 첫 칸에 들어갑니다. */
 
+import { TamBar } from "@/components/SiteBars";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
@@ -103,6 +104,8 @@ export function TamburinsGiftScreen({
     <div className="gift-screen" ref={page} data-opening={opening || undefined}>
       {/* 뒤는 어둡게 깔리고, 그 위에 흰 화면이 놓입니다. */}
       <div className="gift-sheet">
+        {/* 사이트의 머리. 실제 tamburins.com 과 같습니다. */}
+        <TamBar />
         <h4 className="gift-screen-title">NEW 커스텀 기프트</h4>
 
         <section className="gift-screen-main">

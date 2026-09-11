@@ -19,8 +19,8 @@ const CARDS: {
 }[] = [
   {
     index: "01",
-    title: "Learned Behavior",
-    body: "익숙한 행동 기억은 새로운 화면에서도 다음 조작을 예상하게 합니다.",
+    title: "Behavioral Memory",
+    body: "익숙한 행동 기억은 새로운 화면에서도 다음에 벌어질 일을 자연스럽게 예측 가능하게 합니다.",
     // 같은 원이 겹겹이 쌓이며 짙어집니다 — 반복이 남긴 자국
     art: (
       <>
@@ -41,8 +41,8 @@ const CARDS: {
   },
   {
     index: "02",
-    title: "Sensory Cues",
-    body: "감각 단서는 인터페이스의 상태와 변화를 직관적으로 이해하게 합니다.",
+    title: "Sensory Understanding",
+    body: "우리는 보고, 느끼고, 들리는 것과 같은 감각을 통해 인터페이스를 직관적으로 이해하게 합니다.",
     // 서로 맞물린 원들 — 따로 배우지 않아도 이어지는 동작
     art: (
       <>
@@ -56,8 +56,8 @@ const CARDS: {
   },
   {
     index: "03",
-    title: "Natural Control",
-    body: "손에 익은 조작은 기능을 설명보다 먼저 몸으로 이해하게 합니다.",
+    title: "Natural Expectation",
+    body: "손에 익은 조작은 새로운 경험에서도 다음에 무엇이 일어날지 예상할 수 있는 단서가 됩니다.",
     // 고른 격자 속에서 두 칸만 채워집니다 — 눈에 걸리는 신호
     art: (
       <>
@@ -77,8 +77,8 @@ const CARDS: {
   },
   {
     index: "04",
-    title: "Expected Response",
-    body: "예측 가능한 반응은 행동과 시스템 사이에 신뢰를 만듭니다.",
+    title: "Digital Translation",
+    body: "이미 익숙한 행동 중 편리한 것을 가져와 더 자연스럽고 효율적인 디지털 경험으로 연결합니다.",
     // 두 원이 겹치는 자리 — 행동과 시스템이 만나는 지점
     art: (
       <>
@@ -95,10 +95,12 @@ export function ScenePrinciples() {
 
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
-      <h2 className="type-lead capitalize rise col-span-5 row-start-1 row-span-3">
-        UX begins before the screen appears,
+      <h2 className="type-lead capitalize rise col-span-6 row-start-1 row-span-3">
+        UX begins before the screen —
         <br />
-        where familiar senses and behaviors become expectations.
+        in the behaviors, senses, and expectations
+        <br />
+        we already understand.
       </h2>
 
       {/* <p

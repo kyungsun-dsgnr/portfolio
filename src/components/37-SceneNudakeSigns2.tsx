@@ -224,6 +224,8 @@ export function SceneNudakeSigns2() {
               {/* 글판 위에 걸친 진행 막대. 지난 걸음은 차 있고, 지금 걸음이 채워집니다. */}
               <span
                 className="step"
+                /* 돌 때는 지난 걸음이 차 있고 지금 걸음이 채워집니다.
+                   손으로 하나를 골랐을 때도 그 카드의 막대가 채워집니다. */
                 data-state={
                   playing
                     ? i < at
@@ -231,7 +233,9 @@ export function SceneNudakeSigns2() {
                       : i === at
                         ? "now"
                         : undefined
-                    : undefined
+                    : solo === i
+                      ? "now"
+                      : undefined
                 }
                 aria-hidden
               >

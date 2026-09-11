@@ -28,6 +28,8 @@ const TURN_AT = 2100;
 const DOWN_AT = 3100;
 const PUSH_AT = 4100;
 const AWAY_AT = 4900;
+/* 밖의 화면이 서고 잠시 뒤 — 색이 빠지고 '외부 서비스로 이동' 이 뜹니다. */
+const GONE_AT = 5900;
 
 /* 띠는 아래로 갈수록 한 걸음씩 길어집니다. 브랜드 밖으로 나가는 걸음만 채웁니다. */
 const NOTES = [
@@ -55,10 +57,10 @@ export function SceneNudakeGap3({ play = false }: { play?: boolean } = {}) {
   const [ref, inView] = useInView<HTMLDivElement>(0.4);
   const { c } = useCopy();
 
-  /** 0 목록 · 1 손끝이 닿음 · 2 상세 · 3 화면을 내림 · 4 단추를 누름 · 5 밖으로 */
+  /** 0 목록 · 1 손끝이 닿음 · 2 상세 · 3 화면을 내림 · 4 단추를 누름 · 5 밖으로 · 6 흑백 */
   const [at, setAt] = useState(0);
 
-  /* 장에 들어서면 스스로 한 번 밟아 보여 줍니다 — 티 컬렉션을 고르고,
+  /* 장에 들어서면 스스로 한 번 밟아 보여 줍니다 — 티 아카이브를 고르고,
      그 제품의 상세로 넘어갑니다. 장을 벗어나면 목록으로 되돌아옵니다. */
   useEffect(() => {
     if (!play) return;
@@ -72,6 +74,7 @@ export function SceneNudakeGap3({ play = false }: { play?: boolean } = {}) {
       window.setTimeout(() => setAt(3), DOWN_AT),
       window.setTimeout(() => setAt(4), PUSH_AT),
       window.setTimeout(() => setAt(5), AWAY_AT),
+      window.setTimeout(() => setAt(6), GONE_AT),
     ];
     return () => clock.forEach(clearTimeout);
   }, [play, inView]);
@@ -86,7 +89,7 @@ export function SceneNudakeGap3({ play = false }: { play?: boolean } = {}) {
         aria-hidden
       >
         {at >= 5 ? (
-          <NudakeMockKakao />
+          <NudakeMockKakao away={at >= 6} />
         ) : at >= 2 ? (
           <NudakeMockDetail down={at >= 3} tap={at === 4} />
         ) : (

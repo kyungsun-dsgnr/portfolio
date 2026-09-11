@@ -1,3 +1,4 @@
+import { GmBar } from "@/components/SiteBars";
 import Image from "next/image";
 
 import { ChevronIcon, FilterIcon, LocateIcon } from "@/components/StoreIcons";
@@ -187,6 +188,8 @@ export function StoreListMock({
       data-idle={picked ? undefined : ""}
       aria-hidden={dots ? undefined : true}
     >
+      {/* 사이트의 머리. 전체 판일 때만 — 조각만 보일 때는 두지 않습니다. */}
+      {show === ALL ? <GmBar /> : null}
       {has("head") && (
         <div className="store-head" data-blur={blur("head")}>
           <p className="store-count">

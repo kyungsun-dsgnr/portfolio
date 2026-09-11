@@ -38,6 +38,8 @@ export const SLUGS: Record<string, string> = {
   "nudake-gap-3": "nudake/03",
   "nudake-gap-4": "nudake/04",
   "nudake-flow": "nudake/05",
+  /* 세 번째 판에만 서는 장. 뒤 장의 번호는 건드리지 않습니다. */
+  "nudake-flow-full": "nudake/05b",
   "nudake-send": "nudake/06",
 };
 

@@ -2,6 +2,7 @@
 
 /** 탬버린즈 제품 상세 화면. 15장 둘째 칸에 들어갑니다. */
 
+import { TamBar } from "@/components/SiteBars";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
@@ -88,6 +89,8 @@ export function TamburinsProductScreen({
       data-chosen={chosen || undefined}
       data-add={addPress || undefined}
     >
+      {/* 사이트의 머리. 실제 tamburins.com 과 같습니다. */}
+      <TamBar />
       <div className="prod-screen-hero">
         <Image
           src="/images/tam-prod-hero.png"

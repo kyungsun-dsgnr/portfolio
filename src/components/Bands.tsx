@@ -17,11 +17,14 @@ import { useEffect, useRef, useState } from "react";
 
 import { SLUGS } from "@/app/slugs";
 
-/** 갈래 셋 — 주소 첫 자리와 머리에 적을 이름 */
+/** 갈래 — 주소 첫 자리와 머리에 적을 이름. 앞뒤(intro · outro)도 갈래로 칩니다. */
 const BRANDS = [
+  { at: "intro", name: "Intro" },
+  { at: "work", name: "Work" },
   { at: "gentle-monster", name: "Gentle Monster" },
   { at: "tamburins", name: "Tamburins" },
   { at: "nudake", name: "Nudake" },
+  { at: "outro", name: "Outro" },
 ];
 
 /** 목차 — 덱에 선 차례 그대로. 번호는 갈래 안에서 셉니다(01 부터). */
@@ -39,8 +42,11 @@ const TOC: {
       { id: "statement", name: "Concept Statement" },
       { id: "principles", name: "UX Principles" },
       { id: "closing", name: "Transition" },
-      { id: "work", name: "Project Index" },
     ],
+  },
+  {
+    head: "Work",
+    pages: [{ id: "work", name: "Project Index" }],
   },
   {
     head: "Gentle Monster Explore",
@@ -98,9 +104,17 @@ export function Bands({
   index: number;
   total: number;
 }) {
-  /* 이 장이 어느 갈래의 몇 장째인지 — 주소(`nudake/03`)로 압니다. */
+  /* 이 장이 어느 갈래의 몇 장째인지 — 주소(`nudake/03`)로 압니다.
+     `work`(세 갈래) 는 제 이름으로 서고 번호는 없습니다. */
   const [here, page = ""] = (SLUGS[id] ?? "").split("/");
   const brand = BRANDS.find((one) => one.at === here);
+  /* 갈래의 표지(번호 없음 · cover)에는 번호를 적지 않습니다 — 갈래 이름만. */
+  const tail =
+    page === "" || page === "cover"
+      ? ""
+      : /^\d+$/.test(page)
+        ? `#${no(Number(page))}`
+        : page.charAt(0).toUpperCase() + page.slice(1);
 
   /* 목차. 장마다 제 띠가 있어 열림도 장마다 따로입니다 — 옮겨 가면 접습니다. */
   const [open, setOpen] = useState(false);
@@ -119,11 +133,16 @@ export function Bands({
     const esc = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
     };
+    /* 장을 넘기면 접힙니다 — 덱(장들을 굴리는 틀)이 굴러갈 때. */
+    const deck = document.querySelector(".scroll-root");
+    const roll = () => setOpen(false);
     document.addEventListener("pointerdown", away);
     document.addEventListener("keydown", esc);
+    deck?.addEventListener("scroll", roll, { passive: true });
     return () => {
       document.removeEventListener("pointerdown", away);
       document.removeEventListener("keydown", esc);
+      deck?.removeEventListener("scroll", roll);
     };
   }, [open]);
 
@@ -162,12 +181,7 @@ export function Bands({
           >
             <span>UX</span>
             <i className="band-rule" />
-            <span>
-              {brand?.name}{" "}
-              {/^\d+$/.test(page)
-                ? `#${no(Number(page))}`
-                : page.charAt(0).toUpperCase() + page.slice(1)}
-            </span>
+            <span>{tail ? `${brand?.name} ${tail}` : brand?.name}</span>
             {/* 아래를 가리키는 세모. 펼쳐지면 뒤집힙니다. */}
             <svg className="band-toc-cue" viewBox="0 0 10 10" aria-hidden>
               <path d="M2 3.5 H8 L5 7 Z" fill="currentColor" />

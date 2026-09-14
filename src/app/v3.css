@@ -71,21 +71,8 @@
 
 .v3 .band-bottom {
   bottom: calc(-9 * var(--u));
-}
-
-/* 표지 넷 · 세 갈래(work) · 갈래 표지 셋 · 맺음 장에는 띠가 없습니다. */
-.v3 #switch .band,
-.v3 #work .band,
-.v3 #statement .band,
-.v3 #principles .band,
-.v3 #closing .band,
-.v3 #close .band,
-/* 갈래마다의 표지(hero)에도 두지 않습니다 — 크게 보여야 하는 장입니다. */
-.v3 #gentle-monster-paper .band,
-.v3 #tamburins .band,
-.v3 #nudake .band,
-.v3 #thanks .band {
-  display: none;
+  /* 바닥은 머리(0.6)보다 두 겹 더 물러납니다. */
+  opacity: 0.3;
 }
 
 /* `Already There, Just Not Visible` — 재생 중(또는 손이 얹힌) 카드 말고는
@@ -359,7 +346,8 @@
   display: flex;
   flex-direction: column;
   gap: calc(10 * var(--u));
-  min-width: calc(250 * var(--u));
+  /* 판의 두 단 너비(단 둘 + 사이 하나) — 띠가 3 안으로 들어와 있어 그만큼 더합니다. */
+  width: calc(2 * var(--col-size) + var(--grid-gap) + 3 * var(--u) + 8 * var(--u));
   padding: calc(12 * var(--u)) calc(12 * var(--u)) calc(14 * var(--u));
   /* 띠 글(11.5)보다 두 단 크게. */
   font-size: calc(13.5 * var(--u));
@@ -404,6 +392,9 @@
   letter-spacing: inherit;
   text-transform: inherit;
   text-align: left;
+  /* 1depth — 14 · 600. 2depth(12 · 500)와 갈립니다. */
+  font-size: calc(14 * var(--u));
+  font-weight: 600;
   opacity: 0.5;
   cursor: pointer;
   transition: opacity 160ms ease;
@@ -477,14 +468,17 @@
   display: flex;
   align-items: center;
   gap: calc(12 * var(--u));
-  padding: calc(7 * var(--u)) calc(8 * var(--u));
+  /* 갈래 이름 아래 장들은 한 단(16) 들여씁니다. */
+  padding: calc(7 * var(--u)) calc(8 * var(--u)) calc(7 * var(--u))
+    calc(24 * var(--u));
   border: 0;
-  border-radius: calc(4 * var(--u));
+  border-radius: 0;
   background: none;
   /* 장 이름은 갈래 이름보다 한 겹 연하게. 손이 얹히거나 지금 장이면 또렷하게. */
   color: var(--fg);
-  opacity: 0.72;
+  opacity: 0.5;
   font: inherit;
+  font-size: calc(12 * var(--u));
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: none;
@@ -504,9 +498,10 @@
   background: rgb(25 25 25 / 0.06);
 }
 
+/* 지금 장은 판을 깔지 않고 글만 또렷하게(opacity 1) — 굵기는 그대로. */
 .v3 .band-toc-item[data-now] {
-  background: var(--fg);
-  color: var(--bg);
+  background: none;
+  color: var(--fg);
 }
 
 .v3 .band-toc-no {
@@ -516,7 +511,7 @@
 }
 
 .v3 .band-toc-item[data-now] .band-toc-no {
-  opacity: 0.7;
+  opacity: 1;
 }
 
 /* 어두운 장에서는 판 색·선 색을 뒤집습니다. */
@@ -575,12 +570,28 @@
   display: none;
 }
 
+/* 어두운 문장 장은 --fg 를 바꾸지 않아 띠가 먹빛으로 묻힙니다 — 밝은 값을 줍니다. */
+.v3 .section:has(.statement-dark) .band {
+  --fg-soft: rgb(250 250 250 / 0.72);
+  --fg: #fafafa;
+  --bg: #202020;
+}
+
 /* 어두운 장에서는 띠가 더 물러납니다 — 밝은 글이 검은 판 위에서 더 도드라지므로. */
 .v3 .section:has(.compose-full) .band,
 .v3 .section:has(.page-grid[data-past]) .band,
 .v3 .section:has(.after-frame) .band,
-.v3 .section:has(.statement-dark) .band {
+.v3 .section:has(.statement-dark) .band,
+.v3 .section:has(.thanks) .band {
   opacity: 0.4;
+}
+
+.v3 .section:has(.compose-full) .band-bottom,
+.v3 .section:has(.page-grid[data-past]) .band-bottom,
+.v3 .section:has(.after-frame) .band-bottom,
+.v3 .section:has(.statement-dark) .band-bottom,
+.v3 .section:has(.thanks) .band-bottom {
+  opacity: 0.2;
 }
 
 /* ── 맺음 둘(Thank you) ──────────────────────

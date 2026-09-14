@@ -769,11 +769,11 @@
   animation: soft-in 360ms ease backwards;
 }
 
-/* `One screen, one gift` — 한 자리를 볼 때 나머지가 흐려지는 정도를 줄입니다(3 → 1.5). */
+/* `One screen, one gift` — 한 자리를 볼 때 나머지는 흐리지 않고 옅어지기만 합니다. */
 .v3 .cmpb-stage[data-dim] .cmpb-box,
 .v3 .cmpb-layer[data-dim] .cmpb-layer-head,
 .v3 .cmpb-layer[data-dim] .cmpb-layer-body {
-  filter: blur(calc(1.5 * var(--u)));
+  filter: none;
   opacity: 0.6;
 }
 

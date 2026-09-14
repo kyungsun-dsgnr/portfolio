@@ -76,9 +76,9 @@ export function SceneThanks() {
         <p className="type-lead capitalize">
           I translate familiar behaviors, senses, and expectations
           <br />
-          into digital experiences that feel natural
+          into digital experiences
           <br />
-          from the first interaction.
+          that feel natural from the first interaction.
         </p>
         {/* 표지의 `Designing Digital Experiences…` 와 같은 글씨(type-title)입니다. */}
         <p className="type-title capitalize thanks-note">

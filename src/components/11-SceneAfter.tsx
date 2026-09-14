@@ -75,28 +75,13 @@ export function SceneAfter() {
     setPicked(key);
   }, []);
 
-  const hoverIn = useCallback((key: string) => {
-    if (heldNow.current) return;
-    setPicked(key);
+  const dotRef = useCallback((key: string, el: HTMLButtonElement | null) => {
+    /* 다시 그릴 때 잠깐 null 이 됩니다. 그때 지우면 선이 끊깁니다. */
+    if (!el || dots.current[key] === el) return;
+    dots.current[key] = el;
+    /* 점은 눌러야 켜집니다. 위에서는 재생 표가 따라다닙니다. */
+    el.dataset.playCursor = "";
   }, []);
-  const hoverOut = useCallback(() => {
-    if (heldNow.current) return;
-    setPicked(null);
-  }, []);
-
-  const dotRef = useCallback(
-    (key: string, el: HTMLButtonElement | null) => {
-      /* 다시 그릴 때 잠깐 null 이 됩니다. 그때 지우면 선이 끊깁니다. */
-      if (!el || dots.current[key] === el) return;
-      dots.current[key] = el;
-      /* 점도 손이 얹히면 켜지고 떠나면 꺼집니다. 누르는 것은 화면이 pick 으로 알립니다. */
-      el.addEventListener("pointerenter", (event) => {
-        if (event.pointerType === "mouse") hoverIn(key);
-      });
-      el.addEventListener("pointerleave", hoverOut);
-    },
-    [hoverIn, hoverOut],
-  );
 
   useEffect(() => {
     if (!picked) return;
@@ -301,10 +286,7 @@ export function SceneAfter() {
           /* 카드를 눌러도 그 자리가 켜집니다 — 목업이 그 대목으로 굴러가고,
              점과 잇는 선이 그어지며, 나머지는 물러납니다. */
           onClick={() => pick(point.index)}
-          onPointerEnter={(event) => {
-            if (event.pointerType === "mouse") hoverIn(point.index);
-          }}
-          onPointerLeave={hoverOut}
+          data-play-cursor
           style={{ "--delay": `${0.18 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">{point.index}</span>

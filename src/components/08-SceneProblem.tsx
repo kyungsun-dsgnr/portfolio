@@ -102,15 +102,6 @@ export function SceneProblem() {
     setStage({ picked: key, phase: 0 });
   }, []);
 
-  const hoverIn = useCallback((key: string) => {
-    if (heldNow.current) return;
-    setPlaying(false);
-    setStage({ picked: key, phase: 0 });
-  }, []);
-  const hoverOut = useCallback(() => {
-    if (heldNow.current) return;
-    setStage({ picked: null, phase: 0 });
-  }, []);
 
   useEffect(() => {
     if (!inView) {
@@ -148,19 +139,13 @@ export function SceneProblem() {
     Record<string, { d: string; len: number }>
   >({});
 
-  const dotRef = useCallback(
-    (key: string, el: HTMLButtonElement | null) => {
-      /* 다시 그릴 때 잠깐 null 이 됩니다. 그때 지우면 선이 끊깁니다. */
-      if (!el || dots.current[key] === el) return;
-      dots.current[key] = el;
-      /* 점도 손이 얹히면 켜지고 떠나면 꺼집니다. 누르는 것은 화면이 pick 으로 알립니다. */
-      el.addEventListener("pointerenter", (event) => {
-        if (event.pointerType === "mouse") hoverIn(key);
-      });
-      el.addEventListener("pointerleave", hoverOut);
-    },
-    [hoverIn, hoverOut],
-  );
+  const dotRef = useCallback((key: string, el: HTMLButtonElement | null) => {
+    /* 다시 그릴 때 잠깐 null 이 됩니다. 그때 지우면 선이 끊깁니다. */
+    if (!el || dots.current[key] === el) return;
+    dots.current[key] = el;
+    /* 점은 눌러야 켜집니다(화면이 pick 으로 알립니다). 위에서는 재생 표가 따라다닙니다. */
+    el.dataset.playCursor = "";
+  }, []);
 
   /* 요소가 떠오르는 동안 재면 선이 어긋납니다. 다 자리 잡은 뒤부터 긋습니다. */
   const [ready, setReady] = useState(false);
@@ -355,10 +340,7 @@ export function SceneProblem() {
           className={`issue rise ${point.place}`}
           data-dim={picked && picked !== point.index ? true : undefined}
           onClick={() => pick(point.index)}
-          onPointerEnter={(event) => {
-            if (event.pointerType === "mouse") hoverIn(point.index);
-          }}
-          onPointerLeave={hoverOut}
+          data-play-cursor
           style={{ "--delay": `${0.18 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">

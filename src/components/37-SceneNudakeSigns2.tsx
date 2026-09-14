@@ -18,12 +18,7 @@
  * 그림 자리는 아직 비어 있어, 채울 것이 정해지면 넣습니다.
  */
 
-import {
-  useEffect,
-  useState,
-  type CSSProperties,
-  type PointerEvent,
-} from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 import { NudakeMockList, NudakeMockMenu } from "@/components/NudakeScreens";
 import { useInView } from "@/components/useInView";
@@ -83,9 +78,8 @@ export function SceneNudakeSigns2() {
   const [at, setAt] = useState(0);
   /** 손으로 하나만 골라 둔 것. 재생과 따로 놉니다. */
   const [solo, setSolo] = useState<number | null>(null);
-  /** 손이 얹힌 카드. 붙잡은 것(solo)이 없을 때만 셈합니다. */
-  const [over, setOver] = useState<number | null>(null);
-  const seen = solo ?? over;
+  /* 손을 얹는 것으로는 서지 않습니다 — 누른 것(solo)만 섭니다. */
+  const seen = solo;
   const live = playing ? at : (seen ?? -1);
 
   const play = () => {
@@ -108,10 +102,6 @@ export function SceneNudakeSigns2() {
   };
   const handle = (i: number) => ({
     onClick: () => pick(i),
-    onPointerEnter: (event: PointerEvent<HTMLElement>) => {
-      if (event.pointerType === "mouse" && !playing) setOver(i);
-    },
-    onPointerLeave: () => setOver(null),
   });
 
   /* 막대가 다 차면 다음 걸음으로. 마지막까지 가면 멈추고 처음으로 돌아갑니다. */
@@ -204,6 +194,7 @@ export function SceneNudakeSigns2() {
           type="button"
           key={sign.index}
           className={`work nud-cap-card rise self-end row-start-3 row-span-4 ${sign.place}`}
+          data-play-cursor
           data-on={i === live || undefined}
           aria-label={`${sign.title} 만 보기`}
           {...handle(i)}

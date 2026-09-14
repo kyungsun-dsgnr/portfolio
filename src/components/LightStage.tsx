@@ -49,6 +49,7 @@ export function LightStage({
   sections,
   slugs,
   chrome,
+  after,
 }: {
   sections: Section[];
   /** 장 id → 주소(`gentle-monster/01`). 주면 굴릴 때마다 주소창이 따라 바뀌고,
@@ -57,6 +58,8 @@ export function LightStage({
   /** 장마다 판 위에 같이 얹는 것 — 세 번째 판의 위아래 띠.
       몇 장째인지 함께 건네 바닥에 쪽번호를 적습니다. */
   chrome?: (at: { id: string; index: number; total: number }) => ReactNode;
+  /** 덱 바깥에 한 번만 세우는 것(커서 따위). */
+  after?: ReactNode;
 }) {
   const [level, setLevel] = useState(0);
   /** 노브를 다 돌렸을 때 내려갈 곳 — 두 번째 섹션 */
@@ -276,6 +279,8 @@ export function LightStage({
           </section>
         ))}
       </main>
+
+      {after}
 
       {/* 하단 목차. 평소에는 손잡이만 걸쳐 두고, 다가가면 올라옵니다. */}
       <nav className="pager" aria-label="목차">

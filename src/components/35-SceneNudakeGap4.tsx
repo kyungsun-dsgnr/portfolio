@@ -303,16 +303,6 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
     }
   };
 
-  /* 손을 얹기만 해도 그 카드가 돕니다 — 붙잡은 것이 없고 훑는 중이 아닐 때. */
-  const hoverIn = (i: number) => {
-    if (held || auto || solo !== null) return;
-    show(i);
-  };
-  const hoverOut = () => {
-    if (held || auto) return;
-    show(null);
-  };
-
   return (
     <div ref={ref} className="page-grid" data-visible={inView || undefined}>
       {/* 왼쪽은 고치기 전의 화면 — 여기서는 카카오로 나가는 것으로 끝납니다.
@@ -362,6 +352,7 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
           <button
             type="button"
             className="nud-stage-hit"
+            data-play-cursor
             aria-label={
               solo === "before" ? "흐름 멈추기" : "고치기 전 흐름 재생"
             }
@@ -404,6 +395,7 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
           <button
             type="button"
             className="nud-stage-hit"
+            data-play-cursor
             aria-label={solo === "after" ? "흐름 멈추기" : "고친 뒤 흐름 재생"}
             onClick={() => soloPlay("after")}
           />
@@ -463,6 +455,7 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
             type="button"
             key={note.eyebrow}
             className="note nud-ruled rise"
+            data-play-cursor
             data-open={open === i || undefined}
             /* 한 카드가 도는 동안 나머지는 물러납니다. */
             data-off={(busy && i !== open) || undefined}
@@ -477,10 +470,6 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
             aria-expanded={open === i}
             aria-label={`${note.eyebrow} — 앞 장의 글과 견주어 보기`}
             onClick={() => toggle(i)}
-            onPointerEnter={(event) => {
-              if (event.pointerType === "mouse") hoverIn(i);
-            }}
-            onPointerLeave={hoverOut}
             style={{ "--delay": `${0.12 + i * 0.1}s` } as CSSProperties}
           >
             {/* 도는 카드의 위 보더에 막대가 그 길이만큼 차오릅니다. */}

@@ -79,17 +79,8 @@ export function SceneNudakeFlowFull() {
   const keepDot = useCallback((key: string, el: HTMLElement | null) => {
     if (!el || dots.current[key] === el) return;
     dots.current[key] = el;
-    /* 점 위에 손이 얹히면 켜지고 떠나면 꺼집니다 — 붙잡힌 동안은 그대로.
-       점을 직접 누르면 붙잡거나 놓습니다. 얹혀서 이미 켜진 점을 누르면
-       화면이 도로 끄려 하므로 그 누름은 막고 붙잡기만 합니다. */
-    el.addEventListener("pointerenter", (event) => {
-      if (event.pointerType !== "mouse" || heldNow.current) return;
-      if (focusNow.current !== key) el.click();
-    });
-    el.addEventListener("pointerleave", () => {
-      if (heldNow.current) return;
-      if (focusNow.current === key) el.click();
-    });
+    /* 점은 눌러야 켜집니다(붙잡기). 위에서는 재생 표가 따라다닙니다. */
+    el.dataset.playCursor = "";
     el.addEventListener(
       "click",
       (event) => {
@@ -276,14 +267,7 @@ export function SceneNudakeFlowFull() {
               if (focus !== one.index) dot?.click();
             }
           }}
-          onPointerEnter={(event) => {
-            if (event.pointerType !== "mouse" || held) return;
-            if (focus !== one.index) dots.current[one.index]?.click();
-          }}
-          onPointerLeave={() => {
-            if (held) return;
-            if (focus === one.index) dots.current[one.index]?.click();
-          }}
+          data-play-cursor
           style={{ "--delay": `${0.3 + i * 0.08}s` } as CSSProperties}
         >
           <span className="card-index">{one.index}</span>

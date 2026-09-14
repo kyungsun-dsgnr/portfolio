@@ -48,6 +48,7 @@ import { SceneNudakeSend } from "@/components/41-SceneNudakeSend";
 import { SceneClose } from "@/components/51-SceneClose";
 import { SceneThanks } from "@/components/52-SceneThanks";
 import { Bands } from "@/components/Bands";
+import { PlayCursor } from "@/components/PlayCursor";
 // import { SceneNudakeGap5 } from "@/components/36-SceneNudakeGap5";
 // import { SceneNudakeContext3 } from "@/components/31-SceneNudakeContext3";
 // import { SceneNudakeCurrent } from "@/components/25-SceneNudakeCurrent";
@@ -106,6 +107,8 @@ export function Deck({
     <LightStage
       slugs={slugs}
       chrome={third ? (at) => <Bands {...at} /> : undefined}
+      /* 누르면 재생되는 자리 위에서 커서 옆에 따라다니는 재생 표 — 세 번째 판만. */
+      after={third ? <PlayCursor /> : undefined}
       sections={[
         /* 스위치 장과 제목이 같아 접어 둡니다. 되살릴 때 이 줄만 풀면 됩니다.
         { id: "intro", label: "Intro", node: <SceneIntro /> }, */

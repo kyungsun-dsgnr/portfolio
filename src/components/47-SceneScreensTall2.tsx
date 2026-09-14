@@ -163,43 +163,8 @@ export function SceneScreensTall2({
     setPlays((seen) => seen.map((n, i) => (i === to ? n + 1 : n)));
   }, []);
 
-  /* 손을 얹기만 해도 그 화면이 돕니다. 누르면(solo) 붙잡혀 손이 오가도 바뀌지 않고,
-     붙잡은 것이 없을 때 손을 떼면 처음 화면으로 돌아갑니다. */
-  const [over, setOver] = useState<number | null>(null);
-  /* 손이 얹힌 카드를 갱신 함수 밖에서도 알아야 떼는 순간 그 카드만 되감습니다. */
-  const overRef = useRef<number | null>(null);
-  const rewindTimer = useRef(0);
-  /* 손을 얹을 때는 화면을 새로 세우지 않습니다(plays 를 올리지 않습니다) —
-     새로 세우면 첫 그림이 잡히기 전 잿빛 판이 한 번 비칩니다. 이미 서 있는
-     화면을 그대로 돌리고, 되감기는 손을 뗀 뒤 물러난 채로 조용히 합니다. */
-  const hoverIn = (to: number) => {
-    if (still || playing || solo !== null) return;
-    if (overRef.current === to) return;
-    window.clearTimeout(rewindTimer.current);
-    overRef.current = to;
-    setOver(to);
-    at.current = to;
-    setActive(to);
-    if (to === 2) setScentStep(1);
-  };
-  /* 손을 떼면 그 카드만 처음 화면으로 되감습니다. 넷을 다 되감으면(rewind)
-     넷이 모두 새로 서면서 한꺼번에 깜빡이고, 카드가 겹쳐 있어 손이 옆 카드로
-     옮겨 갈 때마다 그 깜빡임이 되풀이됩니다. */
-  const hoverOut = () => {
-    const was = overRef.current;
-    overRef.current = null;
-    setOver(null);
-    if (was === null || solo !== null || playing) return;
-    at.current = 0;
-    setActive(0);
-    setScentStep(1);
-    /* 물러나는 동안(0.9s)은 그대로 두었다가, 다 물러난 뒤에 처음 화면으로 되감습니다. */
-    window.clearTimeout(rewindTimer.current);
-    rewindTimer.current = window.setTimeout(() => {
-      setPlays((seen) => seen.map((n, i) => (i === was ? n + 1 : n)));
-    }, 950);
-  };
-  const seen = solo ?? over;
+  /* 손을 얹는 것으로는 돌지 않습니다 — 누르면(solo) 그 화면이 서고 돕니다. */
+  const seen = solo;
 
   useEffect(() => {
     if (inView) return;
@@ -233,13 +198,7 @@ export function SceneScreensTall2({
     [start, rewind, playing],
   );
 
-  useEffect(
-    () => () => {
-      window.clearTimeout(holdTimer.current);
-      window.clearTimeout(rewindTimer.current);
-    },
-    [],
-  );
+  useEffect(() => () => window.clearTimeout(holdTimer.current), []);
 
   /* 물러난 판에서는 어느 칸도 차례를 갖지 않습니다. */
   const live = still ? -1 : playing ? active : (seen ?? -1);
@@ -297,10 +256,7 @@ export function SceneScreensTall2({
             role="button"
             tabIndex={0}
             onClick={still ? undefined : () => pick(i)}
-            onPointerEnter={(event) => {
-              if (event.pointerType === "mouse") hoverIn(i);
-            }}
-            onPointerLeave={hoverOut}
+            data-play-cursor={still ? undefined : ""}
             onKeyDown={(event) => {
               if (still) return;
               if (event.key === "Enter" || event.key === " ") {

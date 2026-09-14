@@ -665,9 +665,29 @@
   }
 }
 
-/* 메일 주소 위에서는 기본 커서 대신 둥근 COPY 가 따라다닙니다. */
+/* 메일 주소 위에서는 기본 커서 옆에 둥근 COPY 가 따라다닙니다. */
 .v3 .thanks-mail {
-  cursor: none;
+  cursor: pointer;
+}
+
+/* VIEW · COPY 는 커서를 대신하지 않고, 커서의 오른쪽 아래에 붙어 따라다닙니다.
+   두 겹 다 제 가운데가 같은 점(커서에서 14 + 링 반지름만큼 오른쪽 아래)에 오도록
+   layout 자리를 그만큼 밀어 둡니다(translate 는 그 자리 기준입니다). */
+.v3 .work[data-linked] {
+  cursor: pointer;
+}
+
+.v3 .view-cursor,
+.v3 .view-cursor-core {
+  margin: calc(14px + 30 * var(--u)) 0 0 calc(14px + 30 * var(--u));
+}
+
+/* 글 대신 재생 세모가 앉는 가운데 원(`Beyond Store Search…` 의 글 셋). */
+.v3 .play-core svg {
+  width: calc(18 * var(--u));
+  height: calc(18 * var(--u));
+  /* 세모는 무게중심이 왼쪽에 있어 살짝 오른쪽으로 밀어야 가운데로 보입니다. */
+  translate: calc(1 * var(--u)) 0;
 }
 
 /* VIEW · COPY 커서 — 바깥 원은 아래 색을 뒤집고(difference), 글이 앉는 가운데
@@ -1032,4 +1052,10 @@
 
 .v3 #gentle-monster-explore .page-next:hover {
   color: var(--fg);
+}
+
+/* `One screen, one gift` · `Made Here, Given Anywhere` — 글 셋은 눌러서 그 자리를
+   붙잡는 것이라 손가락 커서로 섭니다(globals 의 `읽는 것` 규칙을 되돌립니다). */
+.v3 .compose-full .issue {
+  cursor: pointer;
 }

@@ -5,10 +5,12 @@
  *
  * 6장 `Three Directions` 의 판을 그대로 맨 뒤에 세웁니다 — 밝은 장입니다.
  * 제목 1–6단 1–2행 두 줄 · 카드 셋 3–4 / 5–6 / 7–8단 3–6행.
- * 카드마다 그 갈래의 고친 뒤 화면이 살아 있는 채로 담깁니다.
+ * 카드마다 그 갈래의 고친 뒤 화면을 찍어 둔 그림이 담깁니다 — 살아 움직이는
+ * 화면 셋을 함께 세우면 맺음 장이 무거워져, 정지 화면으로 둡니다.
  * 누르면 6장처럼 그 갈래의 첫 장으로 건너갑니다.
  */
 
+import Image from "next/image";
 import {
   useRef,
   useState,
@@ -17,9 +19,6 @@ import {
   type PointerEvent,
 } from "react";
 
-import { NudakeMockCompose } from "@/components/NudakeComposeScreen";
-import { StoreGlobeMock } from "@/components/StoreGlobeMock";
-import { TamburinsComposeScreenB } from "@/components/TamburinsComposeScreenB";
 import { useInView } from "@/components/useInView";
 
 const WORKS = [
@@ -30,6 +29,7 @@ const WORKS = [
       "익숙한 지구본 탐색 방식을 활용해, 가까운 매장을 찾는 경험을 전 세계의 브랜드 공간을 탐색하는 경험으로 확장했습니다.",
     place: "col-start-3 col-span-2",
     target: "gentle-monster-paper",
+    shot: "/images/close-gm.png",
   },
   {
     index: "02",
@@ -38,6 +38,7 @@ const WORKS = [
       "여러 화면에 나뉘어 있던 제품과 향 선택을 하나의 화면에 모아, 옵션을 고르는 과정에서 선물을 직접 구성하는 경험으로 전환했습니다.",
     place: "col-start-5 col-span-2",
     target: "tamburins",
+    shot: "/images/close-tam.png",
   },
   {
     index: "03",
@@ -46,6 +47,7 @@ const WORKS = [
       "외부 서비스로 이어지던 선물 구매 과정을 브랜드 안에서 직접 고르고, 메시지를 작성하고, 완성해 전달하는 경험으로 확장했습니다.",
     place: "col-start-7 col-span-2",
     target: "nudake",
+    shot: "/images/close-nud.png",
   },
 ];
 
@@ -125,13 +127,15 @@ export function SceneClose() {
             <h3 className="type-title">{work.title}</h3>
           </div>
 
-          {/* 그 갈래의 고친 뒤 화면. 위에서부터 보이는 만큼만 담깁니다. */}
+          {/* 그 갈래의 고친 뒤 화면을 찍은 그림. 칸을 그대로 채웁니다(333 × 378). */}
           <div className="work-visual close-shot" aria-hidden>
-            {work.index === "01" && <StoreGlobeMock initialWorld />}
-            {work.index === "02" && <TamburinsComposeScreenB preset />}
-            {work.index === "03" && (
-              <NudakeMockCompose step="note" written height={726} />
-            )}
+            <Image
+              src={work.shot}
+              alt=""
+              fill
+              sizes="(min-width: 1024px) 24vw, 90vw"
+              className="close-shot-img object-cover object-top"
+            />
 
             {/* 설명은 화면 아래쪽 흰 유리 판 위에 얹힙니다 —
                 `Already There, Just Not Visible` 의 글판과 같은 결입니다. */}

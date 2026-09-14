@@ -135,6 +135,74 @@
   display: none;
 }
 
+/* `One Gift, Across Multiple Screens` — 손은 화면 판(steps-frame)에만 닿습니다.
+   카드 상자(steps-shot)는 물러난 화면 위의 빈 자리까지 차지하고 있어, 거기에
+   손을 얹어도 화면이 도는 것을 막습니다. 그리고 카드가 떠오르기(reveal) 전에는
+   빈 자리라 손을 받지 않고, 떠오른 뒤에야 받습니다. */
+.v3 #tamburins-screens .steps-shot {
+  pointer-events: none;
+}
+
+/* 카드 넷이 서로 겹쳐 있어, 손이 얹힌(물러나지 않은) 카드를 맨 앞에 세웁니다.
+   그러지 않으면 자라나는 카드 위로 뒤 카드가 덮여 손이 그쪽으로 옮겨 가며
+   둘이 번갈아 서고 물러나기를 되풀이합니다(튕김). */
+.v3 #tamburins-screens .steps-shot:not([data-idle]) {
+  z-index: 10;
+}
+
+/* 물러난 카드는 `Already There, Just Not Visible` 의 카드와 같은 결로 —
+   흰 유리 대신 화면 판 전체가 흑백 0.6 으로 물러나고, 그 안의 글은 반만 남습니다.
+   밝기 변화는 0.9s 로 느긋하게, 끝을 눅입니다. */
+.v3 #tamburins-screens .steps-shot,
+.v3 #tamburins-screens .steps-shot[data-idle] {
+  filter: none;
+}
+
+.v3 #tamburins-screens .steps-shot .steps-frame {
+  transition:
+    height 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+    margin-top 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.v3 #tamburins-screens .steps-shot[data-idle] .steps-frame {
+  opacity: 0.6;
+  filter: grayscale(1);
+}
+
+.v3 #tamburins-screens .steps-shot[data-idle] .steps-frame::after {
+  opacity: 0;
+}
+
+.v3 #tamburins-screens .tall-cap > * {
+  transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.v3 #tamburins-screens .tall-cap[data-dim] > * {
+  opacity: 0.5;
+}
+
+.v3 #tamburins-screens .steps-shot .steps-frame {
+  pointer-events: none;
+}
+
+.v3 #tamburins-screens [data-visible] .steps-shot .steps-frame {
+  /* 카드와 같은 박자로 떠오른 끝에 손을 받습니다. */
+  animation: hit-on var(--reveal-time) steps(1, end) both;
+  animation-delay: calc(var(--delay, 0s) * var(--stagger));
+}
+
+@keyframes hit-on {
+  from {
+    pointer-events: none;
+  }
+
+  to {
+    pointer-events: auto;
+  }
+}
+
 /* `Why Add a Global Starting Point?` — 칸 머리의 As-Is · To-Be 는 매장 표·
    `From Buying a Gift…` 표와 같은 글 짜임(9.5 · 700 · 0.14em · 대문자)으로 섭니다.
    표처럼 잉크를 깔지는 않고, 색은 눈썹 글 그대로입니다. */
@@ -149,22 +217,270 @@
   text-transform: uppercase;
 }
 
-/* 표지 — 세 갈래의 정지 화면 셋. 6장 카드의 그림 자리와 같게 둡니다. */
-.v3 .cover-card {
-  position: relative;
-  overflow: hidden;
-}
-
-.v3 .cover-card img {
-  object-position: center calc(50% - 24 * var(--u));
-}
-
 .v3 .band-cell {
   display: flex;
   align-items: center;
   gap: calc(16 * var(--u));
   margin: 0;
   white-space: nowrap;
+}
+
+/* ── 목차 ──────────────────────────────────────
+   위 띠 왼쪽(갈래 · 장)을 누르면 그 아래로 스물셋 장이 갈래별로 펼쳐집니다.
+   띠는 손이 닿지 않는 자리라 이 칸만 되살립니다. */
+.v3 .band-toc {
+  position: relative;
+  /* 띠 키(60)를 다 차지해, 아래 판이 띠 바닥에서 시작할 수 있게 합니다. */
+  align-self: stretch;
+  pointer-events: auto;
+}
+
+.v3 .band-toc-head {
+  display: flex;
+  align-items: center;
+  gap: calc(16 * var(--u));
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.v3 .band-toc-cue {
+  width: calc(10 * var(--u));
+  height: calc(10 * var(--u));
+  margin-left: calc(-6 * var(--u));
+  transition: scale 200ms ease;
+}
+
+.v3 .band-toc[data-open] .band-toc-head .band-toc-cue {
+  scale: 1 -1;
+}
+
+/* 펼친 동안 판 전체에 깔리는 딤드 — 목차(70) 아래, 판 위. */
+.v3 .band-toc-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgb(25 25 25 / 0.32);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 220ms ease,
+    visibility 0s 220ms;
+}
+
+.v3 .band-toc[data-open] .band-toc-veil {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* 어두운 장에서는 더 짙게 깔아야 물러난 것이 보입니다. */
+.v3 .section:has(.compose-full) .band-toc-veil,
+.v3 .section:has(.page-grid[data-past]) .band-toc-veil,
+.v3 .section:has(.after-frame) .band-toc-veil,
+.v3 .section:has(.statement-dark) .band-toc-veil {
+  background: rgb(0 0 0 / 0.5);
+}
+
+/* 펼쳐지는 판 — 띠 바로 아래, 판 색 위에 얇은 선. */
+.v3 .band-toc-list {
+  position: absolute;
+  /* 띠 바닥(판 위 51)에서 시작해 마지막 행 바닥(판 아래 여백 60 위)까지 찹니다. */
+  top: 100%;
+  bottom: calc(-1 * (var(--canvas-h) - var(--page-margin-y) - 51 * var(--u)));
+  left: calc(-8 * var(--u));
+  z-index: 70;
+  overflow-y: auto;
+  /* 다섯 갈래가 세로로 — 지금 장의 갈래만 펼쳐져 있고, 나머지는 이름만 섭니다. */
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--u));
+  min-width: calc(250 * var(--u));
+  padding: calc(12 * var(--u)) calc(12 * var(--u)) calc(14 * var(--u));
+  /* 띠 글(11.5)보다 두 단 크게. */
+  font-size: calc(13.5 * var(--u));
+  background: var(--bg);
+  border: 1px solid rgb(25 25 25 / 0.12);
+  box-shadow: 0 calc(14 * var(--u)) calc(34 * var(--u)) rgb(25 25 25 / 0.12);
+  opacity: 0;
+  translate: 0 calc(-6 * var(--u));
+  visibility: hidden;
+  transition:
+    opacity 220ms ease,
+    translate 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s 220ms;
+}
+
+.v3 .band-toc[data-open] .band-toc-list {
+  opacity: 1;
+  translate: 0 0;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.v3 .band-toc-group {
+  display: flex;
+  flex-direction: column;
+  gap: calc(4 * var(--u));
+}
+
+/* 갈래 이름 — 띠와 같은 글씨. 누르면 그 갈래가 펼쳐집니다.
+   접힌 갈래는 한 겹 물러나 있고, 펼쳐진 갈래는 또렷합니다. */
+.v3 .band-toc-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(12 * var(--u));
+  margin: 0;
+  padding: calc(7 * var(--u)) calc(8 * var(--u));
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-align: left;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 160ms ease;
+}
+
+.v3 .band-toc-title:hover,
+.v3 .band-toc-group[data-shown] .band-toc-title {
+  opacity: 1;
+}
+
+.v3 .band-toc-title .band-toc-cue {
+  margin-left: 0;
+}
+
+.v3 .band-toc-group[data-shown] .band-toc-title .band-toc-cue {
+  scale: 1 -1;
+}
+
+/* 맨 아래의 연락처 — 갈래들 아래 남는 자리를 두고 바닥에 붙습니다. */
+.v3 .band-toc-contact {
+  display: flex;
+  flex-direction: column;
+  gap: calc(6 * var(--u));
+  margin-top: auto;
+  padding: calc(14 * var(--u)) calc(8 * var(--u)) calc(4 * var(--u));
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-align: left;
+  cursor: pointer;
+  /* 목차 글(13.5)보다 한참 작게. */
+  font-size: calc(9.5 * var(--u));
+  text-decoration: none;
+}
+
+.v3 .band-toc-contact > span:first-child {
+  opacity: 0.5;
+}
+
+.v3 .band-toc-mail {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(4 * var(--u));
+  /* Contact 표와 같은 만큼 물러나고, 두 단 큽니다. */
+  color: var(--fg);
+  opacity: 0.5;
+  font-size: calc(11.5 * var(--u));
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.v3 .band-toc-mail svg {
+  width: calc(9 * var(--u));
+  height: calc(9 * var(--u));
+}
+
+.v3 .band-toc-contact:hover .band-toc-mail,
+.v3 .band-toc-contact[data-copied] .band-toc-mail {
+  opacity: 1;
+}
+
+/* 펼쳐진 갈래의 장들 아래로 한 숨. */
+.v3 .band-toc-group[data-shown] {
+  padding-bottom: calc(8 * var(--u));
+}
+
+.v3 .band-toc-item {
+  display: flex;
+  align-items: center;
+  gap: calc(12 * var(--u));
+  padding: calc(7 * var(--u)) calc(8 * var(--u));
+  border: 0;
+  border-radius: calc(4 * var(--u));
+  background: none;
+  /* 장 이름은 갈래 이름보다 한 겹 연하게. 손이 얹히거나 지금 장이면 또렷하게. */
+  color: var(--fg);
+  opacity: 0.72;
+  font: inherit;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    opacity 160ms ease;
+}
+
+.v3 .band-toc-item:hover,
+.v3 .band-toc-item[data-now] {
+  opacity: 1;
+}
+
+.v3 .band-toc-item:hover {
+  background: rgb(25 25 25 / 0.06);
+}
+
+.v3 .band-toc-item[data-now] {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.v3 .band-toc-no {
+  width: calc(18 * var(--u));
+  opacity: 0.55;
+  letter-spacing: 0.08em;
+}
+
+.v3 .band-toc-item[data-now] .band-toc-no {
+  opacity: 0.7;
+}
+
+/* 어두운 장에서는 판 색·선 색을 뒤집습니다. */
+.v3 .section:has(.compose-full) .band-toc-list,
+.v3 .section:has(.page-grid[data-past]) .band-toc-list,
+.v3 .section:has(.after-frame) .band-toc-list,
+.v3 .section:has(.statement-dark) .band-toc-list {
+  border-color: rgb(250 250 250 / 0.14);
+  box-shadow: 0 calc(14 * var(--u)) calc(34 * var(--u)) rgb(0 0 0 / 0.4);
+}
+
+.v3 .section:has(.compose-full) .band-toc-item:hover,
+.v3 .section:has(.page-grid[data-past]) .band-toc-item:hover,
+.v3 .section:has(.after-frame) .band-toc-item:hover,
+.v3 .section:has(.statement-dark) .band-toc-item:hover {
+  background: rgb(250 250 250 / 0.08);
+}
+
+/* 펼친 동안은 띠 전체가 또렷하고, 판 위 무엇보다 앞에 섭니다.
+   (어두운 장의 0.4 규칙과 같은 무게라 .section 을 하나 더 얹어 이깁니다.) */
+.v3 .section .band.band-top:has(.band-toc[data-open]) {
+  z-index: 80;
+  opacity: 1;
 }
 
 .v3 .band-right {
@@ -262,6 +578,23 @@
 .v3 #gentle-monster-after .after-frame {
   grid-row: 1 / span 6;
   padding-top: 0;
+}
+
+/* 이 화면은 떠오를 때 위로 밀려 올라오지 않고 제자리에서 밝아지기만 합니다 —
+   아래 딤드(마스크)까지 함께 올라오면 딤드가 위아래로 흔들리는 것으로 보입니다. */
+.v3 [data-visible] #gentle-monster-after .after-frame.rise,
+.v3 #gentle-monster-after [data-visible] .after-frame.rise {
+  animation-name: fade-in;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* 메일 주소 위에서는 기본 커서 대신 둥근 COPY 가 따라다닙니다. */

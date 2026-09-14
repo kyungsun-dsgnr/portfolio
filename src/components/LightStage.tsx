@@ -10,6 +10,8 @@ import {
   type ReactNode,
 } from "react";
 
+import { ALIASES } from "@/app/slugs";
+
 type LightValue = { level: number; setLevel: (level: number) => void };
 
 const LightContext = createContext<LightValue | null>(null);
@@ -79,9 +81,11 @@ export function LightStage({
     if (!root || !slugs) return;
 
     const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-    const path = window.location.pathname
+    const raw = window.location.pathname
       .slice(base.length)
       .replace(/^\/|\/$/g, "");
+    /* 갈래 이름만 친 주소는 그 갈래의 표지로 — 주소창은 아래 효과가 고쳐 적습니다. */
+    const path = ALIASES[raw] ?? raw;
     const to = sections.findIndex((one) => slugs[one.id] === path);
     if (to <= 0) return;
     root.scrollTo({ top: to * root.clientHeight, behavior: "auto" });

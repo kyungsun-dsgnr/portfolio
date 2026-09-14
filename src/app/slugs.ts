@@ -57,5 +57,18 @@ export const BY_SLUG: Record<string, string> = Object.fromEntries(
   Object.entries(SLUGS).map(([id, slug]) => [slug, id]),
 );
 
-/** 빌드 때 만들어 둘 경로 전부 */
-export const SLUG_LIST = Object.values(SLUGS);
+/** 갈래 이름만 친 주소 — 그 갈래의 표지로 이어 줍니다. `/nudake` → `/nudake/cover`.
+ *  정적으로 내보내므로 서버가 돌려보낼 수 없어, 이 주소에도 덱을 세우고
+ *  덱이 표지로 옮긴 뒤 주소창을 고쳐 적습니다. */
+export const ALIASES: Record<string, string> = {
+  intro: "intro",
+  "gentle-monster": "gentle-monster/cover",
+  tamburins: "tamburins/cover",
+  nudake: "nudake/cover",
+  outro: "outro/01",
+};
+
+/** 빌드 때 만들어 둘 경로 전부 — 장의 주소와 갈래 이름 주소 */
+export const SLUG_LIST = [
+  ...new Set([...Object.values(SLUGS), ...Object.keys(ALIASES)]),
+];

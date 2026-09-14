@@ -682,6 +682,18 @@
   margin: calc(14px + 30 * var(--u)) 0 0 calc(14px + 30 * var(--u));
 }
 
+/* 어두운 장 위에서는 커서 원이 밝게 뒤집힙니다 — 재생 표는 장을 스스로 알아 data-light,
+   VIEW · COPY 는 제 장 안에 있어 장으로 잡습니다. */
+.v3 .view-cursor-core[data-light],
+.v3 .section:has(.compose-full) .view-cursor-core,
+.v3 .section:has(.after-frame) .view-cursor-core,
+.v3 .section:has(.page-grid[data-past]) .view-cursor-core,
+.v3 .section:has(.statement-dark) .view-cursor-core,
+.v3 .section:has(.thanks) .view-cursor-core {
+  background: #fafafa;
+  color: #191919;
+}
+
 /* 글 대신 재생 세모가 앉는 가운데 원(`Beyond Store Search…` 의 글 셋). */
 .v3 .play-core svg {
   width: calc(18 * var(--u));

@@ -30,6 +30,13 @@ export function PlayCursor() {
          오른쪽 아래로 비키는 만큼은 CSS 의 margin 이 맡습니다. */
       el.style.translate = `calc(${event.clientX}px - 50%) calc(${event.clientY}px - 50%)`;
       el.setAttribute("data-on", "");
+      /* 어두운 장 위에서는 밝은 원으로 — 장의 어둠은 그 안의 것들로 압니다. */
+      const dark = Boolean(
+        over.closest(".section")?.matches(
+          ":has(.compose-full), :has(.after-frame), :has(.page-grid[data-past]), :has(.statement-dark), :has(.thanks)",
+        ),
+      );
+      el.toggleAttribute("data-light", dark);
     };
     const leave = () => el.removeAttribute("data-on");
 

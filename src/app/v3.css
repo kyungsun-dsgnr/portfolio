@@ -168,6 +168,11 @@
   background: #1919190d;
 }
 
+/* 두 화면 사이의 화살표는 4~6행의 한가운데(5행 가운데)에 섭니다. */
+.v3 #nudake-gap-4 .nud-turn {
+  grid-row: 4 / span 3;
+}
+
 /* 이 장의 두 화면 머리에서는 아이콘(찾기 · 메뉴 · 뒤로 · 장바구니 · 닫기)을
    모두 걷습니다 — 왼쪽 위의 표와 겹칩니다. 로고와 제목만 남습니다. */
 .v3 #nudake-gap-4 .nud-stage .nud-mock-bar .nud-mock-tap,

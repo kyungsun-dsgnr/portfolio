@@ -1,12 +1,9 @@
 <svg width="227" height="227" viewBox="0 0 227 227" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect width="227" height="227" rx="56" fill="white"/>
-<circle cx="76.0" cy="150.0" r="46" stroke="#191919" stroke-width="7" stroke-opacity="0.14"/>
-<circle cx="85.4" cy="140.9" r="46" stroke="#191919" stroke-width="7" stroke-opacity="0.19"/>
-<circle cx="94.8" cy="131.8" r="46" stroke="#191919" stroke-width="7" stroke-opacity="0.26"/>
-<circle cx="104.1" cy="122.6" r="46" stroke="#191919" stroke-width="7" stroke-opacity="0.36"/>
-<circle cx="113.5" cy="113.5" r="46" stroke="#191919" stroke-width="7" stroke-opacity="0.47"/>
-<circle cx="122.9" cy="104.4" r="46" stroke="#191919" stroke-width="7" stroke-opacity="0.59"/>
-<circle cx="132.2" cy="95.2" r="46" stroke="#191919" stroke-width="7" stroke-opacity="0.71"/>
-<circle cx="141.6" cy="86.1" r="46" stroke="#191919" stroke-width="7" stroke-opacity="0.85"/>
-<circle cx="151.0" cy="77.0" r="46" stroke="#191919" stroke-width="7" stroke-opacity="1.00"/>
+<g transform="translate(113.5 113.5) scale(1.55) translate(-100 -100)" stroke="#191919" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M81 61H119A20 20 0 0 1 139 81V119A20 20 0 0 1 119 139H81A20 20 0 0 1 61 119V81A20 20 0 0 1 81 61Z" transform="translate(-9 9)" stroke-opacity="0.32"/>
+  <path d="M81 61H119A20 20 0 0 1 139 81V119A20 20 0 0 1 119 139H81A20 20 0 0 1 61 119V81A20 20 0 0 1 81 61Z" transform="translate(9 -9)" stroke-opacity="0.32"/>
+  <path d="M81 61H119A20 20 0 0 1 139 81V119A20 20 0 0 1 119 139H81A20 20 0 0 1 61 119V81A20 20 0 0 1 81 61Z" stroke-opacity="0.5"/>
+  <path d="M81 61H119A20 20 0 0 1 139 81V119A20 20 0 0 1 119 139H81A20 20 0 0 1 61 119V81A20 20 0 0 1 81 61Z" pathLength="100" stroke-dasharray="22 78" stroke-dashoffset="-8"/>
+</g>
 </svg>

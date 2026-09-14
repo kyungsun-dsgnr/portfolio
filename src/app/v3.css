@@ -798,8 +798,10 @@
 
 /* 엽서의 손글씨 — 1.44 배(30 → 43), 24 위로. */
 .v3 #nudake .nud-card-hand {
-  font-size: calc(43 * var(--u));
-  translate: 0 calc(-24 * var(--u));
+  /* 43 의 0.8 배 */
+  font-size: calc(34.4 * var(--u));
+  /* 24 위로 올리던 것을 10 내려 14 만 올립니다. */
+  translate: 0 calc(-14 * var(--u));
 }
 
 /* ── 원칙 장(복제) — 움직이는 삽화 ─────────────────

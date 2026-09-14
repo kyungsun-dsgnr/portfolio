@@ -1021,3 +1021,15 @@
     animation: none !important;
   }
 }
+
+/* `Turn the Globe, Find a City` 의 다음 단추 — 문장 장의 스크롤 표(0.45)와 같은 결.
+   떠오르는 애니메이션(rise)이 opacity 를 1 로 붙잡고 있어 opacity 로는 옅어지지
+   않습니다. 대신 글색 자체에 투명도를 섞습니다. */
+.v3 #gentle-monster-explore .page-next {
+  color: color-mix(in srgb, var(--fg) 45%, transparent);
+  opacity: 1;
+}
+
+.v3 #gentle-monster-explore .page-next:hover {
+  color: var(--fg);
+}

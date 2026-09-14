@@ -72,14 +72,16 @@ export function SceneThanks() {
       {/* 한 문장 — 이 덱이 한 일 */}
       {/* 한 문장 — 이 장의 주인공. 인사는 그 아래 반 크기로 가까이 붙습니다. */}
       <div className="thanks-lead rise col-start-1 col-span-8 row-start-1 row-span-5">
-        <p className="type-lead">
+        {/* 다른 장의 제목처럼 낱말마다 머리글자를 세웁니다. */}
+        <p className="type-lead capitalize">
           I translate familiar behaviors, senses, and expectations
           <br />
           into digital experiences that feel natural
           <br />
           from the first interaction.
         </p>
-        <p className="thanks-note">
+        {/* 표지의 `Designing Digital Experiences…` 와 같은 글씨(type-title)입니다. */}
+        <p className="type-title capitalize thanks-note">
           Thank you for taking the time to explore my work.
         </p>
       </div>

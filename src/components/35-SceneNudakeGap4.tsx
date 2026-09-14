@@ -285,11 +285,15 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
     return () => clearTimeout(back);
   }, [inView]);
 
-  /* 손으로 누르면 훑기는 멈추고 그 카드만 돕니다. */
+  /* 손으로 누르면 그 카드만 돕니다. 훑는 중이면 멈추지 않고 그 카드로 건너뛰어
+     거기서부터 이어 훑습니다 — 화면과 카드가 함께 그 걸음으로 넘어갑니다. */
   const toggle = (i: number) => {
     window.clearTimeout(chain.current);
-    setAuto(false);
     setSolo(null);
+    if (auto) {
+      if (open !== i) show(i);
+      return;
+    }
     if (held && open === i) {
       setHeld(false);
       show(null);

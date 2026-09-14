@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
+import { MockSwitch } from "@/components/MockSwitch";
 import { NudakeMockCompose } from "@/components/NudakeComposeScreen";
 
 export const viewport: Viewport = {
@@ -24,6 +25,8 @@ export default function NudakePhonePage() {
   return (
     <main className="phone-page nudc-page">
       <NudakeMockCompose fill />
+      {/* 로고 옆 + — 다른 화면으로 건너갑니다. */}
+      <MockSwitch here="nudake" />
     </main>
   );
 }

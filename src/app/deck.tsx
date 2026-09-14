@@ -30,6 +30,7 @@ import { SceneTamburinsCover } from "@/components/12-SceneTamburinsCover";
 import { SceneAfter } from "@/components/11-SceneAfter";
 import { SceneExplore } from "@/components/10-SceneExplore";
 // 접어 둔 장에서 씁니다: import { SceneIntro } from "@/components/01-SceneIntro";
+import { SceneCover3 } from "@/components/02-SceneCover3";
 import { SceneSwitch } from "@/components/02-SceneSwitch";
 import { SceneNudakeCover } from "@/components/18-SceneNudakeCover";
 // 내려 둔 앞 판에서 씁니다: import { SceneNudakeContext } from "@/components/22-SceneNudakeContext";
@@ -108,7 +109,12 @@ export function Deck({
       sections={[
         /* 스위치 장과 제목이 같아 접어 둡니다. 되살릴 때 이 줄만 풀면 됩니다.
         { id: "intro", label: "Intro", node: <SceneIntro /> }, */
-        { id: "switch", label: "intro-1", node: <SceneSwitch /> },
+        /* 세 번째 판은 조명 대신 세 갈래의 정지 화면으로 엽니다. */
+        {
+          id: "switch",
+          label: "intro-1",
+          node: third ? <SceneCover3 /> : <SceneSwitch />,
+        },
         {
           id: "statement",
           label: "intro-2",

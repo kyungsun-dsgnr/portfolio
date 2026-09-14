@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
+import { MockSwitch } from "@/components/MockSwitch";
 import { StoreGlobeMock } from "@/components/StoreGlobeMock";
 
 export const viewport: Viewport = {
@@ -24,6 +25,8 @@ export default function GlobePhonePage() {
   return (
     <main className="phone-page">
       <StoreGlobeMock dots={false} initialWorld />
+      {/* 로고 옆 + — 다른 화면으로 건너갑니다. */}
+      <MockSwitch here="gentle-monster" />
     </main>
   );
 }

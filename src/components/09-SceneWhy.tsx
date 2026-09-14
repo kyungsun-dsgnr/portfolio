@@ -15,17 +15,17 @@ const SEOUL = ["Seoul"];
 /** 시작점을 하나 더 두는 이유 셋. 마지막 칸만 한 행 더 높아 글이 위에서 시작합니다. */
 const REASONS = [
   {
-    index: "As is 01",
+    index: "As-Is 01",
     title: "Local Start",
     body: "접속 국가와 현재 위치를 기준으로 가까운 매장을 찾습니다.",
   },
   {
-    index: "As is 02",
+    index: "As-Is 02",
     title: "Quick Store Search",
     body: "지역을 선택해 필요한 매장 정보를 빠르게 확인합니다.",
   },
   {
-    index: "To be",
+    index: "To-Be",
     title: "Global Start",
     body: "세계의 도시를 둘러보며 브랜드의 글로벌 스토어를 발견합니다.",
     tall: true,
@@ -64,7 +64,10 @@ export function SceneWhy() {
             style={{ "--delay": `${0.18 + i * 0.08}s` } as CSSProperties}
           >
             <div className="card-text">
-              <span className="card-index">{reason.index}</span>
+              {/* `From Buying a Gift…` 의 As-Is · To-Be 표와 같은 잉크 표입니다. */}
+              <span className="card-index why-tag">
+                {reason.index}
+              </span>
               <h3 className="type-title">{reason.title}</h3>
               <p className="type-body">{reason.body}</p>
             </div>

@@ -1124,6 +1124,8 @@ export function GlobeDots({
         ref={canvasRef}
         className="globe-canvas"
         data-static={interactive ? undefined : ""}
+        /* 펼친 지도만 위아래 손짓을 가져갑니다. 구일 때는 세로 훑기가 목록으로 내려갑니다. */
+        data-flat={zoomed || undefined}
         onPointerDown={interactive ? pointerDown : undefined}
         onPointerMove={interactive ? pointerMove : undefined}
         onPointerUp={
@@ -1186,9 +1188,13 @@ export function GlobeDots({
         onPointerCancel={
           interactive
             ? (event) => {
+                /* 세로로 훑어 브라우저가 스크롤을 가져가면 여기로 옵니다.
+                   손을 뗀 것과 같이 정리해 지구본이 다시 천천히 돕니다. */
                 touches.current.delete(event.pointerId);
                 pinch.current = 0;
                 dragging.current = false;
+                hovering.current = false;
+                activeRef.current = null;
               }
             : undefined
         }

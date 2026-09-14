@@ -3,7 +3,7 @@
  *
  * 판의 위아래 여백(60) 안에 앉는 잔글씨입니다 —
  *   위: 하는 일 · 지금 갈래 #몇 장째 ── 포트폴리오 · 해
- *   아래: 이름 ── 쪽번호
+ *   아래: © 이름 ── 쪽번호
  * 판(.page-grid)과 같은 여덟 단 위에 놓여 글이 단 머리에 맞춰 섭니다.
  * 표지(인트로) · 세 갈래(work) · 맺음 장에는 두지 않습니다 — v3.css 가 감춥니다.
  */
@@ -54,7 +54,7 @@ export function Bands({
 
       <div className="band band-bottom" aria-hidden>
         <p className="band-cell col-start-1 col-span-3">
-          <span>Park Kyungsun</span>
+          <span>© Park Kyungsun</span>
         </p>
         <p className="band-cell band-right col-start-7 col-span-2">
           <span>

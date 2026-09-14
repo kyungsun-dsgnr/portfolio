@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
+import { MockSwitch } from "@/components/MockSwitch";
 import { TamburinsComposeScreenB } from "@/components/TamburinsComposeScreenB";
 
 export const viewport: Viewport = {
@@ -24,6 +25,8 @@ export default function ComposePhonePage() {
     <main className="phone-page">
       {/* 손에 쥔 화면에서는 고른 만큼만 보여 줍니다. */}
       <TamburinsComposeScreenB stepped />
+      {/* 로고 옆 + — 다른 화면으로 건너갑니다. */}
+      <MockSwitch here="tamburins" />
     </main>
   );
 }

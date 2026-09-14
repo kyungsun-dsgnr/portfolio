@@ -336,6 +336,54 @@ export function NudakeMockCompose({
   /** 고른 결제 수단 */
   const [pay, setPay] = useState(false);
   const pen = useRef<HTMLTextAreaElement>(null);
+  /** 편지 판을 굴리는 틀. 고쳐 쓸 때 맨 위로 되돌려 엽서가 머리 아래에 서게 합니다. */
+  const scroller = useRef<HTMLDivElement>(null);
+  const root = useRef<HTMLDivElement>(null);
+  /* 손에 쥔 화면에서 자판이 올라오면 엽서만 그 위로 올립니다.
+     머리와 취소·확인 아래, 자판 위에 남는 자리에 맞춰 크기와 자리를 정해
+     CSS 변수(--edit-scale · --edit-shift)로 건넵니다. 자판이 없으면 비워
+     판 위 목업과 같은 자리를 씁니다. */
+  useEffect(() => {
+    const view = window.visualViewport;
+    const el = root.current;
+    if (!fill || !editing || !view || !el) return;
+
+    const clear = () => {
+      el.style.removeProperty("--edit-scale");
+      el.style.removeProperty("--edit-shift");
+    };
+
+    const place = () => {
+      if (window.innerHeight - view.height < 80) {
+        clear();
+        return;
+      }
+      const s = el.clientWidth / 333;
+      const box = el.getBoundingClientRect();
+      /* 머리 49 + 취소·확인 44 + 숨 8 아래부터, 자판 위 12 까지. */
+      const top = Math.max(box.top + 101 * s, view.offsetTop + 8);
+      const bottom = view.offsetTop + view.height - 12;
+      const room = bottom - top;
+      const scale = Math.min(1.24, Math.max(0.9, room / (252 * s)));
+      /* 엽서의 본디 가운데(머리 49 + 위 29 + 반 126)에서 남은 자리 가운데로.
+         자리가 모자라면 자판 바로 위에 붙입니다 — 위쪽이 머리 아래로 조금
+         들어가더라도 글자리가 자판에 가리는 것보다 낫습니다. */
+      const tall = 252 * s * scale;
+      const center = tall > room ? bottom - tall / 2 : top + room / 2;
+      const shift = center - (box.top + 204 * s);
+      el.style.setProperty("--edit-scale", String(scale));
+      el.style.setProperty("--edit-shift", `${shift}px`);
+    };
+
+    place();
+    view.addEventListener("resize", place);
+    view.addEventListener("scroll", place);
+    return () => {
+      view.removeEventListener("resize", place);
+      view.removeEventListener("scroll", place);
+      clear();
+    };
+  }, [fill, editing]);
   /** 고치기 전의 글. 취소하면 이 자리로 되돌립니다. */
   const kept = useRef(NOTE);
   /** 고른 칸. 스스로 훑을 때는 `pick`, 손으로 고를 때는 누른 칸입니다. */
@@ -529,10 +577,13 @@ export function NudakeMockCompose({
     /* 미리 적혀 있던 기본 글은 제안일 뿐이라 비웁니다 — 안내말이 대신 섭니다.
        손으로 쓴 글이 있으면 그대로 두고 그 뒤에서 이어 씁니다. */
     if (note === NOTE) setNote("");
+    /* 판이 굴러 있었으면 맨 위로 되돌립니다 — 엽서와 취소·확인이
+       머리 위로 올라가 버리지 않게. focus 가 스스로 굴리는 것도 막습니다. */
+    scroller.current?.scrollTo({ top: 0, behavior: "smooth" });
     /* 누른 그 손짓 안에서 focus 해야 자판이 올라옵니다.
        다음 틱으로 미루면 기기가 사용자의 뜻으로 보지 않습니다. */
     const at = pen.current;
-    at?.focus();
+    at?.focus({ preventScroll: true });
     /* 커서는 쓰던 글 끝에 섭니다. */
     const end = at?.value.length ?? 0;
     at?.setSelectionRange(end, end);
@@ -669,6 +720,7 @@ export function NudakeMockCompose({
 
   return (
     <div
+      ref={root}
       className="nud-mock nudc"
       data-at={at}
       data-back={written || undefined}
@@ -779,20 +831,12 @@ export function NudakeMockCompose({
         </span>
       </nav>
 
-      {/* 걸러 놓은 수 — 실제 화면의 그 줄입니다. */}
+      {/* 걸러 놓은 수 — 실제 화면의 그 줄. 오른쪽의 필터는 두지 않습니다. */}
       <div
         className="nudc-filter"
         style={{ ...box({ top: 49 }), padding: `${mk(10)} ${mk(20)}` }}
       >
         <b style={type(13, 24)}>티 기프트({GIFTS.length})</b>
-        <span style={{ ...type(12, 24), gap: mk(5) }}>
-          <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden>
-            <g stroke="#000" strokeMiterlimit="10">
-              <path d="M0 2.447h12M0 9.553h12M3 0v5M9 7v5" />
-            </g>
-          </svg>
-          필터
-        </span>
       </div>
 
       {/* 목록 — 고른 칸만 남기고 물러납니다. */}
@@ -918,7 +962,7 @@ export function NudakeMockCompose({
 
       {/* 편지지 · 봉투 · 제품 줄이 한 판에 담겨 함께 굴러갑니다 —
           아래만 따로 굴리면 위 그림이 붙박이로 남습니다. */}
-      <div className="nudc-scroll">
+      <div className="nudc-scroll" ref={scroller}>
         {/* 편지 자리 한 판. 안쪽 자리는 모두 이 판을 기준으로 잽니다 —
             기기 키가 달라도 봉투가 아래 글줄로 흘러내리지 않습니다. */}
         <div className="nudc-letter" style={{ height: mk(411) }}>
@@ -1031,32 +1075,6 @@ export function NudakeMockCompose({
                 }}
               />
             </div>
-          </div>
-
-          {/* 고쳐 쓰는 동안 엽서만 남기고 나머지는 어둡게 물러납니다. */}
-          <span className="nudc-veil" onClick={done} aria-hidden />
-
-          <div
-            className="nudc-edit-top"
-            style={{ ...box({ top: 49, height: 44 }), padding: `0 ${mk(20)}` }}
-          >
-            <button
-              type="button"
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={undo}
-              style={type(12, 20)}
-            >
-              취소
-            </button>
-            <button
-              type="button"
-              data-on
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={done}
-              style={type(12, 20)}
-            >
-              확인
-            </button>
           </div>
 
           {/* 닫힌 봉투 — 다 담기고 나면 이 그림으로 바뀌어 날아갑니다. */}
@@ -1222,6 +1240,39 @@ export function NudakeMockCompose({
             {picked.desc.split("\n\n").slice(1).join(" ").replace(/\n/g, " ")}
           </p>
         </div>
+      </div>
+
+      {/* 고쳐 쓰는 동안 엽서만 남기고 나머지는 어둡게 물러납니다.
+          굴러가는 판 밖에 두어 머리 아래부터 화면 끝까지 덮습니다 —
+          판이 굴러 있어도 머리는 덮지 않고, 위의 취소·확인도 제자리에 섭니다. */}
+      <span
+        className="nudc-veil"
+        style={box({ top: 49 })}
+        onClick={done}
+        aria-hidden
+      />
+
+      <div
+        className="nudc-edit-top"
+        style={{ ...box({ top: 49, height: 44 }), padding: `0 ${mk(20)}` }}
+      >
+        <button
+          type="button"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={undo}
+          style={type(12, 20)}
+        >
+          취소
+        </button>
+        <button
+          type="button"
+          data-on
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={done}
+          style={type(12, 20)}
+        >
+          확인
+        </button>
       </div>
 
       {/* 결제 시트 — `선물 보내기` 를 누르면 아래에서 올라옵니다.

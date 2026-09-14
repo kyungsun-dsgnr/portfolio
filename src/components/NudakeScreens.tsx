@@ -554,7 +554,17 @@ export function NudakeMockDetail({
 export function NudakeMockKakao({
   away = false,
   quiet = false,
-}: { away?: boolean; quiet?: boolean } = {}) {
+  item = 1,
+  tap = false,
+}: {
+  away?: boolean;
+  quiet?: boolean;
+  /** 서 있는 세트 — DETAILS 의 차례. 상세에서 넘어온 제품 그대로입니다. */
+  item?: number;
+  /** 바닥의 `선물하기` 에 손끝이 닿는 순간 */
+  tap?: boolean;
+} = {}) {
+  const shown = DETAILS[item] ?? DETAILS[1];
   return (
     <div
       className="nud-mock nud-kakao"
@@ -575,7 +585,8 @@ export function NudakeMockKakao({
         {/* 그림과 그 위에 얹히는 두 표 */}
         <div className="nud-kakao-shot" style={box({ height: 333 })}>
           <Image
-            src="/images/nudake-gift/archive.webp"
+            key={shown.img}
+            src={`/images/nudake-gift/${shown.img}.webp`}
             alt=""
             fill
             sizes="30vw"
@@ -626,7 +637,7 @@ export function NudakeMockKakao({
             className="nud-kakao-name"
             style={{ ...type(18, 24), paddingTop: mk(6) }}
           >
-            BEST 티백 선물 세트 / TEA 기프트 ‘티 아카이브’
+            BEST 티백 선물 세트 / TEA 기프트 ‘{shown.name.replace(/^누데이크 /, "")}’
           </p>
 
           <p
@@ -644,7 +655,7 @@ export function NudakeMockKakao({
           </p>
 
           <p className="nud-kakao-price" style={{ paddingTop: mk(12) }}>
-            <b style={type(20, 22)}>38,900</b>
+            <b style={type(20, 22)}>{shown.price.replace("원", "")}</b>
             <em style={type(19, 22)}>원</em>
           </p>
         </div>
@@ -673,7 +684,12 @@ export function NudakeMockKakao({
           style={{ padding: `${mk(12)}`, gap: mk(8) }}
         >
           <b style={{ ...box({ height: 48 }), ...type(15, 48) }}>나에게 선물</b>
-          <em style={{ ...box({ height: 48 }), ...type(15, 48) }}>선물하기</em>
+          <em
+            data-tap={tap || undefined}
+            style={{ ...box({ height: 48 }), ...type(15, 48) }}
+          >
+            선물하기
+          </em>
         </div>
       </div>
 

@@ -114,8 +114,9 @@ const AFTER_AT = 7300;
 /* 카드마다 도는 길이(ms) — 위 보더의 막대가 이 시간에 맞춰 차오르고,
    재생 단추로 훑을 때는 이 시간이 지나면 다음 카드로 넘어갑니다.
    첫 카드: 왼쪽 7.3초 + 오른쪽이 고르기부터 보내기까지 약 13초.
-   둘째: 왼쪽이 두 번 넘기고 오른쪽이 바꿔 담기까지. 셋째: 글을 넣고 보내기까지. */
-const SPAN = [20600, 5400, 8400];
+   둘째: 왼쪽이 두 번 넘기고 카카오로 나가 선물하기까지 누르고, 오른쪽이 바꿔 담기까지.
+   셋째: 글을 넣고 보내기까지. */
+const SPAN = [20600, 8000, 8400];
 
 /* 오른쪽 화면의 키 — 2행 머리부터 6행 끝까지(다섯 행과 사이 넷).
    바닥 단추까지 다 보이게, 화면을 그 키로 세웁니다. */
@@ -126,12 +127,18 @@ const OTHER_PICK = 3;
 
 /* 둘째 카드를 누르면 왼쪽(고치기 전) 상세가 밟는 차례 —
    아카이브 상세에서 바닥의 `다음 제품` 을 두 번 눌러 루스 리프 에디션까지 가고,
-   그제야 오른쪽이 제품 줄에서 같은 제품으로 바꿔 담습니다. */
+   `카카오톡 선물하기` 를 누르면 카카오 선물하기 화면이 서고, 거기서 `선물하기` 를
+   누르면 브랜드 밖으로 빠집니다(흑백). 그제야 오른쪽이 제품 줄에서
+   같은 제품으로 바꿔 담습니다. */
 const NEXT1_AT = 900;
 const TURN1_AT = 1300;
 const NEXT2_AT = 2100;
 const TURN2_AT = 2500;
-const SWAP_AT = 3300;
+const PUSH1_AT = 3300;
+const KAKAO_AT = 3700;
+const PUSH2_AT = 4500;
+const AWAY1_AT = 5100;
+const SWAP_AT = 5900;
 
 export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
   const [ref, inView] = useInView<HTMLDivElement>(0.4);
@@ -212,7 +219,8 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
   const busy = playing || other || send;
 
   /** 둘째 카드의 걸음 — 0 아카이브 · 1 다음 누름 · 2 테이스터 · 3 다음 누름 ·
-      4 루스 리프 · 5 오른쪽이 바꿔 담음 */
+      4 루스 리프 · 5 카카오 단추 누름 · 6 카카오 선물하기 화면 · 7 선물하기 누름 ·
+      8 밖으로(흑백) · 9 오른쪽이 바꿔 담음 */
   const [flip, setFlip] = useState(0);
 
   useEffect(() => {
@@ -225,7 +233,11 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
       window.setTimeout(() => setFlip(2), TURN1_AT),
       window.setTimeout(() => setFlip(3), NEXT2_AT),
       window.setTimeout(() => setFlip(4), TURN2_AT),
-      window.setTimeout(() => setFlip(5), SWAP_AT),
+      window.setTimeout(() => setFlip(5), PUSH1_AT),
+      window.setTimeout(() => setFlip(6), KAKAO_AT),
+      window.setTimeout(() => setFlip(7), PUSH2_AT),
+      window.setTimeout(() => setFlip(8), AWAY1_AT),
+      window.setTimeout(() => setFlip(9), SWAP_AT),
     ];
     return () => clock.forEach(clearTimeout);
   }, [other, inView]);
@@ -235,11 +247,11 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
      둘째 카드는 왼쪽이 넘기는 사이엔 오른쪽이, 바꿔 담을 땐 왼쪽이.
      셋째 카드는 내내 왼쪽이. 아무것도 돌지 않을 때는 오른쪽이 물러나 있습니다. */
   const beforeOff =
-    (playing && was >= 7) || (other && flip >= 5) || send || solo === "after";
+    (playing && was >= 7) || (other && flip >= 9) || send || solo === "after";
   const afterOff =
     (!busy && solo !== "after") ||
     (playing && was < 8) ||
-    (other && flip < 5) ||
+    (other && flip < 9) ||
     solo === "before";
 
   useEffect(() => {
@@ -309,12 +321,27 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
       >
         {pair ? (
           other ? (
-            /* 둘째 카드 — 상세에서 `다음 제품` 으로 두 번 넘어갑니다. */
-            <NudakeMockDetail
-              down
-              item={flip >= 4 ? 3 : flip >= 2 ? 2 : 1}
-              next={flip === 1 || flip === 3}
-            />
+            /* 둘째 카드 — 상세에서 `다음 제품` 으로 두 번 넘어가고,
+               마지막 제품에서 `카카오톡 선물하기` 를 누르면 카카오 선물하기 화면,
+               거기서 `선물하기` 를 누르면 밖으로 빠집니다. */
+            flip >= 6 ? (
+              <NudakeMockKakao
+                item={OTHER_PICK}
+                away={flip >= 8}
+                tap={flip === 7}
+                quiet
+              />
+            ) : (
+              <NudakeMockDetail
+                down
+                item={flip >= 4 ? 3 : flip >= 2 ? 2 : 1}
+                next={flip === 1 || flip === 3}
+                tap={flip === 5}
+              />
+            )
+          ) : send ? (
+            /* 셋째 카드 — 왼쪽은 이미 브랜드 밖, 카카오 선물하기 화면에 서 있습니다. */
+            <NudakeMockKakao quiet />
           ) : was >= 5 ? (
             <NudakeMockKakao away={was >= 6} quiet />
           ) : was >= 2 ? (
@@ -336,6 +363,13 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
             }
             onClick={() => soloPlay("before")}
           />
+        )}
+
+        {/* 화면 왼쪽 위의 이름표 — `Is Still Bound to Place` 의 매장 표와 같은 것. */}
+        {pair && (
+          <span className="nud-shot-tag nud-stage-tag" aria-hidden>
+            As-Is
+          </span>
         )}
       </div>
 
@@ -359,7 +393,7 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
               key="card"
               step="card"
               height={STAGE_H}
-              swapTo={flip >= 5 ? OTHER_PICK : null}
+              swapTo={flip >= 9 ? OTHER_PICK : null}
             />
           )}
 
@@ -369,6 +403,10 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
             aria-label={solo === "after" ? "흐름 멈추기" : "고친 뒤 흐름 재생"}
             onClick={() => soloPlay("after")}
           />
+
+          <span className="nud-shot-tag nud-stage-tag" aria-hidden>
+            To-Be
+          </span>
         </div>
       )}
 
@@ -427,7 +465,7 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
             /* 어느 화면이 도는지 — 그쪽 글이 진하고 다른 쪽은 물러납니다. */
             data-side={
               busy && open === i
-                ? (playing && was < 8) || (other && flip < 5)
+                ? (playing && was < 8) || (other && flip < 9)
                   ? "before"
                   : "after"
                 : undefined

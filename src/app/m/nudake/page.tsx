@@ -12,7 +12,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "KS's Portfolio",
+  title: "박경선 | Portfolio",
   description: "제안하는 누데이크 선물 구성 화면입니다.",
 };
 

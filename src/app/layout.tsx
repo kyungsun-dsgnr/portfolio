@@ -39,14 +39,14 @@ const scriptKo = Nanum_Pen_Script({
 
 export const metadata: Metadata = {
   /* 브라우저 탭에 뜨는 이름. 손에 쥔 화면들은 제 이름을 따로 답니다. */
-  title: "KS's Portfolio",
+  title: "박경선 | Portfolio",
   description:
     "사람들이 이미 이해하고 있는 행동과 감각을 디지털 브랜드 경험으로 번역합니다.",
   /* 예전 iOS 는 매니페스트의 display 를 보지 않습니다.
      홈 화면에서 전체 화면으로 뜨려면 이 표시가 함께 있어야 합니다. */
   appleWebApp: {
     capable: true,
-    title: "KS's Portfolio",
+    title: "박경선 | Portfolio",
     statusBarStyle: "default",
   },
 };

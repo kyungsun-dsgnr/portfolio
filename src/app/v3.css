@@ -759,3 +759,265 @@
   font-size: calc(43 * var(--u));
   translate: 0 calc(-24 * var(--u));
 }
+
+/* ── 원칙 장(복제) — 움직이는 삽화 ─────────────────
+   200 판의 SVG. 선은 1.2, 다른 카드 삽화(24 판 · 0.2)와 무게가 같게 보입니다.
+   장 안에 있을 때만 움직이고, 움직임을 줄인 설정에서는 멈춰 섭니다. */
+.v3 .pm-art svg {
+  /* 판을 두 배로 당겨 보는 그림. 선은 1 로 둡니다. */
+  stroke-width: 1px;
+  overflow: visible;
+  /* 가장 진한 선은 0.67. 연한 선은 그 안에서 값을 올려 전과 같은 진하기를 지킵니다. */
+  opacity: 0.67;
+}
+
+/* 01 — 길을 도는 점선. 뒤·앞 자국이 숨 쉬듯 벌어졌다 모입니다. */
+@keyframes pm-route {
+  from {
+    stroke-dashoffset: 0;
+  }
+
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+@keyframes pm-memory-back {
+  0%,
+  100% {
+    transform: translate(-4px, 4px);
+    opacity: 0.43;
+  }
+
+  50% {
+    transform: translate(-12px, 12px);
+    opacity: 0.7;
+  }
+}
+
+@keyframes pm-memory-front {
+  0%,
+  100% {
+    transform: translate(4px, -4px);
+    opacity: 0.43;
+  }
+
+  50% {
+    transform: translate(12px, -12px);
+    opacity: 0.7;
+  }
+}
+
+/* 01 은 한 바퀴 7.2초 — 점선도 자국도 같은 박자로 느긋하게. */
+.v3 .pm-memory-route {
+  animation: pm-route 7.2s linear infinite;
+}
+
+.v3 .pm-memory-back {
+  animation: pm-memory-back 7.2s ease-in-out infinite;
+}
+
+.v3 .pm-memory-front {
+  animation: pm-memory-front 7.2s ease-in-out infinite;
+}
+
+/* 02 — 원 셋의 윤곽이 차례로 그려지고, 가운데 점이 맺혔다가 함께 사라집니다. */
+@keyframes pm-sense-0 {
+  0%,
+  2% {
+    opacity: 0;
+    stroke-dashoffset: 1;
+  }
+
+  18%,
+  78% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+
+  96%,
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pm-sense-1 {
+  0%,
+  17% {
+    opacity: 0;
+    stroke-dashoffset: 1;
+  }
+
+  33%,
+  78% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+
+  96%,
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pm-sense-2 {
+  0%,
+  32% {
+    opacity: 0;
+    stroke-dashoffset: 1;
+  }
+
+  48%,
+  78% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+
+  96%,
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pm-sense-center {
+  0%,
+  49%,
+  100% {
+    opacity: 0;
+  }
+
+  61%,
+  78% {
+    opacity: 1;
+  }
+
+  94% {
+    opacity: 0;
+  }
+}
+
+.v3 .pm-sense-0,
+.v3 .pm-sense-1,
+.v3 .pm-sense-2 {
+  stroke-dasharray: 1;
+}
+
+/* 02 는 한 바퀴 12초 — 윤곽이 천천히 그려집니다. */
+.v3 .pm-sense-0 {
+  animation: pm-sense-0 12s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.v3 .pm-sense-1 {
+  animation: pm-sense-1 12s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.v3 .pm-sense-2 {
+  animation: pm-sense-2 12s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.v3 .pm-sense-center {
+  animation: pm-sense-center 12s ease-in-out infinite;
+}
+
+/* 03 — 점마다 제 차례에 테가 잠깐 커졌다(신호), 안이 채워집니다(결과). */
+@keyframes pm-expect-cue {
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  1%,
+  3.7% {
+    opacity: 0.81;
+  }
+
+  5%,
+  99% {
+    opacity: 0;
+  }
+}
+
+@keyframes pm-expect-result {
+  0%,
+  4%,
+  100% {
+    opacity: 0;
+  }
+
+  5.2%,
+  9.2% {
+    opacity: 1;
+  }
+
+  11%,
+  99% {
+    opacity: 0;
+  }
+}
+
+/* 03 은 한 바퀴 27초 — 점마다 차례(--phase)도 그 비율(1.5)로 늘립니다. */
+.v3 .pm-expect-cue {
+  animation: pm-expect-cue 27s ease-in-out infinite;
+  animation-delay: calc(var(--phase) * 1.5);
+}
+
+.v3 .pm-expect-result {
+  animation: pm-expect-result 27s ease-in-out infinite;
+  animation-delay: calc(var(--phase) * 1.5);
+}
+
+/* 04 — 원이 네모가 되었다가 돌아옵니다. 뒤로 한 겹이 그림자처럼 따릅니다. */
+@keyframes pm-translate-shape {
+  0%,
+  16%,
+  100% {
+    rx: 41.4px;
+    ry: 41.4px;
+  }
+
+  48%,
+  73% {
+    rx: 3.45px;
+    ry: 3.45px;
+  }
+}
+
+@keyframes pm-translate-depth {
+  0%,
+  16%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+
+  48%,
+  73% {
+    opacity: 0.52;
+    transform: translate(-4px, 4px);
+  }
+}
+
+/* 04 는 한 바퀴 6.7초 — 8초에서 1.2 배 빠르게. */
+.v3 .pm-translate-shape {
+  animation: pm-translate-shape 6.7s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.v3 .pm-translate-depth {
+  animation:
+    pm-translate-shape 6.7s cubic-bezier(0.45, 0, 0.55, 1) infinite,
+    pm-translate-depth 6.7s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+/* 장 밖에 있을 때는 쉬고, 움직임을 줄인 설정에서는 멈춰 섭니다. */
+.v3 .principles-motion:not([data-visible]) .pm-art * {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v3 .pm-art * {
+    animation: none !important;
+  }
+}

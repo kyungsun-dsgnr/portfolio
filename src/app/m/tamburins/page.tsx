@@ -12,7 +12,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "One screen, one gift.",
+  title: "KS's Portfolio",
   description: "제안하는 탬버린즈 선물 구성 화면입니다.",
 };
 

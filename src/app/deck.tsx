@@ -58,6 +58,7 @@ import { Bands } from "@/components/Bands";
 // 밑그림 장이 다 채워져 내려 둡니다: import { SceneDraft } from "@/components/SceneDraft";
 import { SceneProblem } from "@/components/08-SceneProblem";
 import { ScenePrinciples } from "@/components/04-ScenePrinciples";
+import { ScenePrinciples2 } from "@/components/05-ScenePrinciples2";
 import { SceneStatement } from "@/components/02-SceneStatement";
 import { SceneWhy } from "@/components/09-SceneWhy";
 import { SceneWork } from "@/components/06-SceneWork";
@@ -124,7 +125,13 @@ export function Deck({
         },
         /* 뒷장과 제목이 같아 접어 둡니다. 되살릴 때 이 줄만 풀면 됩니다.
         { id: "perspective", label: "Perspective", node: <ScenePerspective /> }, */
-        { id: "principles", label: "intro-3", node: <ScenePrinciples /> },
+        /* 세 번째 판은 삽화가 움직이는 원칙 장을 씁니다. 정지한 판(04)은
+           앞선 판들에 남고, 이 판에서는 숨겨 둡니다. */
+        {
+          id: "principles",
+          label: "intro-3",
+          node: third ? <ScenePrinciples2 /> : <ScenePrinciples />,
+        },
         {
           id: "closing",
           label: "intro-4",

@@ -12,7 +12,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Local Search, Global Discovery",
+  title: "KS's Portfolio",
   description: "제안하는 젠틀몬스터 스토어 찾기 화면입니다.",
 };
 

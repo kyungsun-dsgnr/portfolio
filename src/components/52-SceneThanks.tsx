@@ -95,7 +95,7 @@ export function SceneThanks() {
         },
         {
           label: "Role",
-          value: "Product Designer",
+          value: "Product Designer | UX",
           place: "col-start-5 col-span-2",
         },
         {

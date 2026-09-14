@@ -383,7 +383,7 @@ export function SceneComposeFull() {
         >
           <span className="card-index">{one.index}</span>
           <h3 className="type-title">{c(one.title)}</h3>
-          <p className="type-body">{one.body}</p>
+          <p className="type-body">{c(one.body)}</p>
         </button>
       ))}
 

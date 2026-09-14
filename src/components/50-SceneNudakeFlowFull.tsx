@@ -41,7 +41,7 @@ const POINTS = [
   {
     index: "03",
     title: "Given Without Leaving NUDAKE",
-    body: "발견 이후 외부 서비스로 이동하던 경험을 브랜드 안에서 이어갑니다.\n고르고, 만들고, 전달하는 순간까지 NUDAKE의 경험으로 연결합니다.",
+    body: "선물을 하기 위해 외부 서비스로 이동하던 경험을 브랜드 안에서 이어갑니다.\n고르고, 만들고, 전달하는 순간까지 NUDAKE의 경험으로 연결합니다.",
     place: "col-start-7 col-span-2 row-start-5 row-span-2",
   },
 ];

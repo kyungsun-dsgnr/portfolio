@@ -184,9 +184,9 @@ export function SceneNudakeSigns2() {
         className="type-body rise self-start col-start-1 col-span-4 row-start-2"
         style={{ "--delay": "0.1s" } as CSSProperties}
       >
-        NUDAKE는 이미 선물하기 기능이 있지만 ‘Gift’를 발견하기까지 메뉴 구조를
-        여러 번 거쳐야 합니다. 기능은 존재하지만 탐색 흐름 안에서 충분히 드러나지
-        않습니다.
+        선물 목적의 사용자는 NUDAKE 안에 도착해도, ‘Gift’를 발견하기까지 메뉴
+        구조를 여러 번 거쳐야 합니다. 선물하기 기능은 존재하지만 탐색 흐름 안에서
+        충분히 드러나지 않습니다.
       </p>
 
       {SIGNS.map((sign, i) => (

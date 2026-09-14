@@ -54,7 +54,7 @@ export function SceneExplore() {
       >
         <h3 className="type-title">Familiar Interaction</h3>
         <p className="type-body">
-          지구본을 돌리고 도시를 가리키는 익숙한 행동을
+          {c("지구본을 돌리고 도시를 가리키는 익숙한 행동을")}
           <br />
           글로벌 스토어 탐색 방식으로 옮겼습니다.
         </p>

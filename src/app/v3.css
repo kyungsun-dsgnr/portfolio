@@ -244,6 +244,11 @@
   }
 }
 
+/* 원칙 장의 글판은 넷이 같은 키(세 줄 몫)로 서서 제목·설명이 같은 높이에서 시작합니다. */
+.v3 #principles .card-text {
+  min-height: calc(96 * var(--u));
+}
+
 /* 원칙 장의 제목은 한 단 더 넓게(6 → 7) 섭니다. */
 .v3 #principles .page-grid > .type-lead {
   grid-column: span 7;

@@ -1083,3 +1083,8 @@
 .v3 .compose-full .issue {
   cursor: pointer;
 }
+
+/* 맨 마지막 장(Thank you)에는 머리·바닥 띠를 두지 않습니다. */
+.v3 #thanks .band {
+  display: none;
+}

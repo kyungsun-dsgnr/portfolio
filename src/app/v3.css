@@ -1084,7 +1084,7 @@
   cursor: pointer;
 }
 
-/* 맨 마지막 장(Thank you)에는 머리·바닥 띠를 두지 않습니다. */
-.v3 #thanks .band {
+/* 맨 마지막 장(Thank you)에는 바닥 띠만 두지 않습니다 — 머리(목차)는 남습니다. */
+.v3 #thanks .band-bottom {
   display: none;
 }

@@ -9,7 +9,7 @@
  */
 
 import Image from "next/image";
-import type { CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 
 import { useCopy } from "@/components/copy";
 import { useInView } from "@/components/useInView";
@@ -54,6 +54,18 @@ const BLOBS = [
 /** 세 번째 케이스의 첫 장 */
 export function SceneNudakeCover() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
+
+  /* 엽서의 날짜는 오늘 — 미리 구운 값(빌드 날)이 아니라 화면을 연 날로 씁니다.
+     그리는 중에 넣으면 서버와 어긋나므로, 선 뒤에 글만 바꿔 넣습니다. */
+  const dateRef = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    if (!dateRef.current) return;
+    dateRef.current.textContent = new Date().toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  }, []);
   const { c } = useCopy();
 
   return (
@@ -133,7 +145,10 @@ export function SceneNudakeCover() {
               ))}
             </p>
 
-            <span className="nud-card-date">28 June 2026</span>
+            {/* 보는 날의 날짜가 적힙니다 — 정적으로 구운 글이 아니라 열 때마다 새로. */}
+            <span ref={dateRef} className="nud-card-date">
+              28 June 2026
+            </span>
           </div>
 
           {/* 컵은 카드보다 앞에 섭니다. */}

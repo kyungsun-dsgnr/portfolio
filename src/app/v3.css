@@ -569,10 +569,17 @@
 .v3 .compose-full-frame {
   top: var(--page-margin-y);
   height: var(--tall, calc(var(--canvas-h) - 2 * var(--page-margin-y)));
+  /* 자리와 폭을 온픽셀로 맞춥니다 — 반 픽셀에 걸치면 겹마다 다르게 그려져
+     왼쪽 가장자리에 단차가 지고 단추 옆에 흰 실금이 남습니다. */
+  left: round(calc(50% - 166.5 * var(--u)), 1px);
+  width: round(calc(333 * var(--u)), 1px);
+  translate: 0 var(--lift, 0px);
 }
 
 .v3 #nudake-flow-full .nudc {
   height: 100% !important;
+  /* 폭도 온픽셀로 맞춘 틀을 그대로 따릅니다(인라인 333u 를 덮습니다). */
+  width: 100% !important;
 }
 
 /* 바닥의 목차(손잡이를 당기면 올라오는 장 목록)는 이 판에서 두지 않습니다. */

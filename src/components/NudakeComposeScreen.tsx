@@ -397,20 +397,23 @@ export function NudakeMockCompose({
   /** 결제 시트의 `결제하기` 에 손끝이 닿는 순간 */
   const [payHit, setPayHit] = useState(false);
 
-  /* 밖에서 다른 칸을 가리키면 — 손끝이 닿고, 잠시 뒤 그 제품으로 바뀝니다.
-     가리킴을 거두면 처음 칸으로 되돌아갑니다. */
+  /* 밖에서 다른 칸을 가리키면 — 먼저 판을 아래로 굴려 제품 줄이 보이게 하고,
+     손끝이 닿고, 잠시 뒤 그 제품으로 바뀝니다. 가리킴을 거두면 처음으로 되돌아갑니다. */
   useEffect(() => {
     if (swapTo == null) {
       const back = window.setTimeout(() => {
         setPress(null);
         setChosen(pick);
+        scroller.current?.scrollTo({ top: 0, behavior: "smooth" });
       }, 0);
       return () => clearTimeout(back);
     }
+    const roll = scroller.current;
+    if (roll) roll.scrollTo({ top: roll.scrollHeight, behavior: "smooth" });
     const clock = [
-      window.setTimeout(() => setPress(swapTo), 700),
-      window.setTimeout(() => setChosen(swapTo), 1100),
-      window.setTimeout(() => setPress(null), 1700),
+      window.setTimeout(() => setPress(swapTo), 1300),
+      window.setTimeout(() => setChosen(swapTo), 1700),
+      window.setTimeout(() => setPress(null), 2300),
     ];
     return () => clock.forEach(clearTimeout);
   }, [swapTo, pick]);

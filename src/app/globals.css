@@ -9397,6 +9397,8 @@
     padding-top: calc(49 * var(--s));
     /* 다른 걸음에서는 아래 목록·상세가 손을 받아야 합니다. */
     pointer-events: none;
+    /* 손으로는 못 굴려도 스크립트로는 굴릴 수 있게(바꿔 담을 때 제품 줄로 내려갑니다). */
+    overflow-y: hidden;
     overscroll-behavior-y: contain;
     scrollbar-width: none;
   }

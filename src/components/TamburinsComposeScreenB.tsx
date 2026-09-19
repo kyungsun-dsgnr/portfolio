@@ -940,7 +940,8 @@ export function TamburinsComposeScreenB({
                           const at = i === 0 ? one : two;
                           return (
                             <li key={kind}>
-                              <span className="cmpb-list-shot">
+                              {/* 향 고르는 줄의 썸네일과 같은 앉힘새 — 종류별로 나눕니다. */}
+                              <span className="cmpb-list-shot" data-kind={kind}>
                                 <Image
                                   src={shotOf(kind, at)}
                                   alt=""

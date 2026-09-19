@@ -8677,11 +8677,16 @@
     background: #efefef;
   }
 
-  /* 제품이 상자 아래에 딱 붙지 않게 그만큼만 띄웁니다.
-     fill 로 깔린 사진은 inset: 0 이라 안쪽 여백을 따르지 않으므로 키로 줄입니다. */
+  /* 향 고르는 줄(.cmpb-pick-shot)과 같은 앉힘새 — 위 절반을 덜고 아래쪽을 채웁니다.
+     핸드워시만 병이 길어 온전히 담고 위아래만 조금 띄웁니다. */
   .cmpb-list-shot img {
-    height: calc(100% - 8 * var(--u));
-    object-position: bottom;
+    translate: 0 -34%;
+    scale: 1.6;
+  }
+
+  .cmpb-list-shot[data-kind="wash"] img {
+    translate: 0 6%;
+    scale: 0.7;
   }
 
   .cmpb-list-text {

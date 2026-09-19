@@ -117,14 +117,15 @@ const AFTER_AT = 7300;
    둘째: 왼쪽이 두 번 넘기고 카카오로 나가 선물하기까지 누르고, 오른쪽이 아래로 굴러
    제품 줄에서 바꿔 담기까지.
    셋째: 글을 넣고 보내기까지. */
-const SPAN = [20600, 8800, 8400];
+const SPAN = [20600, 11400, 8400];
 
 /* 오른쪽 화면의 키 — 2행 머리부터 6행 끝까지(다섯 행과 사이 넷).
    바닥 단추까지 다 보이게, 화면을 그 키로 세웁니다. */
 const STAGE_H = 5 * 110 + 4 * 16;
 
-/* 둘째 카드가 바꿔 담는 칸 — 넷째, 루스 리프 에디션. 처음의 아카이브와 다른 제품입니다. */
-const OTHER_PICK = 3;
+/* 둘째 카드가 바꿔 담는 칸들 — 셋째(티 테이스터)로, 그다음 넷째(루스 리프 에디션)로.
+   처음의 아카이브까지 세 제품이 차례로 담깁니다. */
+const OTHER_PICKS = [2, 3];
 
 /* 둘째 카드를 누르면 왼쪽(고치기 전) 상세가 밟는 차례 —
    아카이브 상세에서 바닥의 `다음 제품` 을 두 번 눌러 루스 리프 에디션까지 가고,
@@ -140,6 +141,7 @@ const KAKAO_AT = 3700;
 const PUSH2_AT = 4500;
 const AWAY1_AT = 5100;
 const SWAP_AT = 5900;
+const SWAP2_AT = 8300;
 
 export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
   const [ref, inView] = useInView<HTMLDivElement>(0.4);
@@ -221,7 +223,7 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
 
   /** 둘째 카드의 걸음 — 0 아카이브 · 1 다음 누름 · 2 테이스터 · 3 다음 누름 ·
       4 루스 리프 · 5 카카오 단추 누름 · 6 카카오 선물하기 화면 · 7 선물하기 누름 ·
-      8 밖으로(흑백) · 9 오른쪽이 바꿔 담음 */
+      8 밖으로(흑백) · 9 오른쪽이 테이스터로 바꿔 담음 · 10 루스 리프로 한 번 더 */
   const [flip, setFlip] = useState(0);
 
   useEffect(() => {
@@ -239,6 +241,7 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
       window.setTimeout(() => setFlip(7), PUSH2_AT),
       window.setTimeout(() => setFlip(8), AWAY1_AT),
       window.setTimeout(() => setFlip(9), SWAP_AT),
+      window.setTimeout(() => setFlip(10), SWAP2_AT),
     ];
     return () => clock.forEach(clearTimeout);
   }, [other, inView]);
@@ -321,7 +324,7 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
                거기서 `선물하기` 를 누르면 밖으로 빠집니다. */
             flip >= 6 ? (
               <NudakeMockKakao
-                item={OTHER_PICK}
+                item={3}
                 away={flip >= 8}
                 tap={flip === 7}
                 quiet
@@ -389,7 +392,9 @@ export function SceneNudakeGap4({ pair = false }: { pair?: boolean } = {}) {
               key="card"
               step="card"
               height={STAGE_H}
-              swapTo={flip >= 9 ? OTHER_PICK : null}
+              swapTo={
+                flip >= 10 ? OTHER_PICKS[1] : flip >= 9 ? OTHER_PICKS[0] : null
+              }
             />
           )}
 

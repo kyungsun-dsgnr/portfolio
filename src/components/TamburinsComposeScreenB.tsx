@@ -526,8 +526,7 @@ export function TamburinsComposeScreenB({
       "고르고 나면 어떻게 되는가" 라서, 빈 상자로 시작하면 한 걸음 늦습니다. */
   preset?: boolean;
 } = {}) {
-  /* 처음에는 리본이 묶인 상자입니다. 장에 들어서면 포장이 풀리고
-     뚜껑이 열려 빈 상자가 드러납니다. 담기는 것은 세트를 고른 뒤입니다. */
+  /* 장에 들어서면 뒤쪽 접힘선을 중심으로 뚜껑이 열립니다. */
   const [stage, inView] = useInView<HTMLDivElement>(0.3);
   const [ready, setReady] = useState(false);
 
@@ -536,14 +535,12 @@ export function TamburinsComposeScreenB({
     return () => clearTimeout(open);
   }, [inView]);
 
-  /* 상자가 다 차오르기까지는 제품이 기다렸다 내려앉습니다 — 열리는 도중에
-     떨어지면 아직 비치는 앞면 너머로 제품이 겹쳐 보입니다. 한 번 다 찬 뒤
-     세트를 고쳐 고를 때는 기다리지 않고 바로 담깁니다. */
+  /* 뚜껑이 열린 뒤 제품이 나타납니다. 이후 세트 변경은 바로 반영합니다. */
   const [filled, setFilled] = useState(false);
 
   useEffect(() => {
-    /* 상자 1700ms + 첫 낙하 1900ms + 둘째 것 340ms */
-    const done = window.setTimeout(() => setFilled(ready), ready ? 3940 : 0);
+    /* 뚜껑 1600ms + 제품 1600ms + 둘째 제품 지연 340ms */
+    const done = window.setTimeout(() => setFilled(ready), ready ? 3540 : 0);
     return () => clearTimeout(done);
   }, [ready]);
   /* 지금 열려 있는 층. 고른다고 바로 넘어가지 않고, 굴려 올리면 다음 층이 열립니다. */
@@ -766,11 +763,10 @@ export function TamburinsComposeScreenB({
             className="cmpb-box"
             data-open={ready || undefined}
             style={
-              { "--drop-wait": filled ? "0ms" : "1700ms" } as CSSProperties
+              { "--drop-wait": filled ? "0ms" : "1600ms" } as CSSProperties
             }
           >
-            {/* 상자는 닫힌 채로 놓여 있습니다. 세트를 고르면 뚜껑이 열리고
-                제품이 하나씩 내려앉습니다. 12장 표지와 같은 겹·같은 동작입니다. */}
+            {/* 몸통과 앞면은 고정하고 뚜껑만 회전합니다. */}
             <span className="cmpb-base">
               <Image
                 src="/images/tamburins-box-base.png"
@@ -799,18 +795,6 @@ export function TamburinsComposeScreenB({
                 </span>
               ))}
 
-            {/* 닫힌 채로 놓인 상자. 열리기 시작하면 흐려지며 물러나고,
-                그 아래에서 뚜껑이 열린 상자가 드러납니다. 각도가 서로 달라
-                이어 붙이지 않고 겹쳐 두고 바꿉니다. */}
-            <span className="cmpb-closed" aria-hidden>
-              <Image
-                src="/images/tam-box-closed.png"
-                alt=""
-                fill
-                sizes="16vw"
-              />
-            </span>
-
             <span className="cmpb-front">
               <Image
                 src="/images/tamburins-box-front.png"
@@ -820,7 +804,10 @@ export function TamburinsComposeScreenB({
               />
             </span>
 
-            <span className="cmpb-lid">
+            <span className="cmpb-lid" aria-hidden>
+              <span className="cmpb-lid-outside">
+                <span>TAMBURINS<small>PERFUME</small></span>
+              </span>
               <Image
                 src="/images/tamburins-box-lid.png"
                 alt=""

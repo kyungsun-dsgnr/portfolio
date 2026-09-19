@@ -6,7 +6,11 @@ import { useState } from "react";
 import { GlobeDots } from "@/components/GlobeDots";
 import { GoogleMap } from "@/components/GoogleMap";
 import { ChevronIcon, FilterIcon, LocateIcon } from "@/components/StoreIcons";
-import { STORES, type Store } from "@/data/gentle-monster-stores";
+import { SPOTS, STORES, type Store } from "@/data/gentle-monster-stores";
+
+/** 도시 대표 매장(STORES)에 나라를 펼쳤을 때 드러나는 매장(SPOTS)까지 —
+ *  지구본에서 집을 수 있는 점은 둘 다이므로 목록도 둘 다에서 찾습니다. */
+const EVERY: Store[] = [...STORES, ...SPOTS];
 
 /** 현재 국가 탭. 지역을 고르면 그 지역 매장만 남습니다. */
 const REGIONS: Record<
@@ -286,9 +290,9 @@ export function StoreGlobeMock({
       ? /* 한국은 현재 국가 탭과 같은 목록을 씁니다. */
         (showCity && REGIONS[REGION_OF[showCity] ?? ""]) || KOREA_STORES
       : showCity
-        ? STORES.filter((store) => store.city === showCity).map(card)
+        ? EVERY.filter((store) => store.city === showCity).map(card)
         : showCountry
-          ? STORES.filter((store) => store.country === showCountry).map(card)
+          ? EVERY.filter((store) => store.country === showCountry).map(card)
           : STORES.filter((store) => store.flagship).map(card);
 
   function show(next: boolean) {
@@ -367,7 +371,7 @@ export function StoreGlobeMock({
               text={showCity ?? ALL_CITIES}
               items={[
                 ALL_CITIES,
-                ...STORES.filter((store) => store.country === showCountry).map(
+                ...EVERY.filter((store) => store.country === showCountry).map(
                   (store) => store.city,
                 ),
               ]}

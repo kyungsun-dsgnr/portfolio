@@ -46,9 +46,9 @@ const CARDS: {
     art: (
       <>
         {/* 연한 선은 원본 프로토타입보다 0.2 진하게. */}
-        <path className="pm-memory-back" d={LOOP} opacity={0.38} />
-        <path className="pm-memory-front" d={LOOP} opacity={0.38} />
-        <path d={LOOP} opacity={0.52} />
+        <path className="pm-memory-back" d={LOOP} opacity={0.41} />
+        <path className="pm-memory-front" d={LOOP} opacity={0.41} />
+        <path d={LOOP} opacity={0.56} />
         <path
           className="pm-memory-route"
           d={LOOP}
@@ -64,7 +64,7 @@ const CARDS: {
     body: "우리는 보고, 듣고, 느끼는 감각을 통해 대상과 주변의 관계를 자연스럽게 이해합니다.",
     art: (
       <>
-        <g opacity={0.45}>
+        <g opacity={0.48}>
           <circle cx="84" cy="111" r="31" />
           <circle cx="116" cy="111" r="31" />
           <circle cx="100" cy="83" r="31" />

@@ -72,7 +72,9 @@ export function PlayCursor() {
   return (
     <div ref={core} className="view-cursor-core play-core" aria-hidden>
       <svg viewBox="0 0 24 24" aria-hidden>
-        <path d="M8 5 19 12 8 19 Z" fill="currentColor" />
+        {/* 24 판의 한가운데에 놓인 세모 — 눈에는 조금 오른쪽이 가운데로 보여
+            상자 가운데(12)에서 0.5 만 오른쪽에 둡니다. */}
+        <path d="M7.5 5 L17.5 12 L7.5 19 Z" fill="currentColor" />
       </svg>
     </div>
   );

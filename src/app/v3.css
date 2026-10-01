@@ -715,8 +715,13 @@
 .v3 .play-core svg {
   width: calc(18 * var(--u));
   height: calc(18 * var(--u));
-  /* 세모는 무게중심이 왼쪽에 있어 살짝 오른쪽으로 밀어야 가운데로 보입니다. */
-  translate: calc(1 * var(--u)) 0;
+}
+
+/* 글(VIEW · COPY)을 위한 자간·들여쓰기가 세모까지 오른쪽으로 밀어 냅니다.
+   그림만 앉는 이 원에서는 둘 다 걷어, 원과 세모가 한 점을 가운데로 씁니다. */
+.v3 .play-core {
+  letter-spacing: 0;
+  text-indent: 0;
 }
 
 /* VIEW · COPY 커서 — 바깥 원은 아래 색을 뒤집고(difference), 글이 앉는 가운데
